@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.spongepowered.plugin' version '0.6'
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group 'net.mohron.skyclaims'
+version '0.0.1'
+description = 'SkyClaims is an Island plugin that integrates with GriefPrevention for Sponge servers'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'sponge'
+        url = 'http://repo.spongepowered.org/maven'
+    }
+    jcenter()
+    maven {
+        name = 'forge'
+        url = 'http://files.minecraftforge.net/maven'
+    }
+    maven {
+        url "http://maven.sk89q.com/repo/"
+    }
+}
+
+dependencies {
+    compile ("org.spongepowered:spongeapi:5.0.0")
+    compile ("me.ryanhamshire:griefprevention:1.10.2-2.2.0.193")
+    compile ("com.sk89q.worldedit:worldedit-core:6.1")
+}
