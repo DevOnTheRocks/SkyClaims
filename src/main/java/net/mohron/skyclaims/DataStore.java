@@ -28,5 +28,4 @@ public class DataStore {
 	public boolean hasIsland(UUID owner) {
 		return DataStore.containsKey(owner);
 	}
-
 }

@@ -58,14 +58,14 @@ public class SkyClaims {
 		}
 
 		registerCommands();
-		// TODO
+		// TODO - Load database data into memory
 		getLogger().info("Initialization complete.");
 	}
 
 	@Listener
 	public void onServerStopped(GameStoppedServerEvent event) {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
-		// TODO
+		// TODO - Dump data in memory to the database
 		getLogger().info("Shutdown actions complete.");
 	}
 

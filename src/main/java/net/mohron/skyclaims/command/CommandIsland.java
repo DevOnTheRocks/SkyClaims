@@ -20,8 +20,6 @@ public class CommandIsland implements CommandExecutor {
 					.executor(new CommandHelp())
 					.build(), "skyclaims", "island", "is");
 
-//			SkyClaims.instance.getGame().getCommandManager().register(SkyClaims.instance, commandIsland /*, Str:<alias>*/);
-//			SkyClaims.instance.getLogger().info("Registered command: CommandIsland");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			SkyClaims.instance.getLogger().error("Failed to register command: CommandIsland");
