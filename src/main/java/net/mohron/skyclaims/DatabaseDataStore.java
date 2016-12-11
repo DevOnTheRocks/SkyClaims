@@ -24,13 +24,18 @@ public class DatabaseDataStore extends DataStore {
 
 	private void init(){
 		//TODO Connect to database
-		dbConnection = getDataSource("jdbc:" + "")
+		try {
+			dbConnection = getDataSource(String.format("jdbc:%s", dbUrl)).getConnection(dbUsername, dbPassword);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public javax.sql.DataSource getDataSource(String jdbcUrl) throws SQLException {
-		if (sql == null) {
-			sql = Sponge.getServiceManager().provide(SqlService.class).get();
-		}
+		if (sql == null)
+			if (Sponge.getServiceManager().provide(SqlService.class).isPresent())
+				sql = Sponge.getServiceManager().provide(SqlService.class).get();
+
 		return sql.getDataSource(jdbcUrl);
 	}
 

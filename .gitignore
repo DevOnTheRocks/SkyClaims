@@ -1,0 +1,8 @@
+*.iml
+*.ipr
+*.iws
+/.*
+!.gitignore
+/build/*
+/gradle*
+/run*

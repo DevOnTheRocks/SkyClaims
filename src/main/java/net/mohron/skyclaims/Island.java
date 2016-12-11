@@ -34,13 +34,13 @@ public class Island {
 
 	public String getOwnerName() {
 		GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
+
 		try {
 			return profileManager.get(owner).get().getName().orElse("Unknown");
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
+
 		return "Unknown";
 	}
 
