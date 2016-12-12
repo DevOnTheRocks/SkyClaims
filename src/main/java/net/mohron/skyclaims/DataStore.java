@@ -2,11 +2,18 @@ package net.mohron.skyclaims;
 
 import com.google.common.collect.Maps;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class DataStore {
-	protected static Map<UUID, Island> data = Maps.newHashMap();
+	protected Map<UUID, Island> data = new HashMap<>();
+
+	public DataStore() {}
+
+	public DataStore(Map<UUID, Island> data) {
+		this.data = data;
+	}
 
 	public Island createIsland(UUID owner) {
 		int x, z;

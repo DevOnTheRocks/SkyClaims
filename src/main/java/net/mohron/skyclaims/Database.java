@@ -5,6 +5,8 @@ import org.spongepowered.api.world.World;
 
 import java.io.File;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -56,7 +58,7 @@ public class Database {
 //		}
 	}
 
-	/***
+	/**
 	 * Returns a Connection to the database, by name
 	 * @return A Connection object to the database
 	 * @throws SQLException Thrown if connection issues are encountered
@@ -65,7 +67,9 @@ public class Database {
 		return DriverManager.getConnection(String.format("jdbc:sqlite:%s", databaseName));
 	}
 
-	public Island loadData() {
+	public DataStore loadData() {
+		Map<UUID, Island> dataStore = new HashMap<>();
+
 		// TODO: Create a data constructor
 		try {
 			Statement statement = getConnection().createStatement();
@@ -74,9 +78,12 @@ public class Database {
 
 			while (results.next()) {
 				int id = results.getInt("id");
-				SkyClaims.instance.getLogger().info("DATABASE ID: " + id);
-				return new Island(UUID.fromString(""+id));
+				SkyClaims.instance.getLogger().info("DATABASE ID: " + id); // Debug log
+				Island island =  new Island(UUID.fromString(""+id));
+				dataStore.put(UUID.fromString(""+id), island);
 			}
+
+			return new DataStore(dataStore);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.instance.getLogger().error("Unable to read from the database.");
@@ -85,6 +92,10 @@ public class Database {
 		return null;
 	}
 
+	/**
+	 * Inserts/Updates the database with the data-storage in memory
+	 * @param data The DataStore to pull the data from
+	 */
 	public void saveData(DataStore data) {
 		// TODO: Store the data in the database
 

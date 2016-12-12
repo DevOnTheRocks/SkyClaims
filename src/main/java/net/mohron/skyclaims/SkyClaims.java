@@ -56,7 +56,7 @@ public class SkyClaims {
 		}
 
 		database = new Database("SkyClaims.db");
-		Island data = database.loadData();
+		DataStore data = database.loadData();
 
 		registerCommands();
 		// TODO - Load database data into memory
