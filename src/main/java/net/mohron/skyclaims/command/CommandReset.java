@@ -22,11 +22,11 @@ public class CommandReset implements CommandExecutor {
 
 	public static void register() {
 		try {
-			SkyClaims.instance.getGame().getCommandManager().register(SkyClaims.instance, commandSpec , "reset");
-			SkyClaims.instance.getLogger().info("Registered command: CommandReset");
+			SkyClaims.getInstance().getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec , "reset");
+			SkyClaims.getInstance().getLogger().info("Registered command: CommandReset");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.instance.getLogger().error("Failed to register command: CommandReset");
+			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandReset");
 		}
 	}
 
