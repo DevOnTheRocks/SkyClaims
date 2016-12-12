@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DataStore {
-	protected static Map<UUID, Island> DataStore = Maps.newHashMap();
+	protected static Map<UUID, Island> data = Maps.newHashMap();
 
 	public Island createIsland(UUID owner) {
 		int x, z;
@@ -17,15 +17,15 @@ public class DataStore {
 	}
 
 	public void updateIsland(Island island){
-		DataStore.put(island.getOwner(), island);
+		data.put(island.getOwner(), island);
 	}
 
 	public Island getIsland(UUID owner) {
-		if (!DataStore.containsKey(owner)) updateIsland(createIsland(owner));
-		return DataStore.get(owner);
+		if (!data.containsKey(owner)) updateIsland(createIsland(owner));
+		return data.get(owner);
 	}
 
 	public boolean hasIsland(UUID owner) {
-		return DataStore.containsKey(owner);
+		return data.containsKey(owner);
 	}
 }

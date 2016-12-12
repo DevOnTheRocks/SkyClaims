@@ -4,28 +4,23 @@ import com.google.inject.Inject;
 import net.mohron.skyclaims.command.CommandCreate;
 import net.mohron.skyclaims.command.CommandHelp;
 import net.mohron.skyclaims.command.CommandIsland;
+import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
-import org.slf4j.Logger;
-import org.spongepowered.api.text.Text;
 
-import static net.mohron.skyclaims.PluginInfo.ID;
-import static net.mohron.skyclaims.PluginInfo.NAME;
-import static net.mohron.skyclaims.PluginInfo.VERSION;
-import static net.mohron.skyclaims.PluginInfo.DESCRIPTION;
-import static net.mohron.skyclaims.PluginInfo.AUTHORS;
+import java.sql.SQLException;
+
+import static net.mohron.skyclaims.PluginInfo.*;
 
 @Plugin(id = ID,
 		name = NAME,
 		version = VERSION,
 		description = DESCRIPTION,
-		authors = {AUTHORS},
+		authors = AUTHORS,
 		dependencies = {
 				@Dependency(id = "griefprevention", optional = true),
 				@Dependency(id = "worldedit", optional = true)
@@ -34,6 +29,7 @@ public class SkyClaims {
 	public static SkyClaims instance;
 	@Inject private Logger logger;
 	@Inject private Game game;
+	private Database database;
 
 	public DataStore dataStore;
 
@@ -42,6 +38,8 @@ public class SkyClaims {
 	}
 
 	public Game getGame() { return game; }
+
+	public Database getDatabase() { return database; }
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
@@ -56,6 +54,9 @@ public class SkyClaims {
 				getLogger().error(e.getMessage());
 			}
 		}
+
+		database = new Database("SkyClaims.db");
+		Island data = database.loadData();
 
 		registerCommands();
 		// TODO - Load database data into memory

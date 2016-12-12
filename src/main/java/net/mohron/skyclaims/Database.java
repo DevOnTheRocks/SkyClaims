@@ -1,10 +1,11 @@
 package net.mohron.skyclaims;
 
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.UUID;
 
 /**
  * Created by Cossacksman on 11/12/2016.
@@ -12,49 +13,88 @@ import java.sql.Statement;
 public class Database {
 	private String databaseName;
 
-	public Database(String databaseName) throws ClassNotFoundException, SQLException {
+	public Database(String databaseName) {
 		this.databaseName = databaseName;
 
 		// Load the SQLite JDBC driver
-		Class.forName("org.sqlite.JDBC");
+		try {
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			SkyClaims.instance.getLogger().error("Unable to load the JDBC driver");
+		}
 
 		// If the database does not exist, create it
-		File databaseFile = new File(databaseName);
-		if (!databaseFile.exists()) {
-			// Get a database connection
-			Connection connection = getConnection(databaseName);
+//		File databaseFile = new File(databaseName);
+//		if (!databaseFile.exists()) {
+			try {
+				// Get a database connection
+				Connection connection = getConnection();
 
-			// Create a statement and set the timeout time to 30 seconds
-			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30);
+				// Create a statement and set the timeout time to 30 seconds
+				Statement statement = connection.createStatement();
+				statement.setQueryTimeout(30);
 
-			// Create the database schema
-			String table = "create table islands (" +
-					"uuid		string," +
-					"username	string," +
-				")";
+				// Create the database schema
+				String table = "create table islands (" +
+						"owner		string," +
+						"id			int" +
+						"x			int" +
+						"y			int" +
+						"z			int" +
+						"world		int" +
+					")";
 
-			// Create the islands table (execute statement)
-			statement.executeUpdate(table);
-		}
+				// Create the islands table (execute statement)
+				statement.executeUpdate(table);
+
+				statement.executeUpdate("INSERT INTO islands () values ('1234-4321', 25, 255, 137, 482, 1");
+			} catch(SQLException e) {
+				e.printStackTrace();
+				SkyClaims.instance.getLogger().error("Unable to create SkyClaims database");
+			}
+//		}
 	}
 
 	/***
 	 * Returns a Connection to the database, by name
-	 * @param database The name of the database
 	 * @return A Connection object to the database
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */
-	public Connection getConnection(String database) throws SQLException {
-		return DriverManager.getConnection(String.format("jdbc:sqlite:%s", database));
+	public Connection getConnection() throws SQLException {
+		return DriverManager.getConnection(String.format("jdbc:sqlite:%s", databaseName));
 	}
 
-	public DataStore loadData() {
-		// TODO: Create a DataStore constructor
-		return new DataStore();
+	public Island loadData() {
+		// TODO: Create a data constructor
+		try {
+			Statement statement = getConnection().createStatement();
+
+			ResultSet results = statement.executeQuery("SELECT * FROM islands");
+
+			while (results.next()) {
+				int id = results.getInt("id");
+				SkyClaims.instance.getLogger().info("DATABASE ID: " + id);
+				return new Island(UUID.fromString(""+id));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			SkyClaims.instance.getLogger().error("Unable to read from the database.");
+		}
+
+		return null;
 	}
 
 	public void saveData(DataStore data) {
 		// TODO: Store the data in the database
+
+//		for (Island island : DataStore.data.values()) {
+//			island.getOwner();
+//			island.getClaim().getID();
+//			island.getSpawn().getBlockX();
+//			island.getSpawn().getBlockY();
+//			island.getSpawn().getBlockZ();
+//			island.getSpawn().getExtent();
+//		}
 	}
 }

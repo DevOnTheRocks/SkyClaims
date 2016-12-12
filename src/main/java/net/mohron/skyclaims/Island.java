@@ -20,11 +20,11 @@ public class Island {
 		this.isReady = false;
 	}
 
-	public Location getSpawn() {
+	public Location<World> getSpawn() {
 		return spawn;
 	}
 
-	public void setSpawn(Location spawn) {
+	public void setSpawn(Location<World> spawn) {
 		this.spawn = spawn;
 	}
 
@@ -42,6 +42,10 @@ public class Island {
 		}
 
 		return "Unknown";
+	}
+
+	public Claim getClaim() {
+		return claim;
 	}
 
 	public boolean isReady() {
