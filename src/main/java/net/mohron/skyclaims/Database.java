@@ -70,10 +70,10 @@ public class Database {
 			ResultSet results = statement.executeQuery("SELECT * FROM islands");
 
 			while (results.next()) {
-				int id = results.getInt("id");
-				SkyClaims.getInstance().getLogger().info("DATABASE ID: " + id); // Debug log
-				Island island =  new Island(UUID.fromString(""+id));
-				dataStore.put(UUID.fromString(""+id), island);
+				String owner = results.getString("owner");
+				SkyClaims.getInstance().getLogger().info("Owner UUID: " + owner); // Debug log
+				Island island =  new Island(UUID.fromString(owner));
+				dataStore.put(UUID.fromString(owner), island);
 			}
 
 			return new DataStore(dataStore);
