@@ -1,17 +1,10 @@
 package net.mohron.skyclaims;
 
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
-
-import java.io.File;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by Cossacksman on 11/12/2016.
- */
 public class Database {
 	private String databaseName;
 

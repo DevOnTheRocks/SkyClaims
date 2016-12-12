@@ -4,15 +4,17 @@ import com.google.inject.Inject;
 import net.mohron.skyclaims.command.CommandCreate;
 import net.mohron.skyclaims.command.CommandHelp;
 import net.mohron.skyclaims.command.CommandIsland;
-import org.slf4j.Logger;
+import net.mohron.skyclaims.command.CommandReset;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.slf4j.Logger;
 
-import java.sql.SQLException;
+import java.nio.file.Path;
 
 import static net.mohron.skyclaims.PluginInfo.*;
 
@@ -26,18 +28,31 @@ import static net.mohron.skyclaims.PluginInfo.*;
 				@Dependency(id = "worldedit", optional = true)
 		})
 public class SkyClaims {
-	public static SkyClaims instance;
+	private static SkyClaims instance;
 	@Inject private Logger logger;
 	@Inject private Game game;
+
+	@Inject
+	@ConfigDir(sharedRoot = false)
+	private Path configDir;
+
 	private Database database;
 
 	public DataStore dataStore;
+
+	public static SkyClaims getInstance() {
+		return instance;
+	}
 
 	public Logger getLogger() {
 		return logger;
 	}
 
 	public Game getGame() { return game; }
+
+	public Path getConfigDir() {
+		return configDir;
+	}
 
 	public Database getDatabase() { return database; }
 
@@ -71,8 +86,9 @@ public class SkyClaims {
 	}
 
 	private void registerCommands() {
-		CommandCreate.register();
-		CommandHelp.register();
 		CommandIsland.register();
+		CommandHelp.register();
+		CommandCreate.register();
+		CommandReset.register();
 	}
 }

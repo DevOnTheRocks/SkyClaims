@@ -3,6 +3,7 @@
 *.iws
 /.*
 !.gitignore
-/build/*
+/build*
+!build.gradle
 /gradle*
 /run*

@@ -29,6 +29,6 @@ repositories {
 
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
-    compile ("me.ryanhamshire:griefprevention:1.10.2-2.2.0.193")
+    compile ("me.ryanhamshire:griefprevention:1.10.2-2.2.0.196")
     compile ("com.sk89q.worldedit:worldedit-core:6.1")
 }
