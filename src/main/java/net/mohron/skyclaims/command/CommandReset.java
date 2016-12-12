@@ -17,7 +17,7 @@ public class CommandReset implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if (!SkyClaims.instance.dataStore.hasIsland(player.getUniqueId())) {
+		if (!SkyClaims.getInstance().dataStore.hasIsland(player.getUniqueId())) {
 			throw new CommandException(Text.of("You do not have an island!"));
 		}
 

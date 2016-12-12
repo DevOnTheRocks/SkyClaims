@@ -23,7 +23,7 @@ public class Database {
 			Class.forName("org.sqlite.JDBC");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			SkyClaims.instance.getLogger().error("Unable to load the JDBC driver");
+			SkyClaims.getInstance().getLogger().error("Unable to load the JDBC driver");
 		}
 
 		// If the database does not exist, create it
@@ -53,7 +53,7 @@ public class Database {
 				statement.executeUpdate("INSERT INTO islands () values ('1234-4321', 25, 255, 137, 482, 1");
 			} catch(SQLException e) {
 				e.printStackTrace();
-				SkyClaims.instance.getLogger().error("Unable to create SkyClaims database");
+				SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
 			}
 //		}
 	}
@@ -78,7 +78,7 @@ public class Database {
 
 			while (results.next()) {
 				int id = results.getInt("id");
-				SkyClaims.instance.getLogger().info("DATABASE ID: " + id); // Debug log
+				SkyClaims.getInstance().getLogger().info("DATABASE ID: " + id); // Debug log
 				Island island =  new Island(UUID.fromString(""+id));
 				dataStore.put(UUID.fromString(""+id), island);
 			}
@@ -86,7 +86,7 @@ public class Database {
 			return new DataStore(dataStore);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			SkyClaims.instance.getLogger().error("Unable to read from the database.");
+			SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
 		}
 
 		return null;

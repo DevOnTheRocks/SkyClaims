@@ -26,11 +26,11 @@ public class CommandHelp implements CommandExecutor {
 		try {
 
 
-			SkyClaims.instance.getGame().getCommandManager().register(SkyClaims.instance, commandSpec /*, Str:<alias>*/);
-			SkyClaims.instance.getLogger().info("Registered command: CommandHelp");
+			SkyClaims.getInstance().getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec /*, Str:<alias>*/);
+			SkyClaims.getInstance().getLogger().info("Registered command: CommandHelp");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.instance.getLogger().error("Failed to register command: CommandHelp");
+			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandHelp");
 		}
 	}
 

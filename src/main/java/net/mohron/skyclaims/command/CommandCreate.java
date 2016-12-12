@@ -25,11 +25,11 @@ public class CommandCreate implements CommandExecutor {
 
 	public static void register() {
 		try {
-			SkyClaims.instance.getGame().getCommandManager().register(SkyClaims.instance, commandSpec /*, Str:<alias>*/);
-			SkyClaims.instance.getLogger().info("Registered command: CommandCreate");
+			SkyClaims.getInstance().getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec /*, Str:<alias>*/);
+			SkyClaims.getInstance().getLogger().info("Registered command: CommandCreate");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.instance.getLogger().error("Failed to register command: CommandCreate");
+			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandCreate");
 		}
 	}
 
@@ -38,11 +38,11 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 
 		Player player = (Player) src;
-		if (SkyClaims.instance.dataStore.hasIsland(player.getUniqueId()))
+		if (SkyClaims.getInstance().dataStore.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
-		Island island = SkyClaims.instance.dataStore.createIsland(player.getUniqueId());
+		Island island = SkyClaims.getInstance().dataStore.createIsland(player.getUniqueId());
 
 		while (!island.isReady())
 			player.setLocation(island.getSpawn());

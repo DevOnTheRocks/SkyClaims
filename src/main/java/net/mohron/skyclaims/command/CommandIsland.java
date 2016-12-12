@@ -13,7 +13,7 @@ import org.spongepowered.api.text.Text;
 public class CommandIsland implements CommandExecutor {
 	public static void register() {
 		try {
-			Sponge.getCommandManager().register(SkyClaims.instance, CommandSpec.builder()
+			Sponge.getCommandManager().register(SkyClaims.getInstance(), CommandSpec.builder()
 					.description(Text.of("SkyClaims Island Command"))
 					.child(CommandHelp.commandSpec, "help")
 					.child(CommandCreate.commandSpec, "create")
@@ -22,7 +22,7 @@ public class CommandIsland implements CommandExecutor {
 
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.instance.getLogger().error("Failed to register command: CommandIsland");
+			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandIsland");
 		}
 	}
 
