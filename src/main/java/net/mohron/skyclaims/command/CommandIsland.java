@@ -11,23 +11,29 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
 public class CommandIsland implements CommandExecutor {
+
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
+	private static CommandSpec commandSpec = CommandSpec.builder()
+			.description(Text.of("SkyClaims Island Command"))
+			.child(CommandHelp.commandSpec, "help")
+			.child(CommandCreate.commandSpec, "create")
+			.child(CommandReset.commandSpec, "reset")
+			.child(CommandSetSpawn.commandSpec, "setspawn")
+			.executor(new CommandHelp())
+			.build();
+
 	public static void register() {
 		try {
-			Sponge.getCommandManager().register(SkyClaims.getInstance(), CommandSpec.builder()
-					.description(Text.of("SkyClaims Island Command"))
-					.child(CommandHelp.commandSpec, "help")
-					.child(CommandCreate.commandSpec, "create")
-					.executor(new CommandHelp())
-					.build(), "skyclaims", "island", "is");
-
+			Sponge.getCommandManager().register(PLUGIN, commandSpec, "skyclaims","island","is");
+			PLUGIN.getLogger().info("Registered command: CommandIsland");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandIsland");
+			PLUGIN.getLogger().error("Failed to register command: CommandIsland");
 		}
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-
 		return CommandResult.success();
 	}
 

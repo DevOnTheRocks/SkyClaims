@@ -5,6 +5,7 @@ import net.mohron.skyclaims.command.CommandCreate;
 import net.mohron.skyclaims.command.CommandHelp;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.CommandReset;
+import net.mohron.skyclaims.command.CommandSetSpawn;
 import net.mohron.skyclaims.config.SkyClaimsConfig;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -110,5 +111,6 @@ public class SkyClaims {
 		CommandHelp.register();
 		CommandCreate.register();
 		CommandReset.register();
+		CommandSetSpawn.register();
 	}
 }

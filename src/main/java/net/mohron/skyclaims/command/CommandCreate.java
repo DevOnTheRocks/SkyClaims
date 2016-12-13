@@ -14,6 +14,8 @@ import org.spongepowered.api.text.Text;
 
 public class CommandCreate implements CommandExecutor {
 
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
 			.description(Text.of("create"))
@@ -22,11 +24,11 @@ public class CommandCreate implements CommandExecutor {
 
 	public static void register() {
 		try {
-			SkyClaims.getInstance().getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec /*, Str:<alias>*/);
-			SkyClaims.getInstance().getLogger().info("Registered command: CommandCreate");
+			PLUGIN.getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec /*, Str:<alias>*/);
+			PLUGIN.getLogger().info("Registered command: CommandCreate");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandCreate");
+			PLUGIN.getLogger().error("Failed to register command: CommandCreate");
 		}
 	}
 
@@ -39,10 +41,11 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("You already have an island!"));
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
-		Island island = SkyClaims.getInstance().dataStore.createIsland(player.getUniqueId());
+		Island island = PLUGIN.dataStore.createIsland(player.getUniqueId());
+		PLUGIN.dataStore.saveIsland(island);
 
-		while (!island.isReady())
-			player.setLocation(island.getSpawn());
+//		while (!island.isReady())
+//			player.setLocation(island.getSpawn());
 
 		return CommandResult.success();
 	}

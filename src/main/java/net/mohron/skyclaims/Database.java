@@ -37,13 +37,13 @@ public class Database {
 					"y			INT," +
 					"z			INT," +
 					"world		STRING" +
-				")";
+					")";
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
 
-			statement.executeUpdate("INSERT INTO islands (owner, id, x, y, z, world) values ('"+UUID.randomUUID()+"', '"+UUID.randomUUID()+"', 255, 137, 482, '"+UUID.randomUUID()+"')");
-		} catch(SQLException e) {
+			statement.executeUpdate("INSERT INTO islands (owner, id, x, y, z, world) values ('" + UUID.randomUUID() + "', '" + UUID.randomUUID() + "', 255, 137, 482, '" + UUID.randomUUID() + "')");
+		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
 		}
@@ -68,7 +68,7 @@ public class Database {
 
 			while (results.next()) {
 				String owner = results.getString("owner");
-				Island island =  new Island(UUID.fromString(owner));
+				Island island = new Island(UUID.fromString(owner));
 				dataStore.put(UUID.fromString(owner), island);
 				SkyClaims.getInstance().getLogger().info("Owner UUID: " + owner); // Debug log
 				SkyClaims.getInstance().getLogger().info("SIZE: " + dataStore.values().size());
@@ -85,6 +85,7 @@ public class Database {
 
 	/**
 	 * Inserts/Updates the database with the data-storage in memory
+	 *
 	 * @param dataStore The DataStore to pull the data from
 	 */
 	public void saveData(DataStore dataStore) throws SQLException {
