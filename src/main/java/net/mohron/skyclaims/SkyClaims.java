@@ -15,6 +15,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
+import java.sql.SQLException;
 
 import static net.mohron.skyclaims.PluginInfo.*;
 
@@ -71,7 +72,15 @@ public class SkyClaims {
 		}
 
 		database = new Database("SkyClaims.db");
-		DataStore data = database.loadData();
+		dataStore = database.loadData();
+		getLogger().info("ISLAND LENGTH: " + dataStore.data.keySet().size());
+
+		// DEBUG TEST
+//		try {
+//			database.saveData(dataStore);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
 
 		registerCommands();
 		// TODO - Load database data into memory

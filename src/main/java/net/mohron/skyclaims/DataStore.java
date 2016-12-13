@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DataStore {
-	protected Map<UUID, Island> data = new HashMap<>();
+	public Map<UUID, Island> data = new HashMap<>();
 
 	public DataStore() {}
 
