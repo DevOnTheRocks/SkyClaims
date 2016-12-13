@@ -1,0 +1,9 @@
+<code_scheme name="SkyClaims">
+  <option name="LINE_SEPARATOR" value="&#xD;&#xA;" />
+  <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="8" />
+  <codeStyleSettings language="JAVA">
+    <indentOptions>
+      <option name="USE_TAB_CHARACTER" value="true" />
+    </indentOptions>
+  </codeStyleSettings>
+</code_scheme>

@@ -10,7 +10,7 @@ import org.spongepowered.api.text.Text;
 
 public class CommandSetSpawn {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)) {
+		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;

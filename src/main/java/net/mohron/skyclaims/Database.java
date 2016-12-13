@@ -1,6 +1,10 @@
 package net.mohron.skyclaims;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -22,37 +26,38 @@ public class Database {
 		// If the database does not exist, create it
 //		File databaseFile = new File(databaseName);
 //		if (!databaseFile.exists()) {
-			try {
-				// Get a database connection
-				Connection connection = getConnection();
+		try {
+			// Get a database connection
+			Connection connection = getConnection();
 
-				// Create a statement and set the timeout time to 30 seconds
-				Statement statement = connection.createStatement();
-				statement.setQueryTimeout(30);
+			// Create a statement and set the timeout time to 30 seconds
+			Statement statement = connection.createStatement();
+			statement.setQueryTimeout(30);
 
-				// Create the database schema
-				String table = "CREATE TABLE IF NOT EXISTS islands (" +
-						"owner		string," +
-						"id			int," +
-						"x			int," +
-						"y			int," +
-						"z			int," +
-						"world		int" +
+			// Create the database schema
+			String table = "CREATE TABLE IF NOT EXISTS islands (" +
+					"owner		string," +
+					"id			int," +
+					"x			int," +
+					"y			int," +
+					"z			int," +
+					"world		int" +
 					")";
 
-				// Create the islands table (execute statement)
-				statement.executeUpdate(table);
+			// Create the islands table (execute statement)
+			statement.executeUpdate(table);
 
-				statement.executeUpdate("INSERT INTO islands (owner, id, x, y, z, world) values ('"+UUID.randomUUID()+"', 25, 255, 137, 482, 1)");
-			} catch(SQLException e) {
-				e.printStackTrace();
-				SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
-			}
+			statement.executeUpdate("INSERT INTO islands (owner, id, x, y, z, world) values ('" + UUID.randomUUID() + "', 25, 255, 137, 482, 1)");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
+		}
 //		}
 	}
 
 	/**
 	 * Returns a Connection to the database, by name
+	 *
 	 * @return A Connection object to the database
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */
@@ -72,7 +77,7 @@ public class Database {
 			while (results.next()) {
 				String owner = results.getString("owner");
 				SkyClaims.getInstance().getLogger().info("Owner UUID: " + owner); // Debug log
-				Island island =  new Island(UUID.fromString(owner));
+				Island island = new Island(UUID.fromString(owner));
 				dataStore.put(UUID.fromString(owner), island);
 			}
 
@@ -87,6 +92,7 @@ public class Database {
 
 	/**
 	 * Inserts/Updates the database with the data-storage in memory
+	 *
 	 * @param data The DataStore to pull the data from
 	 */
 	public void saveData(DataStore data) {

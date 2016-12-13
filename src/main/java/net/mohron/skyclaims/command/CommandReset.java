@@ -1,6 +1,5 @@
 package net.mohron.skyclaims.command;
 
-import net.mohron.skyclaims.Island;
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.command.CommandException;
@@ -22,7 +21,7 @@ public class CommandReset implements CommandExecutor {
 
 	public static void register() {
 		try {
-			SkyClaims.getInstance().getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec , "reset");
+			SkyClaims.getInstance().getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec, "reset");
 			SkyClaims.getInstance().getLogger().info("Registered command: CommandReset");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
@@ -31,7 +30,7 @@ public class CommandReset implements CommandExecutor {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if(!(src instanceof Player)) {
+		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
