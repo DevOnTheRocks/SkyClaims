@@ -47,7 +47,7 @@ public class CommandHelp implements CommandExecutor {
 			hasPerms = true;
 		}
 
-		if (!hasPerms)src.sendMessage(Text.of(NAME + " " + VERSION));
+		if (!hasPerms) src.sendMessage(Text.of(NAME + " " + VERSION));
 		return CommandResult.success();
 	}
 }

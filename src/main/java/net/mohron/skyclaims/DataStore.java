@@ -1,7 +1,5 @@
 package net.mohron.skyclaims;
 
-import com.google.common.collect.Maps;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -9,7 +7,8 @@ import java.util.UUID;
 public class DataStore {
 	public Map<UUID, Island> data = new HashMap<>();
 
-	public DataStore() {}
+	public DataStore() {
+	}
 
 	public DataStore(Map<UUID, Island> data) {
 		this.data = data;
@@ -23,7 +22,7 @@ public class DataStore {
 		return new Island(owner);
 	}
 
-	public void updateIsland(Island island){
+	public void updateIsland(Island island) {
 		data.put(island.getOwner(), island);
 	}
 

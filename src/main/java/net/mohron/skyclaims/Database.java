@@ -51,6 +51,7 @@ public class Database {
 
 	/**
 	 * Returns a Connection to the database, by name
+	 *
 	 * @return A Connection object to the database
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */

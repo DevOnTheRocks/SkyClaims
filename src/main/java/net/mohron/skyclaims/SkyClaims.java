@@ -5,6 +5,8 @@ import net.mohron.skyclaims.command.CommandCreate;
 import net.mohron.skyclaims.command.CommandHelp;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.CommandReset;
+import net.mohron.skyclaims.config.SkyClaimsConfig;
+import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
@@ -12,7 +14,6 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
-import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -30,8 +31,10 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		})
 public class SkyClaims {
 	private static SkyClaims instance;
-	@Inject private Logger logger;
-	@Inject private Game game;
+	@Inject
+	private Logger logger;
+	@Inject
+	private Game game;
 
 	@Inject
 	@ConfigDir(sharedRoot = false)
@@ -41,6 +44,8 @@ public class SkyClaims {
 
 	public DataStore dataStore;
 
+	public SkyClaimsConfig config;
+
 	public static SkyClaims getInstance() {
 		return instance;
 	}
@@ -49,19 +54,25 @@ public class SkyClaims {
 		return logger;
 	}
 
-	public Game getGame() { return game; }
+	public Game getGame() {
+		return game;
+	}
 
 	public Path getConfigDir() {
 		return configDir;
 	}
 
-	public Database getDatabase() { return database; }
+	public Database getDatabase() {
+		return database;
+	}
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
 		instance = this;
 
 		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
+
+		config = new SkyClaimsConfig();
 
 		if (this.dataStore == null) {
 			try {

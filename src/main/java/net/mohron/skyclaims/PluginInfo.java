@@ -1,7 +1,5 @@
 package net.mohron.skyclaims;
 
-import java.util.ArrayList;
-
 public class PluginInfo {
 	public static final String ID = "skyclaims";
 	public static final String NAME = "SkyClaims";
