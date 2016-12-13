@@ -36,7 +36,6 @@ public class SkyClaimsConfig {
 		save();
 	}
 
-
 	private CommentedConfigurationNode load() {
 		configLoader = HoconConfigurationLoader.builder().setPath(configFile).build();
 
