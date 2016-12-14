@@ -17,6 +17,8 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 public class CommandHelp implements CommandExecutor {
 
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.description(Text.of("Help"))
 			.executor(new CommandHelp())
@@ -26,11 +28,11 @@ public class CommandHelp implements CommandExecutor {
 		try {
 
 
-			SkyClaims.getInstance().getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec /*, Str:<alias>*/);
-			SkyClaims.getInstance().getLogger().info("Registered command: CommandHelp");
+			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+			PLUGIN.getLogger().info("Registered command: CommandHelp");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandHelp");
+			PLUGIN.getLogger().error("Failed to register command: CommandHelp");
 		}
 	}
 
@@ -38,12 +40,12 @@ public class CommandHelp implements CommandExecutor {
 		boolean hasPerms = false;
 
 		if (src.hasPermission(Permissions.COMMAND_CREATE)) {
-			src.sendMessage(Text.builder("is create").onClick(TextActions.runCommand("is create")).append(Text.builder(" - used to create your personal island").color(TextColors.DARK_GREEN).build()).build());
+			src.sendMessage(Text.builder("is create").onClick(TextActions.runCommand("is create")).append(Text.builder(" -" + CommandCreate.helpText).color(TextColors.DARK_GREEN).build()).build());
 			hasPerms = true;
 		}
 
 		if (src.hasPermission(Permissions.COMMAND_RESET)) {
-			src.sendMessage(Text.builder("is reset").onClick(TextActions.runCommand("is reset")).append(Text.builder(" - used to restart your island").color(TextColors.DARK_GREEN).build()).build());
+			src.sendMessage(Text.builder("is reset").onClick(TextActions.runCommand("is reset")).append(Text.builder(" -" + CommandReset.helpText).color(TextColors.DARK_GREEN).build()).build());
 			hasPerms = true;
 		}
 

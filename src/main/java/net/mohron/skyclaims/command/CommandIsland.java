@@ -1,5 +1,7 @@
 package net.mohron.skyclaims.command;
 
+
+import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -14,6 +16,8 @@ public class CommandIsland implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
+	public static String helpText = String.format("Used to run %s's subcommands or display command help info.", PluginInfo.NAME);
+
 	private static CommandSpec commandSpec = CommandSpec.builder()
 			.description(Text.of("SkyClaims Island Command"))
 			.child(CommandHelp.commandSpec, "help")
@@ -25,7 +29,7 @@ public class CommandIsland implements CommandExecutor {
 
 	public static void register() {
 		try {
-			Sponge.getCommandManager().register(PLUGIN, commandSpec, "skyclaims","island","is");
+			Sponge.getCommandManager().register(PLUGIN, commandSpec, "skyclaims", "island", "is");
 			PLUGIN.getLogger().info("Registered command: CommandIsland");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();

@@ -14,18 +14,11 @@ public class Island {
 	private Claim claim;
 	private Location<World> spawn;
 	private boolean isReady;
+	private int radius;
 
 	public Island(UUID owner) {
 		this.owner = owner;
 		this.isReady = false;
-	}
-
-	public Location<World> getSpawn() {
-		return spawn;
-	}
-
-	public void setSpawn(Location<World> spawn) {
-		this.spawn = spawn;
 	}
 
 	public UUID getOwner() {
@@ -46,6 +39,23 @@ public class Island {
 
 	public Claim getClaim() {
 		return claim;
+	}
+
+	public Location<World> getSpawn() {
+		return spawn;
+	}
+
+	public void setSpawn(Location<World> spawn) {
+		this.spawn = spawn;
+	}
+
+	public int getRadius() {
+		return (claim.getLesserBoundaryCorner().getBlockX() - claim.getGreaterBoundaryCorner().getBlockX()) / 2;
+	}
+
+	public Location getCenter() {
+		int radius = this.getRadius();
+		return new Location(getSpawn().getExtent(), claim.getLesserBoundaryCorner().getX() + radius, 64, claim.getLesserBoundaryCorner().getZ() + radius);
 	}
 
 	public boolean isReady() {

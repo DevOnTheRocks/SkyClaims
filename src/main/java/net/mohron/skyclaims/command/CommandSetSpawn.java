@@ -13,6 +13,10 @@ import org.spongepowered.api.text.Text;
 
 public class CommandSetSpawn {
 
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
+	public static String helpText = "The reset command can be used to delete your island and inventory so you can start over.";
+
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SET_SPAWN)
 			.description(Text.of("setspawn"))
@@ -21,11 +25,11 @@ public class CommandSetSpawn {
 
 	public static void register() {
 		try {
-			SkyClaims.getInstance().getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec /*, Str:<alias>*/);
-			SkyClaims.getInstance().getLogger().info("Registered command: CommandSetSpawn");
+			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+			PLUGIN.getLogger().info("Registered command: CommandSetSpawn");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandSetSpawn");
+			PLUGIN.getLogger().error("Failed to register command: CommandSetSpawn");
 		}
 	}
 

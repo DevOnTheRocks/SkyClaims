@@ -3,6 +3,7 @@ package net.mohron.skyclaims;
 import com.google.inject.Inject;
 import net.mohron.skyclaims.command.CommandCreate;
 import net.mohron.skyclaims.command.CommandHelp;
+import net.mohron.skyclaims.command.CommandInfo;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.CommandReset;
 import net.mohron.skyclaims.command.CommandSetSpawn;
@@ -112,5 +113,6 @@ public class SkyClaims {
 		CommandCreate.register();
 		CommandReset.register();
 		CommandSetSpawn.register();
+		CommandInfo.register();
 	}
 }

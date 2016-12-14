@@ -12,5 +12,6 @@ public class Permissions {
 	public static final String COMMAND_INVITE = "skyclaims.command.invite";
 
 	// Admin Permissions
+	public static final String COMMAND_INFO_OTHERS = "skyclaims.admin.info";
 
 }

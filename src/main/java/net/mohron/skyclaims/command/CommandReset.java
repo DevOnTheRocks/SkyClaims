@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.command;
 
+import net.mohron.skyclaims.IslandTasks;
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.command.CommandException;
@@ -16,12 +17,12 @@ public class CommandReset implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String help = "The reset command can be used to delete your island and inventory so you can start over.";
+	public static String helpText = "The reset command can be used to delete your island and inventory so you can start over.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_RESET)
-			.description(Text.of("reset"))
-			.arguments(GenericArguments.optional(GenericArguments.literal(Text.of("confirm"),"confirm")))
+			.description(Text.of(helpText))
+			.arguments(GenericArguments.optional(GenericArguments.literal(Text.of("confirm"), "confirm")))
 			.executor(new CommandReset())
 			.build();
 
@@ -31,7 +32,7 @@ public class CommandReset implements CommandExecutor {
 			PLUGIN.getLogger().info("Registered command: CommandReset");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Failed to register command: CommandReset");
+			PLUGIN.getLogger().error("Failed to register command: CommandReset");
 		}
 	}
 
@@ -47,9 +48,9 @@ public class CommandReset implements CommandExecutor {
 
 		if (!args.hasAny("confirm")) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
-			player.sendMessage(Text.of("To continue, run /is reset confirm"));
+			player.sendMessage(Text.of("To continue, run ", "/is reset", " confirm"));
 		} else {
-			PLUGIN.dataStore.resetIsland(player.getUniqueId());
+			IslandTasks.resetIsland(player.getUniqueId());
 		}
 
 		return CommandResult.success();

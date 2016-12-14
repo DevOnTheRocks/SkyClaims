@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.Island;
+import net.mohron.skyclaims.IslandTasks;
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.command.CommandException;
@@ -16,6 +17,8 @@ public class CommandCreate implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
+	public static String helpText = "The reset command can be used to delete your island and inventory so you can start over.";
+
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
 			.description(Text.of("create"))
@@ -24,7 +27,7 @@ public class CommandCreate implements CommandExecutor {
 
 	public static void register() {
 		try {
-			PLUGIN.getGame().getCommandManager().register(SkyClaims.getInstance(), commandSpec /*, Str:<alias>*/);
+			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
 			PLUGIN.getLogger().info("Registered command: CommandCreate");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
@@ -41,7 +44,7 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("You already have an island!"));
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
-		Island island = PLUGIN.dataStore.createIsland(player.getUniqueId());
+		Island island = IslandTasks.createIsland(player.getUniqueId());
 		PLUGIN.dataStore.saveIsland(island);
 
 //		while (!island.isReady())
