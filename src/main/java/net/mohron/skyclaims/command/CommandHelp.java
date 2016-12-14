@@ -17,10 +17,12 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 public class CommandHelp implements CommandExecutor {
 
+	public static String helpText = String.format("display info on %s's commands and their uses.", NAME);
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.description(Text.of("Help"))
+			.description(Text.of(helpText))
 			.executor(new CommandHelp())
 			.build();
 
@@ -40,12 +42,12 @@ public class CommandHelp implements CommandExecutor {
 		boolean hasPerms = false;
 
 		if (src.hasPermission(Permissions.COMMAND_CREATE)) {
-			src.sendMessage(Text.builder("is create").onClick(TextActions.runCommand("is create")).append(Text.builder(" -" + CommandCreate.helpText).color(TextColors.DARK_GREEN).build()).build());
+			src.sendMessage(Text.builder("is create").onClick(TextActions.runCommand("is create")).append(Text.of(TextColors.DARK_GREEN, " - ", CommandCreate.helpText)).build());
 			hasPerms = true;
 		}
 
 		if (src.hasPermission(Permissions.COMMAND_RESET)) {
-			src.sendMessage(Text.builder("is reset").onClick(TextActions.runCommand("is reset")).append(Text.builder(" -" + CommandReset.helpText).color(TextColors.DARK_GREEN).build()).build());
+			src.sendMessage(Text.builder("is reset").onClick(TextActions.runCommand("is reset")).append(Text.of(TextColors.DARK_GREEN, " - ", CommandReset.helpText)).build());
 			hasPerms = true;
 		}
 

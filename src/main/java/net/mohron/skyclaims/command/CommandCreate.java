@@ -21,7 +21,7 @@ public class CommandCreate implements CommandExecutor {
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
-			.description(Text.of("create"))
+			.description(Text.of(helpText))
 			.executor(new CommandCreate())
 			.build();
 

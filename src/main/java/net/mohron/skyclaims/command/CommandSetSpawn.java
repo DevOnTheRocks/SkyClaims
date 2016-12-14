@@ -19,7 +19,7 @@ public class CommandSetSpawn {
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SET_SPAWN)
-			.description(Text.of("setspawn"))
+			.description(Text.of(helpText))
 			.executor(new CommandCreate())
 			.build();
 

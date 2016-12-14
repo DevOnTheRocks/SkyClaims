@@ -24,7 +24,7 @@ public class CommandInfo {
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_INFO)
-			.description(Text.of("info"))
+			.description(Text.of(helpText))
 			.arguments(GenericArguments.optional(GenericArguments.user(Text.of("player"))))
 			.executor(new CommandCreate())
 			.build();
