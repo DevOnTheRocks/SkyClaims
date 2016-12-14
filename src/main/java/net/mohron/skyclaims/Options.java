@@ -1,11 +1,7 @@
 package net.mohron.skyclaims;
 
-import com.google.common.collect.Maps;
 import me.ryanhamshire.griefprevention.util.PlayerUtils;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.permission.Subject;
-
-import java.util.Map;
 
 public enum Options {
 	// The default radius of an Island upon creation

@@ -1,6 +1,5 @@
 package net.mohron.skyclaims.command;
 
-import com.google.common.collect.Lists;
 import net.mohron.skyclaims.Island;
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
@@ -13,11 +12,9 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-
-import java.util.List;
-
 
 public class CommandInfo {
 
@@ -57,12 +54,15 @@ public class CommandInfo {
 
 			Island island = PLUGIN.dataStore.getIsland(user.getUniqueId());
 
-			List<Text> infoTextList = Lists.newArrayList();
-			infoTextList.add(Text.of(
+			Text infoText = Text.of(
 					TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwner(), "\n",
 					TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.GRAY, island.getRadius() * 2, "x", island.getRadius() * 2, "\n",
 					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, island.getClaim().getID()
-			));
+			);
+
+			PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island Info")).padding(Text.of("-")).contents(infoText);
+
+			paginationBuilder.sendTo(src);
 
 			return CommandResult.success();
 		}

@@ -18,7 +18,6 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.nio.file.Path;
-import java.sql.SQLException;
 
 import static net.mohron.skyclaims.PluginInfo.*;
 

@@ -17,7 +17,7 @@ public class CommandCreate implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "The reset command can be used to delete your island and inventory so you can start over.";
+	public static String helpText = "create an island.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)

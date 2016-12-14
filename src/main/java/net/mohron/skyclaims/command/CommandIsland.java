@@ -16,7 +16,7 @@ public class CommandIsland implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = String.format("Used to run %s's subcommands or display command help info.", PluginInfo.NAME);
+	public static String helpText = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
 
 	private static CommandSpec commandSpec = CommandSpec.builder()
 			.description(Text.of("SkyClaims Island Command"))
@@ -38,6 +38,7 @@ public class CommandIsland implements CommandExecutor {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		// Not used, CommandIsland is used exclusively as a parent command. Runs /is help when not supplied with a subcommand.
 		return CommandResult.success();
 	}
 
