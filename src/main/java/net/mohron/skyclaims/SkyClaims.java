@@ -35,13 +35,15 @@ import static net.mohron.skyclaims.PluginInfo.*;
 				@Dependency(id = "worldedit", optional = true)
 		})
 public class SkyClaims {
-	public static Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
 	private static SkyClaims instance;
 	public DataStore dataStore;
+	public static Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
+
 	@Inject
 	private Logger logger;
 	@Inject
 	private Game game;
+	//@Inject private Metrics metrics;
 	@Inject
 	@ConfigDir(sharedRoot = false)
 	private Path configDir;
