@@ -20,8 +20,9 @@ public class CommandIsland implements CommandExecutor {
 
 	private static CommandSpec commandSpec = CommandSpec.builder()
 			.description(Text.of("SkyClaims Island Command"))
-			.child(CommandHelp.commandSpec, "help")
+			.child(CommandAdmin.commandSpec, "admin")
 			.child(CommandCreate.commandSpec, "create")
+			.child(CommandHelp.commandSpec, "help")
 			.child(CommandReset.commandSpec, "reset")
 			.child(CommandSetSpawn.commandSpec, "setspawn")
 			.executor(new CommandHelp())
