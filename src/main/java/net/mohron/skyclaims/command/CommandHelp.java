@@ -17,10 +17,8 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 public class CommandHelp implements CommandExecutor {
 
-	public static String helpText = String.format("display info on %s's commands and their uses.", NAME);
-
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
+	public static String helpText = String.format("display info on %s's commands and their uses.", NAME);
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.description(Text.of(helpText))
 			.executor(new CommandHelp())

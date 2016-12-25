@@ -1,15 +1,17 @@
 package net.mohron.skyclaims;
 
 import com.google.inject.Inject;
+import me.lucko.luckperms.api.LuckPermsApi;
 import net.mohron.skyclaims.command.CommandCreate;
 import net.mohron.skyclaims.command.CommandHelp;
 import net.mohron.skyclaims.command.CommandInfo;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.CommandReset;
 import net.mohron.skyclaims.command.CommandSetSpawn;
-import net.mohron.skyclaims.config.SkyClaimsConfig;
+import net.mohron.skyclaims.config.GlobalConfig;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -18,6 +20,7 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static net.mohron.skyclaims.PluginInfo.*;
 
@@ -28,43 +31,25 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		authors = AUTHORS,
 		dependencies = {
 				@Dependency(id = "griefprevention", optional = true),
+				@Dependency(id = "luckperms", optional = true),
 				@Dependency(id = "worldedit", optional = true)
 		})
 public class SkyClaims {
+	public static Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
 	private static SkyClaims instance;
+	public DataStore dataStore;
 	@Inject
 	private Logger logger;
 	@Inject
 	private Game game;
-
 	@Inject
 	@ConfigDir(sharedRoot = false)
 	private Path configDir;
-
 	private Database database;
-
-	public DataStore dataStore;
-
-	public SkyClaimsConfig config;
+	private GlobalConfig config;
 
 	public static SkyClaims getInstance() {
 		return instance;
-	}
-
-	public Logger getLogger() {
-		return logger;
-	}
-
-	public Game getGame() {
-		return game;
-	}
-
-	public Path getConfigDir() {
-		return configDir;
-	}
-
-	public Database getDatabase() {
-		return database;
 	}
 
 	@Listener
@@ -73,7 +58,7 @@ public class SkyClaims {
 
 		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
 
-		config = new SkyClaimsConfig();
+		config = new GlobalConfig();
 
 		if (this.dataStore == null) {
 			try {
@@ -113,5 +98,29 @@ public class SkyClaims {
 		CommandReset.register();
 		CommandSetSpawn.register();
 		CommandInfo.register();
+	}
+
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
+	public GlobalConfig getConfig() {
+		return config;
+	}
+
+	public void setConfig(GlobalConfig config) {
+		this.config = config;
+	}
+
+	public Path getConfigDir() {
+		return configDir;
+	}
+
+	public Database getDatabase() {
+		return database;
 	}
 }

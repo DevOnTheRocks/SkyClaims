@@ -6,16 +6,19 @@ import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
 public class GlobalConfig {
+	@Setting(value = "Database")
+	public DatabaseConfig database;
+	@Setting(value = "SkyClaims-Dimension")
+	public String world;
+	@Setting(value = "Default-Biome")
+	public BiomeType defaultBiome;
+	@Setting(value = "Max-Regions")
+	public Integer maxRegions;
+
 	public GlobalConfig() {
 		database = new DatabaseConfig();
-		skyClaimsDimension = Sponge.getGame().getServer().getDefaultWorldName();
+		world = Sponge.getGame().getServer().getDefaultWorldName();
 		defaultBiome = BiomeTypes.PLAINS;
+		maxRegions = 256;
 	}
-
-	@Setting
-	public DatabaseConfig database;
-	@Setting
-	public String skyClaimsDimension;
-	@Setting
-	public BiomeType defaultBiome;
 }

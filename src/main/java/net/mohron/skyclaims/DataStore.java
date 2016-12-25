@@ -1,5 +1,8 @@
 package net.mohron.skyclaims;
 
+import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.island.IslandTasks;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

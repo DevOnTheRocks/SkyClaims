@@ -1,5 +1,7 @@
 package net.mohron.skyclaims;
 
+import net.mohron.skyclaims.island.Island;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

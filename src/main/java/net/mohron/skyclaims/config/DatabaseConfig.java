@@ -5,10 +5,6 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class DatabaseConfig {
-	public DatabaseConfig() {
-
-	}
-
 	@Setting
 	public String type;
 	@Setting
@@ -19,4 +15,8 @@ public class DatabaseConfig {
 	public String username;
 	@Setting
 	public String password;
+
+	public DatabaseConfig() {
+
+	}
 }
