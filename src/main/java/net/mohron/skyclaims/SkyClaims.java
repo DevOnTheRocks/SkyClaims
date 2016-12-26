@@ -2,6 +2,7 @@ package net.mohron.skyclaims;
 
 import com.google.inject.Inject;
 import me.lucko.luckperms.api.LuckPermsApi;
+import me.ryanhamshire.griefprevention.GriefPrevention;
 import net.mohron.skyclaims.command.CommandCreate;
 import net.mohron.skyclaims.command.CommandHelp;
 import net.mohron.skyclaims.command.CommandInfo;
@@ -37,7 +38,8 @@ import static net.mohron.skyclaims.PluginInfo.*;
 public class SkyClaims {
 	private static SkyClaims instance;
 	public DataStore dataStore;
-	public static Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
+	private static Optional<GriefPrevention> griefPrevention = Sponge.getServiceManager().provide(GriefPrevention.class);
+	private static Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
 
 	@Inject
 	private Logger logger;
@@ -49,10 +51,6 @@ public class SkyClaims {
 	private Path configDir;
 	private Database database;
 	private GlobalConfig config;
-
-	public static SkyClaims getInstance() {
-		return instance;
-	}
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
@@ -100,6 +98,18 @@ public class SkyClaims {
 		CommandReset.register();
 		CommandSetSpawn.register();
 		CommandInfo.register();
+	}
+
+	public static SkyClaims getInstance() {
+		return instance;
+	}
+
+	public Optional<LuckPermsApi> getLuckPerms() {
+		return luckPerms;
+	}
+
+	public Optional<GriefPrevention> getGriefPrevention() {
+		return griefPrevention;
 	}
 
 	public Logger getLogger() {

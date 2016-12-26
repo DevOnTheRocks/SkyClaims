@@ -12,19 +12,20 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class Island {
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
 	private UUID owner;
-	private Claim parentClaim;
 	private Claim claim;
 	private Location<World> spawn;
 	private boolean isReady;
 	private int radius;
 
-	public Island(UUID owner, Claim parentClaim) {
+	public Island(UUID owner, Claim claim) {
 		this.owner = owner;
-		this.parentClaim = parentClaim;
+		this.claim = claim;
 		this.isReady = false;
 
-		IslandTasks.buildIsland(owner, parentClaim);
+		IslandTasks.buildIsland(this);
 	}
 
 	public UUID getOwner() {
@@ -32,8 +33,8 @@ public class Island {
 	}
 
 	public String getOwnerName() {
-		if (SkyClaims.luckPerms.isPresent()) {
-			LuckPermsApi api = SkyClaims.luckPerms.get();
+		if (PLUGIN.getLuckPerms().isPresent()) {
+			LuckPermsApi api = PLUGIN.getLuckPerms().get();
 			return api.getUser(owner).getName();
 		} else {
 			GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
@@ -49,7 +50,7 @@ public class Island {
 	}
 
 	public Claim getParentClaim() {
-		return parentClaim;
+		return claim.parent;
 	}
 
 	public Claim getClaim() {
@@ -71,6 +72,10 @@ public class Island {
 	public Location getCenter() {
 		int radius = this.getRadius();
 		return new Location<>(getSpawn().getExtent(), claim.getLesserBoundaryCorner().getX() + radius, 64, claim.getLesserBoundaryCorner().getZ() + radius);
+	}
+
+	public void toggleIsReady() {
+		 isReady = !isReady;
 	}
 
 	public boolean isReady() {

@@ -55,7 +55,7 @@ public class CommandInfo {
 			Island island = PLUGIN.dataStore.getIsland(user.getUniqueId());
 
 			Text infoText = Text.of(
-					TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwner(), "\n",
+					TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",
 					TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.GRAY, island.getRadius() * 2, "x", island.getRadius() * 2, "\n",
 					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, island.getClaim().getID()
 			);
