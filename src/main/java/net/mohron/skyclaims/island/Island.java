@@ -4,6 +4,7 @@ import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.world.Location;
@@ -31,9 +32,10 @@ public class Island {
 		IslandUtil.buildIsland(this);
 	}
 
-	public Island(UUID owner, WorldProperties world, UUID claimId) {
-		this.owner = owner;
+	public Island(UUID owner, UUID worldId, UUID claimId) {
+		WorldProperties world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(() -> WorldUtil.getDefaultWorld()).getProperties();
 		this.claim = GRIEF_PREVENTION_DATA.getClaim(world, claimId);
+		this.owner = owner;
 		this.isReady = true;
 	}
 
