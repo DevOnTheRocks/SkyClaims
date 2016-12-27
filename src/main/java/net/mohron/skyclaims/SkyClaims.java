@@ -16,6 +16,7 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -39,8 +40,8 @@ import static net.mohron.skyclaims.PluginInfo.*;
 public class SkyClaims {
 	private static SkyClaims instance;
 	public DataStore dataStore;
-	private static Optional<GriefPrevention> griefPrevention = Sponge.getServiceManager().provide(GriefPrevention.class);
-	private static Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
+	private static GriefPrevention griefPrevention;
+	private static LuckPermsApi luckPerms;
 
 	@Inject
 	private Logger logger;
@@ -54,8 +55,17 @@ public class SkyClaims {
 	private GlobalConfig config;
 
 	@Listener
-	public void onServerStarted(GameStartedServerEvent event) {
+	public void onPostInialization(GamePostInitializationEvent event) {
 		instance = this;
+
+		Optional<GriefPrevention> griefPrevention = Sponge.getServiceManager().provide(GriefPrevention.class);
+		griefPrevention.ifPresent(gp -> this.griefPrevention = gp);
+		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
+		luckPerms.ifPresent(lp -> this.luckPerms = lp);
+	}
+
+	@Listener
+	public void onServerStarted(GameStartedServerEvent event) {
 
 		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
 
@@ -106,11 +116,11 @@ public class SkyClaims {
 		return instance;
 	}
 
-	public Optional<LuckPermsApi> getLuckPerms() {
+	public LuckPermsApi getLuckPerms() {
 		return luckPerms;
 	}
 
-	public Optional<GriefPrevention> getGriefPrevention() {
+	public GriefPrevention getGriefPrevention() {
 		return griefPrevention;
 	}
 

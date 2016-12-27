@@ -1,6 +1,6 @@
 package net.mohron.skyclaims.island;
 
-import me.lucko.luckperms.api.LuckPermsApi;
+import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.IslandUtil;
@@ -8,12 +8,14 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static final DataStore GRIEF_PREVENTION_DATA = PLUGIN.getGriefPrevention().dataStore;
 
 	private UUID owner;
 	private Claim claim;
@@ -29,14 +31,19 @@ public class Island {
 		IslandUtil.buildIsland(this);
 	}
 
+	public Island(UUID owner, WorldProperties world, UUID claimId) {
+		this.owner = owner;
+		this.claim = GRIEF_PREVENTION_DATA.getClaim(world, claimId);
+		this.isReady = true;
+	}
+
 	public UUID getOwner() {
 		return owner;
 	}
 
 	public String getOwnerName() {
-		if (PLUGIN.getLuckPerms().isPresent()) {
-			LuckPermsApi api = PLUGIN.getLuckPerms().get();
-			return api.getUser(owner).getName();
+		if (PLUGIN.getLuckPerms() != null) {
+			return PLUGIN.getLuckPerms().getUser(owner).getName();
 		} else {
 			GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
 
@@ -58,6 +65,14 @@ public class Island {
 		return claim;
 	}
 
+	public UUID getClaimId() {
+		return claim.getID();
+	}
+
+	public String getDateCreated() {
+		return claim.getClaimData().getDateCreated();
+	}
+
 	public Location<World> getSpawn() {
 		return spawn;
 	}
@@ -76,7 +91,7 @@ public class Island {
 	}
 
 	public void toggleIsReady() {
-		 isReady = !isReady;
+		isReady = !isReady;
 	}
 
 	public boolean isReady() {

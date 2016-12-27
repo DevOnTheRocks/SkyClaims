@@ -14,11 +14,14 @@ public class GlobalConfig {
 	public BiomeType defaultBiome;
 	@Setting(value = "Max-Regions")
 	public Integer maxRegions;
+	@Setting(value = "Island-Height")
+	public Integer defaultHeight;
 
 	public GlobalConfig() {
 		database = new DatabaseConfig();
 		world = Sponge.getGame().getServer().getDefaultWorldName();
 		defaultBiome = BiomeTypes.PLAINS;
 		maxRegions = 256;
+		defaultHeight = 64;
 	}
 }
