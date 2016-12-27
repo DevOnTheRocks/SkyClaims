@@ -1,6 +1,14 @@
 package net.mohron.skyclaims;
 
+import com.flowpowered.math.vector.Vector3i;
+import com.sun.xml.internal.bind.v2.runtime.ClassBeanInfoImpl;
+import me.ryanhamshire.griefprevention.claim.Claim;
+import me.ryanhamshire.griefprevention.configuration.ClaimStorageData;
 import net.mohron.skyclaims.island.Island;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,9 +16,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Database {
 	private String databaseName;
@@ -64,6 +72,11 @@ public class Database {
 		return DriverManager.getConnection(String.format("jdbc:sqlite:%s", databaseName));
 	}
 
+	/**
+	 * Creates Island objects and stores them in a DataStore to be loaded into memory
+	 *
+	 * @return Returns a new DataStore generated from the database data
+	 */
 	public DataStore loadData() {
 		Map<UUID, Island> dataStore = new HashMap<>();
 
@@ -72,10 +85,18 @@ public class Database {
 			ResultSet results = statement.executeQuery("SELECT * FROM islands");
 
 			while (results.next()) {
-				String owner = results.getString("owner");
-				Island island = new Island(UUID.fromString(owner));
-				dataStore.put(UUID.fromString(owner), island);
-				SkyClaims.getInstance().getLogger().info("Owner UUID: " + owner); // Debug log
+				UUID claimId = UUID.fromString(results.getString("id"));
+				UUID ownerId = UUID.fromString(results.getString("owner"));
+				UUID worldId = UUID.fromString(results.getString("world"));
+				World world = SkyClaims.getInstance().getGame().getServer().getWorld(worldId).get();
+				Vector3i claimLowerBound = new Vector3i(results.getInt("x"), results.getInt("y"), 0);
+				// TODO:- Some funky math to get the size (or store it)
+				Vector3i claimUpperBound = new Vector3i(results.getInt("x"), results.getInt("y"), 0);
+
+				Island island = new Island(ownerId, worldId, claimId);
+
+				dataStore.put(ownerId, island);
+				SkyClaims.getInstance().getLogger().info("Owner UUID: " + ownerId); // Debug log
 				SkyClaims.getInstance().getLogger().info("SIZE: " + dataStore.values().size());
 			}
 
@@ -98,7 +119,7 @@ public class Database {
 			String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
 			PreparedStatement statement = getConnection().prepareStatement(sql);
 			statement.setString(1, island.getOwner().toString());
-			statement.setString(2, island.getClaim().getID().toString());
+			statement.setString(2, island.getClaimId().toString());
 			statement.setInt(3, island.getSpawn().getBlockX());
 			statement.setInt(4, island.getSpawn().getBlockY());
 			statement.setInt(5, island.getSpawn().getBlockZ());
