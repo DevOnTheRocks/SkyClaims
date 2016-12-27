@@ -1,24 +1,13 @@
 package net.mohron.skyclaims;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.sun.xml.internal.bind.v2.runtime.ClassBeanInfoImpl;
-import me.ryanhamshire.griefprevention.claim.Claim;
-import me.ryanhamshire.griefprevention.configuration.ClaimStorageData;
 import net.mohron.skyclaims.island.Island;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.Extent;
-import org.spongepowered.api.world.storage.WorldProperties;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class Database {
 	private String databaseName;
