@@ -7,7 +7,6 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.world.Location;
 
 import java.util.Optional;
 import java.util.UUID;

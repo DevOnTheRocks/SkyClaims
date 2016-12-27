@@ -9,6 +9,7 @@ public class Permissions {
 	public static final String COMMAND_SPAWN = "skyclaims.command.spawn";
 	public static final String COMMAND_SET_SPAWN = "skyclaims.command.setspawn";
 	public static final String COMMAND_SET_BIOME = "skyclaims.command.setbiome";
+	public static final String COMMAND_ARG_BIOMES = "skyclaims.command.arg.biomes";
 	public static final String COMMAND_INVITE = "skyclaims.command.invite";
 
 	// Admin Permissions

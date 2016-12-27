@@ -8,6 +8,7 @@ import net.mohron.skyclaims.command.CommandHelp;
 import net.mohron.skyclaims.command.CommandInfo;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.CommandReset;
+import net.mohron.skyclaims.command.CommandSetBiome;
 import net.mohron.skyclaims.command.CommandSetSpawn;
 import net.mohron.skyclaims.config.GlobalConfig;
 import org.slf4j.Logger;
@@ -98,6 +99,7 @@ public class SkyClaims {
 		CommandReset.register();
 		CommandSetSpawn.register();
 		CommandInfo.register();
+		CommandSetBiome.register();
 	}
 
 	public static SkyClaims getInstance() {
