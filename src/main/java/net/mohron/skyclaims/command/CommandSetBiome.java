@@ -65,15 +65,21 @@ public class CommandSetBiome implements CommandExecutor {
 
 		if (biomeOptional.isPresent()) {
 			BiomeType biome = biomeOptional.get();
-			if (!player.hasPermission(Permissions.COMMAND_ARG_BIOMES + "." + biome.getName().toLowerCase()))
+			if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BIOMES + "." + biome.getName().toLowerCase()))
 				throw new CommandPermissionException(Text.of("You do not have permission to use the designated biome type."));
 			if (args.getOne(Text.of("target")).isPresent()) target = (Target) args.getOne(Text.of("target")).get();
 			switch (target) {
 				case BLOCK:
+					if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BLOCK)) throw new CommandPermissionException();
+					PLUGIN.getLogger().info("SETBIOME: BLOCK");
 					break;
 				case CHUNK:
+					if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_CHUNK)) throw new CommandPermissionException();
+					PLUGIN.getLogger().info("SETBIOME: CHUNK");
 					break;
 				case ISLAND:
+					if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_ISLAND)) throw new CommandPermissionException();
+					PLUGIN.getLogger().info("SETBIOME: ISLAND");
 					break;
 			}
 		}
