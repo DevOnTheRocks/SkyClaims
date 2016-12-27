@@ -1,7 +1,7 @@
 package net.mohron.skyclaims;
 
 import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.island.IslandTasks;
+import net.mohron.skyclaims.util.IslandUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class DataStore {
 	}
 
 	public Island getIsland(UUID owner) {
-		if (!hasIsland(owner)) saveIsland(IslandTasks.createIsland(owner));
+		if (!hasIsland(owner)) saveIsland(IslandUtil.createIsland(owner));
 		return data.get(owner);
 	}
 }

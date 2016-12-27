@@ -3,6 +3,7 @@ package net.mohron.skyclaims.island;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.world.Location;
@@ -25,7 +26,7 @@ public class Island {
 		this.claim = claim;
 		this.isReady = false;
 
-		IslandTasks.buildIsland(this);
+		IslandUtil.buildIsland(this);
 	}
 
 	public UUID getOwner() {

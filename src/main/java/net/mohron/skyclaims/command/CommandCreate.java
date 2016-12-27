@@ -3,7 +3,7 @@ package net.mohron.skyclaims.command;
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.island.IslandTasks;
+import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -44,7 +44,7 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("You already have an island!"));
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
-		Island island = IslandTasks.createIsland(player.getUniqueId());
+		Island island = IslandUtil.createIsland(player.getUniqueId());
 		PLUGIN.dataStore.saveIsland(island);
 
 //		while (!island.isReady())

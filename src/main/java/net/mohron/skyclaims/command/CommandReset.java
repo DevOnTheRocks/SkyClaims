@@ -2,7 +2,7 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.IslandTasks;
+import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -50,7 +50,7 @@ public class CommandReset implements CommandExecutor {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
 			player.sendMessage(Text.of("To continue, run ", "/is reset", " confirm"));
 		} else {
-			IslandTasks.resetIsland(player.getUniqueId());
+			IslandUtil.resetIsland(player.getUniqueId());
 		}
 
 		return CommandResult.success();

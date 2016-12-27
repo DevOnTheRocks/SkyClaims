@@ -1,19 +1,20 @@
-package net.mohron.skyclaims.island;
+package net.mohron.skyclaims.util;
 
-import me.ryanhamshire.griefprevention.GriefPrevention;
+import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.GlobalConfig;
-import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.island.Island;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class IslandTasks {
+public class IslandUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static final DataStore GRIEF_PREVENTION_DATA = PLUGIN.getGriefPrevention().dataStore;
 	private static final int MAX_ISLAND_SIZE = 256; // 16 x 16 chunks
 	private static GlobalConfig config = PLUGIN.getConfig();
 	private static final int MAX_REGIONS = ConfigUtil.get(config.maxRegions, 256);
@@ -40,43 +41,41 @@ public class IslandTasks {
 	}
 
 	private static CreateClaimResult createParentClaim() {
-		Optional<GriefPrevention> griefPrevention = PLUGIN.getGriefPrevention();
-		CreateClaimResult createClaimResult = new CreateClaimResult();
-		if (griefPrevention.isPresent()) {
-			createClaimResult = griefPrevention.get().dataStore.createClaim(
-					ConfigUtil.getWorld(),
-					x * 512 + getXOffset(i),
-					x * 512 + getXOffset(i) + MAX_ISLAND_SIZE,
-					1,
-					255,
-					z * 512 + getYOffset(i),
-					z * 512 + getYOffset(i) + MAX_ISLAND_SIZE,
-					UUID.randomUUID(),
-					null,
-					Claim.Type.ADMIN,
-					false,
-					null
-			);
+		CreateClaimResult createClaimResult;
+		createClaimResult = GRIEF_PREVENTION_DATA.createClaim(
+				ConfigUtil.getWorld(),
+				x * 512 + getXOffset(i),
+				x * 512 + getXOffset(i) + MAX_ISLAND_SIZE,
+				1,
+				255,
+				z * 512 + getYOffset(i),
+				z * 512 + getYOffset(i) + MAX_ISLAND_SIZE,
+				UUID.randomUUID(),
+				null,
+				Claim.Type.ADMIN,
+				false,
+				null
+		);
 
-			if (i == 3) {
-				i = 0;
-				if (z > MAX_REGIONS) {
-					z = 0;
-					x++;
-				}
+		if (i == 3) {
+			i = 0;
+			if (z > MAX_REGIONS) {
+				z = 0;
+				x++;
 			}
-			i++;
 		}
+		i++;
+
 
 		return createClaimResult;
 	}
 
 	private static CreateClaimResult createIslandClaim(UUID owner, Claim parentClaim) {
-		Optional<GriefPrevention> griefPrevention = PLUGIN.getGriefPrevention();
 		Optional<Player> player = PLUGIN.getGame().getServer().getPlayer(owner);
 		CreateClaimResult createClaimResult = new CreateClaimResult();
-		if (griefPrevention.isPresent() && player.isPresent()) {
-			createClaimResult = griefPrevention.get().dataStore.createClaim(
+
+		if (player.isPresent()) {
+			createClaimResult = GRIEF_PREVENTION_DATA.createClaim(
 					ConfigUtil.getWorld(),
 					parentClaim.getLesserBoundaryCorner().getBlockX(),
 					parentClaim.getGreaterBoundaryCorner().getBlockX(),
@@ -97,6 +96,17 @@ public class IslandTasks {
 
 	public static void buildIsland(Island island) {
 		//TODO Build an "island" in the center of the owners island using a schematic
+		int x = island.getCenter().getBlockX();
+		int y = ConfigUtil.get(PLUGIN.getConfig().defaultHeight, 64);
+		int z = island.getCenter().getBlockZ();
+
+
+		for (int i = -1; i < 1; i++) {
+			for (int j = -1; j < 1; j++) {
+				//place some dirt
+			}
+		}
+
 
 		island.toggleIsReady();
 	}
@@ -105,11 +115,11 @@ public class IslandTasks {
 		//TODO Clear island, inventory, enderchest, and supported private mod inventories ie. mod ender chests
 	}
 
-	private static int getXOffset(int i){
+	private static int getXOffset(int i) {
 		return (i == 1 || i == 3) ? 0 : MAX_ISLAND_SIZE;
 	}
 
-	private static int getYOffset(int i){
+	private static int getYOffset(int i) {
 		return (i == 0 || i == 1) ? 0 : MAX_ISLAND_SIZE;
 	}
 }
