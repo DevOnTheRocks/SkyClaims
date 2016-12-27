@@ -38,9 +38,10 @@ public class CommandSetSpawn {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		Island island = new Island(player.getUniqueId());
+		if (!PLUGIN.dataStore.hasIsland(player.getUniqueId())) throw new CommandException(Text.of("You must have an island to use this command!"));
+		Island island = PLUGIN.dataStore.getIsland(player.getUniqueId());
 
-		island.setSpawn(player.getLocation());
+		//island.setSpawn(player.getLocation());
 
 		player.sendMessage(Text.of("Your Island spawn has been set to " + island.getSpawn()));
 		return CommandResult.success();
