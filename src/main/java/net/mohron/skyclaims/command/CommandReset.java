@@ -42,7 +42,7 @@ public class CommandReset implements CommandExecutor {
 		}
 		Player player = (Player) src;
 
-		if (!PLUGIN.dataStore.hasIsland(player.getUniqueId())) {
+		if (!IslandUtil.hasIsland(player.getUniqueId())) {
 			throw new CommandException(Text.of("You do not have an island!"));
 		}
 

@@ -43,8 +43,6 @@ public class Database {
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
-
-			// statement.executeUpdate("INSERT INTO islands (owner, id, x, y, z, world) values ('" + UUID.randomUUID() + "', '" + UUID.randomUUID() + "', 255, 137, 482, '" + UUID.randomUUID() + "')");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
@@ -66,8 +64,8 @@ public class Database {
 	 *
 	 * @return Returns a new DataStore generated from the database data
 	 */
-	public DataStore loadData() {
-		Map<UUID, Island> dataStore = new HashMap<>();
+	public Map<UUID, Island> loadData() {
+		Map<UUID, Island> islands = new HashMap<>();
 
 		try {
 			Statement statement = getConnection().createStatement();
@@ -83,12 +81,12 @@ public class Database {
 
 				Island island = new Island(ownerId, worldId, claimId);
 
-				dataStore.put(ownerId, island);
+				islands.put(ownerId, island);
 				SkyClaims.getInstance().getLogger().debug("Owner UUID: " + ownerId);
-				SkyClaims.getInstance().getLogger().debug("SIZE: " + dataStore.values().size());
+				SkyClaims.getInstance().getLogger().debug("SIZE: " + islands.values().size());
 			}
 
-			return new DataStore(dataStore);
+			return islands;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
@@ -100,10 +98,10 @@ public class Database {
 	/**
 	 * Inserts/Updates the database with the data-storage in memory
 	 *
-	 * @param dataStore The DataStore to pull the data from
+	 * @param islands The map in memory to pull the data from
 	 */
-	public void saveData(DataStore dataStore) {
-		for (Island island : dataStore.data.values()) {
+	public void saveData(Map<UUID, Island> islands) {
+		for (Island island : islands.values()) {
 			String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
 
 			try {

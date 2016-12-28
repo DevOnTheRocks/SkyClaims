@@ -40,12 +40,12 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 
 		Player player = (Player) src;
-		if (SkyClaims.getInstance().dataStore.hasIsland(player.getUniqueId()))
+		if (IslandUtil.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
 		Island island = IslandUtil.createIsland(player.getUniqueId());
-		PLUGIN.dataStore.saveIsland(island);
+		IslandUtil.saveIsland(island);
 
 //		while (!island.isReady())
 //			player.setLocation(island.getSpawn());

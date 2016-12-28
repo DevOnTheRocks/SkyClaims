@@ -3,6 +3,7 @@ package net.mohron.skyclaims.command;
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -49,10 +50,10 @@ public class CommandInfo {
 			}
 			User user = (!(src instanceof Player)) ? (User) args.getOne(Text.of("player")).get() : (User) src;
 
-			if (!PLUGIN.dataStore.hasIsland(user.getUniqueId()))
+			if (!IslandUtil.hasIsland(user.getUniqueId()))
 				throw new CommandException(Text.of(TextColors.RED, "You do not have an island!"));
 
-			Island island = PLUGIN.dataStore.getIsland(user.getUniqueId());
+			Island island = IslandUtil.getIsland(user.getUniqueId());
 
 			Text infoText = Text.of(
 					TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",

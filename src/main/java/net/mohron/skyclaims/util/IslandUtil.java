@@ -34,9 +34,22 @@ public class IslandUtil {
 		return new Island(owner, islandClaim);
 	}
 
+	public static boolean hasIsland(UUID owner) {
+		return SkyClaims.islands.containsKey(owner);
+	}
+
+	public static void saveIsland(Island island) {
+		SkyClaims.islands.put(island.getOwner(), island);
+	}
+
+	public static Island getIsland(UUID owner) {
+		if (!hasIsland(owner)) saveIsland(IslandUtil.createIsland(owner));
+		return SkyClaims.islands.get(owner);
+	}
+
 	public static void resetIsland(UUID owner) {
 		clearIsland(owner);
-		buildIsland(PLUGIN.dataStore.getIsland(owner));
+		buildIsland(getIsland(owner));
 	}
 
 	private static CreateClaimResult createParentClaim() {

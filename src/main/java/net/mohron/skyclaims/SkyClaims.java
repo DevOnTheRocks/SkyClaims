@@ -11,6 +11,7 @@ import net.mohron.skyclaims.command.CommandReset;
 import net.mohron.skyclaims.command.CommandSetBiome;
 import net.mohron.skyclaims.command.CommandSetSpawn;
 import net.mohron.skyclaims.config.GlobalConfig;
+import net.mohron.skyclaims.island.Island;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
@@ -23,7 +24,10 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static net.mohron.skyclaims.PluginInfo.*;
 
@@ -39,9 +43,9 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		})
 public class SkyClaims {
 	private static SkyClaims instance;
-	public DataStore dataStore;
 	private static GriefPrevention griefPrevention;
 	private static LuckPermsApi luckPerms;
+	public static Map<UUID, Island> islands = new HashMap<>();
 
 	@Inject
 	private Logger logger;
@@ -71,17 +75,9 @@ public class SkyClaims {
 
 		config = new GlobalConfig();
 
-		if (this.dataStore == null) {
-			try {
-				this.dataStore = new DataStore();
-			} catch (Exception e) {
-				getLogger().error(e.getMessage());
-			}
-		}
-
 		database = new Database("SkyClaims.db");
-		dataStore = database.loadData();
-		getLogger().info("ISLAND LENGTH: " + dataStore.data.keySet().size());
+		islands = database.loadData();
+		getLogger().info("ISLAND LENGTH: " + islands.keySet().size());
 
 		// DEBUG TEST
 //		try {

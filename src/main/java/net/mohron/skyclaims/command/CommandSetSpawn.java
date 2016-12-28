@@ -3,6 +3,7 @@ package net.mohron.skyclaims.command;
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -38,8 +39,8 @@ public class CommandSetSpawn {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		if (!PLUGIN.dataStore.hasIsland(player.getUniqueId())) throw new CommandException(Text.of("You must have an island to use this command!"));
-		Island island = PLUGIN.dataStore.getIsland(player.getUniqueId());
+		if (!IslandUtil.hasIsland(player.getUniqueId())) throw new CommandException(Text.of("You must have an island to use this command!"));
+		Island island = IslandUtil.getIsland(player.getUniqueId());
 
 		//island.setSpawn(player.getLocation());
 
