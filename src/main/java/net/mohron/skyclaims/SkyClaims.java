@@ -85,13 +85,6 @@ public class SkyClaims {
 		islands = database.loadData();
 		getLogger().info("ISLAND LENGTH: " + islands.keySet().size());
 
-		// DEBUG TEST
-//		try {
-//			database.saveData(dataStore);
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-
 		registerCommands();
 		// TODO - Load database data into memory
 		getLogger().info("Initialization complete.");
@@ -100,7 +93,7 @@ public class SkyClaims {
 	@Listener
 	public void onServerStopped(GameStoppedServerEvent event) {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
-		// TODO - Dump data in memory to the database
+		database.saveData(islands);
 		getLogger().info("Shutdown actions complete.");
 	}
 
