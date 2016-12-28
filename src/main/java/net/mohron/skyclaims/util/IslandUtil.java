@@ -6,32 +6,27 @@ import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
-import org.spongepowered.api.entity.living.player.Player;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class IslandUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final DataStore GRIEF_PREVENTION_DATA = PLUGIN.getGriefPrevention().dataStore;
-	private static final int MAX_ISLAND_SIZE = 256; // 16 x 16 chunks
+	private static final int MAX_ISLAND_SIZE = 512; // 32 x 32 chunks
 	private static GlobalConfig config = PLUGIN.getConfig();
 	private static final int MAX_REGIONS = ConfigUtil.get(config.maxRegions, 256);
-	private static int i; // location of the island in a quadrant
 	private static int x; // x value of the current region
 	private static int z; // y value of the current region
 
 	static {
 		// Initialize with stored values before using defaults
-		i = 0;
 		x = 1;
 		z = 1;
 	}
 
 	public static Island createIsland(UUID owner) {
-		Claim parentClaim = createParentClaim().claim;
-		Claim islandClaim = createIslandClaim(owner, parentClaim).claim;
-		return new Island(owner, islandClaim);
+		Claim claim = createIslandClaim().claim;
+		return new Island(owner, claim);
 	}
 
 	public static boolean hasIsland(UUID owner) {
@@ -52,16 +47,16 @@ public class IslandUtil {
 		buildIsland(getIsland(owner));
 	}
 
-	private static CreateClaimResult createParentClaim() {
+	private static CreateClaimResult createIslandClaim() {
 		CreateClaimResult createClaimResult;
 		createClaimResult = GRIEF_PREVENTION_DATA.createClaim(
 				ConfigUtil.getWorld(),
-				x * 512 + getXOffset(i),
-				x * 512 + getXOffset(i) + MAX_ISLAND_SIZE,
+				x * 512,
+				x * 512 + MAX_ISLAND_SIZE,
 				1,
 				255,
-				z * 512 + getYOffset(i),
-				z * 512 + getYOffset(i) + MAX_ISLAND_SIZE,
+				z * 512,
+				z * 512  + MAX_ISLAND_SIZE,
 				UUID.randomUUID(),
 				null,
 				Claim.Type.ADMIN,
@@ -69,38 +64,9 @@ public class IslandUtil {
 				null
 		);
 
-		if (i == 3) {
-			i = 0;
-			if (z > MAX_REGIONS) {
-				z = 0;
-				x++;
-			}
-		}
-		i++;
-
-
-		return createClaimResult;
-	}
-
-	private static CreateClaimResult createIslandClaim(UUID owner, Claim parentClaim) {
-		Optional<Player> player = PLUGIN.getGame().getServer().getPlayer(owner);
-		CreateClaimResult createClaimResult = new CreateClaimResult();
-
-		if (player.isPresent()) {
-			createClaimResult = GRIEF_PREVENTION_DATA.createClaim(
-					ConfigUtil.getWorld(),
-					parentClaim.getLesserBoundaryCorner().getBlockX(),
-					parentClaim.getGreaterBoundaryCorner().getBlockX(),
-					1,
-					255,
-					parentClaim.getLesserBoundaryCorner().getBlockZ(),
-					parentClaim.getGreaterBoundaryCorner().getBlockZ(),
-					UUID.randomUUID(),
-					parentClaim,
-					Claim.Type.SUBDIVISION,
-					false,
-					player.get()
-			);
+		if (z > MAX_REGIONS) {
+			z = 0;
+			x++;
 		}
 
 		return createClaimResult;

@@ -59,10 +59,6 @@ public class Island {
 		}
 	}
 
-	public Claim getParentClaim() {
-		return claim.parent;
-	}
-
 	public Claim getClaim() {
 		return claim;
 	}
