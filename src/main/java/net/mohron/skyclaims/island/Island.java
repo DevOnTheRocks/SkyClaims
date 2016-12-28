@@ -33,7 +33,7 @@ public class Island {
 	}
 
 	public Island(UUID owner, UUID worldId, UUID claimId) {
-		WorldProperties world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(() -> WorldUtil.getDefaultWorld()).getProperties();
+		WorldProperties world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld).getProperties();
 		this.claim = GRIEF_PREVENTION_DATA.getClaim(world, claimId);
 		this.owner = owner;
 		this.isReady = true;
