@@ -44,7 +44,7 @@ public class Database {
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
 
-			statement.executeUpdate("INSERT INTO islands (owner, id, x, y, z, world) values ('" + UUID.randomUUID() + "', '" + UUID.randomUUID() + "', 255, 137, 482, '" + UUID.randomUUID() + "')");
+			// statement.executeUpdate("INSERT INTO islands (owner, id, x, y, z, world) values ('" + UUID.randomUUID() + "', '" + UUID.randomUUID() + "', 255, 137, 482, '" + UUID.randomUUID() + "')");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
