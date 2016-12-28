@@ -63,9 +63,15 @@ public class SkyClaims {
 		instance = this;
 
 		Optional<GriefPrevention> griefPrevention = Sponge.getServiceManager().provide(GriefPrevention.class);
-		griefPrevention.ifPresent(gp -> this.griefPrevention = gp);
+		griefPrevention.ifPresent(gp -> {
+			this.griefPrevention = gp;
+			getLogger().info("GriefPrevention Integration Successful!");
+		});
 		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
-		luckPerms.ifPresent(lp -> this.luckPerms = lp);
+		luckPerms.ifPresent(lp -> {
+			this.luckPerms = lp;
+			getLogger().info("LuckPerms Integration Successful!");
+		});
 	}
 
 	@Listener
