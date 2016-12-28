@@ -59,17 +59,25 @@ public class SkyClaims {
 	private GlobalConfig config;
 
 	@Listener
-	public void onPostInialization(GamePostInitializationEvent event) {
+	public void onPostInitialization(GamePostInitializationEvent event) {
 		instance = this;
 
-		Optional<GriefPrevention> griefPrevention = Sponge.getServiceManager().provide(GriefPrevention.class);
-		griefPrevention.ifPresent(gp -> {
-			this.griefPrevention = gp;
+//		Optional<GriefPrevention> griefPrevention = Sponge.getServiceManager().provide(GriefPrevention.class);
+//		griefPrevention.ifPresent(gp -> {
+//			SkyClaims.griefPrevention = GriefPrevention.instance;
+//			getLogger().info("GriefPrevention Integration Successful!");
+//		});
+		try {
+			Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
+			SkyClaims.griefPrevention = GriefPrevention.instance;
 			getLogger().info("GriefPrevention Integration Successful!");
-		});
+		} catch (ClassNotFoundException e) {
+			getLogger().info("GriefPrevention Integration Failed!");
+		}
+
 		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
 		luckPerms.ifPresent(lp -> {
-			this.luckPerms = lp;
+			SkyClaims.luckPerms = lp;
 			getLogger().info("LuckPerms Integration Successful!");
 		});
 	}
