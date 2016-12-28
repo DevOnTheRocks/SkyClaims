@@ -17,9 +17,12 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
+import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
@@ -60,8 +63,15 @@ public class SkyClaims {
 
 	@Listener
 	public void onPostInitialization(GamePostInitializationEvent event) {
+		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
+
 		instance = this;
 
+		//TODO Setup the world with a sponge:void world gen modifier if not already created
+	}
+
+	@Listener(order = Order.LATE)
+	public void onAboutToStart(GameAboutToStartServerEvent event) {
 //		Optional<GriefPrevention> griefPrevention = Sponge.getServiceManager().provide(GriefPrevention.class);
 //		griefPrevention.ifPresent(gp -> {
 //			SkyClaims.griefPrevention = GriefPrevention.instance;
@@ -70,7 +80,7 @@ public class SkyClaims {
 		try {
 			Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
 			SkyClaims.griefPrevention = GriefPrevention.instance;
-			getLogger().info("GriefPrevention Integration Successful!");
+			getLogger().info("GriefPrevention Integration Successful! " + SkyClaims.griefPrevention);
 		} catch (ClassNotFoundException e) {
 			getLogger().info("GriefPrevention Integration Failed!");
 		}
@@ -84,9 +94,6 @@ public class SkyClaims {
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
-
-		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
-
 		config = new GlobalConfig();
 
 		database = new Database("SkyClaims.db");
@@ -96,6 +103,13 @@ public class SkyClaims {
 		registerCommands();
 		// TODO - Load database data into memory
 		getLogger().info("Initialization complete.");
+	}
+
+	@Listener
+	public void onWorldSave(SaveWorldEvent.Post event) {
+		if (event.isCancelled() || event.getTargetWorld().equals(game.getServer().getDefaultWorld().get())) {
+			// TODO Save the database
+		}
 	}
 
 	@Listener
