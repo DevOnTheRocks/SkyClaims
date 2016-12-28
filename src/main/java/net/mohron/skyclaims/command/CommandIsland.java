@@ -23,7 +23,9 @@ public class CommandIsland implements CommandExecutor {
 			.child(CommandAdmin.commandSpec, "admin")
 			.child(CommandCreate.commandSpec, "create")
 			.child(CommandHelp.commandSpec, "help")
+			.child(CommandInfo.commandSpec, "info")
 			.child(CommandReset.commandSpec, "reset")
+			.child(CommandSetBiome.commandSpec, "setbiome")
 			.child(CommandSetSpawn.commandSpec, "setspawn")
 			.executor(new CommandHelp())
 			.build();
