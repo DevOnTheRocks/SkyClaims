@@ -119,4 +119,26 @@ public class Database {
 				SkyClaims.getInstance().getLogger().info("UPDATE WORKED!");
 		}
 	}
+
+	/**
+	 * Saves an individual island to the database
+	 * @param island the island to save
+	 * @throws SQLException
+	 */
+	public void saveIsland(Island island) throws SQLException {
+		String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
+
+		PreparedStatement statement = getConnection().prepareStatement(sql);
+		statement.setString(1, island.getOwner().toString());
+		statement.setString(2, island.getClaimId().toString());
+		statement.setInt(3, island.getSpawn().getBlockX());
+		statement.setInt(4, island.getSpawn().getBlockY());
+		statement.setInt(5, island.getSpawn().getBlockZ());
+		statement.setString(6, island.getClaim().world.getUniqueId().toString());
+
+		SkyClaims.getInstance().getLogger().info("UPDATING DB");
+
+		if (statement.execute())
+			SkyClaims.getInstance().getLogger().info("UPDATE WORKED!");
+	}
 }
