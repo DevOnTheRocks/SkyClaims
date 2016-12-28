@@ -77,7 +77,6 @@ public class Database {
 				UUID claimId = UUID.fromString(results.getString("id"));
 				UUID ownerId = UUID.fromString(results.getString("owner"));
 				UUID worldId = UUID.fromString(results.getString("world"));
-				World world = SkyClaims.getInstance().getGame().getServer().getWorld(worldId).get();
 				Vector3i claimLowerBound = new Vector3i(results.getInt("x"), results.getInt("y"), 0);
 				// TODO:- Some funky math to get the size (or store it)
 				Vector3i claimUpperBound = new Vector3i(results.getInt("x"), results.getInt("y"), 0);
