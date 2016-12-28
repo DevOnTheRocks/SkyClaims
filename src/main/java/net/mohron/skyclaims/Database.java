@@ -84,8 +84,8 @@ public class Database {
 				Island island = new Island(ownerId, worldId, claimId);
 
 				dataStore.put(ownerId, island);
-				SkyClaims.getInstance().getLogger().info("Owner UUID: " + ownerId); // Debug log
-				SkyClaims.getInstance().getLogger().info("SIZE: " + dataStore.values().size());
+				SkyClaims.getInstance().getLogger().debug("Owner UUID: " + ownerId);
+				SkyClaims.getInstance().getLogger().debug("SIZE: " + dataStore.values().size());
 			}
 
 			return new DataStore(dataStore);
@@ -102,9 +102,37 @@ public class Database {
 	 *
 	 * @param dataStore The DataStore to pull the data from
 	 */
-	public void saveData(DataStore dataStore) throws SQLException {
+	public void saveData(DataStore dataStore) {
 		for (Island island : dataStore.data.values()) {
 			String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
+
+			try {
+				PreparedStatement statement = getConnection().prepareStatement(sql);
+				statement.setString(1, island.getOwner().toString());
+				statement.setString(2, island.getClaimId().toString());
+				statement.setInt(3, island.getSpawn().getBlockX());
+				statement.setInt(4, island.getSpawn().getBlockY());
+				statement.setInt(5, island.getSpawn().getBlockZ());
+				statement.setString(6, island.getClaim().world.getUniqueId().toString());
+
+				SkyClaims.getInstance().getLogger().debug("UPDATING DB");
+
+				if (statement.execute())
+					SkyClaims.getInstance().getLogger().debug("UPDATE WORKED!");
+			} catch (SQLException e) {
+				SkyClaims.getInstance().getLogger().error(String.format("Error updating the database: %s", e.getMessage()));
+			}
+		}
+	}
+
+	/**
+	 * Saves an individual island to the database
+	 * @param island the island to save
+	 */
+	public void saveIsland(Island island) {
+		String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
+
+		try {
 			PreparedStatement statement = getConnection().prepareStatement(sql);
 			statement.setString(1, island.getOwner().toString());
 			statement.setString(2, island.getClaimId().toString());
@@ -113,32 +141,12 @@ public class Database {
 			statement.setInt(5, island.getSpawn().getBlockZ());
 			statement.setString(6, island.getClaim().world.getUniqueId().toString());
 
-			SkyClaims.getInstance().getLogger().info("UPDATING DB");
+			SkyClaims.getInstance().getLogger().debug("UPDATING DB");
 
 			if (statement.execute())
-				SkyClaims.getInstance().getLogger().info("UPDATE WORKED!");
+				SkyClaims.getInstance().getLogger().debug("UPDATE WORKED!");
+		} catch (SQLException e) {
+			SkyClaims.getInstance().getLogger().error(String.format("Error inserting Island into the database: %s", e.getMessage()));
 		}
-	}
-
-	/**
-	 * Saves an individual island to the database
-	 * @param island the island to save
-	 * @throws SQLException
-	 */
-	public void saveIsland(Island island) throws SQLException {
-		String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
-
-		PreparedStatement statement = getConnection().prepareStatement(sql);
-		statement.setString(1, island.getOwner().toString());
-		statement.setString(2, island.getClaimId().toString());
-		statement.setInt(3, island.getSpawn().getBlockX());
-		statement.setInt(4, island.getSpawn().getBlockY());
-		statement.setInt(5, island.getSpawn().getBlockZ());
-		statement.setString(6, island.getClaim().world.getUniqueId().toString());
-
-		SkyClaims.getInstance().getLogger().info("UPDATING DB");
-
-		if (statement.execute())
-			SkyClaims.getInstance().getLogger().info("UPDATE WORKED!");
 	}
 }
