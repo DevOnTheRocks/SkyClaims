@@ -2,7 +2,6 @@ package net.mohron.skyclaims;
 
 public class Permissions {
 	// User Permissions
-	public static final String COMMAND_ISLAND = "skyclaims.command.base";
 	public static final String COMMAND_INFO = "skyclaims.command.info";
 	public static final String COMMAND_CREATE = "skyclaims.command.create";
 	public static final String COMMAND_RESET = "skyclaims.command.reset";
@@ -13,7 +12,6 @@ public class Permissions {
 	public static final String COMMAND_SET_BIOME_CHUNK = "skyclaims.command.setbiome.chunk";
 	public static final String COMMAND_SET_BIOME_ISLAND = "skyclaims.command.setbiome.island";
 	public static final String COMMAND_SET_BIOME_BIOMES = "skyclaims.command.setbiome.biomes";
-	public static final String COMMAND_INVITE = "skyclaims.command.invite";
 
 	// Admin Permissions
 	public static final String COMMAND_ADMIN = "skyclaims.admin.base";
