@@ -31,7 +31,7 @@ public class CommandCreate implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.choices(Text.of("schematic"), schematics))
+			.arguments(GenericArguments.optional(GenericArguments.choices(Text.of("schematic"), schematics)))
 			.executor(new CommandCreate())
 			.build();
 
