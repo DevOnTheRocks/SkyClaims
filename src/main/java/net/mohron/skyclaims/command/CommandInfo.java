@@ -1,8 +1,9 @@
 package net.mohron.skyclaims.command;
 
-import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.lib.Arguments;
+import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
@@ -28,7 +29,7 @@ public class CommandInfo {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_INFO)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.user(Text.of("player"))))
+			.arguments(GenericArguments.optional(GenericArguments.user(Arguments.USER)))
 			.executor(new CommandCreate())
 			.build();
 
@@ -46,11 +47,11 @@ public class CommandInfo {
 		if (!(src instanceof Player) && !args.hasAny(Text.of("player"))) {
 			throw new CommandException(Text.of(TextColors.RED, "You must supply a player to use this command."));
 		} else {
-			if (args.hasAny(Text.of("player"))) {
+			if (args.hasAny(Arguments.USER)) {
 				if (!src.hasPermission(Permissions.COMMAND_INFO_OTHERS))
 					throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use this command!"));
 			}
-			User user = (args.getOne(Text.of("player")).isPresent()) ? (User) args.getOne(Text.of("player")).get() : (User) src;
+			User user = (args.getOne(Arguments.USER).isPresent()) ? (User) args.getOne(Arguments.USER).get() : (User) src;
 			Optional<Island> islandOptional = IslandUtil.getIsland(user.getUniqueId());
 
 			if (!islandOptional.isPresent())
@@ -60,7 +61,7 @@ public class CommandInfo {
 			Text infoText = Text.of(
 					TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",
 					TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.GRAY, island.getRadius() * 2, "x", island.getRadius() * 2, "\n",
-					TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockX(), TextColors.GRAY, " x, ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, " y, ",TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, " z", "\n",
+					TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockX(), TextColors.GRAY, " x, ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, " y, ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, " z", "\n",
 					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, island.getClaim().getID()
 			);
 

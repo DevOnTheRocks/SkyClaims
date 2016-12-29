@@ -1,8 +1,9 @@
 package net.mohron.skyclaims.command;
 
-import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.lib.Arguments;
+import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -15,10 +16,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CommandCreate implements CommandExecutor {
 
@@ -26,22 +23,12 @@ public class CommandCreate implements CommandExecutor {
 
 	public static String helpText = "create an island.";
 
-	private static Map<String, File> schematics = new HashMap<>();
-
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.choices(Text.of("schematic"), schematics)))
+			.arguments(GenericArguments.optional(GenericArguments.choices(Arguments.SCHEMATIC, Arguments.SCHEMATICS)))
 			.executor(new CommandCreate())
 			.build();
-
-	static {
-		for (String schem : PLUGIN.getConfig().schematics) {
-			String path = String.format("%s\\%s", PLUGIN.getConfigDir(), schem);
-			if (Files.exists(Paths.get(path)))
-				schematics.put(schem, new File(path));
-		}
-	}
 
 	public static void register() {
 		try {
@@ -63,8 +50,8 @@ public class CommandCreate implements CommandExecutor {
 		if (IslandUtil.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
-		if (args.getOne(Text.of("schematic")).isPresent())
-			schematic = (File) args.getOne(Text.of("schematic")).get();
+		if (args.getOne(Arguments.SCHEMATIC).isPresent())
+			schematic = (File) args.getOne(Arguments.SCHEMATIC).get();
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
 		Island island = IslandUtil.createIsland(player.getUniqueId(), schematic);

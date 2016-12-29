@@ -1,8 +1,9 @@
 package net.mohron.skyclaims.command;
 
-import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.lib.Arguments;
+import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
@@ -15,10 +16,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.biome.BiomeType;
-import org.spongepowered.api.world.biome.BiomeTypes;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public class CommandSetBiome implements CommandExecutor {
@@ -27,22 +25,11 @@ public class CommandSetBiome implements CommandExecutor {
 
 	public static String helpText = "set the biome of a block, chunk or island";
 
-	private static Map<String, BiomeType> biomes = new HashMap<>();
-	private static Map<String, Target> targets = new HashMap<>();
-
-	static {
-		biomes.put("forest", BiomeTypes.FOREST);
-		biomes.put("plains", BiomeTypes.PLAINS);
-
-		targets.put("-b", Target.BLOCK);
-		targets.put("-c", Target.CHUNK);
-		targets.put("-i", Target.ISLAND);
-	}
-
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SET_BIOME)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.choices(Text.of("biome"), biomes), GenericArguments.optional(GenericArguments.choices(Text.of("target"), targets)))
+			.arguments(GenericArguments.choices(Arguments.BIOME, Arguments.BIOMES),
+					GenericArguments.optional(GenericArguments.choices(Arguments.TARGET, Arguments.TARGETS)))
 			.executor(new CommandSetBiome())
 			.build();
 
@@ -63,16 +50,17 @@ public class CommandSetBiome implements CommandExecutor {
 		Player player = (Player) src;
 		Optional<Island> island = IslandUtil.getIslandByLocation(player.getLocation());
 
-		Optional<BiomeType> biomeOptional = args.getOne(Text.of("biome"));
-		Target target = Target.CHUNK;
+		Optional<BiomeType> biomeOptional = args.getOne(Arguments.BIOME);
+		Arguments.Target target = Arguments.Target.CHUNK;
 
 		if (!biomeOptional.isPresent())
 			throw new CommandException(Text.of("You must supply a biome to use this command"));
 		BiomeType biome = biomeOptional.get();
+
 		if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BIOMES + "." + biome.getName().toLowerCase()))
 			throw new CommandPermissionException(Text.of("You do not have permission to use the designated biome type."));
 
-		if (args.getOne(Text.of("target")).isPresent()) target = (Target) args.getOne(Text.of("target")).get();
+		if (args.getOne(Arguments.TARGET).isPresent()) target = (Arguments.Target) args.getOne(Arguments.TARGET).get();
 		switch (target) {
 			case BLOCK:
 				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BLOCK)) throw new CommandPermissionException();
@@ -88,11 +76,6 @@ public class CommandSetBiome implements CommandExecutor {
 				break;
 		}
 
-
 		return CommandResult.success();
-	}
-
-	private enum Target {
-		BLOCK, CHUNK, ISLAND;
 	}
 }

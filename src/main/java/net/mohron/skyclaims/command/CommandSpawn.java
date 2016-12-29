@@ -1,9 +1,10 @@
 package net.mohron.skyclaims.command;
 
 import me.ryanhamshire.griefprevention.command.CommandHelper;
-import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.lib.Arguments;
+import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -24,12 +25,11 @@ public class CommandSpawn implements CommandExecutor {
 
 	public static String helpText = "teleport to an island's spawn point.";
 
-	private static Text userArg = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SPAWN)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.user(userArg)))
+			.arguments(GenericArguments.optional(GenericArguments.user(Arguments.USER)))
 			.executor(new CommandCreate())
 			.build();
 
@@ -48,7 +48,7 @@ public class CommandSpawn implements CommandExecutor {
 		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
 		}
-		User user = (args.getOne(userArg).isPresent()) ? (User) args.getOne(userArg).get() : (User) src;
+		User user = (args.getOne(Arguments.USER).isPresent()) ? (User) args.getOne(Arguments.USER).get() : (User) src;
 		Optional<Island> island = IslandUtil.getIsland(user.getUniqueId());
 
 		if (!island.isPresent())

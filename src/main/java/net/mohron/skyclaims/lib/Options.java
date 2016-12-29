@@ -1,4 +1,4 @@
-package net.mohron.skyclaims;
+package net.mohron.skyclaims.lib;
 
 import me.ryanhamshire.griefprevention.util.PlayerUtils;
 import org.spongepowered.api.service.permission.Subject;
