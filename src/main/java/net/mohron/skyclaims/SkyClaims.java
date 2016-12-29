@@ -1,6 +1,7 @@
 package net.mohron.skyclaims;
 
 import com.google.inject.Inject;
+import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import net.mohron.skyclaims.command.CommandCreate;
@@ -48,6 +49,7 @@ public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPrevention griefPrevention;
 	private static LuckPermsApi luckPerms;
+	private static SpongeWorldEdit spongeWorldEdit;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
 	@Inject
@@ -80,7 +82,7 @@ public class SkyClaims {
 		try {
 			Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
 			SkyClaims.griefPrevention = GriefPrevention.instance;
-			getLogger().info("GriefPrevention Integration Successful! " + SkyClaims.griefPrevention);
+			getLogger().info("GriefPrevention Integration Successful!");
 		} catch (ClassNotFoundException e) {
 			getLogger().info("GriefPrevention Integration Failed!");
 		}
@@ -90,6 +92,14 @@ public class SkyClaims {
 			SkyClaims.luckPerms = lp;
 			getLogger().info("LuckPerms Integration Successful!");
 		});
+
+		try {
+			Class.forName("com.sk89q.worldedit.sponge.SpongeWorldEdit");
+			SkyClaims.spongeWorldEdit = SpongeWorldEdit.inst();
+			getLogger().info("WorldEdit Integration Successful!");
+		} catch (ClassNotFoundException e) {
+			getLogger().info("WorldEdit Integration Failed!");
+		}
 	}
 
 	@Listener
@@ -133,12 +143,16 @@ public class SkyClaims {
 		return instance;
 	}
 
+	public GriefPrevention getGriefPrevention() {
+		return griefPrevention;
+	}
+
 	public LuckPermsApi getLuckPerms() {
 		return luckPerms;
 	}
 
-	public GriefPrevention getGriefPrevention() {
-		return griefPrevention;
+	public SpongeWorldEdit getSpongeWorldEdit() {
+		return spongeWorldEdit;
 	}
 
 	public Logger getLogger() {
