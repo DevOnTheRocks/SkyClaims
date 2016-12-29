@@ -2,9 +2,13 @@ package net.mohron.skyclaims;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.island.Island;
-import org.spongepowered.api.world.World;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -125,6 +129,7 @@ public class Database {
 
 	/**
 	 * Saves an individual island to the database
+	 *
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
