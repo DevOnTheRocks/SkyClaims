@@ -2,7 +2,6 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
@@ -50,20 +49,21 @@ public class CommandInfo {
 			}
 			User user = (!(src instanceof Player)) ? (User) args.getOne(Text.of("player")).get() : (User) src;
 
+
 			if (!IslandUtil.hasIsland(user.getUniqueId()))
 				throw new CommandException(Text.of(TextColors.RED, "You do not have an island!"));
 
-			Island island = IslandUtil.getIsland(user.getUniqueId());
+			IslandUtil.getIsland(user.getUniqueId()).ifPresent(island -> {
+				Text infoText = Text.of(
+						TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",
+						TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.GRAY, island.getRadius() * 2, "x", island.getRadius() * 2, "\n",
+						TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, island.getClaim().getID()
+				);
 
-			Text infoText = Text.of(
-					TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",
-					TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.GRAY, island.getRadius() * 2, "x", island.getRadius() * 2, "\n",
-					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, island.getClaim().getID()
-			);
+				PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island Info")).padding(Text.of("-")).contents(infoText);
 
-			PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island Info")).padding(Text.of("-")).contents(infoText);
-
-			paginationBuilder.sendTo(src);
+				paginationBuilder.sendTo(src);
+			});
 
 			return CommandResult.success();
 		}

@@ -12,6 +12,8 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
+import java.util.Optional;
+
 public class CommandSetSpawn {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -35,16 +37,21 @@ public class CommandSetSpawn {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of("You must be a player to run this command!"));
-		}
+		if (!(src instanceof Player))
+			throw new CommandException(Text.of("You must be a player to use this command!"));
+
 		Player player = (Player) src;
-		if (!IslandUtil.hasIsland(player.getUniqueId())) throw new CommandException(Text.of("You must have an island to use this command!"));
-		Island island = IslandUtil.getIsland(player.getUniqueId());
+		Optional<Island> island = IslandUtil.getIsland(player.getUniqueId());
 
-		//island.setSpawn(player.getLocation());
+		if (!island.isPresent())
+			throw new CommandException(Text.of("You must have an island to use this command!"));
 
-		player.sendMessage(Text.of("Your Island spawn has been set to " + island.getSpawn()));
+		if (!island.get().isWithinIsland(player.getLocation()))
+			throw new CommandException(Text.of("You must be on your island to use this command!"));
+
+		island.get().setSpawn(player.getLocation());
+		player.sendMessage(Text.of("Your Island spawn has been set to ", island.get().getSpawn()));
+
 		return CommandResult.success();
 	}
 }
