@@ -5,9 +5,7 @@ import net.mohron.skyclaims.island.Island;
 import org.spongepowered.api.world.World;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Database {
 	private String databaseName;
@@ -23,12 +21,7 @@ public class Database {
 			SkyClaims.getInstance().getLogger().error("Unable to load the JDBC driver");
 		}
 
-		try {
-			// Get a database connection
-			Connection connection = getConnection();
-
-			// Create a statement and set the timeout time to 30 seconds
-			Statement statement = connection.createStatement();
+		try (Statement statement = getConnection().createStatement()) {
 			statement.setQueryTimeout(30);
 
 			// Create the database schema
@@ -67,23 +60,18 @@ public class Database {
 	public Map<UUID, Island> loadData() {
 		Map<UUID, Island> islands = new HashMap<>();
 
-		try {
-			Statement statement = getConnection().createStatement();
+		try (Statement statement = getConnection().createStatement()) {
 			ResultSet results = statement.executeQuery("SELECT * FROM islands");
 
 			while (results.next()) {
 				UUID claimId = UUID.fromString(results.getString("id"));
 				UUID ownerId = UUID.fromString(results.getString("owner"));
 				UUID worldId = UUID.fromString(results.getString("world"));
-				Vector3i claimLowerBound = new Vector3i(results.getInt("x"), results.getInt("y"), 0);
-				// TODO:- Some funky math to get the size (or store it)
-				Vector3i claimUpperBound = new Vector3i(results.getInt("x"), results.getInt("y"), 0);
+				int x = results.getInt("x");
+				int y = results.getInt("y");
 
 				Island island = new Island(ownerId, worldId, claimId);
-
 				islands.put(ownerId, island);
-				SkyClaims.getInstance().getLogger().debug("Owner UUID: " + ownerId);
-				SkyClaims.getInstance().getLogger().debug("SIZE: " + islands.values().size());
 			}
 
 			return islands;
@@ -104,8 +92,7 @@ public class Database {
 		for (Island island : islands.values()) {
 			String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
 
-			try {
-				PreparedStatement statement = getConnection().prepareStatement(sql);
+			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 				statement.setString(1, island.getOwner().toString());
 				statement.setString(2, island.getClaimId().toString());
 				statement.setInt(3, island.getSpawn().getBlockX());
@@ -113,10 +100,7 @@ public class Database {
 				statement.setInt(5, island.getSpawn().getBlockZ());
 				statement.setString(6, island.getClaim().world.getUniqueId().toString());
 
-				SkyClaims.getInstance().getLogger().debug("UPDATING DB");
-
-				if (statement.execute())
-					SkyClaims.getInstance().getLogger().debug("UPDATE WORKED!");
+				statement.execute();
 			} catch (SQLException e) {
 				SkyClaims.getInstance().getLogger().error(String.format("Error updating the database: %s", e.getMessage()));
 			}
@@ -130,8 +114,7 @@ public class Database {
 	public void saveIsland(Island island) {
 		String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
 
-		try {
-			PreparedStatement statement = getConnection().prepareStatement(sql);
+		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwner().toString());
 			statement.setString(2, island.getClaimId().toString());
 			statement.setInt(3, island.getSpawn().getBlockX());
@@ -139,10 +122,7 @@ public class Database {
 			statement.setInt(5, island.getSpawn().getBlockZ());
 			statement.setString(6, island.getClaim().world.getUniqueId().toString());
 
-			SkyClaims.getInstance().getLogger().debug("UPDATING DB");
-
-			if (statement.execute())
-				SkyClaims.getInstance().getLogger().debug("UPDATE WORKED!");
+			statement.execute();
 		} catch (SQLException e) {
 			SkyClaims.getInstance().getLogger().error(String.format("Error inserting Island into the database: %s", e.getMessage()));
 		}

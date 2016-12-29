@@ -7,6 +7,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class IslandUtil {
@@ -84,7 +85,6 @@ public class IslandUtil {
 				//place some dirt
 			}
 		}
-
 
 		island.toggleIsReady();
 	}
