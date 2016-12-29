@@ -5,6 +5,9 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GlobalConfig {
 	@Setting(value = "Database")
 	public DatabaseConfig database;
@@ -16,6 +19,8 @@ public class GlobalConfig {
 	public Integer maxRegions;
 	@Setting(value = "Island-Height")
 	public Integer defaultHeight;
+	@Setting(value = "Island-Schematics")
+	public List<String> schematics;
 
 	public GlobalConfig() {
 		database = new DatabaseConfig();
@@ -23,5 +28,6 @@ public class GlobalConfig {
 		defaultBiome = BiomeTypes.PLAINS;
 		maxRegions = 256;
 		defaultHeight = 64;
+		schematics = new ArrayList<>();
 	}
 }

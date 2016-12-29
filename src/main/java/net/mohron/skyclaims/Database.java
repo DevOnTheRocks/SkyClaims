@@ -1,10 +1,16 @@
 package net.mohron.skyclaims;
 
-import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.island.Island;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class Database {
 	private String databaseName;

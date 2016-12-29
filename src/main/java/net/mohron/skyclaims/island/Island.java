@@ -3,6 +3,7 @@ package net.mohron.skyclaims.island;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.GameProfileManager;
@@ -22,7 +23,6 @@ public class Island {
 	private Claim claim;
 	private Location<World> spawn;
 	private boolean isReady;
-	private int radius;
 
 	public Island(UUID owner, Claim claim, File schematic) {
 		this.owner = owner;
@@ -31,6 +31,8 @@ public class Island {
 
 		GenerateIslandTask generateIsland = new GenerateIslandTask(this, schematic);
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
+
+		IslandUtil.saveIsland(this);
 	}
 
 	public Island(UUID owner, UUID worldId, UUID claimId) {

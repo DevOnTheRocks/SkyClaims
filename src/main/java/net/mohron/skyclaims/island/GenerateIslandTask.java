@@ -36,7 +36,6 @@ public class GenerateIslandTask implements Runnable {
 	@Override
 	public void run() {
 		copySchematic();
-
 	}
 
 	private void copySchematic() {
