@@ -8,6 +8,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -26,8 +27,6 @@ public class CommandHelp implements CommandExecutor {
 
 	public static void register() {
 		try {
-
-
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
 			PLUGIN.getLogger().info("Registered command: CommandHelp");
 		} catch (UnsupportedOperationException e) {
@@ -37,19 +36,26 @@ public class CommandHelp implements CommandExecutor {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+		Text helpContents = Text.EMPTY;
 		boolean hasPerms = false;
 
 		if (src.hasPermission(Permissions.COMMAND_CREATE)) {
-			src.sendMessage(Text.builder("is create").onClick(TextActions.runCommand("is create")).append(Text.of(TextColors.DARK_GREEN, " - ", CommandCreate.helpText)).build());
+			helpContents = Text.join(helpContents, Text.builder("is create").onClick(TextActions.runCommand("is create")).append(Text.of(TextColors.DARK_GREEN, " - ", CommandCreate.helpText)).build());
 			hasPerms = true;
 		}
 
 		if (src.hasPermission(Permissions.COMMAND_RESET)) {
-			src.sendMessage(Text.builder("is reset").onClick(TextActions.runCommand("is reset")).append(Text.of(TextColors.DARK_GREEN, " - ", CommandReset.helpText)).build());
+			helpContents = Text.join(helpContents, Text.builder("is reset").onClick(TextActions.runCommand("is reset")).append(Text.of(TextColors.DARK_GREEN, " - ", CommandReset.helpText)).build());
 			hasPerms = true;
 		}
 
-		if (!hasPerms) src.sendMessage(Text.of(NAME + " " + VERSION));
+		if (hasPerms) {
+			PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, NAME, " Help")).padding(Text.of("-")).contents(helpContents);
+			paginationBuilder.sendTo(src);
+		} else {
+			src.sendMessage(Text.of(NAME + " " + VERSION));
+		}
+
 		return CommandResult.success();
 	}
 }
