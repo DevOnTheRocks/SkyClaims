@@ -54,7 +54,7 @@ public class CommandInfo {
 			Optional<Island> islandOptional = IslandUtil.getIsland(user.getUniqueId());
 
 			if (!islandOptional.isPresent())
-				throw new CommandException(Text.of(TextColors.RED, "You must have an Island to run this command!"));
+				throw new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!"));
 
 			Island island = islandOptional.get();
 			Text infoText = Text.of(
