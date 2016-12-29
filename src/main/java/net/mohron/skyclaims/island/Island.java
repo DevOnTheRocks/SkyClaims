@@ -3,7 +3,6 @@ package net.mohron.skyclaims.island;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.GameProfileManager;
@@ -11,6 +10,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
 
+import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -24,12 +24,13 @@ public class Island {
 	private boolean isReady;
 	private int radius;
 
-	public Island(UUID owner, Claim claim) {
+	public Island(UUID owner, Claim claim, File schematic) {
 		this.owner = owner;
 		this.claim = claim;
 		this.isReady = false;
 
-		IslandUtil.buildIsland(this);
+		GenerateIslandTask generateIsland = new GenerateIslandTask(this, schematic);
+		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
 	}
 
 	public Island(UUID owner, UUID worldId, UUID claimId) {
@@ -71,12 +72,20 @@ public class Island {
 		return claim.getClaimData().getDateCreated();
 	}
 
+	public World getWorld() {
+		return spawn.getExtent();
+	}
+
 	public Location<World> getSpawn() {
 		return spawn;
 	}
 
 	public void setSpawn(Location<World> spawn) {
 		this.spawn = spawn;
+	}
+
+	public boolean isWithinIsland(Location<World> location) {
+		return claim.contains(location, true, false);
 	}
 
 	public int getRadius() {

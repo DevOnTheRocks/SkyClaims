@@ -2,6 +2,7 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.Permissions;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -12,6 +13,8 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+
+import java.util.Optional;
 
 public class CommandReset implements CommandExecutor {
 
@@ -41,16 +44,17 @@ public class CommandReset implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
+		Optional<Island> island = IslandUtil.getIsland(player.getUniqueId());
 
-		if (!IslandUtil.hasIsland(player.getUniqueId())) {
-			throw new CommandException(Text.of("You do not have an island!"));
-		}
+		if (!island.isPresent())
+			throw new CommandException(Text.of("You must have an Island to run this command!"));
+
 
 		if (!args.hasAny("confirm")) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
 			player.sendMessage(Text.of("To continue, run ", "/is reset", " confirm"));
 		} else {
-			IslandUtil.resetIsland(player.getUniqueId());
+			//IslandUtil.resetIsland(player.getUniqueId());
 		}
 
 		return CommandResult.success();

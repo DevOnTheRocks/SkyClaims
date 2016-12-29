@@ -2,7 +2,6 @@ package net.mohron.skyclaims;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.island.Island;
-import org.spongepowered.api.world.World;
 
 import java.sql.*;
 import java.util.*;
@@ -109,6 +108,7 @@ public class Database {
 
 	/**
 	 * Saves an individual island to the database
+	 *
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
