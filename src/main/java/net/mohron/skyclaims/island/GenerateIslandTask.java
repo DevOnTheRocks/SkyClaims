@@ -65,6 +65,5 @@ public class GenerateIslandTask implements Runnable {
 		} catch (IOException e) {
 			PLUGIN.getLogger().error(String.format("Unable to create island for %s. Reason: %s", island.getOwnerName(), e));
 		}
-
 	}
 }
