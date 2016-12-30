@@ -10,7 +10,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.io.File;
 import java.util.UUID;
@@ -35,9 +34,11 @@ public class Island {
 	}
 
 	public Island(UUID owner, UUID worldId, UUID claimId, Vector3i spawnLocation) {
-		WorldProperties world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld).getProperties();
-		this.claim = GRIEF_PREVENTION_DATA.getClaim(world, claimId);
+		World world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld);
+
 		this.owner = owner;
+		this.claim = GRIEF_PREVENTION_DATA.getClaim(world.getProperties(), claimId);
+		this.spawn = new Location<>(world, spawnLocation);
 	}
 
 	public UUID getOwner() {
