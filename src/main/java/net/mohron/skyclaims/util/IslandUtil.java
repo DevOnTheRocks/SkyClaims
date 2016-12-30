@@ -123,8 +123,8 @@ public class IslandUtil {
 	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
 	 */
 	public static ArrayList<Point> generateRegionSpiral() {
-		int islandCount = SkyClaims.getInstance().getDatabase().countEntries();
-		int generationSize = (int)Math.sqrt((double)islandCount);
+		int islandCount = SkyClaims.islands.size();
+		int generationSize = (int)Math.sqrt((double)islandCount) + 1;
 
 		ArrayList<Point> coordinates = new ArrayList<Point>(generationSize);
 		int[] delta = {0, -1};
