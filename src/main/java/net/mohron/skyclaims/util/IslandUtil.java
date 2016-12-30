@@ -109,8 +109,6 @@ public class IslandUtil {
 				//place some dirt
 			}
 		}
-
-		island.toggleIsReady();
 	}
 
 	private static void clearIsland(UUID owner) {

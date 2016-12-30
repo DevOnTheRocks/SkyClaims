@@ -22,12 +22,10 @@ public class Island {
 	private UUID owner;
 	private Claim claim;
 	private Location<World> spawn;
-	private boolean isReady;
 
 	public Island(UUID owner, Claim claim, File schematic) {
 		this.owner = owner;
 		this.claim = claim;
-		this.isReady = false;
 
 		GenerateIslandTask generateIsland = new GenerateIslandTask(this, schematic);
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
@@ -39,7 +37,6 @@ public class Island {
 		WorldProperties world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld).getProperties();
 		this.claim = GRIEF_PREVENTION_DATA.getClaim(world, claimId);
 		this.owner = owner;
-		this.isReady = true;
 	}
 
 	public UUID getOwner() {
@@ -97,13 +94,5 @@ public class Island {
 	public Location getCenter() {
 		int radius = this.getRadius();
 		return new Location<>(getSpawn().getExtent(), claim.getLesserBoundaryCorner().getX() + radius, 64, claim.getLesserBoundaryCorner().getZ() + radius);
-	}
-
-	public void toggleIsReady() {
-		isReady = !isReady;
-	}
-
-	public boolean isReady() {
-		return isReady;
 	}
 }
