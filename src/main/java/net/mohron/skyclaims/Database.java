@@ -1,6 +1,9 @@
 package net.mohron.skyclaims;
 
+import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.island.Island;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -37,7 +40,7 @@ public class Database {
 					"y			INT," +
 					"z			INT," +
 					"world		STRING" +
-					")";
+				")";
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
@@ -74,8 +77,11 @@ public class Database {
 				UUID worldId = UUID.fromString(results.getString("world"));
 				int x = results.getInt("x");
 				int y = results.getInt("y");
+				int z = results.getInt("z");
 
-				Island island = new Island(ownerId, worldId, claimId);
+				Vector3i spawnLocation = new Vector3i(x, y, z);
+
+				Island island = new Island(ownerId, worldId, claimId, spawnLocation);
 				islands.put(ownerId, island);
 			}
 

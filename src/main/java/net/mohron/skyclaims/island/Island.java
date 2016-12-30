@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.island;
 
+import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
@@ -35,7 +36,7 @@ public class Island {
 		IslandUtil.saveIsland(this);
 	}
 
-	public Island(UUID owner, UUID worldId, UUID claimId) {
+	public Island(UUID owner, UUID worldId, UUID claimId, Vector3i spawnLocation) {
 		WorldProperties world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld).getProperties();
 		this.claim = GRIEF_PREVENTION_DATA.getClaim(world, claimId);
 		this.owner = owner;
