@@ -12,6 +12,8 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.io.File;
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -113,6 +115,32 @@ public class IslandUtil {
 
 	private static void clearIsland(UUID owner) {
 		//TODO Clear island, inventory, enderchest, and supported private mod inventories ie. mod ender chests
+	}
+
+	/**
+	 * A method to generate a region-scaled spiral pattern and return the x/y pairs of each region
+	 *
+	 * @param width The width of the spiral in regions
+	 * @param height The height of the spiral in regions
+	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
+	 */
+	public static ArrayList<Point> generateRegionSpiral(int width, int height) {
+		ArrayList<Point> coordinates = new ArrayList<Point>(SkyClaims.islands.size());
+		int[] delta = {0, -1};
+		int x = 0;
+		int y = 0;
+
+		for (int i = (int)Math.pow(Math.max(width, height), 2); i > 0; i--) {
+			if ((-width/2 < x && x <= width/2) && (-height/2 < y && y <= height/2))
+				coordinates.add(new Point(x, y));
+			if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1-y)) {
+				// change direction
+				delta[0] = -delta[1];
+				delta[1] = delta[0];
+			}
+		}
+
+		return coordinates;
 	}
 
 //	private static int getXOffset(int i) {
