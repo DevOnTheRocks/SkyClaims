@@ -133,4 +133,21 @@ public class Database {
 			SkyClaims.getInstance().getLogger().error(String.format("Error inserting Island into the database: %s", e.getMessage()));
 		}
 	}
+
+	public int countEntries() {
+		int count = 0;
+		String sql = "SELECT COUNT(1) FROM islands";
+
+		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+			ResultSet results = statement.executeQuery();
+
+			while (results.next()) {
+				count = results.getInt(1);
+			}
+		} catch (SQLException e) {
+			SkyClaims.getInstance().getLogger().error("Error counting rows in the database: %s", e.getMessage());
+		}
+
+		return count;
+	}
 }
