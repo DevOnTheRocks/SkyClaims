@@ -4,13 +4,7 @@ import com.google.inject.Inject;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.ryanhamshire.griefprevention.GriefPrevention;
-import net.mohron.skyclaims.command.CommandCreate;
-import net.mohron.skyclaims.command.CommandHelp;
-import net.mohron.skyclaims.command.CommandInfo;
-import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.CommandReset;
-import net.mohron.skyclaims.command.CommandSetBiome;
-import net.mohron.skyclaims.command.CommandSetSpawn;
+import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
 import org.slf4j.Logger;
@@ -26,6 +20,7 @@ import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.service.permission.PermissionService;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -50,6 +45,7 @@ public class SkyClaims {
 	private static GriefPrevention griefPrevention;
 	private static LuckPermsApi luckPerms;
 	private static SpongeWorldEdit spongeWorldEdit;
+	public PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
 	@Inject
@@ -74,11 +70,12 @@ public class SkyClaims {
 
 	@Listener(order = Order.LATE)
 	public void onAboutToStart(GameAboutToStartServerEvent event) {
-//		Optional<GriefPrevention> griefPrevention = Sponge.getServiceManager().provide(GriefPrevention.class);
-//		griefPrevention.ifPresent(gp -> {
-//			SkyClaims.griefPrevention = GriefPrevention.instance;
-//			getLogger().info("GriefPrevention Integration Successful!");
-//		});
+		this.permissionService = Sponge.getServiceManager().provide(PermissionService.class).get();
+		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
+			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin.");
+			return;
+		}
+
 		try {
 			Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
 			SkyClaims.griefPrevention = GriefPrevention.instance;
@@ -130,13 +127,16 @@ public class SkyClaims {
 	}
 
 	private void registerCommands() {
-		CommandIsland.register();
-		CommandHelp.register();
+		CommandAdmin.register();
 		CommandCreate.register();
-		CommandReset.register();
-		CommandSetSpawn.register();
+		CommandHelp.register();
 		CommandInfo.register();
+		CommandIsland.register();
+		CommandReset.register();
 		CommandSetBiome.register();
+		CommandSetSpawn.register();
+		CommandSetup.register();
+		CommandSpawn.register();
 	}
 
 	public static SkyClaims getInstance() {

@@ -16,6 +16,7 @@ public class Permissions {
 	// Admin Permissions
 	public static final String COMMAND_ADMIN = "skyclaims.admin.base";
 	public static final String COMMAND_INFO_OTHERS = "skyclaims.admin.info";
+	public static final String COMMAND_SETUP = "skyclaims.admin.setup";
 	public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
 
 }

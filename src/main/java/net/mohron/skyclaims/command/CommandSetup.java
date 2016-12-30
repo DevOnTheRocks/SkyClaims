@@ -1,41 +1,42 @@
 package net.mohron.skyclaims.command;
 
-import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.lib.Permissions;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.text.Text;
 
-public class CommandAdmin {
-
+public class CommandSetup implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static final PermissionService PERMS = PLUGIN.permissionService;
 
-	public static String helpText = String.format("use to run %s's admin commands", PluginInfo.NAME);
+	public static String helpText = "used to assist in setting up the plugin";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_ADMIN)
+			.permission(Permissions.COMMAND_SETUP)
 			.description(Text.of(helpText))
-			.child(CommandSetup.commandSpec, "setup")
-			.executor(new CommandHelp())
+			.executor(new CommandCreate())
 			.build();
 
 	public static void register() {
 		try {
-			Sponge.getCommandManager().register(PLUGIN, commandSpec, "admin");
-			PLUGIN.getLogger().info("Registered command: CommandAdmin");
+			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+			PLUGIN.getLogger().info("Registered command: CommandSetup");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandAdmin");
+			PLUGIN.getLogger().error("Failed to register command: CommandSetup");
 		}
 	}
 
+	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		// Not used, CommandAdmin is used exclusively as a parent command. Runs /is help when not supplied with a subcommand.
-		return CommandResult.success();
+		// TODO Help the src set up required permissions and options
+
+		return CommandResult.empty();
 	}
 }
