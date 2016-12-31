@@ -14,7 +14,6 @@ import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 

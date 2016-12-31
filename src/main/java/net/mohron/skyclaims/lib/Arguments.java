@@ -1,13 +1,9 @@
 package net.mohron.skyclaims.lib;
 
-import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,16 +16,12 @@ public class Arguments {
 	public static final Text TARGET = Text.of("target");
 
 	// Maps for Choice Command Arguments
-	public static final Map<String, File> SCHEMATICS = new HashMap<>();
+	public static final Map<String, String> SCHEMATICS = new HashMap<>();
 	public static final Map<String, BiomeType> BIOMES = new HashMap<>();
 	public static final Map<String, Target> TARGETS = new HashMap<>();
 
 	static {
-		for (String schem : SkyClaims.getInstance().getConfig().schematics) {
-			String path = String.format("%s\\%s", SkyClaims.getInstance().getConfigDir(), schem);
-			if (Files.exists(Paths.get(path)))
-				Arguments.SCHEMATICS.put(schem, new File(path));
-		}
+		// TODO Add all *.schematics file names to SCHEMATICS
 
 		BIOMES.put("forest", BiomeTypes.FOREST);
 		BIOMES.put("plains", BiomeTypes.PLAINS);
