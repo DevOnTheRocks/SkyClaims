@@ -8,13 +8,14 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 
-public class CommandSetSpawn {
+public class CommandSetSpawn implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
@@ -23,7 +24,7 @@ public class CommandSetSpawn {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SET_SPAWN)
 			.description(Text.of(helpText))
-			.executor(new CommandCreate())
+			.executor(new CommandSetSpawn())
 			.build();
 
 	public static void register() {

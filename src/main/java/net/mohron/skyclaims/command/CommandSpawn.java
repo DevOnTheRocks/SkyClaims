@@ -30,7 +30,7 @@ public class CommandSpawn implements CommandExecutor {
 			.permission(Permissions.COMMAND_SPAWN)
 			.description(Text.of(helpText))
 			.arguments(GenericArguments.optional(GenericArguments.user(Arguments.USER)))
-			.executor(new CommandCreate())
+			.executor(new CommandSpawn())
 			.build();
 
 	public static void register() {

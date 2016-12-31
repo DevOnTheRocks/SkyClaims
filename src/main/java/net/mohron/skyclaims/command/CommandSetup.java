@@ -20,7 +20,7 @@ public class CommandSetup implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SETUP)
 			.description(Text.of(helpText))
-			.executor(new CommandCreate())
+			.executor(new CommandSetup())
 			.build();
 
 	public static void register() {

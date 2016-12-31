@@ -11,6 +11,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -20,7 +21,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Optional;
 
-public class CommandInfo {
+public class CommandInfo implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
@@ -30,7 +31,7 @@ public class CommandInfo {
 			.permission(Permissions.COMMAND_INFO)
 			.description(Text.of(helpText))
 			.arguments(GenericArguments.optional(GenericArguments.user(Arguments.USER)))
-			.executor(new CommandCreate())
+			.executor(new CommandInfo())
 			.build();
 
 	public static void register() {
