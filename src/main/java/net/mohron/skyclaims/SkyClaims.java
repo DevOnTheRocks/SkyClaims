@@ -77,6 +77,7 @@ public class SkyClaims {
 			return;
 		}
 
+		// GriefPrevention integration
 		try {
 			Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
 			SkyClaims.griefPrevention = GriefPrevention.instance;

@@ -11,7 +11,7 @@ public class ClaimSystemFactory {
             return claimSystem;
 
         try {
-            Class.forName("me.ryanhamshire.griefprevention.claim.Claim");
+            Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
             claimSystem = new GPClaimSystem();
         } catch (ClassNotFoundException e) {
             claimSystem = new BasicClaimSystem();
