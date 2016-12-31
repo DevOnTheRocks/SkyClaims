@@ -8,6 +8,8 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,11 +22,13 @@ public class SkyClaimsConfig {
 	private CommentedConfigurationNode config;
 	private Path configDir = plugin.getConfigDir();
 	private Path configFile;
+	private Path deafultSchematic;
 
 	public SkyClaimsConfig() {
 		logger.info(String.format("Initializing %s configuration.", PluginInfo.NAME));
 
 		configFile = Paths.get(String.format("%s\\%s.conf", configDir, PluginInfo.NAME));
+		deafultSchematic = Paths.get(String.format("%s\\island.schematic", configDir));
 		config = load();
 
 //		try {
@@ -49,8 +53,16 @@ public class SkyClaimsConfig {
 		if (!Files.exists(configFile)) {
 			try {
 				Files.createFile(configFile);
+
 			} catch (IOException e) {
 				logger.error(String.format("Failed to generate configuration file.\r\n %s", e.getMessage()));
+			}
+		}
+		if (!Files.exists(deafultSchematic)) {
+			try {
+				Files.createFile(deafultSchematic);
+			} catch (IOException e) {
+				logger.error(String.format("Failed to create configuration folder.\r\n %s", e.getMessage()));
 			}
 		}
 		try {
