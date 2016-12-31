@@ -53,7 +53,6 @@ public class SkyClaimsConfig {
 		if (!Files.exists(configFile)) {
 			try {
 				Files.createFile(configFile);
-
 			} catch (IOException e) {
 				logger.error(String.format("Failed to generate configuration file.\r\n %s", e.getMessage()));
 			}
@@ -62,7 +61,7 @@ public class SkyClaimsConfig {
 			try {
 				Files.createFile(deafultSchematic);
 			} catch (IOException e) {
-				logger.error(String.format("Failed to create configuration folder.\r\n %s", e.getMessage()));
+				logger.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
 			}
 		}
 		try {
