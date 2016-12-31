@@ -34,7 +34,7 @@ public class WorldUtil {
 						&& !claim.getClaimData().getBuilders().contains(player.getUniqueId())
 						&& !claim.getClaimData().getManagers().contains(player.getUniqueId())
 						&& !player.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
-					player.sendMessage(Text.of(TextColors.RED, "You do not have permission to use the teleport feature in this claim."));
+					player.sendMessage(Text.of(TextColors.RED, "You do not have permission to teleport to the specified island."));
 					return;
 				}
 			}
