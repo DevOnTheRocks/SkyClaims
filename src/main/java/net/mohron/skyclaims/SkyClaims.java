@@ -99,6 +99,7 @@ public class SkyClaims {
 		} catch (ClassNotFoundException e) {
 			getLogger().info("WorldEdit Integration Failed!");
 		}
+		Sponge.getGame().getEventManager().registerListeners(this, new SchematicHandler());
 	}
 
 	@Listener
