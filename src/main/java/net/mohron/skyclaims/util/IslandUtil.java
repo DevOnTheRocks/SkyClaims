@@ -3,7 +3,6 @@ package net.mohron.skyclaims.util;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
-import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.claim.ClaimSystemFactory;
 import net.mohron.skyclaims.claim.IClaim;
@@ -16,8 +15,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.io.File;
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -124,17 +122,17 @@ public class IslandUtil {
 	 */
 	public static ArrayList<Point> generateRegionSpiral() {
 		int islandCount = SkyClaims.islands.size();
-		int generationSize = (int)Math.sqrt((double)islandCount) + 1;
+		int generationSize = (int) Math.sqrt((double) islandCount) + 1;
 
 		ArrayList<Point> coordinates = new ArrayList<Point>(generationSize);
 		int[] delta = {0, -1};
 		int x = 0;
 		int y = 0;
 
-		for (int i = (int)Math.pow(Math.max(generationSize, generationSize), 2); i > 0; i--) {
-			if ((-generationSize/2 < x && x <= generationSize/2) && (-generationSize/2 < y && y <= generationSize/2))
+		for (int i = (int) Math.pow(Math.max(generationSize, generationSize), 2); i > 0; i--) {
+			if ((-generationSize / 2 < x && x <= generationSize / 2) && (-generationSize / 2 < y && y <= generationSize / 2))
 				coordinates.add(new Point(x, y));
-			if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1-y)) {
+			if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1 - y)) {
 				// change direction
 				delta[0] = -delta[1];
 				delta[1] = delta[0];

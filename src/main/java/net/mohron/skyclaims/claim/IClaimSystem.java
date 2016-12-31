@@ -7,10 +7,8 @@ import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.UUID;
 
-/**
- * Created by cossacksman on 30/12/16.
- */
 public interface IClaimSystem {
-    public IClaimResult createClaim(World world, Vector3i a, Vector3i b, UUID claimId, IClaim parent, IClaim.Type claimType, boolean cuboid, Player player);
-    public IClaim getClaim(WorldProperties world, UUID claimId);
+	public IClaimResult createClaim(World world, Vector3i a, Vector3i b, UUID claimId, IClaim parent, IClaim.Type claimType, boolean cuboid, Player player);
+
+	public IClaim getClaim(WorldProperties world, UUID claimId);
 }

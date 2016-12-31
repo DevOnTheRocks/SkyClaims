@@ -15,8 +15,6 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-import java.io.File;
-
 public class CommandCreate implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();

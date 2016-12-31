@@ -2,8 +2,6 @@ package net.mohron.skyclaims;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.island.Island;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -40,7 +38,7 @@ public class Database {
 					"y			INT," +
 					"z			INT," +
 					"world		STRING" +
-				")";
+					")";
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);

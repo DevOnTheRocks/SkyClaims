@@ -43,195 +43,195 @@ import java.util.Set;
 import java.util.UUID;
 
 public class GPClaim implements IClaim {
-    public GPClaim() {
+	public GPClaim() {
 
-    }
+	}
 
-    public Visualization getVisualizer() {
-        return null;
-    }
+	public Visualization getVisualizer() {
+		return null;
+	}
 
-    public UUID getOwnerUniqueId() {
-        return null;
-    }
+	public UUID getOwnerUniqueId() {
+		return null;
+	}
 
-    public boolean isAdminClaim() {
-        return false;
-    }
+	public boolean isAdminClaim() {
+		return false;
+	}
 
-    public boolean isBasicClaim() {
-        return false;
-    }
+	public boolean isBasicClaim() {
+		return false;
+	}
 
-    public boolean isSubdivision() {
-        return false;
-    }
+	public boolean isSubdivision() {
+		return false;
+	}
 
-    public boolean isWildernessClaim() {
-        return false;
-    }
+	public boolean isWildernessClaim() {
+		return false;
+	}
 
-    public UUID getID() {
-        return null;
-    }
+	public UUID getID() {
+		return null;
+	}
 
-    public boolean canSiege(Player defender) {
-        return false;
-    }
+	public boolean canSiege(Player defender) {
+		return false;
+	}
 
-    public void removeSurfaceFluids(Claim exclusionClaim) {
+	public void removeSurfaceFluids(Claim exclusionClaim) {
 
-    }
+	}
 
-    public boolean hasSurfaceFluids() {
-        return false;
-    }
+	public boolean hasSurfaceFluids() {
+		return false;
+	}
 
-    public int getArea() {
-        return 0;
-    }
+	public int getArea() {
+		return 0;
+	}
 
-    public int getWidth() {
-        return 0;
-    }
+	public int getWidth() {
+		return 0;
+	}
 
-    public int getHeight() {
-        return 0;
-    }
+	public int getHeight() {
+		return 0;
+	}
 
-    public boolean hasFullAccess(User user) {
-        return false;
-    }
+	public boolean hasFullAccess(User user) {
+		return false;
+	}
 
-    public boolean hasFullTrust(User user) {
-        return false;
-    }
+	public boolean hasFullTrust(User user) {
+		return false;
+	}
 
-    public String allowEdit(Player player) {
-        return null;
-    }
+	public String allowEdit(Player player) {
+		return null;
+	}
 
-    public String allowBuild(Object source, Location<World> location, User user) {
-        return null;
-    }
+	public String allowBuild(Object source, Location<World> location, User user) {
+		return null;
+	}
 
-    public String allowBreak(Object source, BlockSnapshot blockSnapshot, User user) {
-        return null;
-    }
+	public String allowBreak(Object source, BlockSnapshot blockSnapshot, User user) {
+		return null;
+	}
 
-    public String allowAccess(User user) {
-        return null;
-    }
+	public String allowAccess(User user) {
+		return null;
+	}
 
-    public String allowAccess(User user, Location<World> location) {
-        return null;
-    }
+	public String allowAccess(User user, Location<World> location) {
+		return null;
+	}
 
-    public String allowAccess(User user, Location<World> location, boolean interact) {
-        return null;
-    }
+	public String allowAccess(User user, Location<World> location, boolean interact) {
+		return null;
+	}
 
-    public String allowItemDrop(User user, Location<World> location) {
-        return null;
-    }
+	public String allowItemDrop(User user, Location<World> location) {
+		return null;
+	}
 
-    public String allowContainers(User user, Location<World> location) {
-        return null;
-    }
+	public String allowContainers(User user, Location<World> location) {
+		return null;
+	}
 
-    public String allowGrantPermission(Player player) {
-        return null;
-    }
+	public String allowGrantPermission(Player player) {
+		return null;
+	}
 
-    public void clearPermissions() {
+	public void clearPermissions() {
 
-    }
+	}
 
-    public Location<World> getLesserBoundaryCorner() {
-        return null;
-    }
+	public Location<World> getLesserBoundaryCorner() {
+		return null;
+	}
 
-    public Location<World> getGreaterBoundaryCorner() {
-        return null;
-    }
+	public Location<World> getGreaterBoundaryCorner() {
+		return null;
+	}
 
-    public String getOwnerName() {
-        return null;
-    }
+	public String getOwnerName() {
+		return null;
+	}
 
-    public World getWorld() {
-        return null;
-    }
+	public World getWorld() {
+		return null;
+	}
 
-    public boolean contains(Location<World> location, boolean ignoreHeight, boolean excludeSubdivisions) {
-        return false;
-    }
+	public boolean contains(Location<World> location, boolean ignoreHeight, boolean excludeSubdivisions) {
+		return false;
+	}
 
-    public boolean contains(Location<World> location) {
-        return false;
-    }
+	public boolean contains(Location<World> location) {
+		return false;
+	}
 
-    public boolean overlaps(Claim otherClaim) {
-        return false;
-    }
+	public boolean overlaps(Claim otherClaim) {
+		return false;
+	}
 
-    public String allowMoreEntities() {
-        return null;
-    }
+	public String allowMoreEntities() {
+		return null;
+	}
 
-    public boolean greaterThan(Claim otherClaim) {
-        return false;
-    }
+	public boolean greaterThan(Claim otherClaim) {
+		return false;
+	}
 
-    public ArrayList<Chunk> getChunks() {
-        return null;
-    }
+	public ArrayList<Chunk> getChunks() {
+		return null;
+	}
 
-    public Set<Long> getChunkHashes() {
-        return null;
-    }
+	public Set<Long> getChunkHashes() {
+		return null;
+	}
 
-    public IClaimData getClaimData() {
-        return null;
-    }
+	public IClaimData getClaimData() {
+		return null;
+	}
 
-    public ClaimStorageData getClaimStorage() {
-        return null;
-    }
+	public ClaimStorageData getClaimStorage() {
+		return null;
+	}
 
-    public void setClaimData(IClaimData data) {
+	public void setClaimData(IClaimData data) {
 
-    }
+	}
 
-    public void setClaimStorage(ClaimStorageData storage) {
+	public void setClaimStorage(ClaimStorageData storage) {
 
-    }
+	}
 
-    public void updateClaimStorageData() {
+	public void updateClaimStorageData() {
 
-    }
+	}
 
-    public boolean protectPlayersInClaim() {
-        return false;
-    }
+	public boolean protectPlayersInClaim() {
+		return false;
+	}
 
-    public boolean isPvpEnabled() {
-        return false;
-    }
+	public boolean isPvpEnabled() {
+		return false;
+	}
 
-    public void setPvpEnabled(Tristate value) {
+	public void setPvpEnabled(Tristate value) {
 
-    }
+	}
 
-    public boolean pvpRulesApply() {
-        return false;
-    }
+	public boolean pvpRulesApply() {
+		return false;
+	}
 
-    public void unload() {
+	public void unload() {
 
-    }
+	}
 
-    public Context getContext() {
-        return null;
-    }
+	public Context getContext() {
+		return null;
+	}
 }
