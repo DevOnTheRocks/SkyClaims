@@ -62,7 +62,7 @@ public class SkyClaimsConfig {
 				String filePath = this.getClass().getResource("island.schematic").getPath();
 				Files.copy(new File(filePath).toPath(), defaultSchematic);
 			} catch (IOException e) {
-				logger.error(String.format("Failed to create configuration folder.\r\n %s", e.getMessage()));
+				logger.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
 			}
 		}
 		try {
