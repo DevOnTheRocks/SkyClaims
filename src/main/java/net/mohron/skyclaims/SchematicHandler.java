@@ -2,6 +2,7 @@ package net.mohron.skyclaims;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Maps;
+import net.mohron.skyclaims.lib.Permissions;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -12,7 +13,6 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.extent.ArchetypeVolume;
 
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +23,7 @@ public class SchematicHandler {
 
 	@Listener
 	public void onInteract(InteractBlockEvent.Secondary.MainHand event, @Root Player player) {
+		if (!player.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) return;
 		Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
 		if (item.isPresent() && item.get().getItem().equals(ItemTypes.GOLDEN_AXE) && event.getTargetBlock() != BlockSnapshot.NONE) {
 			get(player).setPos2(event.getTargetBlock().getPosition());
@@ -33,6 +34,7 @@ public class SchematicHandler {
 
 	@Listener
 	public void onInteract(InteractBlockEvent.Primary.MainHand event, @Root Player player) {
+		if (!player.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) return;
 		Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
 		if (item.isPresent() && item.get().getItem().equals(ItemTypes.GOLDEN_AXE)) {
 			get(player).setPos1(event.getTargetBlock().getPosition());
@@ -46,7 +48,6 @@ public class SchematicHandler {
 		private final UUID uid;
 		private Vector3i pos1;
 		private Vector3i pos2;
-		private ArchetypeVolume clipboard;
 
 		public PlayerData(UUID uid) {
 			this.uid = uid;
@@ -70,14 +71,6 @@ public class SchematicHandler {
 
 		public void setPos2(Vector3i pos) {
 			this.pos2 = pos;
-		}
-
-		public ArchetypeVolume getClipboard() {
-			return this.clipboard;
-		}
-
-		public void setClipboard(ArchetypeVolume volume) {
-			this.clipboard = volume;
 		}
 	}
 
