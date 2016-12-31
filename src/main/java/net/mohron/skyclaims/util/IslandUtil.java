@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.util;
 
+import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
@@ -81,12 +82,8 @@ public class IslandUtil {
 		IClaimResult createClaimResult;
 		createClaimResult = claimSystem.createClaim(
 				ConfigUtil.getWorld(),
-				x * 512,
-				x * 512 + MAX_ISLAND_SIZE,
-				1,
-				255,
-				z * 512,
-				z * 512 + MAX_ISLAND_SIZE,
+				new Vector3i(x * 512, x * 512 + MAX_ISLAND_SIZE, 1),
+				new Vector3i(255, z * 512, z * 512 + MAX_ISLAND_SIZE),
 				UUID.randomUUID(),
 				null,
 				IClaim.Type.BASIC,
