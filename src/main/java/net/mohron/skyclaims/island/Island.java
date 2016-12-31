@@ -2,8 +2,10 @@ package net.mohron.skyclaims.island;
 
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
-import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.claim.ClaimSystemFactory;
+import net.mohron.skyclaims.claim.IClaim;
+import net.mohron.skyclaims.claim.IClaimSystem;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
@@ -18,12 +20,13 @@ import java.util.concurrent.ExecutionException;
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final DataStore GRIEF_PREVENTION_DATA = PLUGIN.getGriefPrevention().dataStore;
+	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
 
 	private UUID owner;
-	private Claim claim;
+	private IClaim claim;
 	private Location<World> spawn;
 
-	public Island(UUID owner, Claim claim, File schematic) {
+	public Island(UUID owner, IClaim claim, File schematic) {
 		this.owner = owner;
 		this.claim = claim;
 
@@ -37,7 +40,7 @@ public class Island {
 		World world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld);
 
 		this.owner = owner;
-		this.claim = GRIEF_PREVENTION_DATA.getClaim(world.getProperties(), claimId);
+		this.claim = claimSystem.getClaim(world.getProperties(), claimId);
 		this.spawn = new Location<>(world, spawnLocation);
 	}
 
@@ -61,7 +64,7 @@ public class Island {
 		}
 	}
 
-	public Claim getClaim() {
+	public IClaim getClaim() {
 		return claim;
 	}
 

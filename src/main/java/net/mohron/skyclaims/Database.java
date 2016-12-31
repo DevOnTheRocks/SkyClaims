@@ -109,7 +109,7 @@ public class Database {
 				statement.setInt(3, island.getSpawn().getBlockX());
 				statement.setInt(4, island.getSpawn().getBlockY());
 				statement.setInt(5, island.getSpawn().getBlockZ());
-				statement.setString(6, island.getClaim().world.getUniqueId().toString());
+				statement.setString(6, island.getClaim().getWorld().getUniqueId().toString());
 
 				statement.execute();
 			} catch (SQLException e) {
@@ -132,7 +132,7 @@ public class Database {
 			statement.setInt(3, island.getSpawn().getBlockX());
 			statement.setInt(4, island.getSpawn().getBlockY());
 			statement.setInt(5, island.getSpawn().getBlockZ());
-			statement.setString(6, island.getClaim().world.getUniqueId().toString());
+			statement.setString(6, island.getClaim().getWorld().getUniqueId().toString());
 
 			statement.execute();
 		} catch (SQLException e) {

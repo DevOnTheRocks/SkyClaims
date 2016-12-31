@@ -4,6 +4,10 @@ import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.claim.ClaimSystemFactory;
+import net.mohron.skyclaims.claim.IClaim;
+import net.mohron.skyclaims.claim.IClaimResult;
+import net.mohron.skyclaims.claim.IClaimSystem;
 import net.mohron.skyclaims.config.GlobalConfig;
 import net.mohron.skyclaims.island.GenerateIslandTask;
 import net.mohron.skyclaims.island.Island;
@@ -25,6 +29,7 @@ public class IslandUtil {
 	private static final int MAX_REGIONS = ConfigUtil.get(config.maxRegions, 256);
 	private static int x; // x value of the current region
 	private static int z; // y value of the current region
+	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
 
 	static {
 		// Initialize with stored values before using defaults
@@ -33,9 +38,9 @@ public class IslandUtil {
 	}
 
 	public static Island createIsland(UUID owner, File schematic) {
-		CreateClaimResult claimResult = createIslandClaim(owner);
-		if (!claimResult.succeeded) PLUGIN.getLogger().info("Failed to create claim");
-		return new Island(owner, claimResult.claim, schematic);
+		IClaimResult claimResult = createIslandClaim(owner);
+		if (!claimResult.getStatus()) PLUGIN.getLogger().info("Failed to create claim");
+		return new Island(owner, claimResult.getClaim(), schematic);
 	}
 
 	public static boolean hasIsland(UUID owner) {
@@ -71,10 +76,10 @@ public class IslandUtil {
 		});
 	}
 
-	private static CreateClaimResult createIslandClaim(UUID owner) {
+	private static IClaimResult createIslandClaim(UUID owner) {
 		Player player = PLUGIN.getGame().getServer().getPlayer(owner).get();
-		CreateClaimResult createClaimResult;
-		createClaimResult = GRIEF_PREVENTION_DATA.createClaim(
+		IClaimResult createClaimResult;
+		createClaimResult = claimSystem.createClaim(
 				ConfigUtil.getWorld(),
 				x * 512,
 				x * 512 + MAX_ISLAND_SIZE,
@@ -84,7 +89,7 @@ public class IslandUtil {
 				z * 512 + MAX_ISLAND_SIZE,
 				UUID.randomUUID(),
 				null,
-				Claim.Type.BASIC,
+				IClaim.Type.BASIC,
 				false,
 				player
 		);

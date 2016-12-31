@@ -58,6 +58,7 @@ public interface IClaim {
     public Location<World> getLesserBoundaryCorner();
     public Location<World> getGreaterBoundaryCorner();
     public String getOwnerName();
+    public World getWorld();
     public boolean contains(Location<World> location, boolean ignoreHeight, boolean excludeSubdivisions);
     public boolean contains(Location<World> location);
     public boolean overlaps(Claim otherClaim);

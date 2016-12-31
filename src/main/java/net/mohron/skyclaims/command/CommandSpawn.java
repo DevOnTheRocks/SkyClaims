@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.command;
 
+import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.command.CommandHelper;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
@@ -55,7 +56,7 @@ public class CommandSpawn implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!"));
 
 		if (user.isOnline()) {
-			CommandHelper.createTeleportConsumer(src, island.get().getSpawn(), island.get().getClaim());
+			CommandHelper.createTeleportConsumer(src, island.get().getSpawn(), (Claim)island.get().getClaim());
 		}
 
 		return CommandResult.success();

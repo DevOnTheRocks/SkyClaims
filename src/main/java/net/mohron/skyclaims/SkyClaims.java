@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.ryanhamshire.griefprevention.GriefPrevention;
+import net.mohron.skyclaims.claim.IClaim;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
