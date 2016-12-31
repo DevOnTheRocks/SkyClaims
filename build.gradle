@@ -23,10 +23,6 @@ repositories {
         url = 'http://files.minecraftforge.net/maven'
     }
     maven {
-        name = 'worldedit'
-        url "http://maven.sk89q.com/repo/"
-    }
-    maven {
         name = 'luckperms'
         url "https://repo.lucko.me/"
     }
@@ -35,6 +31,5 @@ repositories {
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
     compile ("me.ryanhamshire:griefprevention:1.10.2-2.2.0.205")
-    compile ("com.sk89q.worldedit:worldedit-sponge-mc1.10.2:6.1.4-SNAPSHOT")
     compile ("me.lucko.luckperms:luckperms-api:2.8")
 }

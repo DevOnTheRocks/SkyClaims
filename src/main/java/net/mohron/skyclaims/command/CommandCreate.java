@@ -42,19 +42,19 @@ public class CommandCreate implements CommandExecutor {
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (!(src instanceof Player))
-			throw new CommandException(Text.of("You must be a player to run this command!"));
+			throw new CommandException(Text.of("You must be a player to use this command!"));
 
 		Player player = (Player) src;
-		File schematic = new File(String.format("%s\\Island.schem", PLUGIN.getConfigDir()));
+		String schematic = "island";
 
 		if (IslandUtil.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
 		if (args.getOne(Arguments.SCHEMATIC).isPresent())
-			schematic = (File) args.getOne(Arguments.SCHEMATIC).get();
+			schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
-		Island island = IslandUtil.createIsland(player.getUniqueId(), schematic);
+		Island island = IslandUtil.createIsland(player, schematic);
 
 		return CommandResult.success();
 	}

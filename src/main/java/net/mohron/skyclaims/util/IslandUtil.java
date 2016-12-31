@@ -38,8 +38,8 @@ public class IslandUtil {
 		z = 1;
 	}
 
-	public static Island createIsland(UUID owner, File schematic) {
-		IClaimResult claimResult = createIslandClaim(owner);
+	public static Island createIsland(Player owner, String schematic) {
+		IClaimResult claimResult = createIslandClaim(owner.getUniqueId());
 		if (!claimResult.getStatus()) PLUGIN.getLogger().info("Failed to create claim");
 		return new Island(owner, claimResult.getClaim(), schematic);
 	}
@@ -69,10 +69,10 @@ public class IslandUtil {
 			return Optional.empty();
 	}
 
-	public static void resetIsland(UUID owner, File schematic) {
-		clearIsland(owner);
-		getIsland(owner).ifPresent(island -> {
-			GenerateIslandTask generateIsland = new GenerateIslandTask(island, schematic);
+	public static void resetIsland(Player owner, String schematic) {
+		clearIsland(owner.getUniqueId());
+		getIsland(owner.getUniqueId()).ifPresent(island -> {
+			GenerateIslandTask generateIsland = new GenerateIslandTask(owner, island, schematic);
 			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
 		});
 	}

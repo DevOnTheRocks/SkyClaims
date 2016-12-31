@@ -1,10 +1,8 @@
 package net.mohron.skyclaims;
 
 import com.google.inject.Inject;
-import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.ryanhamshire.griefprevention.GriefPrevention;
-import net.mohron.skyclaims.claim.IClaim;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
@@ -39,13 +37,11 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		dependencies = {
 				@Dependency(id = "griefprevention", optional = true),
 				@Dependency(id = "luckperms", optional = true),
-				@Dependency(id = "worldedit", optional = true)
 		})
 public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPrevention griefPrevention;
 	private static LuckPermsApi luckPerms;
-	private static SpongeWorldEdit spongeWorldEdit;
 	public PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
@@ -92,13 +88,6 @@ public class SkyClaims {
 			getLogger().info("LuckPerms Integration Successful!");
 		});
 
-		try {
-			Class.forName("com.sk89q.worldedit.sponge.SpongeWorldEdit");
-			SkyClaims.spongeWorldEdit = SpongeWorldEdit.inst();
-			getLogger().info("WorldEdit Integration Successful!");
-		} catch (ClassNotFoundException e) {
-			getLogger().info("WorldEdit Integration Failed!");
-		}
 		Sponge.getGame().getEventManager().registerListeners(this, new SchematicHandler());
 	}
 
@@ -111,7 +100,6 @@ public class SkyClaims {
 		getLogger().info("ISLAND LENGTH: " + islands.keySet().size());
 
 		registerCommands();
-		// TODO - Load database data into memory
 		getLogger().info("Initialization complete.");
 	}
 
@@ -136,6 +124,7 @@ public class SkyClaims {
 		CommandInfo.register();
 		CommandIsland.register();
 		CommandReset.register();
+		CommandCreateSchematic.register();
 		CommandSetBiome.register();
 		CommandSetSpawn.register();
 		CommandSetup.register();
@@ -152,10 +141,6 @@ public class SkyClaims {
 
 	public LuckPermsApi getLuckPerms() {
 		return luckPerms;
-	}
-
-	public SpongeWorldEdit getSpongeWorldEdit() {
-		return spongeWorldEdit;
 	}
 
 	public Logger getLogger() {

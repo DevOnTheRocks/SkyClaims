@@ -21,7 +21,7 @@ public class CommandIsland implements CommandExecutor {
 	private static CommandSpec commandSpec = CommandSpec.builder()
 			.description(Text.of(helpText))
 			.child(CommandAdmin.commandSpec, "admin")
-			.child(CommandCreate.commandSpec, "create")
+			/*.child(CommandCreate.commandSpec, "create")*/
 			.child(CommandHelp.commandSpec, "help")
 			.child(CommandInfo.commandSpec, "info")
 			.child(CommandReset.commandSpec, "reset")
