@@ -51,8 +51,6 @@ public class WorldUtil {
 	}
 
 	public static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
-		return teleport -> {
-			player.setLocation(location);
-		};
+		return teleport -> player.setLocation(location);
 	}
 }
