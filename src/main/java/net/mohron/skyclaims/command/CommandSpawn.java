@@ -48,13 +48,14 @@ public class CommandSpawn implements CommandExecutor {
 		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
 		}
+		Player player = (Player) src;
 		User user = (args.getOne(Arguments.USER).isPresent()) ? (User) args.getOne(Arguments.USER).get() : (User) src;
 		Optional<Island> island = IslandUtil.getIsland(user.getUniqueId());
 
 		if (!island.isPresent())
 			throw new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!"));
 
-		if (!island.get().hasPermissions((Player) src) || !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
+		if (!player.getUniqueId().equals(island.get().getOwner()) || !island.get().hasPermissions(player) || !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
 			throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
 
 		if (user.isOnline()) {
