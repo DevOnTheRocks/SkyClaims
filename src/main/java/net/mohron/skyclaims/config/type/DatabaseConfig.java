@@ -1,4 +1,4 @@
-package net.mohron.skyclaims.config;
+package net.mohron.skyclaims.config.type;
 
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;

@@ -8,7 +8,7 @@ import net.mohron.skyclaims.claim.ClaimSystemFactory;
 import net.mohron.skyclaims.claim.IClaim;
 import net.mohron.skyclaims.claim.IClaimResult;
 import net.mohron.skyclaims.claim.IClaimSystem;
-import net.mohron.skyclaims.config.GlobalConfig;
+import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.GenerateIslandTask;
 import net.mohron.skyclaims.island.Island;
 import org.spongepowered.api.entity.living.player.Player;
@@ -25,7 +25,6 @@ public class IslandUtil {
 	private static final DataStore GRIEF_PREVENTION_DATA = PLUGIN.getGriefPrevention().dataStore;
 	private static final int MAX_ISLAND_SIZE = 512; // 32 x 32 chunks
 	private static GlobalConfig config = PLUGIN.getConfig();
-	private static final int MAX_REGIONS = ConfigUtil.get(config.maxRegions, 256);
 	private static int x; // x value of the current region
 	private static int z; // y value of the current region
 	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
@@ -89,18 +88,13 @@ public class IslandUtil {
 				player
 		);
 
-		if (z > MAX_REGIONS) {
-			z = 0;
-			x++;
-		}
-
 		return createClaimResult;
 	}
 
 	public static void buildIsland(Island island) {
 		//TODO Build an "island" in the center of the owners island using a schematic
 		int x = island.getCenter().getBlockX();
-		int y = ConfigUtil.get(PLUGIN.getConfig().defaultHeight, 64);
+		int y = ConfigUtil.get(PLUGIN.getConfig().world.defaultHeight, 64);
 		int z = island.getCenter().getBlockZ();
 
 

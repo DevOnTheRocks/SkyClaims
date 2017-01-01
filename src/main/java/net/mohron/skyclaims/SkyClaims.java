@@ -4,12 +4,16 @@ import com.google.inject.Inject;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import net.mohron.skyclaims.command.*;
-import net.mohron.skyclaims.config.GlobalConfig;
+import net.mohron.skyclaims.config.ConfigManager;
+import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
@@ -42,19 +46,28 @@ public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPrevention griefPrevention;
 	private static LuckPermsApi luckPerms;
-	public PermissionService permissionService;
+	public static PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
 	@Inject
 	private Logger logger;
+
 	@Inject
 	private Game game;
-	//@Inject private Metrics metrics;
+
+	//@Inject
+	//private Metrics metrics;
+
 	@Inject
 	@ConfigDir(sharedRoot = false)
 	private Path configDir;
+	@Inject
+	@DefaultConfig(sharedRoot = false)
+	private ConfigurationLoader<CommentedConfigurationNode> configManager;
+	private GlobalConfig defaultConfig;
+	private ConfigManager pluginConfigManager;
+
 	private Database database;
-	private GlobalConfig config;
 
 	@Listener
 	public void onPostInitialization(GamePostInitializationEvent event) {
@@ -62,12 +75,12 @@ public class SkyClaims {
 
 		instance = this;
 
-		//TODO Setup the world with a sponge:void world gen modifier if not already created
+		//TODO Setup the worldName with a sponge:void worldName gen modifier if not already created
 	}
 
 	@Listener(order = Order.LATE)
 	public void onAboutToStart(GameAboutToStartServerEvent event) {
-		this.permissionService = Sponge.getServiceManager().provide(PermissionService.class).get();
+		SkyClaims.permissionService = Sponge.getServiceManager().provide(PermissionService.class).get();
 		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
 			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin.");
 			return;
@@ -88,18 +101,21 @@ public class SkyClaims {
 			getLogger().info("LuckPerms Integration Successful!");
 		});
 
+		defaultConfig = new GlobalConfig();
+		pluginConfigManager = new ConfigManager(configManager);
+		pluginConfigManager.save();
+
 		Sponge.getGame().getEventManager().registerListeners(this, new SchematicHandler());
+
+		registerCommands();
 	}
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
-		config = new GlobalConfig();
-
 		database = new Database("SkyClaims.db");
 		islands = database.loadData();
 		getLogger().info("ISLAND LENGTH: " + islands.keySet().size());
 
-		registerCommands();
 		getLogger().info("Initialization complete.");
 	}
 
@@ -152,18 +168,14 @@ public class SkyClaims {
 	}
 
 	public GlobalConfig getConfig() {
-		return config;
+		return this.defaultConfig;
 	}
 
-	public void setConfig(GlobalConfig config) {
-		this.config = config;
+	public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {
+		return this.configManager;
 	}
 
 	public Path getConfigDir() {
 		return configDir;
-	}
-
-	public Database getDatabase() {
-		return database;
 	}
 }

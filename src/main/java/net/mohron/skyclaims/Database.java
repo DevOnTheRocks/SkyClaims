@@ -37,7 +37,7 @@ public class Database {
 					"x			INT," +
 					"y			INT," +
 					"z			INT," +
-					"world		STRING" +
+					"worldName		STRING" +
 					")";
 
 			// Create the islands table (execute statement)
@@ -72,7 +72,7 @@ public class Database {
 			while (results.next()) {
 				UUID claimId = UUID.fromString(results.getString("id"));
 				UUID ownerId = UUID.fromString(results.getString("owner"));
-				UUID worldId = UUID.fromString(results.getString("world"));
+				UUID worldId = UUID.fromString(results.getString("worldName"));
 				int x = results.getInt("x");
 				int y = results.getInt("y");
 				int z = results.getInt("z");
@@ -99,7 +99,7 @@ public class Database {
 	 */
 	public void saveData(Map<UUID, Island> islands) {
 		for (Island island : islands.values()) {
-			String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
+			String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
 
 			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 				statement.setString(1, island.getOwner().toString());
@@ -122,7 +122,7 @@ public class Database {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, world) VALUES(?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwner().toString());
