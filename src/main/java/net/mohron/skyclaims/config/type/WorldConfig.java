@@ -7,16 +7,16 @@ import org.spongepowered.api.world.biome.BiomeTypes;
 
 @ConfigSerializable
 public class WorldConfig {
-	@Setting(value = "SkyClaims-Dimension")
+	@Setting(value = "SkyClaims-World", comment = "Name of the world to manage islands in. Default: world")
 	public String worldName;
-	@Setting(value = "Default-Biome")
+	@Setting(value = "Default-Biome", comment = "Name of the biome to change islands to upon creation. Default: null")
 	public String defaultBiome;
-	@Setting(value = "Island-Height")
+	@Setting(value = "Island-Height", comment = "Height to build islands at. Default: 64")
 	public Integer defaultHeight;
 
 	public WorldConfig() {
 		worldName = Sponge.getGame().getServer().getDefaultWorldName();
-		defaultBiome = BiomeTypes.PLAINS.getName();
+		defaultBiome = null;
 		defaultHeight = 64;
 	}
 }
