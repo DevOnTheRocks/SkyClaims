@@ -31,7 +31,7 @@ public class CommandCreate implements CommandExecutor {
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().info("Registered command: CommandCreate");
+			PLUGIN.getLogger().debug("Registered command: CommandCreate");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandCreate");

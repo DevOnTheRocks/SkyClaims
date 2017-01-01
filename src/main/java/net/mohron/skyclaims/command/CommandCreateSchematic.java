@@ -3,6 +3,7 @@ package net.mohron.skyclaims.command;
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SchematicHandler;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -24,7 +25,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.zip.GZIPOutputStream;
 
-import static org.spongepowered.api.command.args.GenericArguments.seq;
 import static org.spongepowered.api.command.args.GenericArguments.string;
 
 public class CommandCreateSchematic implements CommandExecutor {
@@ -36,14 +36,14 @@ public class CommandCreateSchematic implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE_SCHEMATIC)
 			.description(Text.of(helpText))
-			.arguments(seq(string(Text.of("format")), string(Text.of("name"))))
+			.arguments(string(Arguments.NAME))
 			.executor(new CommandCreateSchematic())
 			.build();
 
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().info("Registered command: CommandCreateSchematic");
+			PLUGIN.getLogger().debug("Registered command: CommandCreateSchematic");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandCreateSchematic");
@@ -66,25 +66,16 @@ public class CommandCreateSchematic implements CommandExecutor {
 		Vector3i max = data.getPos1().max(data.getPos2());
 		ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, player.getLocation().getPosition().toInt());
 
-		String format = args.getOne("format").get().toString();
-		String name = args.getOne("name").get().toString();
+		String name = args.getOne(Arguments.NAME).get().toString();
 
-		if (!"legacy".equalsIgnoreCase(format) && !"sponge".equalsIgnoreCase(format)) {
-			player.sendMessage(Text.of(TextColors.RED, "Unsupported schematic format, supported formats are [legacy, sponge]"));
-			return CommandResult.success();
-		}
 		Schematic schematic = Schematic.builder()
 				.volume(volume)
 				.metaValue(Schematic.METADATA_AUTHOR, player.getName())
 				.metaValue(Schematic.METADATA_NAME, name)
 				.paletteType(BlockPaletteTypes.LOCAL)
 				.build();
-		DataContainer schematicData = null;
-		if ("legacy".equalsIgnoreCase(format)) {
-			schematicData = DataTranslators.LEGACY_SCHEMATIC.translate(schematic);
-		} else if ("sponge".equalsIgnoreCase(format)) {
-			schematicData = DataTranslators.SCHEMATIC.translate(schematic);
-		}
+		DataContainer schematicData = DataTranslators.SCHEMATIC.translate(schematic);
+
 		File outputFile = new File(CONFIG_DIR, name + ".schematic");
 		try {
 			DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(outputFile)), schematicData);

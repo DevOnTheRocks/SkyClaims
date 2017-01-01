@@ -28,7 +28,7 @@ public class CommandAdmin {
 	public static void register() {
 		try {
 			Sponge.getCommandManager().register(PLUGIN, commandSpec, "admin");
-			PLUGIN.getLogger().info("Registered command: CommandAdmin");
+			PLUGIN.getLogger().debug("Registered command: CommandAdmin");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandAdmin");

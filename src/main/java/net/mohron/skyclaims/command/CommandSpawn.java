@@ -36,7 +36,7 @@ public class CommandSpawn implements CommandExecutor {
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().info("Registered command: CommandSpawn");
+			PLUGIN.getLogger().debug("Registered command: CommandSpawn");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandSpawn");

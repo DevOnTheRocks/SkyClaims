@@ -37,7 +37,7 @@ public class CommandInfo implements CommandExecutor {
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().info("Registered command: CommandInfo");
+			PLUGIN.getLogger().debug("Registered command: CommandInfo");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandInfo");
@@ -54,9 +54,10 @@ public class CommandInfo implements CommandExecutor {
 			}
 			User user = (args.getOne(Arguments.USER).isPresent()) ? (User) args.getOne(Arguments.USER).get() : (User) src;
 			Optional<Island> islandOptional = IslandUtil.getIsland(user.getUniqueId());
+			String name = (user.getName().equalsIgnoreCase(src.getName())) ? user.getName() : "You";
 
 			if (!islandOptional.isPresent())
-				throw new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!"));
+				throw new CommandException(Text.of(TextColors.RED, name, " must have an Island to use this command!"));
 
 			Island island = islandOptional.get();
 			Text infoText = Text.of(

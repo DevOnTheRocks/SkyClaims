@@ -30,7 +30,7 @@ public class CommandSetSpawn implements CommandExecutor {
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().info("Registered command: CommandSetSpawn");
+			PLUGIN.getLogger().debug("Registered command: CommandSetSpawn");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandSetSpawn");

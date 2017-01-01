@@ -21,7 +21,7 @@ public class CommandReset implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "delete your island and inventory so you can start over.";
+	public static String helpText = "delete your island and inventory so you can start over";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_RESET)
@@ -33,7 +33,7 @@ public class CommandReset implements CommandExecutor {
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "reset");
-			PLUGIN.getLogger().info("Registered command: CommandReset");
+			PLUGIN.getLogger().debug("Registered command: CommandReset");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandReset");

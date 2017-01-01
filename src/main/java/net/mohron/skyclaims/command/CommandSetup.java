@@ -26,7 +26,7 @@ public class CommandSetup implements CommandExecutor {
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().info("Registered command: CommandSetup");
+			PLUGIN.getLogger().debug("Registered command: CommandSetup");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandSetup");

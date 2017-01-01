@@ -36,7 +36,7 @@ public class CommandSetBiome implements CommandExecutor {
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "setbiome");
-			PLUGIN.getLogger().info("Registered command: CommandSetBiome");
+			PLUGIN.getLogger().debug("Registered command: CommandSetBiome");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandSetBiome");

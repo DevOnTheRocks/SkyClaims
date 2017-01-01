@@ -34,7 +34,7 @@ public class CommandIsland implements CommandExecutor {
 	public static void register() {
 		try {
 			Sponge.getCommandManager().register(PLUGIN, commandSpec, "skyclaims", "island", "is");
-			PLUGIN.getLogger().info("Registered command: CommandIsland");
+			PLUGIN.getLogger().debug("Registered command: CommandIsland");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
 			PLUGIN.getLogger().error("Failed to register command: CommandIsland");
