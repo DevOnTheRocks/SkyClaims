@@ -139,6 +139,7 @@ public class SkyClaims {
 		CommandHelp.register();
 		CommandInfo.register();
 		CommandIsland.register();
+		CommandList.register();
 		CommandReset.register();
 		CommandCreateSchematic.register();
 		CommandSetBiome.register();
