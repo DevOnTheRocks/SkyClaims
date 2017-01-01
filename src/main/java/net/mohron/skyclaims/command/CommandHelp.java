@@ -99,7 +99,7 @@ public class CommandHelp implements CommandExecutor {
 			}
 
 			if (src.hasPermission(Permissions.COMMAND_SPAWN)) {
-				helpContents = Text.join(helpContents,  Text.of(
+				helpContents = Text.join(helpContents, Text.of(
 						(hasPerms) ? "\n" : "",
 						TextColors.AQUA, Text.builder("is spawn").onClick(TextActions.runCommand("/is spawn")),
 						TextColors.GRAY, " [player]",

@@ -3,7 +3,6 @@ package net.mohron.skyclaims.config;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
-import net.mohron.skyclaims.util.ConfigUtil;
 import ninja.leaping.configurate.SimpleConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
