@@ -56,6 +56,8 @@ public class CommandReset implements CommandExecutor {
 			player.sendMessage(Text.of("To continue, run ", "/is reset", " confirm"));
 		} else {
 			//IslandUtil.resetIsland(player.getUniqueId());
+			//player.getEnderChestInventory().clear();
+			//player.getInventory().clear();
 		}
 
 		return CommandResult.success();
