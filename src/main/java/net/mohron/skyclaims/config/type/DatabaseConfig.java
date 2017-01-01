@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.config.type;
 
+import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -10,6 +11,8 @@ public class DatabaseConfig {
 	@Setting
 	public String location;
 	@Setting
+	public String databaseName;
+	@Setting
 	public String tableName;
 //	@Setting
 //	public String username;
@@ -18,5 +21,8 @@ public class DatabaseConfig {
 
 	public DatabaseConfig() {
 		type = "SQLite";
+		location = String.format("./");
+		databaseName = "skyclaims";
+		tableName = "islands";
 	}
 }

@@ -59,7 +59,7 @@ public class Database {
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s", databaseLocation, File.separator, databaseName));
+		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s", databaseLocation, File.separator, config.databaseName));
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class Database {
 		Map<UUID, Island> islands = new HashMap<>();
 
 		try (Statement statement = getConnection().createStatement()) {
-			ResultSet results = statement.executeQuery("SELECT * FROM islands");
+			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.tableName));
 
 			while (results.next()) {
 				UUID claimId = UUID.fromString(results.getString("id"));
@@ -102,7 +102,7 @@ public class Database {
 	 */
 	public void saveData(Map<UUID, Island> islands) {
 		for (Island island : islands.values()) {
-			String sql = "INSERT OR REPLACE INTO islands(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
+			String sql = String.format("INSERT OR REPLACE INTO %s(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)", config.tableName);
 
 			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 				statement.setString(1, island.getOwner().toString());
@@ -125,7 +125,7 @@ public class Database {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = "INSERT OR REPLACE INTO islands(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
+		String sql = String.format("INSERT OR REPLACE INTO %s(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)", config.tableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwner().toString());
