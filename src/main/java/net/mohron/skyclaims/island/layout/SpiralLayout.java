@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class SpiralLayout implements ILayout {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static GlobalConfig config = PLUGIN.getConfig();
-	private static final int spawnRegions = ConfigUtil.get(config.world.spawnRegions, 1) ^ 2;
+	private static final int spawnRegions = (int) Math.pow(ConfigUtil.get(config.world.spawnRegions, 1), 2);
 
 	/**
 	 * A method to generate a region-scaled spiral pattern and return the x/y pairs of each region
@@ -49,7 +49,7 @@ public class SpiralLayout implements ILayout {
 		ArrayList<Point> regions = generateRegionSpiral();
 		int i = 0;
 
-		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points.", regions.size()));
+		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
 		point:
 		for (Point point : regions) {
 			if (i < spawnRegions) {
