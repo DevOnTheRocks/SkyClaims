@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class Arguments {
 	// Command Argument Keys
+	public static final Text SUBCOMMAND = Text.of("admin");
+	public static final Text NAME = Text.of("name");
 	public static final Text SCHEMATIC = Text.of("schematic");
 	public static final Text USER = Text.of("user");
 	public static final Text CONFIRM = Text.of("confirm");
@@ -22,6 +24,7 @@ public class Arguments {
 
 	static {
 		// TODO Add all *.schematics file names to SCHEMATICS
+		SCHEMATICS.put("island", "island");
 
 		BIOMES.put("forest", BiomeTypes.FOREST);
 		BIOMES.put("plains", BiomeTypes.PLAINS);
