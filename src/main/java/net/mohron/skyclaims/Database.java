@@ -59,7 +59,7 @@ public class Database {
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s", databaseLocation, File.separator, config.databaseName));
+		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s.db", databaseLocation, File.separator, config.databaseName));
 	}
 
 	/**
