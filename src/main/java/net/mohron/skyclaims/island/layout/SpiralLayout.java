@@ -21,7 +21,7 @@ public class SpiralLayout implements ILayout {
 	 */
 	private static ArrayList<Point> generateRegionSpiral() {
 		int islandCount = SkyClaims.islands.size();
-		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
+		int generationSize = (int) Math.sqrt((double) islandCount + Math.pow(spawnRegions, 2)) + 1;
 
 		ArrayList<Point> coordinates = new ArrayList<>(generationSize);
 		int[] delta = {0, -1};
@@ -52,7 +52,7 @@ public class SpiralLayout implements ILayout {
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points.", regions.size()));
 		point:
 		for (Point point : regions) {
-			if (i < spawnRegions) {
+			if (i < Math.pow(spawnRegions, 2)) {
 				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", point.x, point.y));
 				i++;
 				continue;

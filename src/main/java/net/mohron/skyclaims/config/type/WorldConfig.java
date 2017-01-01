@@ -12,7 +12,7 @@ public class WorldConfig {
 	public String defaultBiome;
 	@Setting(value = "Island-Height", comment = "Height to build islands at. Default: 64")
 	public Integer defaultHeight;
-	@Setting(value = "Spawn-Regions", comment = "Number of regions to reserve for Spawn. Default: 1")
+	@Setting(value = "Spawn-Regions", comment = "The height & width of regions to reserve for Spawn. Default: 1")
 	public Integer spawnRegions;
 
 	public WorldConfig() {
