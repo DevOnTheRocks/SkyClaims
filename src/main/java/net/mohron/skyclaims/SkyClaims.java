@@ -119,8 +119,7 @@ public class SkyClaims {
 	public void onServerStarted(GameStartedServerEvent event) {
 		database = new Database(getConfigDir() + File.separator + "skyclaims.db");
 		islands = database.loadData();
-		getLogger().info("ISLAND LENGTH: " + islands.keySet().size());
-
+		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
 	}
 
