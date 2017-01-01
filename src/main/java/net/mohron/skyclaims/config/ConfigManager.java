@@ -45,7 +45,7 @@ public class ConfigManager {
 		}
 	}
 
-	public void load() {
+	private void load() {
 		try {
 			this.configMapper.populate(this.loader.load());
 		} catch (ObjectMappingException | IOException e) {
@@ -54,7 +54,7 @@ public class ConfigManager {
 	}
 
 	private void initializeSchematic() {
-		Path defaultSchematic = Paths.get(String.format("%s\\island.schematic", PLUGIN.getConfigDir()));
+		Path defaultSchematic = Paths.get(String.format("%s" + File.separator + "island.schematic", PLUGIN.getConfigDir()));
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
