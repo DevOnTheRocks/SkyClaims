@@ -1,23 +1,25 @@
 package net.mohron.skyclaims;
 
 import com.flowpowered.math.vector.Vector3i;
+import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.File;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class Database {
+	private GlobalConfig config;
 	private String databaseName;
+	private String databaseLocation;
+	private String islandTableName;
 
 	public Database(String databaseName) {
 		this.databaseName = databaseName;
+		this.databaseLocation = config.database.location;
+		this.islandTableName = config.tableName;
 
 		// Load the SQLite JDBC driver
 		try {
@@ -31,14 +33,14 @@ public class Database {
 			statement.setQueryTimeout(30);
 
 			// Create the database schema
-			String table = "CREATE TABLE IF NOT EXISTS islands (" +
+			String table = String.format("CREATE TABLE IF NOT EXISTS %s (" +
 					"owner		STRING PRIMARY KEY," +
 					"id			STRING," +
 					"x			INT," +
 					"y			INT," +
 					"z			INT," +
 					"worldName		STRING" +
-					")";
+					")", islandTableName);
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
@@ -55,7 +57,7 @@ public class Database {
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(String.format("jdbc:sqlite:%s", databaseName));
+		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s", databaseLocation, File.separator, databaseName));
 	}
 
 	/**
