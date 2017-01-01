@@ -2,10 +2,8 @@ package net.mohron.skyclaims.island;
 
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
+import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.claim.ClaimSystemFactory;
-import net.mohron.skyclaims.claim.IClaim;
-import net.mohron.skyclaims.claim.IClaimSystem;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
@@ -20,14 +18,14 @@ import java.util.concurrent.ExecutionException;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final DataStore GRIEF_PREVENTION_DATA = PLUGIN.getGriefPrevention().dataStore;
-	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
+	private static final DataStore claimSystem = PLUGIN.getGriefPrevention().dataStore;
+//	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
 
 	private UUID owner;
-	private IClaim claim;
+	private Claim claim;
 	private Location<World> spawn;
 
-	public Island(Player owner, IClaim claim, String schematic) {
+	public Island(Player owner, Claim claim, String schematic) {
 		this.owner = owner.getUniqueId();
 		this.claim = claim;
 		this.spawn = getCenter();
@@ -72,7 +70,7 @@ public class Island {
 
 	}
 
-	public IClaim getClaim() {
+	public Claim getClaim() {
 		return claim;
 	}
 

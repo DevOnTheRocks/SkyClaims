@@ -3,46 +3,41 @@ package net.mohron.skyclaims.util;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
+import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.claim.ClaimSystemFactory;
 import net.mohron.skyclaims.claim.IClaim;
 import net.mohron.skyclaims.claim.IClaimResult;
 import net.mohron.skyclaims.claim.IClaimSystem;
-import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.GenerateIslandTask;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.island.layout.ILayout;
+import net.mohron.skyclaims.island.layout.SpiralLayout;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.biome.BiomeType;
-import org.spongepowered.api.world.biome.BiomeTypes;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
 public class IslandUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final DataStore GRIEF_PREVENTION_DATA = PLUGIN.getGriefPrevention().dataStore;
-	private static final int MAX_ISLAND_SIZE = 512; // 32 x 32 chunks
-	private static GlobalConfig config = PLUGIN.getConfig();
-	private static int x; // x value of the current region
-	private static int z; // y value of the current region
+	private static final int MAX_ISLAND_SIZE = 511; // 32 x 32 chunks
 	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
-
-	static {
-		// Initialize with stored values before using defaults
-		x = 1;
-		z = 1;
-	}
+	private static ILayout layout = new SpiralLayout();
 
 	public static Island createIsland(Player owner, String schematic) {
+		Point region = layout.nextRegion();
+		int x = region.x;
+		int z = region.y;
+
 		if (ConfigUtil.getDefaultBiome() != null) WorldUtil.setRegionBiome(x, z, ConfigUtil.getDefaultBiome());
 
-		IClaimResult claimResult = createIslandClaim(owner.getUniqueId());
-		if (!claimResult.getStatus()) PLUGIN.getLogger().info("Failed to create claim");
-		return new Island(owner, claimResult.getClaim(), schematic);
+		CreateClaimResult claimResult = createIslandClaimLegacy(owner.getUniqueId(), x, z);
+		if (!claimResult.succeeded) PLUGIN.getLogger().error("Failed to create claim");
+		return new Island(owner, claimResult.claim, schematic);
 	}
 
 	public static boolean hasIsland(UUID owner) {
@@ -51,6 +46,7 @@ public class IslandUtil {
 
 	public static void saveIsland(Island island) {
 		SkyClaims.islands.put(island.getOwner(), island);
+		PLUGIN.getDatabase().saveIsland(island);
 	}
 
 	public static Optional<Island> getIsland(UUID owner) {
@@ -78,13 +74,31 @@ public class IslandUtil {
 		});
 	}
 
-	private static IClaimResult createIslandClaim(UUID owner) {
+	private static CreateClaimResult createIslandClaimLegacy(UUID owner, int rx, int rz) {
+		Player player = PLUGIN.getGame().getServer().getPlayer(owner).get();
+		return PLUGIN.getGriefPrevention().dataStore.createClaim(
+				ConfigUtil.getWorld(),
+				rx * 512,
+				rx * 512 + MAX_ISLAND_SIZE,
+				0,
+				255,
+				rz * 512,
+				rz * 512 + MAX_ISLAND_SIZE,
+				UUID.randomUUID(),
+				null,
+				Claim.Type.BASIC,
+				false,
+				player
+		);
+	}
+
+	private static IClaimResult createIslandClaim(UUID owner, int rx, int rz) {
 		Player player = PLUGIN.getGame().getServer().getPlayer(owner).get();
 		IClaimResult createClaimResult;
 		createClaimResult = claimSystem.createClaim(
 				ConfigUtil.getWorld(),
-				new Vector3i(x * 512, x * 512 + MAX_ISLAND_SIZE, 1),
-				new Vector3i(255, z * 512, z * 512 + MAX_ISLAND_SIZE),
+				new Vector3i(rx * 512, rx * 512 + MAX_ISLAND_SIZE, 1),
+				new Vector3i(255, rz * 512, rz * 512 + MAX_ISLAND_SIZE),
 				UUID.randomUUID(),
 				null,
 				IClaim.Type.BASIC,
@@ -95,49 +109,8 @@ public class IslandUtil {
 		return createClaimResult;
 	}
 
-	public static void buildIsland(Island island) {
-		//TODO Build an "island" in the center of the owners island using a schematic
-		int x = island.getCenter().getBlockX();
-		int y = ConfigUtil.get(PLUGIN.getConfig().world.defaultHeight, 64);
-		int z = island.getCenter().getBlockZ();
-
-
-		for (int i = -1; i < 1; i++) {
-			for (int j = -1; j < 1; j++) {
-				//place some dirt
-			}
-		}
-	}
-
 	private static void clearIsland(UUID owner) {
 		//TODO Clear island, inventory, enderchest, and supported private mod inventories ie. mod ender chests
-	}
-
-	/**
-	 * A method to generate a region-scaled spiral pattern and return the x/y pairs of each region
-	 *
-	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
-	 */
-	public static ArrayList<Point> generateRegionSpiral() {
-		int islandCount = SkyClaims.islands.size();
-		int generationSize = (int) Math.sqrt((double) islandCount) + 1;
-
-		ArrayList<Point> coordinates = new ArrayList<Point>(generationSize);
-		int[] delta = {0, -1};
-		int x = 0;
-		int y = 0;
-
-		for (int i = (int) Math.pow(Math.max(generationSize, generationSize), 2); i > 0; i--) {
-			if ((-generationSize / 2 < x && x <= generationSize / 2) && (-generationSize / 2 < y && y <= generationSize / 2))
-				coordinates.add(new Point(x, y));
-			if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1 - y)) {
-				// change direction
-				delta[0] = -delta[1];
-				delta[1] = delta[0];
-			}
-		}
-
-		return coordinates;
 	}
 
 //	private static int getXOffset(int i) {

@@ -3,7 +3,6 @@ package net.mohron.skyclaims.config.type;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.world.biome.BiomeTypes;
 
 @ConfigSerializable
 public class WorldConfig {
@@ -13,10 +12,13 @@ public class WorldConfig {
 	public String defaultBiome;
 	@Setting(value = "Island-Height", comment = "Height to build islands at. Default: 64")
 	public Integer defaultHeight;
+	@Setting(value = "Spawn-Regions", comment = "Number of regions to reserve for Spawn. Default: 1")
+	public Integer spawnRegions;
 
 	public WorldConfig() {
 		worldName = Sponge.getGame().getServer().getDefaultWorldName();
 		defaultBiome = null;
 		defaultHeight = 64;
+		spawnRegions = 1;
 	}
 }

@@ -1,7 +1,6 @@
 package net.mohron.skyclaims.island;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.data.DataContainer;
