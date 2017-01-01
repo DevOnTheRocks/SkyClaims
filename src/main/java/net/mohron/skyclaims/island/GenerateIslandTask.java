@@ -1,6 +1,9 @@
 package net.mohron.skyclaims.island;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.config.type.GlobalConfig;
+import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
@@ -11,6 +14,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Chunk;
+import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ArchetypeVolume;
 
 import java.io.File;
@@ -20,6 +24,7 @@ import java.util.zip.GZIPInputStream;
 
 public class GenerateIslandTask implements Runnable {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static final World WORLD = ConfigUtil.getWorld();
 	private static final File CONFIG_DIR = new File(PLUGIN.getConfigDir().toString());
 
 	private Player player;
@@ -52,12 +57,12 @@ public class GenerateIslandTask implements Runnable {
 
 		ArchetypeVolume volume = DataTranslators.SCHEMATIC.translate(schematicData);
 
-		Optional<Chunk> chunk = island.getWorld().loadChunk(island.getCenter().getChunkPosition(), true);
+		Optional<Chunk> chunk = WORLD.loadChunk(island.getCenter().getChunkPosition(), true);
 		chunk.ifPresent(chunk1 -> {
 			// TODO Find and replace the minecraft:sponge and set the spawn via its location
 			// Location<World> spawn = sponge location
 			// island.setSpawn(spawn);
-			volume.apply(island.getCenter(), BlockChangeFlag.ALL, Cause.of(NamedCause.of("plugin", PLUGIN), NamedCause.source(player)));
+			volume.apply(island.getCenter(), BlockChangeFlag.ALL, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
 			chunk1.unloadChunk();
 		});
 
