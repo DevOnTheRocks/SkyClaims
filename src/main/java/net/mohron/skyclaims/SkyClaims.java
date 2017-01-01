@@ -99,7 +99,6 @@ public class SkyClaims {
 		} catch (ClassNotFoundException e) {
 			getLogger().info("GriefPrevention Integration Failed!");
 		}
-
 		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
 		luckPerms.ifPresent(lp -> {
 			SkyClaims.luckPerms = lp;
