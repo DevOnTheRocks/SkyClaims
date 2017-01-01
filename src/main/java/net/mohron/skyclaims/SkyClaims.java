@@ -162,9 +162,9 @@ public class SkyClaims {
 		return griefPrevention;
 	}
 
-	public LuckPermsApi getLuckPerms() {
-		return luckPerms;
-	}
+//	public LuckPermsApi getLuckPerms() {
+//		return luckPerms;
+//	}
 
 	public PluginContainer getPluginContainer() {
 		return pluginContainer;
