@@ -7,6 +7,7 @@ import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.util.ConfigUtil;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
@@ -29,7 +30,6 @@ import org.spongepowered.api.service.permission.PermissionService;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static net.mohron.skyclaims.PluginInfo.*;
@@ -99,11 +99,11 @@ public class SkyClaims {
 			getLogger().info("GriefPrevention Integration Failed!");
 		}
 
-		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
-		luckPerms.ifPresent(lp -> {
-			SkyClaims.luckPerms = lp;
-			getLogger().info("LuckPerms Integration Successful!");
-		});
+//		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
+//		luckPerms.ifPresent(lp -> {
+//			SkyClaims.luckPerms = lp;
+//			getLogger().info("LuckPerms Integration Successful!");
+//		});
 
 		defaultConfig = new GlobalConfig();
 		pluginConfigManager = new ConfigManager(configManager);
@@ -125,13 +125,13 @@ public class SkyClaims {
 
 	@Listener
 	public void onWorldSave(SaveWorldEvent.Post event) {
-		if (event.isCancelled() || event.getTargetWorld().equals(game.getServer().getDefaultWorld().get())) {
-			// TODO Save the database
+		if (event.isCancelled() || event.getTargetWorld().equals(ConfigUtil.getWorld())) {
+			database.saveData(islands);
 		}
 	}
 
 	@Listener
-	public void onServerStopped(GameStoppedServerEvent event) {
+	public void onGameStopping(GameStoppingServerEvent event) {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 		database.saveData(islands);
 		getLogger().info("Shutdown actions complete.");
