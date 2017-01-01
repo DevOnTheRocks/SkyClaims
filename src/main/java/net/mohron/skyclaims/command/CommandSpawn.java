@@ -23,7 +23,7 @@ import java.util.Optional;
 public class CommandSpawn implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "teleport to an island's spawn point.";
+	public static String helpText = "teleport to an island's spawn point";
 
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
@@ -55,7 +55,7 @@ public class CommandSpawn implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!"));
 
 		if (user.isOnline()) {
-			WorldUtil.createTeleportConsumer(src, island.get().getSpawn(), island.get().getClaim());
+			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(WorldUtil.createTeleportConsumer((Player) src, island.get().getSpawn(), island.get().getClaim())).submit(PLUGIN);
 		}
 
 		return CommandResult.success();

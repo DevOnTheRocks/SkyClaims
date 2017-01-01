@@ -1,12 +1,13 @@
 package net.mohron.skyclaims.util;
 
+import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.claim.IClaim;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -23,13 +24,8 @@ public class WorldUtil {
 		return SkyClaims.getInstance().getGame().getServer().getWorld(defaultWorldName).get();
 	}
 
-	public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location, IClaim claim) {
+	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location, Claim claim) {
 		return teleport -> {
-			if (!(src instanceof Player)) {
-				// ignore
-				return;
-			}
-			Player player = (Player) src;
 			// if not owner of claim, validate perms
 			if (!player.getUniqueId().equals(claim.getOwnerUniqueId())) {
 				if (!claim.getClaimData().getContainers().contains(player.getUniqueId())

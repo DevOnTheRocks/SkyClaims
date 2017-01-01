@@ -60,5 +60,7 @@ public class GenerateIslandTask implements Runnable {
 			volume.apply(island.getCenter(), BlockChangeFlag.ALL, Cause.of(NamedCause.of("plugin", PLUGIN), NamedCause.source(player)));
 			chunk1.unloadChunk();
 		});
+
+		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(WorldUtil.createTeleportConsumer(player, island.getSpawn(), island.getClaim())).submit(PLUGIN);
 	}
 }
