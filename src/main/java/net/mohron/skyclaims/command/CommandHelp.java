@@ -119,7 +119,7 @@ public class CommandHelp implements CommandExecutor {
 		}
 
 		if (hasPerms) {
-			PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, NAME, " Help")).padding(Text.of("-")).contents(helpContents);
+			PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, NAME, " Help")).padding(Text.of(TextColors.AQUA, "-")).contents(helpContents);
 			paginationBuilder.sendTo(src);
 		} else {
 			src.sendMessage(Text.of(NAME + " " + VERSION));
