@@ -14,6 +14,8 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
+import java.io.File;
+
 public class CommandCreate implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -49,6 +51,10 @@ public class CommandCreate implements CommandExecutor {
 
 		if (args.getOne(Arguments.SCHEMATIC).isPresent())
 			schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
+
+        if (!new File(PLUGIN.getConfigDir() + File.separator + schematic + ".schematic").exists()) {
+            throw new CommandException(Text.of("A schematic with this name does not exist."));
+        }
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
 		IslandUtil.createIsland(player, schematic);
