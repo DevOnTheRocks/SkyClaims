@@ -49,19 +49,25 @@ public class Island {
 	}
 
 	public String getOwnerName() {
+		String name;
 		if (PLUGIN.getLuckPerms() != null) {
-			return PLUGIN.getLuckPerms().getUser(owner).getName();
-		} else {
-			GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
-
-			try {
-				return profileManager.get(owner).get().getName().orElse("Unknown");
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
-
-			return "Unknown";
+			name = PLUGIN.getLuckPerms().getUser(owner).getName();
+			if (name != null) return name;
 		}
+
+		name = getClaim().getOwnerName();
+		if (name != null) return name;
+
+		GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
+
+		try {
+			return profileManager.get(owner).get().getName().orElse("Unknown");
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
+
+		return "Unknown";
+
 	}
 
 	public IClaim getClaim() {
