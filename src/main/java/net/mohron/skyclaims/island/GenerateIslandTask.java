@@ -56,13 +56,13 @@ public class GenerateIslandTask implements Runnable {
 
 		ArchetypeVolume volume = DataTranslators.SCHEMATIC.translate(schematicData);
 
-		Optional<Chunk> chunk = WORLD.loadChunk(island.getCenter().getChunkPosition(), true);
-		chunk.ifPresent(chunk1 -> {
+		Optional<Chunk> chunkOptional = WORLD.loadChunk(island.getCenter().getChunkPosition(), true);
+		chunkOptional.ifPresent(chunk -> {
 			// TODO Find and replace the minecraft:sponge and set the spawn via its location
 			// Location<World> spawn = sponge location
 			// island.setSpawn(spawn);
 			volume.apply(island.getCenter(), BlockChangeFlag.ALL, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
-			chunk1.unloadChunk();
+			chunk.unloadChunk();
 		});
 
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(WorldUtil.createTeleportConsumer(player, island.getSpawn(), island.getClaim())).submit(PLUGIN);
