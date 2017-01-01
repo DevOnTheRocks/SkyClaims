@@ -1,7 +1,6 @@
 package net.mohron.skyclaims;
 
 import com.google.inject.Inject;
-import me.lucko.luckperms.api.LuckPermsApi;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
@@ -123,7 +122,6 @@ public class SkyClaims {
 		getLogger().info("Initialization complete.");
 	}
 
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Listener
 	public void onWorldSave(SaveWorldEvent.Post event) {
 		if (event.isCancelled() || event.getTargetWorld().equals(ConfigUtil.getWorld())) {
@@ -132,7 +130,7 @@ public class SkyClaims {
 	}
 
 	@Listener
-	public void onServerStopped(GameStoppingServerEvent event) {
+	public void onGameStopping(GameStoppingServerEvent event) {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 		database.saveData(islands);
 		getLogger().info("Shutdown actions complete.");
