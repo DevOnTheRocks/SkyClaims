@@ -50,18 +50,19 @@ public class SpiralLayout implements ILayout {
 		int i = 0;
 
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points.", regions.size()));
+		point:
 		for (Point point : regions) {
 			if (i < spawnRegions) {
-				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", point.getX(), point.getY()));
+				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", point.x, point.y));
 				i++;
 				continue;
 			}
-			PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", point.getX(), point.getY()));
+			PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", point.x, point.y));
 			if (SkyClaims.islands.isEmpty()) return point;
 			for (Island island : SkyClaims.islands.values()) {
-				PLUGIN.getLogger().info(String.format("Checking island %s (%s,%s) against region (%s, %s)", island.getOwnerName(), island.getRegionX(), island.getRegionZ(), point.getX(), point.getY()));
-				if (point.x == island.getRegionX() && point.y == island.getRegionZ()) continue;
-				PLUGIN.getLogger().info(String.format("Next Available Region is (%s, %s)", point.getX(), point.getY()));
+				PLUGIN.getLogger().info(String.format("Checking %s's island (%s,%s) against region (%s, %s)", island.getOwnerName(), island.getRegionX(), island.getRegionZ(), point.x, point.y));
+				if (point.x == island.getRegionX() && point.y == island.getRegionZ()) continue point;
+				PLUGIN.getLogger().info(String.format("Next Available Region is (%s, %s)", point.x, point.y));
 				return point;
 			}
 		}
