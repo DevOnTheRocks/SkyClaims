@@ -5,18 +5,18 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class DatabaseConfig {
-	@Setting
+	@Setting(value = "Database-Type", comment = "The type of data base to use. Supports [SQLite]")
 	public String type;
 	@Setting
 	public String location;
-	@Setting
-	public String tableName;
-	@Setting
-	public String username;
-	@Setting
-	public String password;
+//	@Setting
+//	public String tableName;
+//	@Setting
+//	public String username;
+//	@Setting
+//	public String password;
 
 	public DatabaseConfig() {
-
+		type = "SQLite";
 	}
 }
