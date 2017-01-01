@@ -52,7 +52,7 @@ public class CommandCreate implements CommandExecutor {
 			schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
-		Island island = IslandUtil.createIsland(player, schematic);
+		IslandUtil.createIsland(player, schematic);
 
 		return CommandResult.success();
 	}
