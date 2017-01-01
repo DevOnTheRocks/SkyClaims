@@ -31,5 +31,5 @@ repositories {
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
     compile ("me.ryanhamshire:griefprevention:1.10.2-2.2.0.205")
-    compile ("me.lucko.luckperms:luckperms-api:2.8")
+    compile ("me.lucko.luckperms:luckperms-api:2.15")
 }
