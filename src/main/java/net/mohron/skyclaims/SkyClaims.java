@@ -7,6 +7,7 @@ import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.util.ConfigUtil;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -27,7 +28,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static net.mohron.skyclaims.PluginInfo.*;
@@ -96,11 +96,12 @@ public class SkyClaims {
 		} catch (ClassNotFoundException e) {
 			getLogger().info("GriefPrevention Integration Failed!");
 		}
-		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
-		luckPerms.ifPresent(lp -> {
-			SkyClaims.luckPerms = lp;
-			getLogger().info("LuckPerms Integration Successful!");
-		});
+
+//		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
+//		luckPerms.ifPresent(lp -> {
+//			SkyClaims.luckPerms = lp;
+//			getLogger().info("LuckPerms Integration Successful!");
+//		});
 
 		defaultConfig = new GlobalConfig();
 		pluginConfigManager = new ConfigManager(configManager);
@@ -123,9 +124,8 @@ public class SkyClaims {
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
     @Listener
 	public void onWorldSave(SaveWorldEvent.Post event) {
-		if (event.isCancelled() || event.getTargetWorld().equals(game.getServer().getDefaultWorld().get())) {
-			// TODO Save the database
-            database.saveData(islands);
+		if (event.isCancelled() || event.getTargetWorld().equals(ConfigUtil.getWorld())) {
+			database.saveData(islands);
 		}
 	}
 

@@ -31,6 +31,5 @@ repositories {
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
     compile ("me.ryanhamshire:griefprevention:1.10.2-2.2.0.205")
-    //todo up to date api (2.16) is not available
     compile ("me.lucko.luckperms:luckperms-api:2.15")
 }

@@ -90,12 +90,12 @@ public class IslandUtil {
 		Player player = PLUGIN.getGame().getServer().getPlayer(owner).get();
 		return PLUGIN.getGriefPrevention().dataStore.createClaim(
 				ConfigUtil.getWorld(),
-				rx * 512,
-				rx * 512 + MAX_ISLAND_SIZE,
+				rx >> 5 >> 4,
+				rx >> 5 >> 4 + MAX_ISLAND_SIZE,
 				0,
 				255,
-				rz * 512,
-				rz * 512 + MAX_ISLAND_SIZE,
+				rz >> 5 >> 4,
+				rz >> 5 >> 4 + MAX_ISLAND_SIZE,
 				UUID.randomUUID(),
 				null,
 				Claim.Type.BASIC,
@@ -124,12 +124,4 @@ public class IslandUtil {
 	private static void clearIsland(UUID owner) {
 		//TODO Clear island, inventory, enderchest, and supported private mod inventories ie. mod ender chests
 	}
-
-//	private static int getXOffset(int i) {
-//		return (i == 1 || i == 3) ? 0 : MAX_ISLAND_SIZE;
-//	}
-
-//	private static int getYOffset(int i) {
-//		return (i == 0 || i == 1) ? 0 : MAX_ISLAND_SIZE;
-//	}
 }

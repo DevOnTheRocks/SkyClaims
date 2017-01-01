@@ -52,11 +52,10 @@ public class Island {
 
 	public String getOwnerName() {
 		String name;
-		// todo luckperms 2.16 api is not available atm
-		/*if (PLUGIN.getLuckPerms() != null) {
-			name = PLUGIN.getLuckPerms().getUser(owner).getName();
-			if (name != null) return name;
-		}*/
+//		if (PLUGIN.getLuckPerms() != null) {
+//			name = PLUGIN.getLuckPerms().getUser(owner).getName();
+//			if (name != null) return name;
+//		}
 
 		name = getClaim().getOwnerName();
 		if (name != null) return name;
@@ -64,13 +63,12 @@ public class Island {
 		GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
 
 		try {
-			return profileManager.get(owner).get().getName().orElse("Unknown");
+			name = profileManager.get(owner).get().getName().orElse("Unknown");
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
 
-		return "Unknown";
-
+		return name;
 	}
 
 	public Claim getClaim() {
@@ -95,6 +93,7 @@ public class Island {
 
 	public void setSpawn(Location<World> spawn) {
 		this.spawn = spawn;
+		IslandUtil.saveIsland(this);
 	}
 
 	public boolean isWithinIsland(Location<World> location) {
