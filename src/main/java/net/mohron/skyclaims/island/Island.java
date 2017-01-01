@@ -63,13 +63,12 @@ public class Island {
 		GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
 
 		try {
-			return profileManager.get(owner).get().getName().orElse("Unknown");
+			name = profileManager.get(owner).get().getName().orElse("Unknown");
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
 
-		return "Unknown";
-
+		return name;
 	}
 
 	public Claim getClaim() {
