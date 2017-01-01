@@ -71,7 +71,7 @@ public class CommandInfo implements CommandExecutor {
 					TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, " y, ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, " z", "\n",
 					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getClaim().getID().toString())
 							.onClick(TextActions.executeCallback(createCommandConsumer(src, "claiminfo", island.getClaim().getID().toString(), createReturnIslandInfoConsumer(src, ""))))
-							.onHover(TextActions.showText(Text.of("Click here to check claim info."))),
+							.onHover(TextActions.showText(Text.of("Click here to check claim info."))), "\n",
 					TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated()
 			);
 
