@@ -8,7 +8,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group 'net.mohron.skyclaims'
-version '0.0.1'
+version '0.0.2'
 description = 'SkyClaims is an Island plugin that integrates with GriefPrevention for Sponge servers'
 
 repositories {
@@ -31,5 +31,6 @@ repositories {
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
     compile ("me.ryanhamshire:griefprevention:1.10.2-2.2.0.205")
-    compile ("me.lucko.luckperms:luckperms-api:2.8")
+    //todo up to date api (2.16) is not available
+    compile ("me.lucko.luckperms:luckperms-api:2.15")
 }
