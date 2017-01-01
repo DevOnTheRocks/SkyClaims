@@ -59,7 +59,7 @@ public class WorldUtil {
 	public static void setBlockBiome(Location<World> location, BiomeType biomeType) {
 		location.getExtent().setBiome(
 				location.getBlockX(),
-				1,
+				0,
 				location.getBlockZ(),
 				biomeType);
 	}
@@ -69,7 +69,7 @@ public class WorldUtil {
 			for (int z = 0; z < 16; z++) {
 				location.getExtent().setBiome(
 						location.getBlockX() + x,
-						1,
+						0,
 						location.getBlockZ() + z,
 						biomeType);
 			}
@@ -85,21 +85,21 @@ public class WorldUtil {
 			for (int z = z1; z < z2; z++) {
 				island.getWorld().setBiome(
 						x,
-						1,
+						0,
 						z,
 						biomeType);
 			}
 		}
 	}
 
-	public static void setRegionBiome(int rx, int ry, BiomeType biomeType) {
+	public static void setRegionBiome(int rx, int rz, BiomeType biomeType) {
 		World world = ConfigUtil.getWorld();
 		for (int x = 0; x < 512; x++) {
 			for (int z = 0; z < 512; z++) {
 				world.setBiome(
 						rx * 512 + x,
-						1,
-						ry * 512 + z,
+						0,
+						rz * 512 + z,
 						biomeType);
 			}
 		}
