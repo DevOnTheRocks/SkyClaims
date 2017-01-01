@@ -99,7 +99,7 @@ public class Database {
 	 */
 	public void saveData(Map<UUID, Island> islands) {
 		for (Island island : islands.values()) {
-			String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
+			String sql = "INSERT OR REPLACE INTO islands (owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
 
 			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 				statement.setString(1, island.getOwner().toString());
@@ -122,7 +122,7 @@ public class Database {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT OR REPLACE INTO islands (owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwner().toString());
@@ -140,7 +140,7 @@ public class Database {
 
 	public int countEntries() {
 		int count = 0;
-		String sql = "SELECT COUNT(1) FROM islands";
+		String sql = "SELECT COUNT(*) FROM islands";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			ResultSet results = statement.executeQuery();
