@@ -6,6 +6,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.claim.ClaimSystemFactory;
 import net.mohron.skyclaims.claim.IClaim;
 import net.mohron.skyclaims.claim.IClaimSystem;
+import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
@@ -29,6 +30,7 @@ public class Island {
 	public Island(Player owner, IClaim claim, String schematic) {
 		this.owner = owner.getUniqueId();
 		this.claim = claim;
+		this.spawn = getCenter();
 
 		GenerateIslandTask generateIsland = new GenerateIslandTask(owner, this, schematic);
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
@@ -83,7 +85,7 @@ public class Island {
 	}
 
 	public World getWorld() {
-		return spawn.getExtent();
+		return ConfigUtil.getWorld();
 	}
 
 	public Location<World> getSpawn() {
@@ -99,11 +101,19 @@ public class Island {
 	}
 
 	public int getRadius() {
-		return (claim.getLesserBoundaryCorner().getBlockX() - claim.getGreaterBoundaryCorner().getBlockX()) / 2;
+		return (claim.getGreaterBoundaryCorner().getBlockX() - claim.getLesserBoundaryCorner().getBlockX()) / 2;
 	}
 
 	public Location<World> getCenter() {
 		int radius = this.getRadius();
-		return new Location<>(getSpawn().getExtent(), claim.getLesserBoundaryCorner().getX() + radius, 64, claim.getLesserBoundaryCorner().getZ() + radius);
+		return new Location<>(ConfigUtil.getWorld(), claim.getLesserBoundaryCorner().getX() + radius, 64, claim.getLesserBoundaryCorner().getZ() + radius);
+	}
+
+	public int getRegionX() {
+		return getCenter().getBlockX() / 512;
+	}
+
+	public int getRegionZ() {
+		return getCenter().getBlockZ() / 512;
 	}
 }
