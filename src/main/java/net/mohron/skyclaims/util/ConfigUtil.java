@@ -33,7 +33,7 @@ public class ConfigUtil {
 		Server server = GAME.getServer();
 		Optional<World> world = server.getWorld(config.world.worldName);
 		Optional<World> defaultWorld = server.getWorld(server.getDefaultWorldName());
-		return (world.isPresent()) ? world.get() : defaultWorld.get();
+		return world.isPresent() ? world.get() : defaultWorld.get();
 	}
 
 	public static BiomeType getDefaultBiome() {

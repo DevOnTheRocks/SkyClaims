@@ -16,10 +16,7 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
-import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
+import org.spongepowered.api.event.game.state.*;
 import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
@@ -123,15 +120,17 @@ public class SkyClaims {
 		getLogger().info("Initialization complete.");
 	}
 
-	@Listener
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+    @Listener
 	public void onWorldSave(SaveWorldEvent.Post event) {
 		if (event.isCancelled() || event.getTargetWorld().equals(game.getServer().getDefaultWorld().get())) {
 			// TODO Save the database
+            database.saveData(islands);
 		}
 	}
 
 	@Listener
-	public void onServerStopped(GameStoppedServerEvent event) {
+	public void onServerStopped(GameStoppingServerEvent event) {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 		database.saveData(islands);
 		getLogger().info("Shutdown actions complete.");
