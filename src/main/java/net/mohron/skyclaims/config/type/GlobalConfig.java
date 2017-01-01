@@ -9,13 +9,13 @@ public class GlobalConfig {
 	@Setting(value = "Config-Version")
 	public Integer version;
 //	@Setting(value = "Database")
-//	public DatabaseConfig database;
+	public DatabaseConfig database;
 	@Setting(value = "World")
 	public WorldConfig world;
 
 	public GlobalConfig() {
 		version = ConfigManager.CONFIG_VERSION;
 		world = new WorldConfig();
-//		database = new DatabaseConfig();
+		database = new DatabaseConfig();
 	}
 }

@@ -1,6 +1,7 @@
 package net.mohron.skyclaims;
 
 import com.flowpowered.math.vector.Vector3i;
+import net.mohron.skyclaims.config.type.DatabaseConfig;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
 
@@ -11,14 +12,15 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Database {
-	private GlobalConfig config;
+	private DatabaseConfig config;
 	private String databaseName;
 	private String databaseLocation;
 	private String islandTableName;
 
 	public Database(String databaseName) {
+		this.config = SkyClaims.getInstance().getConfig().database;
 		this.databaseName = databaseName;
-		this.databaseLocation = config.database.location;
+		this.databaseLocation = config.location;
 		this.islandTableName = config.tableName;
 
 		// Load the SQLite JDBC driver

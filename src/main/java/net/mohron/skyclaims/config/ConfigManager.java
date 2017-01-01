@@ -9,8 +9,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,8 +57,17 @@ public class ConfigManager {
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
-				String filePath = this.getClass().getResource("island.schematic").getPath();
-				Files.copy(new File(filePath).toPath(), defaultSchematic);
+
+				InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic");
+				OutputStream outputStream = new FileOutputStream(defaultSchematic.toString());
+				byte[] buffer = new byte[1024];
+				int bytesRead;
+
+				while((bytesRead = inputStream.read()) != -1)
+					outputStream.write(buffer, 0, bytesRead);
+
+				inputStream.close();
+				outputStream.close();
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
 			}

@@ -9,8 +9,8 @@ public class DatabaseConfig {
 	public String type;
 	@Setting
 	public String location;
-//	@Setting
-//	public String tableName;
+	@Setting
+	public String tableName;
 //	@Setting
 //	public String username;
 //	@Setting
