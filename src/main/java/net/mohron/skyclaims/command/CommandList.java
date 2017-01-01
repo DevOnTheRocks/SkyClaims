@@ -44,10 +44,10 @@ public class CommandList implements CommandExecutor {
 		for (Island island : SkyClaims.islands.values()) {
 			listText = Text.join(listText, Text.of(
 					(newline) ? "\n" : "",
-					island.getOwnerName(), " (",
-					island.getRegionX(), ", ",
-					island.getRegionZ(), ")"
-					));
+					TextColors.AQUA, island.getOwnerName(), TextColors.GRAY, " (",
+					TextColors.LIGHT_PURPLE, island.getRegionX(), TextColors.GRAY, ", ",
+					TextColors.LIGHT_PURPLE, island.getRegionZ(), TextColors.GRAY, ")"
+			));
 			newline = true;
 		}
 
