@@ -38,7 +38,7 @@ public class GenerateIslandTask implements Runnable {
 
 	@Override
 	public void run() {
-		File inputFile = new File(CONFIG_DIR, schematic + ".schematic");
+		File inputFile = new File(CONFIG_DIR, String.format("schematics%s%s.schematic", File.separator, schematic));
 
 		if (!inputFile.exists()) {
 			player.sendMessage(Text.of(TextColors.RED, "Schematic at " + inputFile.getAbsolutePath() + " not found."));
