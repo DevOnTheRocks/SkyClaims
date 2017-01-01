@@ -94,6 +94,7 @@ public class Island {
 
 	public void setSpawn(Location<World> spawn) {
 		this.spawn = spawn;
+		IslandUtil.saveIsland(this);
 	}
 
 	public boolean isWithinIsland(Location<World> location) {
