@@ -16,6 +16,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.biome.BiomeType;
 
 import java.util.Optional;
@@ -59,7 +60,7 @@ public class CommandSetBiome implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must be on an island to use this command"));
 
-		if (!player.getUniqueId().equals(island.get().getOwner()) || !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
+		if (!player.getUniqueId().equals(island.get().getOwner()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
 			throw new CommandException(Text.of("You do not have permission to use setbiome on this island"));
 
 		if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BIOMES + "." + biome.getName().toLowerCase()))
@@ -70,19 +71,25 @@ public class CommandSetBiome implements CommandExecutor {
 
 		switch (target) {
 			case BLOCK:
-				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BLOCK)) throw new CommandPermissionException();
+				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BLOCK))
+					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> block"));
 				PLUGIN.getLogger().info("SETBIOME: BLOCK");
 				WorldUtil.setBlockBiome(player.getLocation(), biome);
+				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome at %s,%s to %s.", player.getLocation().getBlockX(), player.getLocation().getBlockZ(), biome.getName())));
 				break;
 			case CHUNK:
-				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_CHUNK)) throw new CommandPermissionException();
+				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_CHUNK))
+					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> chunk"));
 				PLUGIN.getLogger().info("SETBIOME: CHUNK");
 				WorldUtil.setChunkBiome(player.getLocation(), biome);
+				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome in this chunk to %s.", biome.getName())));
 				break;
 			case ISLAND:
-				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_ISLAND)) throw new CommandPermissionException();
+				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_ISLAND))
+					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> island"));
 				PLUGIN.getLogger().info("SETBIOME: ISLAND");
 				WorldUtil.setIslandBiome(island.get(), biome);
+				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome on this island to %s.", biome.getName())));
 				break;
 		}
 
