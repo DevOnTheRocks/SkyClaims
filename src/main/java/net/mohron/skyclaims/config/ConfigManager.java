@@ -60,7 +60,7 @@ public class ConfigManager {
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
-				InputStream schemStream = this.getClass().getResourceAsStream("island.schematic");
+				InputStream schemStream = this.getClass().getResourceAsStream("/island.schematic");
 				FileOutputStream fileWriter = new FileOutputStream(defaultSchematic.toFile());
 				int read = 0;
 				byte[] buffer = new byte[1024];
@@ -68,7 +68,6 @@ public class ConfigManager {
 					fileWriter.write(buffer, 0, read);
 				}
 				schemStream.close();
-				fileWriter.flush();
 				fileWriter.close();
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
