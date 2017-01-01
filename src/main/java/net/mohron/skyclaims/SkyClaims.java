@@ -26,6 +26,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,7 +117,7 @@ public class SkyClaims {
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
-		database = new Database("SkyClaims.db");
+		database = new Database(getConfigDir() + File.separator + "skyclaims.db");
 		islands = database.loadData();
 		getLogger().info("ISLAND LENGTH: " + islands.keySet().size());
 
