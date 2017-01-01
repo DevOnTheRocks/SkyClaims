@@ -47,7 +47,7 @@ import static net.mohron.skyclaims.PluginInfo.*;
 public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPrevention griefPrevention;
-	private static LuckPermsApi luckPerms;
+	//	private static LuckPermsApi luckPerms;
 	public static PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
