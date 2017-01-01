@@ -64,9 +64,9 @@ public class WorldUtil {
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				location.getExtent().setBiome(
-						location.getBlockX() + x,
+						location.getChunkPosition().getX() * 16 + x,
 						0,
-						location.getBlockZ() + z,
+						location.getChunkPosition().getZ() * 16 + z,
 						biomeType);
 			}
 		}
