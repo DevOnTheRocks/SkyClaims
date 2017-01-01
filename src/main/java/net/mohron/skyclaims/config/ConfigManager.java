@@ -9,10 +9,15 @@ import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.zip.GZIPOutputStream;
 
 public class ConfigManager {
 	private final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -31,7 +36,7 @@ public class ConfigManager {
 		}
 
 		this.load();
-		this.initializeSchematic();
+		//this.initializeSchematic();
 	}
 
 	public void save() {
@@ -60,11 +65,14 @@ public class ConfigManager {
 
 				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic")) {
 					try (OutputStream outputStream = new FileOutputStream(defaultSchematic.toString())) {
-						byte[] buffer = new byte[1024];
-						int bytesRead;
+						try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream)) {
 
-						while((bytesRead = inputStream.read()) != -1)
-							outputStream.write(buffer, 0, bytesRead);
+							byte[] buffer = new byte[1024];
+							int bytesRead;
+
+							while ((bytesRead = inputStream.read()) != -1)
+								gzipOutputStream.write(buffer, 0, bytesRead);
+						}
 					}
 				}
 			} catch (IOException e) {
