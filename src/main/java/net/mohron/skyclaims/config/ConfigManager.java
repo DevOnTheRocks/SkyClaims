@@ -54,7 +54,7 @@ public class ConfigManager {
 	}
 
 	private void initializeSchematic() {
-		Path defaultSchematic = Paths.get(String.format("%s\\island.schematic", PLUGIN.getConfigDir()));
+		Path defaultSchematic = Paths.get(String.format("%s%sisland.schematic", PLUGIN.getConfigDir(), File.separator));
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
