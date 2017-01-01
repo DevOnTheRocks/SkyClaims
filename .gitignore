@@ -2,8 +2,8 @@
 *.ipr
 *.iws
 /.*
-!.gitignore
 /build*
-!build.gradle
-/gradle*
 /run*
+/lib/
+!.gitignore
+!build.gradle
