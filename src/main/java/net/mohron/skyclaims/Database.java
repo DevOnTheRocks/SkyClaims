@@ -99,7 +99,7 @@ public class Database {
 	 */
 	public void saveData(Map<UUID, Island> islands) {
 		for (Island island : islands.values()) {
-			String sql = "INSERT OR UPDATE INTO islands(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
+			String sql = "INSERT OR REPLACE INTO islands(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)";
 
 			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 				statement.setString(1, island.getOwner().toString());
@@ -111,7 +111,8 @@ public class Database {
 
 				statement.execute();
 			} catch (SQLException e) {
-				SkyClaims.getInstance().getLogger().error(String.format("Error updating the database: %s", e.getMessage()));
+//				SkyClaims.getInstance().getLogger().error(String.format("Error updating the database: %s", e.getMessage()));
+				e.printStackTrace();
 			}
 		}
 	}
