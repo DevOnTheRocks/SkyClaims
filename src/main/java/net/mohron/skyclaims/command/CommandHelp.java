@@ -98,6 +98,15 @@ public class CommandHelp implements CommandExecutor {
 				hasPerms = true;
 			}
 
+			if (src.hasPermission(Permissions.COMMAND_SET_SPAWN)) {
+				helpContents = Text.join(helpContents, Text.of(
+						(hasPerms) ? "\n" : "",
+						TextColors.AQUA, Text.builder("is setspawn").onClick(TextActions.runCommand("/is setspawn")),
+						TextColors.DARK_GRAY, " - ",
+						TextColors.DARK_GREEN, CommandSetSpawn.helpText));
+				hasPerms = true;
+			}
+
 			if (src.hasPermission(Permissions.COMMAND_SPAWN)) {
 				helpContents = Text.join(helpContents, Text.of(
 						(hasPerms) ? "\n" : "",
