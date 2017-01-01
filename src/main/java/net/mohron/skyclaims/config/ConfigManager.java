@@ -58,16 +58,15 @@ public class ConfigManager {
 			try {
 				Files.createFile(defaultSchematic);
 
-				InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic");
-				OutputStream outputStream = new FileOutputStream(defaultSchematic.toString());
-				byte[] buffer = new byte[1024];
-				int bytesRead;
+				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic")) {
+					try (OutputStream outputStream = new FileOutputStream(defaultSchematic.toString())) {
+						byte[] buffer = new byte[1024];
+						int bytesRead;
 
-				while((bytesRead = inputStream.read()) != -1)
-					outputStream.write(buffer, 0, bytesRead);
-
-				inputStream.close();
-				outputStream.close();
+						while((bytesRead = inputStream.read()) != -1)
+							outputStream.write(buffer, 0, bytesRead);
+					}
+				}
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
 			}
