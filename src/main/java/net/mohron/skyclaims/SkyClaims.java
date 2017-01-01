@@ -23,6 +23,7 @@ import org.spongepowered.api.event.game.state.GameStoppedServerEvent;
 import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 
 import java.nio.file.Path;
@@ -48,6 +49,9 @@ public class SkyClaims {
 	private static LuckPermsApi luckPerms;
 	public static PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
+
+	@Inject
+	private PluginContainer pluginContainer;
 
 	@Inject
 	private Logger logger;
@@ -160,6 +164,10 @@ public class SkyClaims {
 		return luckPerms;
 	}
 
+	public PluginContainer getPluginContainer() {
+		return pluginContainer;
+	}
+
 	public Logger getLogger() {
 		return logger;
 	}
@@ -178,5 +186,9 @@ public class SkyClaims {
 
 	public Path getConfigDir() {
 		return configDir;
+	}
+
+	public Database getDatabase() {
+		return database;
 	}
 }

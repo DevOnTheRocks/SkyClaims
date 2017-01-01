@@ -1,6 +1,5 @@
 package net.mohron.skyclaims.config;
 
-
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import ninja.leaping.configurate.SimpleConfigurationNode;
