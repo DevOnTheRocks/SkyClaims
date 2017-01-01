@@ -1,13 +1,11 @@
 package net.mohron.skyclaims.util;
 
-import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
+import me.ryanhamshire.griefprevention.PlayerData;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.claim.ClaimSystemFactory;
-import net.mohron.skyclaims.claim.IClaim;
-import net.mohron.skyclaims.claim.IClaimResult;
 import net.mohron.skyclaims.claim.IClaimSystem;
 import net.mohron.skyclaims.island.GenerateIslandTask;
 import net.mohron.skyclaims.island.Island;
@@ -35,7 +33,7 @@ public class IslandUtil {
 
 		if (ConfigUtil.getDefaultBiome() != null) WorldUtil.setRegionBiome(x, z, ConfigUtil.getDefaultBiome());
 
-		CreateClaimResult claimResult = createIslandClaimLegacy(owner, x, z);
+		CreateClaimResult claimResult = createProtection(owner, x, z);
 		if (!claimResult.succeeded) PLUGIN.getLogger().error("Failed to create claim");
 		return new Island(owner, claimResult.claim, schematic);
 	}
@@ -74,7 +72,22 @@ public class IslandUtil {
 		});
 	}
 
-	private static CreateClaimResult createIslandClaimLegacy(Player player, int rx, int rz) {
+	private static CreateClaimResult createProtection(Player owner, int rx, int rz) {
+		DataStore dataStore = PLUGIN.getGriefPrevention().dataStore;
+		PlayerData ownerData = dataStore.getOrCreatePlayerData(ConfigUtil.getWorld(), owner.getUniqueId());
+		return dataStore.createClaim(
+				ConfigUtil.getWorld(),
+				rx >> 5 >> 4,
+				rx >> 5 >> 4 + MAX_ISLAND_SIZE,
+				0,
+				255,
+				rz  >> 5 >> 4,
+				rz >> 5 >> 4 + MAX_ISLAND_SIZE,
+				UUID.randomUUID(), null, Claim.Type.BASIC, ownerData.getCuboidMode(), owner);
+	}
+
+	/*private static CreateClaimResult createIslandClaimLegacy(UUID owner, int rx, int rz) {
+		Player player = PLUGIN.getGame().getServer().getPlayer(owner).get();
 		return PLUGIN.getGriefPrevention().dataStore.createClaim(
 				ConfigUtil.getWorld(),
 				rx >> 5 >> 4,
@@ -106,7 +119,7 @@ public class IslandUtil {
 		);
 
 		return createClaimResult;
-	}
+	}*/
 
 	private static void clearIsland(UUID owner) {
 		//TODO Clear island, inventory, enderchest, and supported private mod inventories ie. mod ender chests

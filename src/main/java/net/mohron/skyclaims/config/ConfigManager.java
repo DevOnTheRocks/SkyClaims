@@ -44,7 +44,7 @@ public class ConfigManager {
 		}
 	}
 
-	public void load() {
+	private void load() {
 		try {
 			this.configMapper.populate(this.loader.load());
 		} catch (ObjectMappingException | IOException e) {
