@@ -1,6 +1,5 @@
 package net.mohron.skyclaims.config.type;
 
-import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
