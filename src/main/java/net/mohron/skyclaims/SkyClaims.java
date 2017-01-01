@@ -17,7 +17,10 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.game.state.*;
+import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
+import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
@@ -122,7 +125,7 @@ public class SkyClaims {
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-    @Listener
+	@Listener
 	public void onWorldSave(SaveWorldEvent.Post event) {
 		if (event.isCancelled() || event.getTargetWorld().equals(ConfigUtil.getWorld())) {
 			database.saveData(islands);
