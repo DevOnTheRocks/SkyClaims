@@ -14,6 +14,8 @@ import net.mohron.skyclaims.island.Island;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.biome.BiomeType;
+import org.spongepowered.api.world.biome.BiomeTypes;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ public class IslandUtil {
 	}
 
 	public static Island createIsland(Player owner, String schematic) {
+		if (config.world.defaultBiome != null) WorldUtil.setRegionBiome(1, 1, BiomeTypes.PLAINS); //TODO Find a way to convert biome names to BiomeTypes & use proper region coords
+
 		IClaimResult claimResult = createIslandClaim(owner.getUniqueId());
 		if (!claimResult.getStatus()) PLUGIN.getLogger().info("Failed to create claim");
 		return new Island(owner, claimResult.getClaim(), schematic);

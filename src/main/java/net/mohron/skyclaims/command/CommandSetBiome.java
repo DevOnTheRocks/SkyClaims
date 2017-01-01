@@ -5,6 +5,7 @@ import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -48,31 +49,40 @@ public class CommandSetBiome implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 
 		Player player = (Player) src;
-		Optional<Island> island = IslandUtil.getIslandByLocation(player.getLocation());
 
 		Optional<BiomeType> biomeOptional = args.getOne(Arguments.BIOME);
-		Arguments.Target target = Arguments.Target.CHUNK;
-
 		if (!biomeOptional.isPresent())
 			throw new CommandException(Text.of("You must supply a biome to use this command"));
 		BiomeType biome = biomeOptional.get();
 
+		Optional<Island> island = IslandUtil.getIslandByLocation(player.getLocation());
+		if (!island.isPresent())
+			throw new CommandException(Text.of("You must be on an island to use this command"));
+
+		if (!player.getUniqueId().equals(island.get().getOwner()) || player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
+			throw new CommandException(Text.of("You do not have permission to use setbiome on this island"));
+
 		if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BIOMES + "." + biome.getName().toLowerCase()))
 			throw new CommandPermissionException(Text.of("You do not have permission to use the designated biome type."));
 
+		Arguments.Target target = Arguments.Target.CHUNK;
 		if (args.getOne(Arguments.TARGET).isPresent()) target = (Arguments.Target) args.getOne(Arguments.TARGET).get();
+
 		switch (target) {
 			case BLOCK:
 				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BLOCK)) throw new CommandPermissionException();
 				PLUGIN.getLogger().info("SETBIOME: BLOCK");
+				WorldUtil.setBlockBiome(player.getLocation(), biome);
 				break;
 			case CHUNK:
 				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_CHUNK)) throw new CommandPermissionException();
 				PLUGIN.getLogger().info("SETBIOME: CHUNK");
+				WorldUtil.setChunkBiome(player.getLocation(), biome);
 				break;
 			case ISLAND:
 				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_ISLAND)) throw new CommandPermissionException();
 				PLUGIN.getLogger().info("SETBIOME: ISLAND");
+				WorldUtil.setIslandBiome(island.get(), biome);
 				break;
 		}
 
