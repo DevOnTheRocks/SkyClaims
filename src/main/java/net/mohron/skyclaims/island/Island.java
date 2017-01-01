@@ -52,10 +52,11 @@ public class Island {
 
 	public String getOwnerName() {
 		String name;
-		if (PLUGIN.getLuckPerms() != null) {
+		// todo luckperms 2.16 api is not available atm
+		/*if (PLUGIN.getLuckPerms() != null) {
 			name = PLUGIN.getLuckPerms().getUser(owner).getName();
 			if (name != null) return name;
-		}
+		}*/
 
 		name = getClaim().getOwnerName();
 		if (name != null) return name;
