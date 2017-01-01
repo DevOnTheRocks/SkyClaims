@@ -38,7 +38,7 @@ public class IslandUtil {
 	}
 
 	public static Island createIsland(Player owner, String schematic) {
-		if (config.world.defaultBiome != null) WorldUtil.setRegionBiome(1, 1, BiomeTypes.PLAINS); //TODO Find a way to convert biome names to BiomeTypes & use proper region coords
+		if (ConfigUtil.getDefaultBiome() != null) WorldUtil.setRegionBiome(x, z, ConfigUtil.getDefaultBiome());
 
 		IClaimResult claimResult = createIslandClaim(owner.getUniqueId());
 		if (!claimResult.getStatus()) PLUGIN.getLogger().info("Failed to create claim");

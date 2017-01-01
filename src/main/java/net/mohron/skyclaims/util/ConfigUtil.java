@@ -6,6 +6,8 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldArchetypes;
+import org.spongepowered.api.world.biome.BiomeType;
+import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.gen.WorldGeneratorModifiers;
 import org.spongepowered.api.world.storage.WorldProperties;
@@ -32,6 +34,40 @@ public class ConfigUtil {
 		Optional<World> world = server.getWorld(config.world.worldName);
 		Optional<World> defaultWorld = server.getWorld(server.getDefaultWorldName());
 		return (world.isPresent()) ? world.get() : defaultWorld.get();
+	}
+
+	public static BiomeType getDefaultBiome() {
+		if (config.world.defaultBiome == null) return null;
+		switch (config.world.defaultBiome) {
+			case "deepocean":
+				return BiomeTypes.DEEP_OCEAN;
+			case "desert":
+				return BiomeTypes.DESERT;
+			case "extremehills":
+				return BiomeTypes.EXTREME_HILLS;
+			case "flowerforest":
+				return BiomeTypes.FLOWER_FOREST;
+			case "forest":
+				return BiomeTypes.FOREST;
+			case "hell":
+				return BiomeTypes.HELL;
+			case "jungle":
+				return BiomeTypes.JUNGLE;
+			case "mushroomisland":
+				return BiomeTypes.MUSHROOM_ISLAND;
+			case "ocean":
+				return BiomeTypes.OCEAN;
+			case "plains":
+				return BiomeTypes.PLAINS;
+			case "sky":
+				return BiomeTypes.SKY;
+			case "swampland":
+				return BiomeTypes.SWAMPLAND;
+			case "taiga":
+				return BiomeTypes.TAIGA;
+			default:
+				return null;
+		}
 	}
 
 	/**
