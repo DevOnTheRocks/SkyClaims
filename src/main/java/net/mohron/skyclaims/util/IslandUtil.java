@@ -73,16 +73,22 @@ public class IslandUtil {
 	}
 
 	private static CreateClaimResult createProtection(Player owner, int rx, int rz) {
+		PLUGIN.getLogger().info(String.format(
+				"Protecting Region %s,%s: (%s,%s),(%s,%s)",
+				rx, rz,
+				rx << 5 << 4, (((rx + 1) << 5) << 4) - 1,
+				rz << 5 << 4, (((rz + 1) << 5) << 4) - 1
+		));
 		DataStore dataStore = PLUGIN.getGriefPrevention().dataStore;
 		PlayerData ownerData = dataStore.getOrCreatePlayerData(ConfigUtil.getWorld(), owner.getUniqueId());
 		return dataStore.createClaim(
 				ConfigUtil.getWorld(),
-				rx >> 5 >> 4,
-				rx >> 5 >> 4 + MAX_ISLAND_SIZE,
+				rx << 5 << 4,
+				(((rx + 1) << 5) << 4) - 1,
 				0,
 				255,
-				rz  >> 5 >> 4,
-				rz >> 5 >> 4 + MAX_ISLAND_SIZE,
+				rz << 5 << 4,
+				(((rz + 1) << 5) << 4) - 1,
 				UUID.randomUUID(), null, Claim.Type.BASIC, ownerData.getCuboidMode(), owner);
 	}
 
