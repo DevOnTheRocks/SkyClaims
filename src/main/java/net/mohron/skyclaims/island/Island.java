@@ -4,6 +4,7 @@ import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
@@ -18,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static GlobalConfig config = PLUGIN.getConfig();
 	private static final DataStore claimSystem = PLUGIN.getGriefPrevention().dataStore;
 //	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
 
@@ -104,7 +106,17 @@ public class Island {
 
 	public Location<World> getCenter() {
 		int radius = this.getRadius();
-		return new Location<>(ConfigUtil.getWorld(), claim.getLesserBoundaryCorner().getX() + radius, 64, claim.getLesserBoundaryCorner().getZ() + radius);
+		return new Location<>(ConfigUtil.getWorld(),
+				claim.getLesserBoundaryCorner().getX() + radius,
+				ConfigUtil.get(config.world.defaultHeight, 64),
+				claim.getLesserBoundaryCorner().getZ() + radius);
+	}
+
+	public boolean hasPermissions(Player player) {
+		return player.getUniqueId().equals(claim.getOwnerUniqueId()) ||
+				!claim.getClaimData().getContainers().contains(player.getUniqueId()) ||
+				!claim.getClaimData().getBuilders().contains(player.getUniqueId()) ||
+				!claim.getClaimData().getManagers().contains(player.getUniqueId());
 	}
 
 	public int getRegionX() {

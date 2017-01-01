@@ -54,6 +54,9 @@ public class CommandSpawn implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!"));
 
+		if (!island.get().hasPermissions((Player) src) || !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
+			throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
+
 		if (user.isOnline()) {
 			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(WorldUtil.createTeleportConsumer((Player) src, island.get().getSpawn(), island.get().getClaim())).submit(PLUGIN);
 		}
