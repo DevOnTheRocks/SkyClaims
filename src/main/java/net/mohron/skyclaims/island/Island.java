@@ -9,14 +9,11 @@ import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.profile.GameProfileManager;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -51,20 +48,11 @@ public class Island {
 	}
 
 	public String getOwnerName() {
-		String name;
+		return getPlayer().getName();
+	}
 
-		name = getClaim().getOwnerName();
-		if (name != null) return name;
-
-		GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
-
-		try {
-			name = profileManager.get(owner).get().getName().orElse("Unknown");
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-
-		return name;
+	public Player getPlayer() {
+		return PLUGIN.getGame().getServer().getPlayer(owner).get();
 	}
 
 	public Claim getClaim() {
