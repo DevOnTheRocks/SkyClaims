@@ -26,7 +26,7 @@ public class IslandUtil {
 	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
 	private static ILayout layout = new SpiralLayout();
 
-	public static Island createIsland(Player owner, String schematic) {
+	public static Optional<Island> createIsland(Player owner, String schematic) {
 		Point region = layout.nextRegion();
 		int x = region.x;
 		int z = region.y;
@@ -36,9 +36,9 @@ public class IslandUtil {
 		CreateClaimResult claimResult = createProtection(owner, x, z);
 		if (!claimResult.succeeded) {
 			PLUGIN.getLogger().error("Failed to create claim. Found overlapping claim: " + claimResult.claim.getID());
-			return null;
+			return Optional.empty();
 		}
-		return new Island(owner, claimResult.claim, schematic);
+		return Optional.of(new Island(owner, claimResult.claim, schematic));
 	}
 
 	public static boolean hasIsland(UUID owner) {
