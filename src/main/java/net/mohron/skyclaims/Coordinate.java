@@ -1,8 +1,8 @@
 package net.mohron.skyclaims;
 
 public class Coordinate {
-	public int x;
-	public int z;
+	private int x;
+	private int z;
 
 	public Coordinate(int x, int z) {
 		this.x = x;

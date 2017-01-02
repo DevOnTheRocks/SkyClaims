@@ -3,6 +3,7 @@ package net.mohron.skyclaims.island;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
+import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
@@ -21,7 +22,6 @@ public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static GlobalConfig config = PLUGIN.getConfig();
 	private static final DataStore claimSystem = PLUGIN.getGriefPrevention().dataStore;
-//	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
 
 	private UUID owner;
 	private Claim claim;
@@ -119,11 +119,7 @@ public class Island {
 				!claim.getClaimData().getManagers().contains(player.getUniqueId());
 	}
 
-	public int getRegionX() {
-		return getCenter().getBlockX() / 512;
-	}
-
-	public int getRegionZ() {
-		return getCenter().getBlockZ() / 512;
+	public Region getRegion() {
+		return new Region(getCenter().getChunkPosition().getX() >> 5, getCenter().getChunkPosition().getZ() >> 5);
 	}
 }

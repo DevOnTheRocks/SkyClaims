@@ -1,6 +1,5 @@
 package net.mohron.skyclaims.island.layout;
 
-
 import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -57,11 +56,11 @@ public class SpiralLayout implements ILayout {
 
 				// Skip the spawn regions for checking
 				if (i < spawnRegions) {
-					PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.x, region.z));
+					PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
 					continue;
 				}
 
-				PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.z, region.z));
+				PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
 
 				// If there are no islands, the one after spawn will be taken
 				if (currentIslands.isEmpty())
@@ -70,8 +69,8 @@ public class SpiralLayout implements ILayout {
 				// Ensure there are regions to get at this index
 				for (Island island : currentIslands) {
 					SkyClaims.getInstance().getLogger().info(String.format("This iteration's island: %s", island.getOwnerName()));
-					if (region.x == island.getRegionX() && region.z == island.getRegionZ())
-						continue;
+					if (region.equals(island.getRegion()))
+						break;
 				}
 
 //				for (Island island : SkyClaims.islands.values()) {

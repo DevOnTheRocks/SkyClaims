@@ -47,8 +47,8 @@ public class CommandList implements CommandExecutor {
 			listText = Text.join(listText, Text.of(
 					(newline) ? "\n" : "",
 					TextColors.AQUA, island.getOwnerName(), TextColors.GRAY, " (",
-					TextColors.LIGHT_PURPLE, island.getRegionX(), TextColors.GRAY, ", ",
-					TextColors.LIGHT_PURPLE, island.getRegionZ(), TextColors.GRAY, ") -",
+					TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ",
+					TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") -",
 					TextColors.GREEN, Text.builder(island.getClaimId().toString()).
 							onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getID().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
 							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))

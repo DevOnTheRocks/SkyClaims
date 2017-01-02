@@ -14,7 +14,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.awt.*;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,12 +24,11 @@ public class IslandUtil {
 
 	public static Optional<Island> createIsland(Player owner, String schematic) {
 		Region region = layout.nextRegion();
-		int x = region.x;
-		int z = region.z;
 
-		if (ConfigUtil.getDefaultBiome() != null) WorldUtil.setRegionBiome(x, z, ConfigUtil.getDefaultBiome());
+		if (ConfigUtil.getDefaultBiome() != null)
+			WorldUtil.setRegionBiome(region.getX(), region.getZ(), ConfigUtil.getDefaultBiome());
 
-		CreateClaimResult claimResult = createProtection(owner, x, z);
+		CreateClaimResult claimResult = createProtection(owner, region);
 		if (!claimResult.succeeded) {
 			PLUGIN.getLogger().error("Failed to create claim. Found overlapping claim: " + claimResult.claim.getID());
 			return Optional.empty();
@@ -72,24 +70,24 @@ public class IslandUtil {
 		});
 	}
 
-	private static CreateClaimResult createProtection(Player owner, int rx, int rz) {
+	private static CreateClaimResult createProtection(Player owner, Region region) {
 		PLUGIN.getLogger().info(String.format(
 				"Creating claim for %s with region %s,%s: (%s,%s),(%s,%s)",
 				owner.getName(),
-				rx, rz,
-				rx << 5 << 4, (((rx + 1) << 5) << 4) - 1,
-				rz << 5 << 4, (((rz + 1) << 5) << 4) - 1
+				region.getX(), region.getZ(),
+				region.getLesserBoundary().getX(), region.getGreaterBoundary().getX(),
+				region.getLesserBoundary().getZ(), region.getGreaterBoundary().getZ()
 		));
 		DataStore dataStore = PLUGIN.getGriefPrevention().dataStore;
 		PlayerData ownerData = dataStore.getOrCreatePlayerData(ConfigUtil.getWorld(), owner.getUniqueId());
 		return dataStore.createClaim(
 				ConfigUtil.getWorld(),
-				rx << 5 << 4,
-				(((rx + 1) << 5) << 4) - 1,
+				region.getX() << 5 << 4,
+				(((region.getX() + 1) << 5) << 4) - 1,
 				0,
 				255,
-				rz << 5 << 4,
-				(((rz + 1) << 5) << 4) - 1,
+				region.getZ() << 5 << 4,
+				(((region.getZ() + 1) << 5) << 4) - 1,
 				UUID.randomUUID(), null, Claim.Type.BASIC, ownerData.getCuboidMode(), owner);
 	}
 
