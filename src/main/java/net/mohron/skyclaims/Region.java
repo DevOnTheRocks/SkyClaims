@@ -1,8 +1,8 @@
 package net.mohron.skyclaims;
 
 public class Region {
-	public int x;
-	public int z;
+	private int x;
+	private int z;
 
 	public Region(int x, int z) {
 		this.x = x;
