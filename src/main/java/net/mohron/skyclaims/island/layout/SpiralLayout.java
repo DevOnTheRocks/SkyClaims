@@ -29,20 +29,19 @@ public class SpiralLayout implements ILayout {
 		int y = 0;
 
 		for (int i = (int) Math.pow(Math.max(generationSize, generationSize), 2); i > 0; i--) {
-			if ((-generationSize / 2 < x && x <= generationSize / 2) && (-generationSize / 2 < y && y <= generationSize / 2))
-				coordinates.add(new Region(x, y));
 			if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1 - y)) {
 				// change direction
 				int a = delta[0];
 				delta[0] = -delta[1];
 				delta[1] = a;
 			}
-			log += String.format("(%s,%s),",x,y);
+			coordinates.add(new Region(x, y));
+			log += String.format("(%s,%s),", x, y);
 			x += delta[0];
 			y += delta[1];
 		}
 		PLUGIN.getLogger().info(log + "]");
-
+		PLUGIN.getLogger().info(String.format("Coordinates length: %s", coordinates.size()));
 		return coordinates;
 	}
 
