@@ -4,6 +4,7 @@ import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.PlayerData;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
+import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.GenerateIslandTask;
 import net.mohron.skyclaims.island.Island;
@@ -23,9 +24,9 @@ public class IslandUtil {
 	private static ILayout layout = new SpiralLayout();
 
 	public static Optional<Island> createIsland(Player owner, String schematic) {
-		Point region = layout.nextRegion();
+		Region region = layout.nextRegion();
 		int x = region.x;
-		int z = region.y;
+		int z = region.z;
 
 		if (ConfigUtil.getDefaultBiome() != null) WorldUtil.setRegionBiome(x, z, ConfigUtil.getDefaultBiome());
 

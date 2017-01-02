@@ -3,12 +3,10 @@ package net.mohron.skyclaims.island.layout;
 
 import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.claim.SkyClaim;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.util.ConfigUtil;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class SpiralLayout implements ILayout {
@@ -21,7 +19,7 @@ public class SpiralLayout implements ILayout {
 	 *
 	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
 	 */
-	private static ArrayList<Region> generateRegionSpiral() {
+	public ArrayList<Region> generateRegionPattern() {
 		int islandCount = SkyClaims.islands.size();
 		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
 
@@ -49,7 +47,7 @@ public class SpiralLayout implements ILayout {
 
 	public Region nextRegion() {
 		ArrayList<Island> currentIslands = new ArrayList<Island>(SkyClaims.islands.values());
-		ArrayList<Region> regions = generateRegionSpiral();
+		ArrayList<Region> regions = generateRegionPattern();
 
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
 
@@ -71,6 +69,7 @@ public class SpiralLayout implements ILayout {
 
 				// Ensure there are regions to get at this index
 				for (Island island : currentIslands) {
+					SkyClaims.getInstance().getLogger().info(String.format("This iteration's island: %s", island.getOwnerName()));
 					if (region.x == island.getRegionX() && region.z == island.getRegionZ())
 						continue;
 				}
