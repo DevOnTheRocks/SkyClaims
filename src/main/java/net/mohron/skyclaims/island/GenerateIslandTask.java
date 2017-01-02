@@ -13,6 +13,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Chunk;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ArchetypeVolume;
 
@@ -57,11 +58,12 @@ public class GenerateIslandTask implements Runnable {
 		ArchetypeVolume volume = DataTranslators.SCHEMATIC.translate(schematicData);
 
 		Optional<Chunk> chunkOptional = WORLD.loadChunk(island.getCenter().getChunkPosition(), true);
+		Location<World> center = new Location<>(island.getWorld(), island.getCenter().getX(), island.getCenter().getY() + volume.getBlockSize().getY() - 1, island.getCenter().getZ());
 		chunkOptional.ifPresent(chunk -> {
-			volume.apply(island.getCenter(), BlockChangeFlag.ALL, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
+			volume.apply(center, BlockChangeFlag.ALL, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
 			chunk.unloadChunk();
 		});
 
-		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(CommandUtil.createTeleportConsumer(player, island.getSpawn(), island.getClaim())).submit(PLUGIN);
+		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(CommandUtil.createTeleportConsumer(player, island.getSpawn())).submit(PLUGIN);
 	}
 }
