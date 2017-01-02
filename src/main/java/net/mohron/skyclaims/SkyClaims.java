@@ -45,7 +45,7 @@ import static net.mohron.skyclaims.PluginInfo.*;
 public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPrevention griefPrevention;
-	public static PermissionService permissionService;
+	private static PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
 	@Inject
@@ -149,6 +149,10 @@ public class SkyClaims {
 
 	public GriefPrevention getGriefPrevention() {
 		return griefPrevention;
+	}
+
+	public PermissionService getPermissionService() {
+		return permissionService;
 	}
 
 	public PluginContainer getPluginContainer() {
