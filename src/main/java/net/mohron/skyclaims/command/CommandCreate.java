@@ -52,12 +52,15 @@ public class CommandCreate implements CommandExecutor {
 		if (args.getOne(Arguments.SCHEMATIC).isPresent())
 			schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
 
-        if (!new File(PLUGIN.getConfigDir() + File.separator + schematic + ".schematic").exists()) {
-            throw new CommandException(Text.of("A schematic with this name does not exist."));
-        }
+		String schemPath = String.format("%s%sschematics%s%s.schematic", PLUGIN.getConfigDir(), File.separator, File.separator, schematic);
+		if (!new File(schemPath).exists()) {
+			throw new CommandException(Text.of("A schematic can not be found at ", schemPath));
+		}
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
-		IslandUtil.createIsland(player, schematic);
+
+		if (!IslandUtil.createIsland(player, schematic).isPresent())
+			throw new CommandException(Text.of("Unable to create island due to claim creation failure!"));
 
 		return CommandResult.success();
 	}

@@ -24,34 +24,6 @@ public class WorldUtil {
 		return SkyClaims.getInstance().getGame().getServer().getWorld(defaultWorldName).get();
 	}
 
-	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location, Claim claim) {
-		return teleport -> {
-			// if not owner of claim, validate perms
-			if (!player.getUniqueId().equals(claim.getOwnerUniqueId())) {
-				if (!claim.getClaimData().getContainers().contains(player.getUniqueId())
-						&& !claim.getClaimData().getBuilders().contains(player.getUniqueId())
-						&& !claim.getClaimData().getManagers().contains(player.getUniqueId())
-						&& !player.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
-					player.sendMessage(Text.of(TextColors.RED, "You do not have permission to teleport to the specified island."));
-					return;
-				}
-			}
-
-			Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
-			if (safeLocation == null) {
-				player.sendMessage(
-						Text.builder().append(Text.of(TextColors.RED, "Location is not safe. "),
-								Text.builder().append(Text.of(TextColors.GREEN, "Are you sure you want to teleport here?")).onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location))).style(TextStyles.UNDERLINE).build()).build());
-			} else {
-				player.setLocation(safeLocation);
-			}
-		};
-	}
-
-	public static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
-		return teleport -> player.setLocation(location);
-	}
-
 	public static void setBlockBiome(Location<World> location, BiomeType biomeType) {
 		location.getExtent().setBiome(
 				location.getBlockX(),

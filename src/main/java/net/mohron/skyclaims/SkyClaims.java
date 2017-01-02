@@ -1,12 +1,12 @@
 package net.mohron.skyclaims;
 
 import com.google.inject.Inject;
-import me.lucko.luckperms.api.LuckPermsApi;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.util.ConfigUtil;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -16,7 +16,10 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.game.state.*;
+import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
+import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
@@ -26,8 +29,8 @@ import org.spongepowered.api.service.permission.PermissionService;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static net.mohron.skyclaims.PluginInfo.*;
@@ -44,7 +47,7 @@ import static net.mohron.skyclaims.PluginInfo.*;
 public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPrevention griefPrevention;
-	private static LuckPermsApi luckPerms;
+	//	private static LuckPermsApi luckPerms;
 	public static PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
@@ -66,8 +69,8 @@ public class SkyClaims {
 	@Inject
 	@DefaultConfig(sharedRoot = false)
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
-	private GlobalConfig defaultConfig;
 	private ConfigManager pluginConfigManager;
+	private GlobalConfig defaultConfig;
 
 	private Database database;
 
@@ -96,11 +99,12 @@ public class SkyClaims {
 		} catch (ClassNotFoundException e) {
 			getLogger().info("GriefPrevention Integration Failed!");
 		}
-		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
-		luckPerms.ifPresent(lp -> {
-			SkyClaims.luckPerms = lp;
-			getLogger().info("LuckPerms Integration Successful!");
-		});
+
+//		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
+//		luckPerms.ifPresent(lp -> {
+//			SkyClaims.luckPerms = lp;
+//			getLogger().info("LuckPerms Integration Successful!");
+//		});
 
 		defaultConfig = new GlobalConfig();
 		pluginConfigManager = new ConfigManager(configManager);
@@ -115,22 +119,19 @@ public class SkyClaims {
 	public void onServerStarted(GameStartedServerEvent event) {
 		database = new Database(getConfigDir() + File.separator + "skyclaims.db");
 		islands = database.loadData();
-		getLogger().info("ISLAND LENGTH: " + islands.keySet().size());
-
+		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
 	}
 
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
-    @Listener
+	@Listener
 	public void onWorldSave(SaveWorldEvent.Post event) {
-		if (event.isCancelled() || event.getTargetWorld().equals(game.getServer().getDefaultWorld().get())) {
-			// TODO Save the database
-            database.saveData(islands);
+		if (event.isCancelled() || event.getTargetWorld().equals(ConfigUtil.getWorld())) {
+			database.saveData(islands);
 		}
 	}
 
 	@Listener
-	public void onServerStopped(GameStoppingServerEvent event) {
+	public void onGameStopping(GameStoppingServerEvent event) {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 		database.saveData(islands);
 		getLogger().info("Shutdown actions complete.");
@@ -159,9 +160,9 @@ public class SkyClaims {
 		return griefPrevention;
 	}
 
-	public LuckPermsApi getLuckPerms() {
-		return luckPerms;
-	}
+//	public LuckPermsApi getLuckPerms() {
+//		return luckPerms;
+//	}
 
 	public PluginContainer getPluginContainer() {
 		return pluginContainer;

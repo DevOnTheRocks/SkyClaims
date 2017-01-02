@@ -1,7 +1,10 @@
 package net.mohron.skyclaims.island.layout;
 
-import java.awt.*;
+import net.mohron.skyclaims.Region;
+
+import java.util.ArrayList;
 
 public interface ILayout {
-	public Point nextRegion();
+	ArrayList<Region> generateRegionPattern();
+	public Region nextRegion();
 }

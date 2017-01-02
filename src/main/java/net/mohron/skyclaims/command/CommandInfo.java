@@ -5,6 +5,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -70,7 +71,7 @@ public class CommandInfo implements CommandExecutor {
 					TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockX(), TextColors.GRAY, " x, ",
 					TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, " y, ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, " z", "\n",
 					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getClaim().getID().toString())
-							.onClick(TextActions.executeCallback(createCommandConsumer(src, "claiminfo", island.getClaim().getID().toString(), createReturnIslandInfoConsumer(src, ""))))
+							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getID().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
 							.onHover(TextActions.showText(Text.of("Click here to check claim info."))), "\n",
 					TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated()
 			);
@@ -80,27 +81,5 @@ public class CommandInfo implements CommandExecutor {
 
 			return CommandResult.success();
 		}
-	}
-
-	private static Consumer<CommandSource> createCommandConsumer(CommandSource src, String command, String arguments, Consumer<CommandSource> postConsumerTask) {
-		return consumer -> {
-			try {
-				Sponge.getCommandManager().get(command).get().getCallable().process(src, arguments);
-			} catch (CommandException e) {
-				src.sendMessage(e.getText());
-			}
-			if (postConsumerTask != null) {
-				postConsumerTask.accept(src);
-			}
-		};
-	}
-
-	private Consumer<CommandSource> createReturnIslandInfoConsumer(CommandSource src, String arguments) {
-		return consumer -> {
-			Text claimListReturnCommand = Text.builder().append(Text.of(
-					TextColors.WHITE, "\n[", TextColors.AQUA, "Return to island info", TextColors.WHITE, "]\n"))
-					.onClick(TextActions.executeCallback(CommandHelper.createCommandConsumer(src, "is info", arguments))).build();
-			src.sendMessage(claimListReturnCommand);
-		};
 	}
 }

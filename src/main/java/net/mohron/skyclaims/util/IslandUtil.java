@@ -4,9 +4,8 @@ import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.PlayerData;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
+import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.claim.ClaimSystemFactory;
-import net.mohron.skyclaims.claim.IClaimSystem;
 import net.mohron.skyclaims.island.GenerateIslandTask;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.island.layout.ILayout;
@@ -15,27 +14,26 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.awt.*;
 import java.util.Optional;
 import java.util.UUID;
 
 public class IslandUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final DataStore GRIEF_PREVENTION_DATA = PLUGIN.getGriefPrevention().dataStore;
-	private static final int MAX_ISLAND_SIZE = 511; // 32 x 32 chunks
-	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
 	private static ILayout layout = new SpiralLayout();
 
-	public static Island createIsland(Player owner, String schematic) {
-		Point region = layout.nextRegion();
-		int x = region.x;
-		int z = region.y;
+	public static Optional<Island> createIsland(Player owner, String schematic) {
+		Region region = layout.nextRegion();
 
-		if (ConfigUtil.getDefaultBiome() != null) WorldUtil.setRegionBiome(x, z, ConfigUtil.getDefaultBiome());
+		if (ConfigUtil.getDefaultBiome() != null)
+			WorldUtil.setRegionBiome(region.getX(), region.getZ(), ConfigUtil.getDefaultBiome());
 
-		CreateClaimResult claimResult = createProtection(owner, x, z);
-		if (!claimResult.succeeded) PLUGIN.getLogger().error("Failed to create claim");
-		return new Island(owner, claimResult.claim, schematic);
+		CreateClaimResult claimResult = createProtection(owner, region);
+		if (!claimResult.succeeded) {
+			PLUGIN.getLogger().error("Failed to create claim. Found overlapping claim: " + claimResult.claim.getID());
+			return Optional.empty();
+		}
+		return Optional.of(new Island(owner, claimResult.claim, schematic));
 	}
 
 	public static boolean hasIsland(UUID owner) {
@@ -72,64 +70,28 @@ public class IslandUtil {
 		});
 	}
 
-	private static CreateClaimResult createProtection(Player owner, int rx, int rz) {
+	private static CreateClaimResult createProtection(Player owner, Region region) {
+		PLUGIN.getLogger().info(String.format(
+				"Creating claim for %s with region %s,%s: (%s,%s),(%s,%s)",
+				owner.getName(),
+				region.getX(), region.getZ(),
+				region.getLesserBoundary().getX(), region.getGreaterBoundary().getX(),
+				region.getLesserBoundary().getZ(), region.getGreaterBoundary().getZ()
+		));
 		DataStore dataStore = PLUGIN.getGriefPrevention().dataStore;
 		PlayerData ownerData = dataStore.getOrCreatePlayerData(ConfigUtil.getWorld(), owner.getUniqueId());
 		return dataStore.createClaim(
 				ConfigUtil.getWorld(),
-				rx >> 5 >> 4,
-				rx >> 5 >> 4 + MAX_ISLAND_SIZE,
+				region.getX() << 5 << 4,
+				(((region.getX() + 1) << 5) << 4) - 1,
 				0,
 				255,
-				rz  >> 5 >> 4,
-				rz >> 5 >> 4 + MAX_ISLAND_SIZE,
+				region.getZ() << 5 << 4,
+				(((region.getZ() + 1) << 5) << 4) - 1,
 				UUID.randomUUID(), null, Claim.Type.BASIC, ownerData.getCuboidMode(), owner);
 	}
-
-	/*private static CreateClaimResult createIslandClaimLegacy(UUID owner, int rx, int rz) {
-		Player player = PLUGIN.getGame().getServer().getPlayer(owner).get();
-		return PLUGIN.getGriefPrevention().dataStore.createClaim(
-				ConfigUtil.getWorld(),
-				rx * 512,
-				rx * 512 + MAX_ISLAND_SIZE,
-				0,
-				255,
-				rz * 512,
-				rz * 512 + MAX_ISLAND_SIZE,
-				UUID.randomUUID(),
-				null,
-				Claim.Type.BASIC,
-				false,
-				player
-		);
-	}
-
-	private static IClaimResult createIslandClaim(UUID owner, int rx, int rz) {
-		Player player = PLUGIN.getGame().getServer().getPlayer(owner).get();
-		IClaimResult createClaimResult;
-		createClaimResult = claimSystem.createClaim(
-				ConfigUtil.getWorld(),
-				new Vector3i(rx * 512, rx * 512 + MAX_ISLAND_SIZE, 1),
-				new Vector3i(255, rz * 512, rz * 512 + MAX_ISLAND_SIZE),
-				UUID.randomUUID(),
-				null,
-				IClaim.Type.BASIC,
-				false,
-				player
-		);
-
-		return createClaimResult;
-	}*/
 
 	private static void clearIsland(UUID owner) {
 		//TODO Clear island, inventory, enderchest, and supported private mod inventories ie. mod ender chests
 	}
-
-//	private static int getXOffset(int i) {
-//		return (i == 1 || i == 3) ? 0 : MAX_ISLAND_SIZE;
-//	}
-
-//	private static int getYOffset(int i) {
-//		return (i == 0 || i == 1) ? 0 : MAX_ISLAND_SIZE;
-//	}
 }

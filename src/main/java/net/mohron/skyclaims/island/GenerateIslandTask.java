@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.island;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.data.DataContainer;
@@ -38,7 +39,7 @@ public class GenerateIslandTask implements Runnable {
 
 	@Override
 	public void run() {
-		File inputFile = new File(CONFIG_DIR, schematic + ".schematic");
+		File inputFile = new File(CONFIG_DIR, String.format("schematics%s%s.schematic", File.separator, schematic));
 
 		if (!inputFile.exists()) {
 			player.sendMessage(Text.of(TextColors.RED, "Schematic at " + inputFile.getAbsolutePath() + " not found."));
@@ -65,6 +66,6 @@ public class GenerateIslandTask implements Runnable {
 			chunk.unloadChunk();
 		});
 
-		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(WorldUtil.createTeleportConsumer(player, island.getSpawn(), island.getClaim())).submit(PLUGIN);
+		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(CommandUtil.createTeleportConsumer(player, island.getSpawn(), island.getClaim())).submit(PLUGIN);
 	}
 }

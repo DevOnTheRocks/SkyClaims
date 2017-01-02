@@ -3,6 +3,7 @@ package net.mohron.skyclaims.island;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
+import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
@@ -21,7 +22,6 @@ public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static GlobalConfig config = PLUGIN.getConfig();
 	private static final DataStore claimSystem = PLUGIN.getGriefPrevention().dataStore;
-//	private static IClaimSystem claimSystem = ClaimSystemFactory.getClaimSystem();
 
 	private UUID owner;
 	private Claim claim;
@@ -52,11 +52,10 @@ public class Island {
 
 	public String getOwnerName() {
 		String name;
-		// todo luckperms 2.16 api is not available atm
-		/*if (PLUGIN.getLuckPerms() != null) {
-			name = PLUGIN.getLuckPerms().getUser(owner).getName();
-			if (name != null) return name;
-		}*/
+//		if (PLUGIN.getLuckPerms() != null) {
+//			name = PLUGIN.getLuckPerms().getUser(owner).getName();
+//			if (name != null) return name;
+//		}
 
 		name = getClaim().getOwnerName();
 		if (name != null) return name;
@@ -64,13 +63,12 @@ public class Island {
 		GameProfileManager profileManager = Sponge.getServer().getGameProfileManager();
 
 		try {
-			return profileManager.get(owner).get().getName().orElse("Unknown");
+			name = profileManager.get(owner).get().getName().orElse("Unknown");
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
 
-		return "Unknown";
-
+		return name;
 	}
 
 	public Claim getClaim() {
@@ -95,6 +93,7 @@ public class Island {
 
 	public void setSpawn(Location<World> spawn) {
 		this.spawn = spawn;
+		IslandUtil.saveIsland(this);
 	}
 
 	public boolean isWithinIsland(Location<World> location) {
@@ -120,11 +119,7 @@ public class Island {
 				!claim.getClaimData().getManagers().contains(player.getUniqueId());
 	}
 
-	public int getRegionX() {
-		return getCenter().getBlockX() / 512;
-	}
-
-	public int getRegionZ() {
-		return getCenter().getBlockZ() / 512;
+	public Region getRegion() {
+		return new Region(getCenter().getChunkPosition().getX() >> 5, getCenter().getChunkPosition().getZ() >> 5);
 	}
 }

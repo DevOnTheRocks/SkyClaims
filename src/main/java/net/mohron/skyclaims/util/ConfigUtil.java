@@ -31,13 +31,13 @@ public class ConfigUtil {
 
 	public static World getWorld() {
 		Server server = GAME.getServer();
-		Optional<World> world = server.getWorld(config.world.worldName);
+		Optional<World> world = (config.world != null) ? server.getWorld(config.world.worldName) : Optional.empty();
 		Optional<World> defaultWorld = server.getWorld(server.getDefaultWorldName());
 		return world.isPresent() ? world.get() : defaultWorld.get();
 	}
 
 	public static BiomeType getDefaultBiome() {
-		if (config.world.defaultBiome == null) return null;
+		if (config.world == null || config.world.defaultBiome == null) return null;
 		switch (config.world.defaultBiome) {
 			case "deepocean":
 				return BiomeTypes.DEEP_OCEAN;

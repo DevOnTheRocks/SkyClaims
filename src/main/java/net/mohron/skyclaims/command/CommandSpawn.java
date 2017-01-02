@@ -4,6 +4,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.command.CommandException;
@@ -55,11 +56,11 @@ public class CommandSpawn implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!"));
 
-		if (!player.getUniqueId().equals(island.get().getOwner()) || !island.get().hasPermissions(player) || !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
+		if (!player.getUniqueId().equals(island.get().getOwner()) && !island.get().hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
 			throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
 
 		if (user.isOnline()) {
-			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(WorldUtil.createTeleportConsumer((Player) src, island.get().getSpawn(), island.get().getClaim())).submit(PLUGIN);
+			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(CommandUtil.createTeleportConsumer((Player) src, island.get().getSpawn(), island.get().getClaim())).submit(PLUGIN);
 		}
 
 		return CommandResult.success();

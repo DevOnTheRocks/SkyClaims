@@ -10,10 +10,14 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.zip.GZIPOutputStream;
 
 public class ConfigManager {
 	private final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -32,9 +36,12 @@ public class ConfigManager {
 		}
 
 		this.load();
-		this.initializeSchematic();
+		//this.initializeSchematic();
 	}
 
+	/**
+	 * Saves the serialized config to file
+	 */
 	public void save() {
 		try {
 			SimpleConfigurationNode out = SimpleConfigurationNode.root();
@@ -45,6 +52,9 @@ public class ConfigManager {
 		}
 	}
 
+	/**
+	 * Loads the configs into serialized objects, for the configMapper
+	 */
 	private void load() {
 		try {
 			this.configMapper.populate(this.loader.load());
@@ -53,13 +63,27 @@ public class ConfigManager {
 		}
 	}
 
+	/**
+	 * Create the default schematic file, from resource
+	 */
 	private void initializeSchematic() {
-		Path defaultSchematic = Paths.get(String.format("%s" + File.separator + "island.schematic", PLUGIN.getConfigDir()));
+		Path defaultSchematic = Paths.get(String.format("%s%sisland.schematic", PLUGIN.getConfigDir(), File.separator));
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
-				String filePath = this.getClass().getResource("island.schematic").getPath();
-				Files.copy(new File(filePath).toPath(), defaultSchematic);
+
+				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic")) {
+					try (OutputStream outputStream = new FileOutputStream(defaultSchematic.toString())) {
+						try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream)) {
+
+							byte[] buffer = new byte[1024];
+							int bytesRead;
+
+							while ((bytesRead = inputStream.read()) != -1)
+								gzipOutputStream.write(buffer, 0, bytesRead);
+						}
+					}
+				}
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
 			}
