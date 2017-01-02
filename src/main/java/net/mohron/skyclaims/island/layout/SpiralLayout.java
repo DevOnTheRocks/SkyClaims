@@ -75,7 +75,10 @@ public class SpiralLayout implements ILayout {
 				l++;
 			}
 
-			if (l == currentIslands.size() + 1)
+			SkyClaims.getInstance().getLogger().info(String.format("L is %s", l));
+			SkyClaims.getInstance().getLogger().info(String.format("size is %s", currentIslands.size()));
+
+			if (l == currentIslands.size())
 				return region;
 		}
 
