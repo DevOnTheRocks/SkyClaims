@@ -29,6 +29,7 @@ import org.spongepowered.api.service.permission.PermissionService;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ public class SkyClaims {
 	private static GriefPrevention griefPrevention;
 	//	private static LuckPermsApi luckPerms;
 	public static PermissionService permissionService;
-	public static Map<UUID, Island> islands = new HashMap<>();
+	public static Map<UUID, Island> islands = new LinkedHashMap<>();
 
 	@Inject
 	private PluginContainer pluginContainer;
