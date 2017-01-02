@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.island.layout;
 
 
+import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.claim.SkyClaim;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -20,18 +21,18 @@ public class SpiralLayout implements ILayout {
 	 *
 	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
 	 */
-	private static ArrayList<Point> generateRegionSpiral() {
+	private static ArrayList<Region> generateRegionSpiral() {
 		int islandCount = SkyClaims.islands.size();
 		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
 
-		ArrayList<Point> coordinates = new ArrayList<>(generationSize);
+		ArrayList<Region> coordinates = new ArrayList<>(generationSize);
 		int[] delta = {0, -1};
 		int x = 0;
 		int y = 0;
 
 		for (int i = (int) Math.pow(Math.max(generationSize, generationSize), 2); i > 0; i--) {
 			if ((-generationSize / 2 < x && x <= generationSize / 2) && (-generationSize / 2 < y && y <= generationSize / 2))
-				coordinates.add(new Point(x, y));
+				coordinates.add(new Region(x, y));
 			if (x == y || (x < 0 && x == -y) || (x > 0 && x == 1 - y)) {
 				// change direction
 				int a = delta[0];
@@ -46,31 +47,31 @@ public class SpiralLayout implements ILayout {
 		return coordinates;
 	}
 
-	public Point nextRegion() {
+	public Region nextRegion() {
 		ArrayList<Island> currentIslands = new ArrayList<Island>(SkyClaims.islands.values());
-		ArrayList<Point> regions = generateRegionSpiral();
+		ArrayList<Region> regions = generateRegionSpiral();
 
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
 
 		if (!regions.isEmpty()) {
 			for (int i = 0; i < regions.size(); i++) {
-				Point point = regions.get(i);
+				Region region = regions.get(i);
 
 				// Skip the spawn regions for checking
 				if (i < spawnRegions) {
-					PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", point.x, point.y));
+					PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.x, region.z));
 					continue;
 				}
 
-				PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", point.x, point.y));
+				PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.z, region.z));
 
 				// If there are no islands, the one after spawn will be taken
 				if (currentIslands.isEmpty())
-					return point;
+					return region;
 
 				// Ensure there are regions to get at this index
 				for (Island island : currentIslands) {
-					if (point.x == island.getRegionX() && point.y == island.getRegionZ())
+					if (region.x == island.getRegionX() && region.z == island.getRegionZ())
 						continue;
 				}
 
