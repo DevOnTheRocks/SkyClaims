@@ -131,12 +131,13 @@ public class SkyClaims {
 	private void registerCommands() {
 		CommandAdmin.register();
 		CommandCreate.register();
+		CommandCreateSchematic.register();
+		CommandDelete.register();
 		CommandHelp.register();
 		CommandInfo.register();
 		CommandIsland.register();
 		CommandList.register();
 		CommandReset.register();
-		CommandCreateSchematic.register();
 		CommandSetBiome.register();
 		CommandSetSpawn.register();
 		CommandSetup.register();
