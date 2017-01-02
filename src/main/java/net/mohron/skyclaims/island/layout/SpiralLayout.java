@@ -73,7 +73,6 @@ public class SpiralLayout implements ILayout {
 					SkyClaims.getInstance().getLogger().info(String.format("This iteration's island: %s", island.getOwnerName()));
 					if (region.equals(island.getRegion()))
 						break;
-				}
 
 					if (l == currentIslands.size())
 						return region;
