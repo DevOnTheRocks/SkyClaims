@@ -17,7 +17,7 @@ import org.spongepowered.api.world.World;
 import java.util.function.Consumer;
 
 public class CommandUtil {
-	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location, Claim claim) {
+	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
 		return teleport -> {
 			Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
 			if (safeLocation == null) {
