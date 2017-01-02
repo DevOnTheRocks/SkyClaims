@@ -21,6 +21,7 @@ public class SpiralLayout implements ILayout {
 	public ArrayList<Region> generateRegionPattern() {
 		int islandCount = SkyClaims.islands.size();
 		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
+		String log = "Region Pattern: [";
 
 		ArrayList<Region> coordinates = new ArrayList<>(generationSize);
 		int[] delta = {0, -1};
@@ -36,10 +37,11 @@ public class SpiralLayout implements ILayout {
 				delta[0] = -delta[1];
 				delta[1] = a;
 			}
-			PLUGIN.getLogger().info(x + ", " + y);
+			log += String.format("(%s,%s),",x,y);
 			x += delta[0];
 			y += delta[1];
 		}
+		PLUGIN.getLogger().info(log + "]");
 
 		return coordinates;
 	}
