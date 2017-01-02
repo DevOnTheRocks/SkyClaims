@@ -94,4 +94,8 @@ public class IslandUtil {
 	private static void clearIsland(UUID owner) {
 		//TODO Clear island, inventory, enderchest, and supported private mod inventories ie. mod ender chests
 	}
+
+	public static ILayout getLayout() {
+		return layout;
+	}
 }

@@ -13,7 +13,7 @@ import org.spongepowered.api.text.Text;
 
 public class CommandSetup implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final PermissionService PERMS = SkyClaims.permissionService;
+	private static final PermissionService PERMS = PLUGIN.getPermissionService();
 
 	public static String helpText = "used to assist in setting up the plugin";
 
