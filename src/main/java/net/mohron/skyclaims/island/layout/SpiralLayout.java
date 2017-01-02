@@ -54,8 +54,8 @@ public class SpiralLayout implements ILayout {
 
 		if (!regions.isEmpty()) {
 			for (int i = 0; i < regions.size(); i++) {
-				Island island = currentRegions.get(i);
 				Point point = regions.get(i);
+				Island island;
 
 				// Skip the spawn regions for checking
 				if (i < spawnRegions) {
@@ -69,6 +69,8 @@ public class SpiralLayout implements ILayout {
 				// If there are no islands, the one after spawn will be taken
 				if (currentRegions.isEmpty())
 					return point;
+
+				island = currentRegions.get(i);
 
 				PLUGIN.getLogger().info(String.format("Checking %s's island (%s,%s) against region (%s, %s)", island.getOwnerName(), island.getRegionX(), island.getRegionZ(), point.x, point.y));
 				if (point.x == island.getRegionX() && point.y == island.getRegionZ())
