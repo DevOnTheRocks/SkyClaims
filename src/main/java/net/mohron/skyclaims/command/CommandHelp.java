@@ -59,8 +59,8 @@ public class CommandHelp implements CommandExecutor {
 		} else {
 
 			helpContents = Text.join(helpContents, Text.of(
-					TextColors.AQUA, "SkyClaims utilizes GriefPrevention for island protection and management. Use ", TextColors.YELLOW,
-					Text.builder("/gphelp").onClick(TextActions.runCommand("/gphelp")), TextColors.AQUA, " to learn more."));
+					TextColors.WHITE, "SkyClaims utilizes GriefPrevention for island protection and management. Go to ", TextColors.YELLOW,
+					"http://bit.ly/mcgpuser", TextColors.WHITE, " to learn more."));
 
 			if (src.hasPermission(Permissions.COMMAND_CREATE)) {
 				helpContents = Text.join(helpContents, Text.of(
