@@ -25,8 +25,8 @@ public class IslandUtil {
 	public static Optional<Island> createIsland(Player owner, String schematic) {
 		Region region = layout.nextRegion();
 
-		if (ConfigUtil.getDefaultBiome() != null)
-			WorldUtil.setRegionBiome(region.getX(), region.getZ(), ConfigUtil.getDefaultBiome());
+		if (ConfigUtil.getDefaultBiome().isPresent())
+			WorldUtil.setRegionBiome(region, ConfigUtil.getDefaultBiome().get());
 
 		CreateClaimResult claimResult = createProtection(owner, region);
 		if (!claimResult.succeeded) {

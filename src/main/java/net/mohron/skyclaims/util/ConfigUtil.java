@@ -2,6 +2,7 @@ package net.mohron.skyclaims.util;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
+import net.mohron.skyclaims.lib.Arguments;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.world.World;
@@ -36,38 +37,12 @@ public class ConfigUtil {
 		return world.isPresent() ? world.get() : defaultWorld.get();
 	}
 
-	public static BiomeType getDefaultBiome() {
-		if (config.world == null || config.world.defaultBiome == null) return null;
-		switch (config.world.defaultBiome) {
-			case "deepocean":
-				return BiomeTypes.DEEP_OCEAN;
-			case "desert":
-				return BiomeTypes.DESERT;
-			case "extremehills":
-				return BiomeTypes.EXTREME_HILLS;
-			case "flowerforest":
-				return BiomeTypes.FLOWER_FOREST;
-			case "forest":
-				return BiomeTypes.FOREST;
-			case "hell":
-				return BiomeTypes.HELL;
-			case "jungle":
-				return BiomeTypes.JUNGLE;
-			case "mushroomisland":
-				return BiomeTypes.MUSHROOM_ISLAND;
-			case "ocean":
-				return BiomeTypes.OCEAN;
-			case "plains":
-				return BiomeTypes.PLAINS;
-			case "sky":
-				return BiomeTypes.SKY;
-			case "swampland":
-				return BiomeTypes.SWAMPLAND;
-			case "taiga":
-				return BiomeTypes.TAIGA;
-			default:
-				return null;
+	public static Optional<BiomeType> getDefaultBiome() {
+		if (config.world == null || config.world.defaultBiome == null) return Optional.empty();
+		for (BiomeType biome : Arguments.BIOMES.values()){
+			if (biome.getName().equalsIgnoreCase(config.world.defaultBiome)) return Optional.of(biome);
 		}
+		return Optional.empty();
 	}
 
 	/**
