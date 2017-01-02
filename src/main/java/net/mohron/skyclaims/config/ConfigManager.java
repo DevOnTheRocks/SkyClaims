@@ -64,7 +64,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Create the default schematic file, from resource
+	 * Create the default schematic file, from resource, into the config-specified folder
 	 */
 	private void initializeSchematic() {
 		if (!Files.exists(PLUGIN.getSchematicDir())) {

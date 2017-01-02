@@ -115,4 +115,8 @@ public class Island {
 	public Region getRegion() {
 		return new Region(getCenter().getChunkPosition().getX() >> 5, getCenter().getChunkPosition().getZ() >> 5);
 	}
+
+	public void delete() {
+		
+	}
 }
