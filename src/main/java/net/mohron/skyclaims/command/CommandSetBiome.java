@@ -64,7 +64,7 @@ public class CommandSetBiome implements CommandExecutor {
 		if (!player.getUniqueId().equals(island.get().getOwner()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
 			throw new CommandException(Text.of("You do not have permission to use setbiome on this island"));
 
-		if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BIOMES + "." + biome.getName().toLowerCase()))
+		if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biome.getName().toLowerCase()))
 			throw new CommandPermissionException(Text.of("You do not have permission to use the designated biome type."));
 
 		Arguments.Target target = Arguments.Target.CHUNK;
@@ -72,21 +72,21 @@ public class CommandSetBiome implements CommandExecutor {
 
 		switch (target) {
 			case BLOCK:
-				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_BLOCK))
+				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_BLOCK))
 					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> block"));
 				PLUGIN.getLogger().info("SETBIOME: BLOCK");
 				WorldUtil.setBlockBiome(player.getLocation(), biome);
 				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome at %s,%s to %s.", player.getLocation().getBlockX(), player.getLocation().getBlockZ(), biome.getName())));
 				break;
 			case CHUNK:
-				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_CHUNK))
+				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_CHUNK))
 					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> chunk"));
 				PLUGIN.getLogger().info("SETBIOME: CHUNK");
 				WorldUtil.setChunkBiome(player.getLocation(), biome);
 				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome in this chunk to %s.", biome.getName())));
 				break;
 			case ISLAND:
-				if (!player.hasPermission(Permissions.COMMAND_SET_BIOME_ISLAND))
+				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_ISLAND))
 					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> island"));
 				PLUGIN.getLogger().info("SETBIOME: ISLAND");
 				WorldUtil.setIslandBiome(island.get(), biome);
