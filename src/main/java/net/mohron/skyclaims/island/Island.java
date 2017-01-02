@@ -117,6 +117,6 @@ public class Island {
 	}
 
 	public void delete() {
-		
+
 	}
 }
