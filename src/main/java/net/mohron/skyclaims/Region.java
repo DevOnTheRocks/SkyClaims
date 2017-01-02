@@ -1,8 +1,6 @@
 package net.mohron.skyclaims;
 
-import net.mohron.skyclaims.claim.SkyClaim;
 import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.util.IslandUtil;
 
 import java.util.ArrayList;
 
@@ -40,5 +38,23 @@ public class Region {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Region region = (Region) o;
+
+		if (x != region.x) return false;
+		return z == region.z;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = x;
+		result = 31 * result + z;
+		return result;
 	}
 }

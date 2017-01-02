@@ -67,7 +67,7 @@ public class ConfigManager {
 	 * Create the default schematic file, from resource
 	 */
 	private void initializeSchematic() {
-		Path defaultSchematic = Paths.get(String.format("%s%sisland.schematic", PLUGIN.getConfigDir(), File.separator));
+		Path defaultSchematic = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
