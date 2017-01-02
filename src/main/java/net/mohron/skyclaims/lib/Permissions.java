@@ -22,6 +22,7 @@ public class Permissions {
 	public static final String COMMAND_CREATE_SCHEMATIC = "skyclaims.admin.schematic.create";
 	public static final String COMMAND_DELETE = "skyclaims.admin.delete";
 	public static final String COMMAND_INFO_OTHERS = "skyclaims.admin.info";
+	public static final String COMMAND_RELOAD = "skyclaims.admin.reload";
 	public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";
 	public static final String COMMAND_SETUP = "skyclaims.admin.setup";
 	public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";

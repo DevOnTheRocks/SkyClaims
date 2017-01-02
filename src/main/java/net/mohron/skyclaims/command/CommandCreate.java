@@ -5,6 +5,7 @@ import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -13,8 +14,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-
-import java.io.File;
+import org.spongepowered.api.text.format.TextColors;
 
 public class CommandCreate implements CommandExecutor {
 
@@ -25,7 +25,7 @@ public class CommandCreate implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.choices(Arguments.SCHEMATIC, Arguments.SCHEMATICS)))
+			.arguments(GenericArguments.optional(GenericArguments.onlyOne(GenericArguments.string(Arguments.SCHEMATIC))))
 			.executor(new CommandCreate())
 			.build();
 
@@ -49,12 +49,19 @@ public class CommandCreate implements CommandExecutor {
 		if (IslandUtil.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
-		if (args.getOne(Arguments.SCHEMATIC).isPresent())
+		if (args.getOne(Arguments.SCHEMATIC).isPresent()) {
 			schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
+			if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + schematic.toLowerCase()))
+				throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use the ", TextColors.YELLOW, schematic, TextColors.RED, " schematic!"));
+		}
 
-		String schemPath = String.format("%s%sschematics%s%s.schematic", PLUGIN.getConfigDir(), File.separator, File.separator, schematic);
-		if (!new File(schemPath).exists()) {
-			throw new CommandException(Text.of("A schematic can not be found at ", schemPath));
+		if (!Arguments.SCHEMATICS.containsKey(schematic.toLowerCase())) {
+			String schems = "[";
+			for (String s : Arguments.SCHEMATICS.values()) {
+				schems += s + ", ";
+			}
+			schems = schems.substring(0, schems.length() - 2) + "]";
+			throw new CommandException(Text.of("The value supplied is not a valid schematic. ", TextColors.AQUA, schems));
 		}
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));

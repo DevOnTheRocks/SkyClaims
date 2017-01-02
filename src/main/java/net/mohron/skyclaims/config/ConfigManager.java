@@ -36,7 +36,7 @@ public class ConfigManager {
 		}
 
 		this.load();
-		//this.initializeSchematic();
+		this.initializeSchematic();
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class ConfigManager {
 	/**
 	 * Loads the configs into serialized objects, for the configMapper
 	 */
-	private void load() {
+	public void load() {
 		try {
 			this.configMapper.populate(this.loader.load());
 		} catch (ObjectMappingException | IOException e) {
@@ -74,7 +74,7 @@ public class ConfigManager {
 				LOGGER.error(String.format("Failed to create schematics directory.\r\n %s", e.getMessage()));
 			}
 		}
-		Path defaultSchematic = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
+/*		Path defaultSchematic = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
@@ -93,6 +93,6 @@ public class ConfigManager {
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
 			}
-		}
+		}*/
 	}
 }

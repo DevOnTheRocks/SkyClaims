@@ -141,6 +141,7 @@ public class SkyClaims {
 		CommandInfo.register();
 		CommandIsland.register();
 		CommandList.register();
+		CommandReload.register();
 		CommandReset.register();
 		CommandSetBiome.register();
 		CommandSetSpawn.register();
@@ -176,8 +177,8 @@ public class SkyClaims {
 		return this.defaultConfig;
 	}
 
-	public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {
-		return this.configManager;
+	public ConfigManager getConfigManager() {
+		return this.pluginConfigManager;
 	}
 
 	public Path getConfigDir() {

@@ -80,6 +80,7 @@ public class CommandCreateSchematic implements CommandExecutor {
 		try {
 			DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(outputFile)), schematicData);
 			player.sendMessage(Text.of(TextColors.GREEN, "Saved schematic to " + outputFile.getAbsolutePath()));
+			Arguments.SCHEMATICS.put(name, name);
 		} catch (Exception e) {
 			e.printStackTrace();
 			player.sendMessage(Text.of(TextColors.DARK_RED, "Error saving schematic: " + e.getMessage()));

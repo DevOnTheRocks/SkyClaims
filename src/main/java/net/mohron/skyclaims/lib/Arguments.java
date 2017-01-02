@@ -1,13 +1,17 @@
 package net.mohron.skyclaims.lib;
 
+import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Arguments {
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
 	// Command Argument Keys
 	public static final Text SUBCOMMAND = Text.of("admin");
 	public static final Text NAME = Text.of("name");
@@ -23,8 +27,7 @@ public class Arguments {
 	public static final Map<String, Target> TARGETS = new HashMap<>();
 
 	static {
-		// TODO Add all *.schematics file names to SCHEMATICS
-		SCHEMATICS.put("island", "island");
+		loadSchematics();
 
 		// Standard Biomes
 		BIOMES.put(getCommandArg(BiomeTypes.BEACH), BiomeTypes.BEACH);
@@ -94,6 +97,25 @@ public class Arguments {
 		TARGETS.put("block", Target.BLOCK);
 		TARGETS.put("chunk", Target.CHUNK);
 		TARGETS.put("island", Target.ISLAND);
+	}
+
+	@SuppressWarnings("ConstantConditions")
+	public static void loadSchematics() {
+		SCHEMATICS.clear();
+		File schemDir = new File(PLUGIN.getConfigDir() + File.separator + "schematics");
+		try {
+			PLUGIN.getLogger().info("Attempting to retrieve all schematics!");
+			for (File file : schemDir.listFiles()) {
+				PLUGIN.getLogger().info("Found File: " + file);
+				String schem = file.getName();
+				if (schem.endsWith(".schematic")) {
+					SCHEMATICS.put(schem.replace(".schematic", "").toLowerCase(), schem.replace(".schematic", ""));
+					PLUGIN.getLogger().info("Added Schematic: " + schem);
+				}
+			}
+		} catch (NullPointerException e) {
+			PLUGIN.getLogger().error("Failed to read schematics directory!");
+		}
 	}
 
 	public enum Target {
