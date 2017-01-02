@@ -49,37 +49,27 @@ public class SpiralLayout implements ILayout {
 	public Region nextRegion() {
 		ArrayList<Island> currentIslands = new ArrayList<Island>(SkyClaims.islands.values());
 		ArrayList<Region> regions = generateRegionPattern();
+		int iterator = 0;
 
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
 
-		if (!regions.isEmpty()) for (int i = 0; i < regions.size(); i++) {
-			Region region = regions.get(i);
-
-			// Skip the spawn regions for checking
-			if (i < spawnRegions) {
+		for (Region region : regions) {
+			if (iterator < spawnRegions) {
 				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
 				continue;
 			}
 
 			PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
 
-			// If there are no islands, the one after spawn will be taken
-			if (currentIslands.isEmpty())
-				return region;
-
-			int l = 1;
 			for (Island island : currentIslands) {
 				if (region.equals(island.getRegion()))
 					break;
-
-				l++;
 			}
 
-			SkyClaims.getInstance().getLogger().info(String.format("L is %s", l));
-			SkyClaims.getInstance().getLogger().info(String.format("size is %s", currentIslands.size()));
-
-			if (l == currentIslands.size())
+			if (iterator == regions.size())
 				return region;
+
+			iterator++;
 		}
 
 		return regions.get(regions.size() - 1);
