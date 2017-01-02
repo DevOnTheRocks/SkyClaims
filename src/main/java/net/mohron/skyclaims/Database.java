@@ -2,11 +2,15 @@ package net.mohron.skyclaims;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.config.type.DatabaseConfig;
-import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.island.Island;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

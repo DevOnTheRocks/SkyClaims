@@ -130,7 +130,6 @@ public class CommandHelp implements CommandExecutor {
 			src.sendMessage(Text.of(NAME + " " + VERSION));
 		}
 
-
 		return CommandResult.success();
 	}
 }
