@@ -3,6 +3,7 @@ package net.mohron.skyclaims.command;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.util.CommandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,6 +12,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 public class CommandList implements CommandExecutor {
@@ -46,7 +48,10 @@ public class CommandList implements CommandExecutor {
 					(newline) ? "\n" : "",
 					TextColors.AQUA, island.getOwnerName(), TextColors.GRAY, " (",
 					TextColors.LIGHT_PURPLE, island.getRegionX(), TextColors.GRAY, ", ",
-					TextColors.LIGHT_PURPLE, island.getRegionZ(), TextColors.GRAY, ")"
+					TextColors.LIGHT_PURPLE, island.getRegionZ(), TextColors.GRAY, ") -",
+					TextColors.GREEN, Text.builder(island.getClaimId().toString()).
+							onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getID().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
+							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
 			));
 			newline = true;
 		}
