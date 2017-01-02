@@ -45,14 +45,13 @@ public class CommandDelete implements CommandExecutor {
 		Optional<User> user = args.getOne(Arguments.USER);
 		if (!user.isPresent()) throw new CommandException(Text.of("Invalid user"));
 
-		Optional<Player> player = user.get().getPlayer();
-		if (!player.isPresent()) throw new CommandException(Text.of("Invalid player"));
-
-		Optional<Island> island = IslandUtil.getIsland(player.get().getUniqueId());
+		Optional<Island> island = IslandUtil.getIsland(user.get().getUniqueId());
 		if (!island.isPresent()) throw new CommandException(Text.of("Invalid island"));
 
+
+		throw new CommandException(Text.of("Command is not yet implemented"));
 		//TODO clear the island and delete the references
 
-		return CommandResult.empty();
+		//return CommandResult.empty();
 	}
 }
