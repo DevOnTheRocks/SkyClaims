@@ -65,7 +65,7 @@ public class SkyClaims {
 	private Path configDir;
 	@Inject
 	@ConfigDir(sharedRoot = false)
-	private Path schematicDir = new Paths(configDir + File.separator + "schematics");
+	private Path schematicDir = new File(configDir + File.separator + "schematics").toPath();
 	@Inject
 	@DefaultConfig(sharedRoot = false)
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
