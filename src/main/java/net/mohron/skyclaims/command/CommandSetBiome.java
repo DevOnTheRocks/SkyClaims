@@ -30,8 +30,9 @@ public class CommandSetBiome implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SET_BIOME)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.choices(Arguments.BIOME, Arguments.BIOMES),
-					GenericArguments.optional(GenericArguments.choices(Arguments.TARGET, Arguments.TARGETS)))
+			.arguments(
+					GenericArguments.choices(Arguments.BIOME, Arguments.BIOMES),
+					GenericArguments.optional(GenericArguments.enumValue(Arguments.TARGET, Arguments.Target.class)))
 			.executor(new CommandSetBiome())
 			.build();
 

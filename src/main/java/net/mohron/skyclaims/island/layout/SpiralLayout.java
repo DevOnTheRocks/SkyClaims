@@ -39,8 +39,8 @@ public class SpiralLayout implements ILayout {
 			x += delta[0];
 			y += delta[1];
 		}
-		PLUGIN.getLogger().info(log + "]");
-		PLUGIN.getLogger().info(String.format("Coordinates length: %s", coordinates.size()));
+		PLUGIN.getLogger().debug(log + "]");
+		PLUGIN.getLogger().debug(String.format("Coordinates length: %s", coordinates.size()));
 		return coordinates;
 	}
 
@@ -48,16 +48,16 @@ public class SpiralLayout implements ILayout {
 		ArrayList<Region> regions = generateRegionPattern();
 		int iterator = 0;
 
-		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
+		PLUGIN.getLogger().debug(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
 
 		for (Region region : regions) {
 			if (iterator < spawnRegions) {
-				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
+				PLUGIN.getLogger().debug(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
 				iterator++;
 				continue;
 			}
 
-			PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
+			PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
 
 			if (Region.isTaken(region)) {
 				iterator++;

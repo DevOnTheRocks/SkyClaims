@@ -20,6 +20,7 @@ public class CommandAdmin {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_ADMIN)
 			.description(Text.of(helpText))
+			.child(CommandDelete.commandSpec, "delete")
 			.child(CommandSetup.commandSpec, "setup")
 			.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
 			.executor(new CommandHelp())
