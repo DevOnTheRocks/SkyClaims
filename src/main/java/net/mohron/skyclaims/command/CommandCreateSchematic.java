@@ -76,7 +76,7 @@ public class CommandCreateSchematic implements CommandExecutor {
 				.build();
 		DataContainer schematicData = DataTranslators.SCHEMATIC.translate(schematic);
 
-		File outputFile = new File(CONFIG_DIR, String.format("schematics%s%s.schematic", name, File.separator));
+		File outputFile = new File(CONFIG_DIR, String.format("schematics%s%s.schematic", File.separator, name));
 		try {
 			DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(outputFile)), schematicData);
 			player.sendMessage(Text.of(TextColors.GREEN, "Saved schematic to " + outputFile.getAbsolutePath()));
