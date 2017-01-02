@@ -21,7 +21,8 @@ public class CommandReset implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "delete your island and inventory so you can start over";
+	//public static String helpText = "delete your island and inventory so you can start over";
+	public static String helpText = "work in progress - not available yet";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_RESET)
@@ -50,8 +51,9 @@ public class CommandReset implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must have an Island to run this command!"));
 
+		throw new CommandException(Text.of("This feature is still work in progress."));
 
-		if (!args.hasAny(Arguments.CONFIRM)) {
+		/*if (!args.hasAny(Arguments.CONFIRM)) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
 			player.sendMessage(Text.of("To continue, run ", "/is reset", " confirm"));
 		} else {
@@ -60,6 +62,6 @@ public class CommandReset implements CommandExecutor {
 			//player.getInventory().clear();
 		}
 
-		return CommandResult.success();
+		return CommandResult.success();*/
 	}
 }
