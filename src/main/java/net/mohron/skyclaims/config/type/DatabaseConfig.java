@@ -20,7 +20,7 @@ public class DatabaseConfig {
 
 	public DatabaseConfig() {
 		type = "SQLite";
-		location = String.format("./");
+		location = "./";
 		databaseName = "skyclaims";
 		tableName = "islands";
 	}
