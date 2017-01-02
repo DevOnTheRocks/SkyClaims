@@ -56,20 +56,18 @@ public class SpiralLayout implements ILayout {
 		for (Region region : regions) {
 			if (iterator < spawnRegions) {
 				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
+				iterator++;
 				continue;
 			}
 
 			PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
 
-			for (Island island : currentIslands) {
-				if (region.equals(island.getRegion()))
-					break;
-			}
-
-			if (iterator == regions.size())
+			if (Region.isTaken(region)) {
+				iterator++;
+				continue;
+			} else {
 				return region;
-
-			iterator++;
+			}
 		}
 
 		return regions.get(regions.size() - 1);
