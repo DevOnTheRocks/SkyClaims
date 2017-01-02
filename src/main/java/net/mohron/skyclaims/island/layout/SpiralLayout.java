@@ -66,16 +66,13 @@ public class SpiralLayout implements ILayout {
 				if (currentIslands.isEmpty())
 					return region;
 
-				// Ensure there are regions to get at this index
-				for (int l = 0; l <= currentIslands.size(); l++) {
-					if (currentIslands.size() - 1 < l) {
-						return region;
-					} else {
-						Island island = currentIslands.get(l);
+				int l = 1;
+				for (Island island : currentIslands) {
+					if (region.equals(island.getRegion()))
+						break;
 
-						if (region.equals(island.getRegion()))
-							break;
-					}
+					if (l == currentIslands.size())
+						return region;
 				}
 			}
 		}
