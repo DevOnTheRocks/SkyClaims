@@ -64,6 +64,9 @@ public class SkyClaims {
 	@ConfigDir(sharedRoot = false)
 	private Path configDir;
 	@Inject
+	@ConfigDir(sharedRoot = false)
+	private Path schematicDir = new Paths(configDir + File.separator + "schematics");
+	@Inject
 	@DefaultConfig(sharedRoot = false)
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
 	private ConfigManager pluginConfigManager;
@@ -178,6 +181,10 @@ public class SkyClaims {
 
 	public Path getConfigDir() {
 		return configDir;
+	}
+
+	public Path getSchematicDir() {
+		return schematicDir;
 	}
 
 	public Database getDatabase() {

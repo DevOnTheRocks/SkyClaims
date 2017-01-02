@@ -67,12 +67,19 @@ public class ConfigManager {
 	 * Create the default schematic file, from resource
 	 */
 	private void initializeSchematic() {
+		if (!Files.exists(PLUGIN.getSchematicDir())) {
+			try {
+				Files.createDirectory(PLUGIN.getSchematicDir());
+			} catch (IOException e) {
+				LOGGER.error(String.format("Failed to create schematics directory.\r\n %s", e.getMessage()));
+			}
+		}
 		Path defaultSchematic = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
 
-				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic")) {
+				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("/island.schematic")) {
 					try (OutputStream outputStream = new FileOutputStream(defaultSchematic.toString())) {
 						try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream)) {
 							byte[] buffer = new byte[1024];
