@@ -39,6 +39,9 @@ public class ConfigManager {
 		//this.initializeSchematic();
 	}
 
+	/**
+	 * Saves the serialized config to file
+	 */
 	public void save() {
 		try {
 			SimpleConfigurationNode out = SimpleConfigurationNode.root();
@@ -49,6 +52,9 @@ public class ConfigManager {
 		}
 	}
 
+	/**
+	 * Loads the configs into serialized objects, for the configMapper
+	 */
 	private void load() {
 		try {
 			this.configMapper.populate(this.loader.load());
@@ -57,6 +63,9 @@ public class ConfigManager {
 		}
 	}
 
+	/**
+	 * Create the default schematic file, from resource
+	 */
 	private void initializeSchematic() {
 		Path defaultSchematic = Paths.get(String.format("%s%sisland.schematic", PLUGIN.getConfigDir(), File.separator));
 		if (!Files.exists(defaultSchematic)) {

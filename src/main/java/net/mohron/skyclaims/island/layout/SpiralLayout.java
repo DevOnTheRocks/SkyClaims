@@ -51,37 +51,40 @@ public class SpiralLayout implements ILayout {
 		ArrayList<Point> regions = generateRegionSpiral();
 
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
-		for (int i = 0; i < regions.size(); i++) {
-			Island island = currentRegions.get(i);
-			Point point = regions.get(i);
 
-			// Skip the spawn regions for checking
-			if (i < spawnRegions) {
-				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", point.x, point.y));
-				i++;
-				continue;
-			}
+		if (!regions.isEmpty()) {
+			for (int i = 0; i < regions.size(); i++) {
+				Island island = currentRegions.get(i);
+				Point point = regions.get(i);
 
-			PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", point.x, point.y));
+				// Skip the spawn regions for checking
+				if (i < spawnRegions) {
+					PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", point.x, point.y));
+					i++;
+					continue;
+				}
 
-			// If there are no islands, the one after spawn will be taken
-			if (currentRegions.isEmpty())
+				PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", point.x, point.y));
+
+				// If there are no islands, the one after spawn will be taken
+				if (currentRegions.isEmpty())
+					return point;
+
+				PLUGIN.getLogger().info(String.format("Checking %s's island (%s,%s) against region (%s, %s)", island.getOwnerName(), island.getRegionX(), island.getRegionZ(), point.x, point.y));
+				if (point.x == island.getRegionX() && point.y == island.getRegionZ())
+					continue;
+				PLUGIN.getLogger().info(String.format("Next Available Region is (%s, %s)", point.x, point.y));
+
 				return point;
 
-			PLUGIN.getLogger().info(String.format("Checking %s's island (%s,%s) against region (%s, %s)", island.getOwnerName(), island.getRegionX(), island.getRegionZ(), point.x, point.y));
-			if (point.x == island.getRegionX() && point.y == island.getRegionZ())
-				continue;
-			PLUGIN.getLogger().info(String.format("Next Available Region is (%s, %s)", point.x, point.y));
-
-			return point;
-
-//			for (Island island : SkyClaims.islands.values()) {
-//				PLUGIN.getLogger().info(String.format("Checking %s's island (%s,%s) against region (%s, %s)", island.getOwnerName(), island.getRegionX(), island.getRegionZ(), point.x, point.y));
-//				if (point.x == island.getRegionX() && point.y == island.getRegionZ())
-//					continue point;
-//				PLUGIN.getLogger().info(String.format("Next Available Region is (%s, %s)", point.x, point.y));
-//				return point;
-//			}
+//				for (Island island : SkyClaims.islands.values()) {
+//					PLUGIN.getLogger().info(String.format("Checking %s's island (%s,%s) against region (%s, %s)", island.getOwnerName(), island.getRegionX(), island.getRegionZ(), point.x, point.y));
+//					if (point.x == island.getRegionX() && point.y == island.getRegionZ())
+//						continue point;
+//					PLUGIN.getLogger().info(String.format("Next Available Region is (%s, %s)", point.x, point.y));
+//					return point;
+//				}
+			}
 		}
 
 		return regions.get(regions.size() - 1);

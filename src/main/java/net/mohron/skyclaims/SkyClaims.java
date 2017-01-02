@@ -49,7 +49,7 @@ public class SkyClaims {
 	private static GriefPrevention griefPrevention;
 	//	private static LuckPermsApi luckPerms;
 	public static PermissionService permissionService;
-	public static Map<UUID, Island> islands = new LinkedHashMap<>();
+	public static Map<UUID, Island> islands = new HashMap<>();
 
 	@Inject
 	private PluginContainer pluginContainer;
@@ -69,8 +69,8 @@ public class SkyClaims {
 	@Inject
 	@DefaultConfig(sharedRoot = false)
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
-	private GlobalConfig defaultConfig;
 	private ConfigManager pluginConfigManager;
+	private GlobalConfig defaultConfig;
 
 	private Database database;
 
