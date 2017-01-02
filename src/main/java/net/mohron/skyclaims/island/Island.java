@@ -9,10 +9,14 @@ import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class Island {
@@ -48,11 +52,16 @@ public class Island {
 	}
 
 	public String getOwnerName() {
-		return getPlayer().getName();
+		return (getUser().isPresent()) ? getUser().get().getName() : "Unknown";
 	}
 
-	public Player getPlayer() {
-		return PLUGIN.getGame().getServer().getPlayer(owner).get();
+	public Optional<User> getUser() {
+		Optional<UserStorageService> optStorage = Sponge.getServiceManager().provide(UserStorageService.class);
+		if (optStorage.isPresent()) {
+			UserStorageService storage = optStorage.get();
+			return (storage.get(owner).isPresent()) ? Optional.of(storage.get(owner).get()) : Optional.empty();
+		}
+		return Optional.empty();
 	}
 
 	public Claim getClaim() {
