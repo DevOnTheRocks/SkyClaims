@@ -75,7 +75,6 @@ public class ConfigManager {
 				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic")) {
 					try (OutputStream outputStream = new FileOutputStream(defaultSchematic.toString())) {
 						try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream)) {
-
 							byte[] buffer = new byte[1024];
 							int bytesRead;
 

@@ -12,6 +12,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Optional;
 
@@ -51,7 +52,10 @@ public class CommandSetSpawn implements CommandExecutor {
 			throw new CommandException(Text.of("You must be on your island to use this command!"));
 
 		island.get().setSpawn(player.getLocation());
-		player.sendMessage(Text.of("Your Island spawn has been set to ", island.get().getSpawn()));
+		player.sendMessage(Text.of("Your Island spawn has been set to ", TextColors.GRAY, "(",
+				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockX(), TextColors.GRAY, ",",
+				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockY(), TextColors.GRAY, ",",
+				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockZ(), TextColors.GRAY, ")"));
 
 		return CommandResult.success();
 	}

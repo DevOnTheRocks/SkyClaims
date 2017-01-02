@@ -21,6 +21,7 @@ public class SpiralLayout implements ILayout {
 	public ArrayList<Region> generateRegionPattern() {
 		int islandCount = SkyClaims.islands.size();
 		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
+		String log = "Region Pattern: [";
 
 		ArrayList<Region> coordinates = new ArrayList<>(generationSize);
 		int[] delta = {0, -1};
@@ -36,10 +37,11 @@ public class SpiralLayout implements ILayout {
 				delta[0] = -delta[1];
 				delta[1] = a;
 			}
-			PLUGIN.getLogger().info(x + ", " + y);
+			log += String.format("(%s,%s),",x,y);
 			x += delta[0];
 			y += delta[1];
 		}
+		PLUGIN.getLogger().info(log + "]");
 
 		return coordinates;
 	}
@@ -50,34 +52,34 @@ public class SpiralLayout implements ILayout {
 
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
 
-		if (!regions.isEmpty()) {
-			for (int i = 0; i < regions.size(); i++) {
-				Region region = regions.get(i);
+		if (!regions.isEmpty()) for (int i = 0; i < regions.size(); i++) {
+			Region region = regions.get(i);
 
-				// Skip the spawn regions for checking
-				if (i < spawnRegions) {
-					PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
-					continue;
-				}
-
-				PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
-
-				// If there are no islands, the one after spawn will be taken
-				if (currentIslands.isEmpty())
-					return region;
-
-				// Ensure there are regions to get at this index
-				for (int l = 0; l <= currentIslands.size(); l++) {
-					if (currentIslands.size() - 1 < l) {
-						return region;
-					} else {
-						Island island = currentIslands.get(l);
-
-						if (region.equals(island.getRegion()))
-							break;
-					}
-				}
+			// Skip the spawn regions for checking
+			if (i < spawnRegions) {
+				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
+				continue;
 			}
+
+			PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
+
+			// If there are no islands, the one after spawn will be taken
+			if (currentIslands.isEmpty())
+				return region;
+
+			int l = 1;
+			for (Island island : currentIslands) {
+				if (region.equals(island.getRegion()))
+					break;
+
+				l++;
+			}
+
+			SkyClaims.getInstance().getLogger().info(String.format("L is %s", l));
+			SkyClaims.getInstance().getLogger().info(String.format("size is %s", currentIslands.size()));
+
+			if (l == currentIslands.size())
+				return region;
 		}
 
 		return regions.get(regions.size() - 1);
