@@ -18,7 +18,7 @@ public class WorldConfig {
 	public WorldConfig() {
 		worldName = Sponge.getGame().getServer().getDefaultWorldName();
 		defaultBiome = null;
-		defaultHeight = 64;
+		defaultHeight = 72;
 		spawnRegions = 1;
 	}
 }

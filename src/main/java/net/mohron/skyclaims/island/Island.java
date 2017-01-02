@@ -101,7 +101,7 @@ public class Island {
 		int radius = this.getRadius();
 		return new Location<>(ConfigUtil.getWorld(),
 				claim.getLesserBoundaryCorner().getX() + radius,
-				ConfigUtil.get(config.world.defaultHeight, 64),
+				ConfigUtil.get(config.world.defaultHeight, 72),
 				claim.getLesserBoundaryCorner().getZ() + radius);
 	}
 
