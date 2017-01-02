@@ -47,7 +47,7 @@ public class SpiralLayout implements ILayout {
 	}
 
 	public Point nextRegion() {
-		ArrayList<Island> currentRegions = new ArrayList<Island>(SkyClaims.islands.values());
+		ArrayList<Island> currentIslands = new ArrayList<Island>(SkyClaims.islands.values());
 		ArrayList<Point> regions = generateRegionSpiral();
 
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
@@ -55,7 +55,6 @@ public class SpiralLayout implements ILayout {
 		if (!regions.isEmpty()) {
 			for (int i = 0; i < regions.size(); i++) {
 				Point point = regions.get(i);
-				Island island;
 
 				// Skip the spawn regions for checking
 				if (i < spawnRegions) {
@@ -66,13 +65,11 @@ public class SpiralLayout implements ILayout {
 				PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", point.x, point.y));
 
 				// If there are no islands, the one after spawn will be taken
-				if (currentRegions.isEmpty())
+				if (currentIslands.isEmpty())
 					return point;
 
 				// Ensure there are regions to get at this index
-				if (regions.size() >= i) {
-					island = currentRegions.get(i);
-
+				for (Island island : currentIslands) {
 					if (point.x == island.getRegionX() && point.y == island.getRegionZ())
 						continue;
 				}
