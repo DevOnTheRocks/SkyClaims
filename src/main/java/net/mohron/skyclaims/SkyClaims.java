@@ -29,7 +29,6 @@ import org.spongepowered.api.service.permission.PermissionService;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -41,13 +40,11 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		description = DESCRIPTION,
 		authors = AUTHORS,
 		dependencies = {
-				@Dependency(id = "griefprevention", optional = true),
-				@Dependency(id = "luckperms", optional = true),
+				@Dependency(id = "griefprevention", optional = true)
 		})
 public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPrevention griefPrevention;
-	//	private static LuckPermsApi luckPerms;
 	public static PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
@@ -99,12 +96,6 @@ public class SkyClaims {
 		} catch (ClassNotFoundException e) {
 			getLogger().info("GriefPrevention Integration Failed!");
 		}
-
-//		Optional<LuckPermsApi> luckPerms = Sponge.getServiceManager().provide(LuckPermsApi.class);
-//		luckPerms.ifPresent(lp -> {
-//			SkyClaims.luckPerms = lp;
-//			getLogger().info("LuckPerms Integration Successful!");
-//		});
 
 		defaultConfig = new GlobalConfig();
 		pluginConfigManager = new ConfigManager(configManager);
@@ -159,10 +150,6 @@ public class SkyClaims {
 	public GriefPrevention getGriefPrevention() {
 		return griefPrevention;
 	}
-
-//	public LuckPermsApi getLuckPerms() {
-//		return luckPerms;
-//	}
 
 	public PluginContainer getPluginContainer() {
 		return pluginContainer;
