@@ -6,5 +6,6 @@ import java.util.ArrayList;
 
 public interface ILayout {
 	ArrayList<Region> generateRegionPattern();
+
 	public Region nextRegion();
 }
