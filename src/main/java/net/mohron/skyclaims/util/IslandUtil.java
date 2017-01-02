@@ -34,7 +34,10 @@ public class IslandUtil {
 		if (ConfigUtil.getDefaultBiome() != null) WorldUtil.setRegionBiome(x, z, ConfigUtil.getDefaultBiome());
 
 		CreateClaimResult claimResult = createProtection(owner, x, z);
-		if (!claimResult.succeeded) PLUGIN.getLogger().error("Failed to create claim");
+		if (!claimResult.succeeded) {
+			PLUGIN.getLogger().error("Failed to create claim. Found overlapping claim: " + claimResult.claim.getID());
+			return null;
+		}
 		return new Island(owner, claimResult.claim, schematic);
 	}
 

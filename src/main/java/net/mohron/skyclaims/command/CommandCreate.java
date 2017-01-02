@@ -58,7 +58,9 @@ public class CommandCreate implements CommandExecutor {
 		}
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
-		IslandUtil.createIsland(player, schematic);
+		Island island = IslandUtil.createIsland(player, schematic);
+		if (island == null)
+			throw new CommandException(Text.of("Unable to create island due to claim creation failure!"));
 
 		return CommandResult.success();
 	}
