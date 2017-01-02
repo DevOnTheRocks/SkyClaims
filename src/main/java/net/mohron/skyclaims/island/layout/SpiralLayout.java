@@ -50,31 +50,31 @@ public class SpiralLayout implements ILayout {
 
 		PLUGIN.getLogger().info(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
 
-		if (!regions.isEmpty()) {
-			for (int i = 0; i < regions.size(); i++) {
-				Region region = regions.get(i);
+		if (!regions.isEmpty()) for (int i = 0; i < regions.size(); i++) {
+			Region region = regions.get(i);
 
-				// Skip the spawn regions for checking
-				if (i < spawnRegions) {
-					PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
-					continue;
-				}
-
-				PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
-
-				// If there are no islands, the one after spawn will be taken
-				if (currentIslands.isEmpty())
-					return region;
-
-				int l = 1;
-				for (Island island : currentIslands) {
-					if (region.equals(island.getRegion()))
-						break;
-
-					if (l == currentIslands.size())
-						return region;
-				}
+			// Skip the spawn regions for checking
+			if (i < spawnRegions) {
+				PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
+				continue;
 			}
+
+			PLUGIN.getLogger().info(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
+
+			// If there are no islands, the one after spawn will be taken
+			if (currentIslands.isEmpty())
+				return region;
+
+			int l = 1;
+			for (Island island : currentIslands) {
+				if (region.equals(island.getRegion()))
+					break;
+
+				l++;
+			}
+
+			if (l == currentIslands.size() + 1)
+				return region;
 		}
 
 		return regions.get(regions.size() - 1);
