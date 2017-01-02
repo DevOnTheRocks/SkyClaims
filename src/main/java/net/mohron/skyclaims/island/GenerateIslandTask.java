@@ -3,7 +3,6 @@ package net.mohron.skyclaims.island;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
-import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
@@ -59,9 +58,6 @@ public class GenerateIslandTask implements Runnable {
 
 		Optional<Chunk> chunkOptional = WORLD.loadChunk(island.getCenter().getChunkPosition(), true);
 		chunkOptional.ifPresent(chunk -> {
-			// TODO Find and replace the minecraft:sponge and set the spawn via its location
-			// Location<World> spawn = sponge location
-			// island.setSpawn(spawn);
 			volume.apply(island.getCenter(), BlockChangeFlag.ALL, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
 			chunk.unloadChunk();
 		});
