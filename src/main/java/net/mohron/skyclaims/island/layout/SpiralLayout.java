@@ -60,7 +60,6 @@ public class SpiralLayout implements ILayout {
 				// Skip the spawn regions for checking
 				if (i < spawnRegions) {
 					PLUGIN.getLogger().info(String.format("Skipping (%s, %s) for spawn", point.x, point.y));
-					i++;
 					continue;
 				}
 
