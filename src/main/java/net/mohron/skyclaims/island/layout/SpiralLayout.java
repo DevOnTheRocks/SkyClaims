@@ -82,3 +82,4 @@ public class SpiralLayout implements ILayout {
 
 		return regions.get(regions.size() - 1);
 	}
+}
