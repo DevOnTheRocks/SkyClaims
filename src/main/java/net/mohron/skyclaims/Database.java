@@ -144,4 +144,21 @@ public class Database {
 			SkyClaims.getInstance().getLogger().error(String.format("Error inserting Island into the database: %s", e.getMessage()));
 		}
 	}
+
+	/**
+	 * remove an individual island to the database
+	 *
+	 * @param island the island to save
+	 */
+	public void removeIsland(Island island) {
+		String sql = String.format("DELETE FROM %s WHERE owner = '?'", config.tableName);
+
+		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+			statement.setString(1, island.getOwner().toString());
+
+			statement.execute();
+		} catch (SQLException e) {
+			SkyClaims.getInstance().getLogger().error(String.format("Error removing Island from the database: %s", e.getMessage()));
+		}
+	}
 }

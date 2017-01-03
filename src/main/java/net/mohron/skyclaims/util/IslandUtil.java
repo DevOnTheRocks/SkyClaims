@@ -41,11 +41,6 @@ public class IslandUtil {
 		return SkyClaims.islands.containsKey(owner);
 	}
 
-	public static void saveIsland(Island island) {
-		SkyClaims.islands.put(island.getOwner(), island);
-		PLUGIN.getDatabase().saveIsland(island);
-	}
-
 	public static Optional<Island> getIsland(UUID owner) {
 		return (hasIsland(owner)) ? Optional.of(SkyClaims.islands.get(owner)) : Optional.empty();
 	}

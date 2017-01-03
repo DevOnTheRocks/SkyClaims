@@ -7,7 +7,6 @@ import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -36,7 +35,7 @@ public class Island {
 		GenerateIslandTask generateIsland = new GenerateIslandTask(owner, this, schematic);
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
 
-		IslandUtil.saveIsland(this);
+		save();
 	}
 
 	public Island(UUID owner, UUID worldId, UUID claimId, Vector3i spawnLocation) {
@@ -86,7 +85,7 @@ public class Island {
 
 	public void setSpawn(Location<World> spawn) {
 		this.spawn = spawn;
-		IslandUtil.saveIsland(this);
+		save();
 	}
 
 	public boolean isWithinIsland(Location<World> location) {
@@ -116,7 +115,15 @@ public class Island {
 		return new Region(getCenter().getChunkPosition().getX() >> 5, getCenter().getChunkPosition().getZ() >> 5);
 	}
 
-	public void delete() {
+	public void save() {
+		SkyClaims.islands.put(owner, this);
+		PLUGIN.getDatabase().saveIsland(this);
+	}
 
+	public void delete() {
+		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
+		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
+		SkyClaims.islands.remove(owner);
+		PLUGIN.getDatabase().removeIsland(this);
 	}
 }
