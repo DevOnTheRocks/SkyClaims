@@ -34,15 +34,16 @@ public class Region {
 
 		for (Island island : islands) {
 			try {
-				if (inputRegion.equals(island.getRegion()))
-					return true;
+				if (!inputRegion.equals(island.getRegion())) {
+                    return false;
+                }
 			} catch (NullPointerException e) {
 				SkyClaims.getInstance().getLogger().error("Could not get region of island " +  island.getOwner() + " " +
 						island.getOwnerName() + " probably caused by broken claim relation.");
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override
