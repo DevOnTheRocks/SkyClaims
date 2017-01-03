@@ -58,8 +58,13 @@ public class CommandHelp implements CommandExecutor {
 
 		} else {
 
+			helpContents = Text.join(helpContents, Text.of(
+					TextColors.WHITE, "SkyClaims utilizes GriefPrevention for island protection and management. Go to ", TextColors.YELLOW,
+					"http://bit.ly/mcgpuser", TextColors.WHITE, " to learn more."));
+
 			if (src.hasPermission(Permissions.COMMAND_CREATE)) {
 				helpContents = Text.join(helpContents, Text.of(
+						"\n",
 						TextColors.AQUA, Text.builder("is create").onClick(TextActions.runCommand("/is create")),
 						TextColors.GRAY, " [schematic]",
 						TextColors.DARK_GRAY, " - ",
@@ -69,7 +74,7 @@ public class CommandHelp implements CommandExecutor {
 
 			if (src.hasPermission(Permissions.COMMAND_INFO)) {
 				helpContents = Text.join(helpContents, Text.of(
-						(hasPerms) ? "\n" : "",
+						"\n",
 						TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
 						TextColors.GRAY, " [player]",
 						TextColors.DARK_GRAY, " - ",
@@ -79,7 +84,7 @@ public class CommandHelp implements CommandExecutor {
 
 			if (src.hasPermission(Permissions.COMMAND_RESET)) {
 				helpContents = Text.join(helpContents, Text.of(
-						(hasPerms) ? "\n" : "",
+						"\n",
 						TextColors.AQUA, Text.builder("is reset").onClick(TextActions.runCommand("/is reset")),
 						TextColors.GRAY, " [schematic]",
 						TextColors.DARK_GRAY, " - ",
@@ -89,7 +94,7 @@ public class CommandHelp implements CommandExecutor {
 
 			if (src.hasPermission(Permissions.COMMAND_SET_BIOME)) {
 				helpContents = Text.join(helpContents, Text.of(
-						(hasPerms) ? "\n" : "",
+						"\n",
 						TextColors.AQUA, "is setbiome",
 						TextColors.GOLD, " <biome>",
 						TextColors.GRAY, " [target]",
@@ -100,7 +105,7 @@ public class CommandHelp implements CommandExecutor {
 
 			if (src.hasPermission(Permissions.COMMAND_SET_SPAWN)) {
 				helpContents = Text.join(helpContents, Text.of(
-						(hasPerms) ? "\n" : "",
+						"\n",
 						TextColors.AQUA, Text.builder("is setspawn").onClick(TextActions.runCommand("/is setspawn")),
 						TextColors.DARK_GRAY, " - ",
 						TextColors.DARK_GREEN, CommandSetSpawn.helpText));
@@ -109,7 +114,7 @@ public class CommandHelp implements CommandExecutor {
 
 			if (src.hasPermission(Permissions.COMMAND_SPAWN)) {
 				helpContents = Text.join(helpContents, Text.of(
-						(hasPerms) ? "\n" : "",
+						"\n",
 						TextColors.AQUA, Text.builder("is spawn").onClick(TextActions.runCommand("/is spawn")),
 						TextColors.GRAY, " [player]",
 						TextColors.DARK_GRAY, " - ",
@@ -124,7 +129,6 @@ public class CommandHelp implements CommandExecutor {
 		} else {
 			src.sendMessage(Text.of(NAME + " " + VERSION));
 		}
-
 
 		return CommandResult.success();
 	}

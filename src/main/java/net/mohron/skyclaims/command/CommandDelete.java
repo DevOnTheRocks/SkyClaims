@@ -12,7 +12,6 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 
@@ -45,14 +44,14 @@ public class CommandDelete implements CommandExecutor {
 		Optional<User> user = args.getOne(Arguments.USER);
 		if (!user.isPresent()) throw new CommandException(Text.of("Invalid user"));
 
-		Optional<Player> player = user.get().getPlayer();
-		if (!player.isPresent()) throw new CommandException(Text.of("Invalid player"));
-
-		Optional<Island> island = IslandUtil.getIsland(player.get().getUniqueId());
+		Optional<Island> island = IslandUtil.getIsland(user.get().getUniqueId());
 		if (!island.isPresent()) throw new CommandException(Text.of("Invalid island"));
 
-		//TODO clear the island and delete the references
+		throw new CommandException(Text.of("Command is not yet implemented"));
 
-		return CommandResult.empty();
+/*		island.get().delete();
+
+		src.sendMessage(Text.of(island.get().getOwnerName(), "'s island has been deleted!"));
+		return CommandResult.success();*/
 	}
 }

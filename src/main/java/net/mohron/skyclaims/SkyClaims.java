@@ -28,6 +28,7 @@ import org.spongepowered.api.service.permission.PermissionService;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -65,7 +66,7 @@ public class SkyClaims {
 	private Path configDir;
 	@Inject
 	@ConfigDir(sharedRoot = false)
-	private Path schematicDir = new File(configDir + File.separator + "schematics").toPath();
+	private Path schematicDir = Paths.get(configDir + File.separator + "schematics");
 	@Inject
 	@DefaultConfig(sharedRoot = false)
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
@@ -140,6 +141,7 @@ public class SkyClaims {
 		CommandInfo.register();
 		CommandIsland.register();
 		CommandList.register();
+		CommandReload.register();
 		CommandReset.register();
 		CommandSetBiome.register();
 		CommandSetSpawn.register();
@@ -175,8 +177,8 @@ public class SkyClaims {
 		return this.defaultConfig;
 	}
 
-	public ConfigurationLoader<CommentedConfigurationNode> getConfigManager() {
-		return this.configManager;
+	public ConfigManager getConfigManager() {
+		return this.pluginConfigManager;
 	}
 
 	public Path getConfigDir() {

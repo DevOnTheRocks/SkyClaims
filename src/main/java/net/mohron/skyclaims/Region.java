@@ -34,8 +34,8 @@ public class Region {
 
 		for (Island island : islands) {
 			try {
-				if (!inputRegion.equals(island.getRegion())) {
-                    return false;
+				if (inputRegion.equals(island.getRegion())) {
+                    return true;
                 }
 			} catch (NullPointerException e) {
 				SkyClaims.getInstance().getLogger().error("Could not get region of island " +  island.getOwner() + " " +
@@ -43,7 +43,7 @@ public class Region {
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	@Override

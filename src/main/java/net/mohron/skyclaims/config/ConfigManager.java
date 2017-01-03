@@ -10,14 +10,10 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.zip.GZIPOutputStream;
 
 public class ConfigManager {
 	private final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -36,7 +32,7 @@ public class ConfigManager {
 		}
 
 		this.load();
-		//this.initializeSchematic();
+		this.initializeSchematic();
 	}
 
 	/**
@@ -55,7 +51,7 @@ public class ConfigManager {
 	/**
 	 * Loads the configs into serialized objects, for the configMapper
 	 */
-	private void load() {
+	public void load() {
 		try {
 			this.configMapper.populate(this.loader.load());
 		} catch (ObjectMappingException | IOException e) {
@@ -64,17 +60,18 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Create the default schematic file, from resource
+	 * Create the default schematic file, from resource, into the config-specified folder
 	 */
 	private void initializeSchematic() {
-		if (!Files.exists(PLUGIN.getSchematicDir())) {
+		Path schemDir = Paths.get(PLUGIN.getConfigDir() + File.separator + "schematics");
+		if (!Files.exists(schemDir)) {
 			try {
-				Files.createDirectory(PLUGIN.getSchematicDir());
+				Files.createDirectory(schemDir);
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create schematics directory.\r\n %s", e.getMessage()));
 			}
 		}
-		Path defaultSchematic = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
+/*		Path defaultSchematic = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
 		if (!Files.exists(defaultSchematic)) {
 			try {
 				Files.createFile(defaultSchematic);
@@ -93,6 +90,6 @@ public class ConfigManager {
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
 			}
-		}
+		}*/
 	}
 }

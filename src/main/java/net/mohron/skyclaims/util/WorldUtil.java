@@ -1,22 +1,11 @@
 package net.mohron.skyclaims.util;
 
-import me.ryanhamshire.griefprevention.claim.Claim;
+import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.lib.Permissions;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
-
-import java.util.function.Consumer;
 
 public class WorldUtil {
 	public static World getDefaultWorld() {
@@ -60,15 +49,11 @@ public class WorldUtil {
 		}
 	}
 
-	public static void setRegionBiome(int rx, int rz, BiomeType biomeType) {
+	public static void setRegionBiome(Region region, BiomeType biomeType) {
 		World world = ConfigUtil.getWorld();
-		for (int x = 0; x < 512; x++) {
-			for (int z = 0; z < 512; z++) {
-				world.setBiome(
-						rx * 512 + x,
-						0,
-						rz * 512 + z,
-						biomeType);
+		for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x++) {
+			for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z++) {
+				world.setBiome(x, 0, z, biomeType);
 			}
 		}
 	}

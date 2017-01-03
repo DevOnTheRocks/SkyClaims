@@ -5,7 +5,12 @@ import net.mohron.skyclaims.config.type.DatabaseConfig;
 import net.mohron.skyclaims.island.Island;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -137,6 +142,23 @@ public class Database {
 			statement.execute();
 		} catch (SQLException e) {
 			SkyClaims.getInstance().getLogger().error(String.format("Error inserting Island into the database: %s", e.getMessage()));
+		}
+	}
+
+	/**
+	 * remove an individual island to the database
+	 *
+	 * @param island the island to save
+	 */
+	public void removeIsland(Island island) {
+		String sql = String.format("DELETE FROM %s WHERE owner = '?'", config.tableName);
+
+		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+			statement.setString(1, island.getOwner().toString());
+
+			statement.execute();
+		} catch (SQLException e) {
+			SkyClaims.getInstance().getLogger().error(String.format("Error removing Island from the database: %s", e.getMessage()));
 		}
 	}
 }

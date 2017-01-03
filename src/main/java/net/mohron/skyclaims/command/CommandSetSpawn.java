@@ -53,8 +53,8 @@ public class CommandSetSpawn implements CommandExecutor {
 
 		island.get().setSpawn(player.getLocation());
 		player.sendMessage(Text.of("Your Island spawn has been set to ", TextColors.GRAY, "(",
-				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockX(), TextColors.GRAY, ",",
-				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockY(), TextColors.GRAY, ",",
+				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockX(), TextColors.GRAY, " ,",
+				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockY(), TextColors.GRAY, " ,",
 				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockZ(), TextColors.GRAY, ")"));
 
 		return CommandResult.success();

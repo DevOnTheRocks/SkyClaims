@@ -6,11 +6,12 @@ import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
 import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.GenerateIslandTask;
 import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.island.RegenerateRegionTask;
 import net.mohron.skyclaims.island.layout.ILayout;
 import net.mohron.skyclaims.island.layout.SpiralLayout;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -25,8 +26,8 @@ public class IslandUtil {
 	public static Optional<Island> createIsland(Player owner, String schematic) {
 		Region region = layout.nextRegion();
 
-		if (ConfigUtil.getDefaultBiome() != null)
-			WorldUtil.setRegionBiome(region.getX(), region.getZ(), ConfigUtil.getDefaultBiome());
+		if (ConfigUtil.getDefaultBiome().isPresent())
+			WorldUtil.setRegionBiome(region, ConfigUtil.getDefaultBiome().get());
 
 		CreateClaimResult claimResult = createProtection(owner, region);
 		if (!claimResult.succeeded) {
@@ -38,11 +39,6 @@ public class IslandUtil {
 
 	public static boolean hasIsland(UUID owner) {
 		return SkyClaims.islands.containsKey(owner);
-	}
-
-	public static void saveIsland(Island island) {
-		SkyClaims.islands.put(island.getOwner(), island);
-		PLUGIN.getDatabase().saveIsland(island);
 	}
 
 	public static Optional<Island> getIsland(UUID owner) {
@@ -62,11 +58,15 @@ public class IslandUtil {
 			return Optional.empty();
 	}
 
-	public static void resetIsland(Player owner, String schematic) {
-		clearIsland(owner.getUniqueId());
+	public static void resetIsland(User owner, String schematic) {
+		// Send online players to spawn!
+		owner.getPlayer().ifPresent(
+				player -> CommandUtil.createForceTeleportConsumer(player, WorldUtil.getDefaultWorld().getSpawnLocation())
+		);
+		// Destroy everything they ever loved!
 		getIsland(owner.getUniqueId()).ifPresent(island -> {
-			GenerateIslandTask generateIsland = new GenerateIslandTask(owner, island, schematic);
-			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
+			RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(owner, island, schematic);
+			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 		});
 	}
 
@@ -82,20 +82,12 @@ public class IslandUtil {
 		PlayerData ownerData = dataStore.getOrCreatePlayerData(ConfigUtil.getWorld(), owner.getUniqueId());
 		return dataStore.createClaim(
 				ConfigUtil.getWorld(),
-				region.getX() << 5 << 4,
-				(((region.getX() + 1) << 5) << 4) - 1,
+				region.getLesserBoundary().getX(),
+				region.getGreaterBoundary().getX(),
 				0,
 				255,
-				region.getZ() << 5 << 4,
-				(((region.getZ() + 1) << 5) << 4) - 1,
+				region.getLesserBoundary().getZ(),
+				region.getGreaterBoundary().getZ(),
 				UUID.randomUUID(), null, Claim.Type.BASIC, ownerData.getCuboidMode(), owner);
-	}
-
-	private static void clearIsland(UUID owner) {
-		//TODO Clear island, inventory, enderchest, and supported private mod inventories ie. mod ender chests
-	}
-
-	public static ILayout getLayout() {
-		return layout;
 	}
 }

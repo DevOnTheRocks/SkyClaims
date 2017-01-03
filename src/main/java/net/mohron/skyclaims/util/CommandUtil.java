@@ -1,6 +1,5 @@
 package net.mohron.skyclaims.util;
 
-import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.command.CommandHelper;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -17,7 +16,7 @@ import org.spongepowered.api.world.World;
 import java.util.function.Consumer;
 
 public class CommandUtil {
-	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location, Claim claim) {
+	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
 		return teleport -> {
 			Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
 			if (safeLocation == null) {
