@@ -1,6 +1,5 @@
 package net.mohron.skyclaims.util;
 
-import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.command.CommandHelper;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;

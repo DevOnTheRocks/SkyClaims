@@ -10,14 +10,10 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.zip.GZIPOutputStream;
 
 public class ConfigManager {
 	private final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -67,9 +63,10 @@ public class ConfigManager {
 	 * Create the default schematic file, from resource, into the config-specified folder
 	 */
 	private void initializeSchematic() {
-		if (!Files.exists(PLUGIN.getSchematicDir())) {
+		Path schemDir = Paths.get(PLUGIN.getConfigDir() + File.separator + "schematics");
+		if (!Files.exists(schemDir)) {
 			try {
-				Files.createDirectory(PLUGIN.getSchematicDir());
+				Files.createDirectory(schemDir);
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create schematics directory.\r\n %s", e.getMessage()));
 			}

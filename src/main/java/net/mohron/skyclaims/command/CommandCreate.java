@@ -56,12 +56,12 @@ public class CommandCreate implements CommandExecutor {
 		}
 
 		if (!Arguments.SCHEMATICS.containsKey(schematic.toLowerCase())) {
-			String schems = "[";
+			String schems = "";
 			for (String s : Arguments.SCHEMATICS.values()) {
 				schems += s + ", ";
 			}
-			schems = schems.substring(0, schems.length() - 2) + "]";
-			throw new CommandException(Text.of("The value supplied is not a valid schematic. ", TextColors.AQUA, schems));
+			schems = schems.substring(0, schems.length() - 2);
+			throw new CommandException(Text.of("The value supplied is not a valid schematic. Choose from: ", TextColors.AQUA, schems));
 		}
 
 		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));

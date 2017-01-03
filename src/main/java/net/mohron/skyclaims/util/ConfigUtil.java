@@ -8,7 +8,6 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldArchetypes;
 import org.spongepowered.api.world.biome.BiomeType;
-import org.spongepowered.api.world.biome.BiomeTypes;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.gen.WorldGeneratorModifiers;
 import org.spongepowered.api.world.storage.WorldProperties;
@@ -39,7 +38,7 @@ public class ConfigUtil {
 
 	public static Optional<BiomeType> getDefaultBiome() {
 		if (config.world == null || config.world.defaultBiome == null) return Optional.empty();
-		for (BiomeType biome : Arguments.BIOMES.values()){
+		for (BiomeType biome : Arguments.BIOMES.values()) {
 			if (biome.getName().equalsIgnoreCase(config.world.defaultBiome)) return Optional.of(biome);
 		}
 		return Optional.empty();
