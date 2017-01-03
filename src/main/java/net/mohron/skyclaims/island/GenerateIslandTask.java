@@ -60,7 +60,7 @@ public class GenerateIslandTask implements Runnable {
 		Optional<Chunk> chunkOptional = WORLD.loadChunk(island.getCenter().getChunkPosition(), true);
 		Location<World> center = new Location<>(island.getWorld(), island.getCenter().getX(), island.getCenter().getY() + volume.getBlockSize().getY() - 1, island.getCenter().getZ());
 		chunkOptional.ifPresent(chunk -> {
-			volume.apply(center, BlockChangeFlag.ALL, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
+			volume.apply(center, BlockChangeFlag.NONE, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
 			chunk.unloadChunk();
 		});
 
