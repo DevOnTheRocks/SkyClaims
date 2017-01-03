@@ -106,9 +106,9 @@ public class Island {
 
 	public boolean hasPermissions(Player player) {
 		return player.getUniqueId().equals(claim.getOwnerUniqueId()) ||
-				!claim.getClaimData().getContainers().contains(player.getUniqueId()) ||
-				!claim.getClaimData().getBuilders().contains(player.getUniqueId()) ||
-				!claim.getClaimData().getManagers().contains(player.getUniqueId());
+				claim.getClaimData().getContainers().contains(player.getUniqueId()) ||
+				claim.getClaimData().getBuilders().contains(player.getUniqueId()) ||
+				claim.getClaimData().getManagers().contains(player.getUniqueId());
 	}
 
 	public Region getRegion() {
