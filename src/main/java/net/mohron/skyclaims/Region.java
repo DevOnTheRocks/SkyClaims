@@ -33,8 +33,13 @@ public class Region {
 		ArrayList<Island> islands = new ArrayList<>(SkyClaims.islands.values());
 
 		for (Island island : islands) {
-			if (inputRegion.equals(island.getRegion()))
-				return true;
+			try {
+				if (inputRegion.equals(island.getRegion()))
+					return true;
+			} catch (NullPointerException e) {
+				SkyClaims.getInstance().getLogger().error("Could not get region of island " +  island.getOwner() + " " +
+						island.getOwnerName() + " probably caused by broken claim relation.");
+			}
 		}
 
 		return false;

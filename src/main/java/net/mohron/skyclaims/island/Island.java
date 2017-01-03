@@ -44,6 +44,11 @@ public class Island {
 
 		this.owner = owner;
 		this.claim = claimSystem.getClaim(world.getProperties(), claimId);
+
+		if (this.claim == null) {
+			SkyClaims.getInstance().getLogger().error("Claim " + claimId + " not found.");
+		}
+
 		this.spawn = new Location<>(world, spawnLocation);
 	}
 
