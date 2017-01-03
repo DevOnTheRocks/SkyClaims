@@ -50,6 +50,18 @@ public class GenerateIslandTask implements Runnable {
 
 		ArchetypeVolume volume = DataTranslators.SCHEMATIC.translate(schematicData);
 
+		// Loads 9 chunks
+		for (int x = -1; x <= 1; x++) {
+			for (int z = -1; z <= 1; z++) {
+				WORLD.loadChunk(
+						island.getCenter().getChunkPosition().getX() + x,
+						island.getCenter().getChunkPosition().getY(),
+						island.getCenter().getChunkPosition().getZ() + z,
+						true
+				);
+			}
+		}
+		// Get the chunk to apply the volume to
 		Optional<Chunk> chunkOptional = WORLD.loadChunk(island.getCenter().getChunkPosition(), true);
 		Location<World> center = new Location<>(island.getWorld(), island.getCenter().getX(), island.getCenter().getY() + volume.getBlockSize().getY() - 1, island.getCenter().getZ());
 		island.setSpawn(center);
