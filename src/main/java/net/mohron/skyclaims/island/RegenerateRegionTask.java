@@ -46,7 +46,7 @@ public class RegenerateRegionTask implements Runnable {
 						for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
 							for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
 								if (chunk.getBlockType(bx, by, bz) != BlockTypes.AIR) {
-									PLUGIN.getLogger().info(String.format("Found %s at (%s, %s, %s), replacing with air.", chunk.getBlock(bx, by, bz).getType().getName(), bx, by, bz));
+//									PLUGIN.getLogger().info(String.format("Found %s at (%s, %s, %s), replacing with air.", chunk.getBlock(bx, by, bz).getType().getName(), bx, by, bz));
 									chunk.getLocation(bx, by, bz).setBlock(BlockTypes.AIR.getDefaultState(), Cause.source(PLUGIN).build());
 								}
 							}
