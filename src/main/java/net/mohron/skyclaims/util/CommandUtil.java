@@ -1,6 +1,5 @@
 package net.mohron.skyclaims.util;
 
-import me.ryanhamshire.griefprevention.command.CommandHelper;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
@@ -16,13 +15,36 @@ import org.spongepowered.api.world.World;
 import java.util.function.Consumer;
 
 public class CommandUtil {
+	public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location) {
+		return teleport -> {
+			if (!(src instanceof Player)) return;
+			Player player = (Player) src;
+			Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+			if (safeLocation == null) {
+				player.sendMessage(
+						Text.builder().append(Text.of(TextColors.RED, "Location is not safe. "),
+								Text.builder().append(
+										Text.of(TextColors.GREEN, "Are you sure you want to teleport here?"))
+										.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+										.style(TextStyles.UNDERLINE).build()
+						).build());
+			} else {
+				player.setLocation(safeLocation);
+			}
+		};
+	}
+
 	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
 		return teleport -> {
 			Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
 			if (safeLocation == null) {
 				player.sendMessage(
 						Text.builder().append(Text.of(TextColors.RED, "Location is not safe. "),
-								Text.builder().append(Text.of(TextColors.GREEN, "Are you sure you want to teleport here?")).onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location))).style(TextStyles.UNDERLINE).build()).build());
+								Text.builder().append(
+										Text.of(TextColors.GREEN, "Are you sure you want to teleport here?"))
+										.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+										.style(TextStyles.UNDERLINE).build()
+						).build());
 			} else {
 				player.setLocation(safeLocation);
 			}
@@ -50,7 +72,7 @@ public class CommandUtil {
 		return consumer -> {
 			Text claimListReturnCommand = Text.builder().append(Text.of(
 					TextColors.WHITE, "\n[", TextColors.AQUA, "Return to island info", TextColors.WHITE, "]\n"))
-					.onClick(TextActions.executeCallback(CommandHelper.createCommandConsumer(src, "is info", arguments))).build();
+					.onClick(TextActions.executeCallback(createCommandConsumer(src, "is info", arguments, null))).build();
 			src.sendMessage(claimListReturnCommand);
 		};
 	}

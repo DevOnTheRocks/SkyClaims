@@ -148,7 +148,7 @@ public class Database {
 	/**
 	 * remove an individual island to the database
 	 *
-	 * @param island the island to save
+	 * @param island the island to remove
 	 */
 	public void removeIsland(Island island) {
 		String sql = String.format("DELETE FROM %s WHERE owner = '?'", config.tableName);

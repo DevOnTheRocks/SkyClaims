@@ -50,9 +50,17 @@ public class CommandHelp implements CommandExecutor {
 
 			if (src.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
 				helpContents = Text.join(helpContents, Text.of(
-						TextColors.AQUA, Text.builder("is admin cs").onClick(TextActions.runCommand("/is admin cs")),
+						TextColors.AQUA, "isa cs",
 						TextColors.DARK_GRAY, " - ",
 						TextColors.DARK_GREEN, CommandCreateSchematic.helpText));
+				hasPerms = true;
+			}
+
+			if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
+				helpContents = Text.join(helpContents, Text.of(
+						TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
+						TextColors.DARK_GRAY, " - ",
+						TextColors.DARK_GREEN, CommandReload.helpText));
 				hasPerms = true;
 			}
 
@@ -79,6 +87,15 @@ public class CommandHelp implements CommandExecutor {
 						TextColors.GRAY, " [player]",
 						TextColors.DARK_GRAY, " - ",
 						TextColors.DARK_GREEN, CommandInfo.helpText));
+				hasPerms = true;
+			}
+
+			if (src.hasPermission(Permissions.COMMAND_LOCK)) {
+				helpContents = Text.join(helpContents, Text.of(
+						"\n",
+						TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
+						TextColors.DARK_GRAY, " - ",
+						TextColors.DARK_GREEN, CommandLock.helpText));
 				hasPerms = true;
 			}
 
@@ -119,6 +136,15 @@ public class CommandHelp implements CommandExecutor {
 						TextColors.GRAY, " [player]",
 						TextColors.DARK_GRAY, " - ",
 						TextColors.DARK_GREEN, CommandSpawn.helpText));
+				hasPerms = true;
+			}
+
+			if (src.hasPermission(Permissions.COMMAND_LOCK)) {
+				helpContents = Text.join(helpContents, Text.of(
+						"\n",
+						TextColors.AQUA, Text.builder("is unlock").onClick(TextActions.runCommand("/is unlock")),
+						TextColors.DARK_GRAY, " - ",
+						TextColors.DARK_GREEN, CommandUnlock.helpText));
 				hasPerms = true;
 			}
 		}

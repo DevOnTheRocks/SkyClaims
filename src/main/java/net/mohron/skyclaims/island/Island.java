@@ -1,17 +1,19 @@
 package net.mohron.skyclaims.island;
 
 import com.flowpowered.math.vector.Vector3i;
-import me.ryanhamshire.griefprevention.DataStore;
-import me.ryanhamshire.griefprevention.claim.Claim;
+import me.ryanhamshire.griefprevention.api.claim.Claim;
+import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
+import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -20,17 +22,19 @@ import java.util.UUID;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
 	private static GlobalConfig config = PLUGIN.getConfig();
-	private static final DataStore claimSystem = PLUGIN.getGriefPrevention().dataStore;
 
 	private UUID owner;
 	private Claim claim;
 	private Location<World> spawn;
+	private boolean locked;
 
 	public Island(Player owner, Claim claim, String schematic) {
 		this.owner = owner.getUniqueId();
 		this.claim = claim;
 		this.spawn = getCenter();
+		this.locked = false;
 
 		GenerateIslandTask generateIsland = new GenerateIslandTask(owner, this, schematic);
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
@@ -42,8 +46,11 @@ public class Island {
 		World world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld);
 
 		this.owner = owner;
-		this.claim = claimSystem.getClaim(world.getProperties(), claimId);
 		this.spawn = new Location<>(world, spawnLocation);
+
+		Claim claim = CLAIM_MANAGER.getClaimByUUID(claimId).orElse(ClaimUtil.createIslandClaim(getUser().get(), getRegion()).getClaim());
+		if (!CLAIM_MANAGER.getClaimByUUID(claim.getUniqueId()).isPresent()) CLAIM_MANAGER.addClaim(claim);
+		this.claim = claim;
 	}
 
 	public UUID getOwner() {
@@ -68,11 +75,23 @@ public class Island {
 	}
 
 	public UUID getClaimId() {
-		return claim.getID();
+		return claim.getUniqueId();
 	}
 
 	public String getDateCreated() {
-		return claim.getClaimData().getDateCreated();
+		return claim.getClaimData().getDateCreated().toString();
+	}
+
+	public Text getName() {
+		return (claim.getName().isPresent()) ? claim.getName().get() : Text.of(claim.getUniqueId().toString());
+	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
 	}
 
 	public World getWorld() {
@@ -112,7 +131,7 @@ public class Island {
 	}
 
 	public Region getRegion() {
-		return new Region(getCenter().getChunkPosition().getX() >> 5, getCenter().getChunkPosition().getZ() >> 5);
+		return new Region(getSpawn().getChunkPosition().getX() >> 5, getSpawn().getChunkPosition().getZ() >> 5);
 	}
 
 	public void save() {

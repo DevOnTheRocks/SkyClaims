@@ -25,10 +25,12 @@ public class CommandIsland implements CommandExecutor {
 			.child(CommandHelp.commandSpec, "help")
 			.child(CommandInfo.commandSpec, "info")
 			.child(CommandList.commandSpec, "list")
+			.child(CommandLock.commandSpec, "lock")
 			.child(CommandReset.commandSpec, "reset")
 			.child(CommandSetBiome.commandSpec, "setbiome")
 			.child(CommandSetSpawn.commandSpec, "setspawn", "sethome")
 			.child(CommandSpawn.commandSpec, "spawn", "tp", "home")
+			.child(CommandUnlock.commandSpec, "unlock")
 			.executor(new CommandHelp())
 			.build();
 

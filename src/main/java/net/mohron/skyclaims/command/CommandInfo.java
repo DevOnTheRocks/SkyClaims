@@ -67,8 +67,8 @@ public class CommandInfo implements CommandExecutor {
 					TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.GRAY, island.getRadius() * 2, "x", island.getRadius() * 2, "\n",
 					TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockX(), TextColors.GRAY, " x, ",
 					TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, " y, ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, " z", "\n",
-					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getClaim().getID().toString())
-							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getID().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
+					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getName(), island.getName().toString())
+							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
 							.onHover(TextActions.showText(Text.of("Click here to check claim info."))), "\n",
 					TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated()
 			);

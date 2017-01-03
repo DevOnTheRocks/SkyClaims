@@ -2,54 +2,55 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Optional;
 
-public class CommandDelete implements CommandExecutor {
+public class CommandLock implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "used to delete a player island";
+	public static String helpText = "used to prevent untrusted players from visiting to your island.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_DELETE)
+			.permission(Permissions.COMMAND_LOCK)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.user(Arguments.USER))
-			.executor(new CommandDelete())
+			.executor(new CommandLock())
 			.build();
 
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandDelete");
+			PLUGIN.getLogger().debug("Registered command: CommandLock");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandDelete");
+			PLUGIN.getLogger().error("Failed to register command: CommandLock");
 		}
 	}
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		Optional<User> user = args.getOne(Arguments.USER);
-		if (!user.isPresent()) throw new CommandException(Text.of("Invalid user"));
+		if (!(src instanceof Player)) {
+			throw new CommandException(Text.of("You must be a player to run this command!"));
+		}
+		Player player = (Player) src;
+		Optional<Island> island = IslandUtil.getIsland(player.getUniqueId());
 
-		Optional<Island> island = IslandUtil.getIsland(user.get().getUniqueId());
-		if (!island.isPresent()) throw new CommandException(Text.of("Invalid island"));
+		if (!island.isPresent())
+			throw new CommandException(Text.of("You must have an Island to run this command!"));
 
-		island.get().delete();
+		island.get().setLocked(true);
 
-		src.sendMessage(Text.of(island.get().getOwnerName(), "'s island has been deleted!"));
+		src.sendMessage(Text.of(TextColors.GREEN, "Your island is now locked!"));
 		return CommandResult.success();
 	}
 }

@@ -44,13 +44,17 @@ public class CommandList implements CommandExecutor {
 		boolean newline = false;
 
 		for (Island island : SkyClaims.islands.values()) {
+			if (!island.isLocked() && !src.hasPermission(Permissions.COMMAND_LIST_ALL)) continue;
 			listText = Text.join(listText, Text.of(
 					(newline) ? "\n" : "",
-					TextColors.AQUA, island.getOwnerName(), TextColors.GRAY, " (",
+					TextColors.AQUA, island.getName().toBuilder().onClick(TextActions
+							.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn())))
+							.onHover(TextActions.showText(Text.of("Click here to teleport to this island."))), TextColors.GRAY, " (",
 					TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ",
 					TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ",
-					TextColors.GREEN, Text.builder(island.getClaimId().toString()).
-							onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getID().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
+					TextColors.GREEN, Text.builder(island.getName(), island.getName().toString()).
+							onClick(TextActions.executeCallback(CommandUtil
+									.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
 							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
 			));
 			newline = true;

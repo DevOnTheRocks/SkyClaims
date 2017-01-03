@@ -2,6 +2,7 @@ package net.mohron.skyclaims;
 
 import com.google.inject.Inject;
 import me.ryanhamshire.griefprevention.GriefPrevention;
+import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -41,11 +42,11 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		description = DESCRIPTION,
 		authors = AUTHORS,
 		dependencies = {
-				@Dependency(id = "griefprevention", optional = true)
+				@Dependency(id = "griefprevention")
 		})
 public class SkyClaims {
 	private static SkyClaims instance;
-	private static GriefPrevention griefPrevention;
+	private static GriefPreventionApi griefPrevention;
 	private static PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
 
@@ -81,6 +82,12 @@ public class SkyClaims {
 
 		instance = this;
 
+		SkyClaims.griefPrevention = GriefPrevention.getApi();
+		if (SkyClaims.griefPrevention != null)
+			getLogger().info("GriefPrevention Integration Successful!");
+		else
+			getLogger().error("GriefPrevention Integration Failed!");
+
 		//TODO Setup the worldName with a sponge:void worldName gen modifier if not already created
 	}
 
@@ -90,15 +97,6 @@ public class SkyClaims {
 		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
 			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin.");
 			return;
-		}
-
-		// GriefPrevention integration
-		try {
-			Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
-			SkyClaims.griefPrevention = GriefPrevention.instance;
-			getLogger().info("GriefPrevention Integration Successful!");
-		} catch (ClassNotFoundException e) {
-			getLogger().info("GriefPrevention Integration Failed!");
 		}
 
 		defaultConfig = new GlobalConfig();
@@ -141,19 +139,21 @@ public class SkyClaims {
 		CommandInfo.register();
 		CommandIsland.register();
 		CommandList.register();
+		CommandLock.register();
 		CommandReload.register();
 		CommandReset.register();
 		CommandSetBiome.register();
 		CommandSetSpawn.register();
 		CommandSetup.register();
 		CommandSpawn.register();
+		CommandUnlock.register();
 	}
 
 	public static SkyClaims getInstance() {
 		return instance;
 	}
 
-	public GriefPrevention getGriefPrevention() {
+	public GriefPreventionApi getGriefPrevention() {
 		return griefPrevention;
 	}
 
