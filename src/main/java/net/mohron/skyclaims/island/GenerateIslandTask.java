@@ -6,11 +6,9 @@ import net.mohron.skyclaims.util.ConfigUtil;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Chunk;
 import org.spongepowered.api.world.Location;
@@ -27,11 +25,11 @@ public class GenerateIslandTask implements Runnable {
 	private static final World WORLD = ConfigUtil.getWorld();
 	private static final File CONFIG_DIR = new File(PLUGIN.getConfigDir().toString());
 
-	private Player player;
+	private User player;
 	private Island island;
 	private String schematic;
 
-	public GenerateIslandTask(Player player, Island island, String schematic) {
+	public GenerateIslandTask(User player, Island island, String schematic) {
 		this.player = player;
 		this.island = island;
 		this.schematic = schematic;
@@ -41,17 +39,12 @@ public class GenerateIslandTask implements Runnable {
 	public void run() {
 		File inputFile = new File(CONFIG_DIR, String.format("schematics%s%s.schematic", File.separator, schematic));
 
-		if (!inputFile.exists()) {
-			player.sendMessage(Text.of(TextColors.RED, "Schematic at " + inputFile.getAbsolutePath() + " not found."));
-			return;
-		}
-
 		DataContainer schematicData;
 		try {
 			schematicData = DataFormats.NBT.readFrom(new GZIPInputStream(new FileInputStream(inputFile)));
 		} catch (Exception e) {
 			e.printStackTrace();
-			player.sendMessage(Text.of(TextColors.DARK_RED, "Error loading schematic: " + e.getMessage()));
+			PLUGIN.getLogger().error("Error loading schematic: " + e.getMessage());
 			return;
 		}
 
@@ -64,6 +57,10 @@ public class GenerateIslandTask implements Runnable {
 			chunk.unloadChunk();
 		});
 
-		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(CommandUtil.createTeleportConsumer(player, island.getSpawn())).submit(PLUGIN);
+		player.getPlayer().ifPresent(p1 -> {
+			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(
+					CommandUtil.createTeleportConsumer(p1, island.getSpawn())
+			).submit(PLUGIN);
+		});
 	}
 }

@@ -6,6 +6,7 @@ import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -14,6 +15,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Optional;
 
@@ -21,13 +23,15 @@ public class CommandReset implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	//public static String helpText = "delete your island and inventory so you can start over";
-	public static String helpText = "work in progress - not available yet";
+	public static String helpText = "delete your island and inventory so you can start over";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_RESET)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.literal(Arguments.CONFIRM, "confirm")))
+			.arguments(GenericArguments.optional(GenericArguments.seq(
+					GenericArguments.onlyOne(GenericArguments.literal(Arguments.CONFIRM, "confirm")),
+					GenericArguments.optional(GenericArguments.onlyOne(GenericArguments.string(Arguments.SCHEMATIC)))
+			)))
 			.executor(new CommandReset())
 			.build();
 
@@ -51,17 +55,33 @@ public class CommandReset implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must have an Island to run this command!"));
 
-		throw new CommandException(Text.of("This feature is still work in progress."));
-
-		/*if (!args.hasAny(Arguments.CONFIRM)) {
+		if (!args.hasAny(Arguments.CONFIRM)) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
-			player.sendMessage(Text.of("To continue, run ", "/is reset", " confirm"));
+			player.sendMessage(Text.of("To continue, run ", "/is reset", " confirm [schematic]"));
 		} else {
-			//IslandUtil.resetIsland(player.getUniqueId());
-			//player.getEnderChestInventory().clear();
-			//player.getInventory().clear();
+			String schematic = "island";
+			if (args.getOne(Arguments.SCHEMATIC).isPresent()) {
+				schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
+				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + schematic.toLowerCase()))
+					throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use the ", TextColors.YELLOW, schematic, TextColors.RED, " schematic!"));
+			}
+
+			if (!Arguments.SCHEMATICS.containsKey(schematic.toLowerCase())) {
+				String schems = "";
+				for (String s : Arguments.SCHEMATICS.values()) {
+					schems += s + ", ";
+				}
+				schems = schems.substring(0, schems.length() - 2);
+				throw new CommandException(Text.of("The value supplied is not a valid schematic. Choose from: ", TextColors.AQUA, schems));
+			}
+
+			player.getEnderChestInventory().clear();
+			player.getInventory().clear();
+
+			src.sendMessage(Text.of("Please be patient while your island is reset."));
+			IslandUtil.resetIsland(player, schematic);
 		}
 
-		return CommandResult.success();*/
+		return CommandResult.success();
 	}
 }

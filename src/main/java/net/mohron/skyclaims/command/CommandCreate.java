@@ -49,6 +49,9 @@ public class CommandCreate implements CommandExecutor {
 		if (IslandUtil.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
+		if (Arguments.SCHEMATICS.isEmpty())
+			throw new CommandException(Text.of("There are no valid schematics to create an island with!"));
+
 		if (args.getOne(Arguments.SCHEMATIC).isPresent()) {
 			schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
 			if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + schematic.toLowerCase()))
