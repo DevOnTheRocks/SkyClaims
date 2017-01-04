@@ -1,11 +1,11 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;

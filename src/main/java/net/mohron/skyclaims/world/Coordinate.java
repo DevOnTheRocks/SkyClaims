@@ -1,4 +1,4 @@
-package net.mohron.skyclaims;
+package net.mohron.skyclaims.world;
 
 public class Coordinate {
 	private int x;

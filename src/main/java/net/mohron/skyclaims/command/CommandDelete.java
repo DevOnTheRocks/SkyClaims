@@ -1,10 +1,10 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class CommandDelete implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "used to delete a player island";
+	public static String helpText = "used to delete a player's island";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_DELETE)

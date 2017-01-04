@@ -13,7 +13,7 @@ public class Arguments {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
 	// Command Argument Keys
-	public static final Text SUBCOMMAND = Text.of("admin");
+	public static final Text HELP = Text.of("help");
 	public static final Text NAME = Text.of("name");
 	public static final Text SCHEMATIC = Text.of("schematic");
 	public static final Text USER = Text.of("user");

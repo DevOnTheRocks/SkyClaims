@@ -1,4 +1,4 @@
-package net.mohron.skyclaims.island;
+package net.mohron.skyclaims.world;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.CommandUtil;

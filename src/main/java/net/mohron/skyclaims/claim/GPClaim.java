@@ -26,7 +26,7 @@
 package net.mohron.skyclaims.claim;
 
 import me.ryanhamshire.griefprevention.Visualization;
-import me.ryanhamshire.griefprevention.claim.Claim;
+import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.configuration.ClaimStorageData;
 import me.ryanhamshire.griefprevention.configuration.IClaimData;
 import org.spongepowered.api.block.BlockSnapshot;

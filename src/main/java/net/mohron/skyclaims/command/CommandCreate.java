@@ -67,7 +67,7 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("The value supplied is not a valid schematic. Choose from: ", TextColors.AQUA, schems));
 		}
 
-		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
+		player.sendMessage(Text.of("Your island is being created. You will be teleported shortly."));
 
 		if (!IslandUtil.createIsland(player, schematic).isPresent())
 			throw new CommandException(Text.of("Unable to create island due to claim creation failure!"));

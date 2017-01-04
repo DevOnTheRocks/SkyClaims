@@ -13,6 +13,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 public class CommandReload implements CommandExecutor {
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
 	public static String helpText = "used to reload plugin config and schematics.";

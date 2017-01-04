@@ -1,17 +1,17 @@
-package net.mohron.skyclaims.island;
+package net.mohron.skyclaims.world;
 
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
-import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
+import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
@@ -23,7 +23,6 @@ import java.util.UUID;
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
-	private static GlobalConfig config = PLUGIN.getConfig();
 
 	private UUID owner;
 	private Claim claim;
@@ -42,14 +41,17 @@ public class Island {
 		save();
 	}
 
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public Island(UUID owner, UUID worldId, UUID claimId, Vector3i spawnLocation) {
 		World world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld);
 
 		this.owner = owner;
 		this.spawn = new Location<>(world, spawnLocation);
 
-		Claim claim = CLAIM_MANAGER.getClaimByUUID(claimId).orElse(ClaimUtil.createIslandClaim(getUser().get(), getRegion()).getClaim());
-		if (!CLAIM_MANAGER.getClaimByUUID(claim.getUniqueId()).isPresent()) CLAIM_MANAGER.addClaim(claim);
+		Claim claim = CLAIM_MANAGER.getClaimByUUID(claimId)
+				.orElse(ClaimUtil.createIslandClaim(getUser().get(), getRegion()).getClaim().get());
+		if (!CLAIM_MANAGER.getClaimByUUID(claim.getUniqueId()).isPresent())
+			CLAIM_MANAGER.addClaim(claim, Cause.source(PLUGIN).build());
 		this.claim = claim;
 	}
 
@@ -116,18 +118,14 @@ public class Island {
 	}
 
 	public Location<World> getCenter() {
-		int radius = this.getRadius();
-		return new Location<>(ConfigUtil.getWorld(),
-				claim.getLesserBoundaryCorner().getX() + radius,
-				ConfigUtil.get(config.world.defaultHeight, 72),
-				claim.getLesserBoundaryCorner().getZ() + radius);
+		return getRegion().getCenterBlock();
 	}
 
 	public boolean hasPermissions(Player player) {
 		return player.getUniqueId().equals(claim.getOwnerUniqueId()) ||
-				claim.getClaimData().getContainers().contains(player.getUniqueId()) ||
-				claim.getClaimData().getBuilders().contains(player.getUniqueId()) ||
-				claim.getClaimData().getManagers().contains(player.getUniqueId());
+				claim.getTrustManager().getContainers().contains(player.getUniqueId()) ||
+				claim.getTrustManager().getBuilders().contains(player.getUniqueId()) ||
+				claim.getTrustManager().getManagers().contains(player.getUniqueId());
 	}
 
 	public Region getRegion() {

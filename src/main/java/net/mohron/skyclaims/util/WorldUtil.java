@@ -1,8 +1,8 @@
 package net.mohron.skyclaims.util;
 
-import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;

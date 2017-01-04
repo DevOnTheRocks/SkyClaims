@@ -1,8 +1,8 @@
-package net.mohron.skyclaims.island;
+package net.mohron.skyclaims.world;
 
-import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;

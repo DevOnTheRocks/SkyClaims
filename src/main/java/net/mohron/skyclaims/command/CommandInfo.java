@@ -1,11 +1,11 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -59,7 +59,7 @@ public class CommandInfo implements CommandExecutor {
 			String name = (user.getName().equalsIgnoreCase(src.getName())) ? user.getName() : "You";
 
 			if (!islandOptional.isPresent())
-				throw new CommandException(Text.of(TextColors.RED, name, " must have an Island to use this command!"));
+				throw new CommandException(Text.of(TextColors.RED, name, " must have an island to use this command!"));
 
 			Island island = islandOptional.get();
 			Text infoText = Text.of(

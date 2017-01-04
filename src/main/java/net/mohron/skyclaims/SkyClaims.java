@@ -6,8 +6,9 @@ import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
-import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.world.Island;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -59,8 +60,8 @@ public class SkyClaims {
 	@Inject
 	private Game game;
 
-	//@Inject
-	//private Metrics metrics;
+	@Inject
+	private Metrics metrics;
 
 	@Inject
 	@ConfigDir(sharedRoot = false)
@@ -135,7 +136,6 @@ public class SkyClaims {
 		CommandCreate.register();
 		CommandCreateSchematic.register();
 		CommandDelete.register();
-		CommandHelp.register();
 		CommandInfo.register();
 		CommandIsland.register();
 		CommandList.register();

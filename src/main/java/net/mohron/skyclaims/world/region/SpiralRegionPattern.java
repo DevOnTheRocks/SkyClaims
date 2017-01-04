@@ -1,20 +1,17 @@
-package net.mohron.skyclaims.island.layout;
+package net.mohron.skyclaims.world.region;
 
-import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.GlobalConfig;
-import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.world.Island;
 
 import java.util.ArrayList;
 
-public class SpiralLayout implements ILayout {
+public class SpiralRegionPattern implements IRegionPattern {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static GlobalConfig config = PLUGIN.getConfig();
-	private static final int spawnRegions = (int) Math.pow(ConfigUtil.get(config.world.spawnRegions, 1), 2);
+	private static final int spawnRegions = ConfigUtil.getSpawnRegions();
 
 	/**
-	 * A method to generate a region-scaled spiral pattern and return the x/y pairs of each region
+	 * A method to generate a region-scaled spiral region and return the x/y pairs of each region
 	 *
 	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
 	 */
@@ -59,9 +56,9 @@ public class SpiralLayout implements ILayout {
 				continue;
 			}
 
-			PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
+			PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for world", region.getX(), region.getZ()));
 
-			if (Region.isTaken(region)) {
+			if (Region.isOccupied(region)) {
 				iterator++;
 				continue;
 			} else {
