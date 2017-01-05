@@ -34,6 +34,12 @@ public class IslandUtil {
 		if (ConfigUtil.getDefaultBiome().isPresent())
 			WorldUtil.setRegionBiome(region, ConfigUtil.getDefaultBiome().get());
 
+		ConfigUtil.getCreateCommands().ifPresent(commands -> {
+			for (String command : commands) {
+				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
+			}
+		});
+
 		ClaimResult claimResult = ClaimUtil.createIslandClaim(owner, region);
 		switch (claimResult.getResultType()) {
 			case CLAIM_ALREADY_EXISTS:
@@ -62,12 +68,6 @@ public class IslandUtil {
 				return Optional.of(new Island(owner, claimResult.getClaim().get(), schematic));
 		}
 
-		ConfigUtil.getCreateCommands().ifPresent(commands -> {
-			for (String command : commands) {
-				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
-			}
-		});
-
 		return Optional.empty();
 	}
 
@@ -76,6 +76,12 @@ public class IslandUtil {
 		owner.getPlayer().ifPresent(
 				player -> CommandUtil.createForceTeleportConsumer(player, WorldUtil.getDefaultWorld().getSpawnLocation())
 		);
+		// Run reset commands
+		ConfigUtil.getCreateCommands().ifPresent(commands -> {
+			for (String command : commands) {
+				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
+			}
+		});
 		// Destroy everything they ever loved!
 		getIsland(owner.getUniqueId()).ifPresent(island -> {
 			RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(owner, island, schematic);
@@ -98,23 +104,5 @@ public class IslandUtil {
 			return (island.getClaimId().equals(claim.getUniqueId())) ? Optional.of(island) : Optional.empty();
 		} else
 			return Optional.empty();
-	}
-
-	public static void resetIsland(User owner, String schematic) {
-		// Send online players to spawn!
-		owner.getPlayer().ifPresent(
-				player -> CommandUtil.createForceTeleportConsumer(player, WorldUtil.getDefaultWorld().getSpawnLocation())
-		);
-		// Run reset commands
-		ConfigUtil.getCreateCommands().ifPresent(commands -> {
-			for (String command : commands) {
-				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
-			}
-		});
-		// Destroy everything they ever loved!
-		getIsland(owner.getUniqueId()).ifPresent(island -> {
-			RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(owner, island, schematic);
-			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
-		});
 	}
 }
