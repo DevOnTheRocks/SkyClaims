@@ -40,6 +40,7 @@ public class Region {
 			} catch (NullPointerException e) {
 				SkyClaims.getInstance().getLogger().error("Could not get region of island " +  island.getOwner() + " " +
 						island.getOwnerName() + " probably caused by broken claim relation.");
+				return true;
 			}
 		}
 
