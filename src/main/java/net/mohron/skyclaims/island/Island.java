@@ -3,6 +3,7 @@ package net.mohron.skyclaims.island;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
+import net.mohron.skyclaims.IslandStore;
 import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -135,16 +136,14 @@ public class Island {
 	}
 
 	public void save() {
-        SkyClaims.occupiedRegions.add(region);
-		SkyClaims.islands.put(owner, this);
+		IslandStore.addIsland(this);
 		PLUGIN.getDatabase().saveIsland(this);
 	}
 
 	public void delete() {
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
-		SkyClaims.occupiedRegions.remove(region);
-		SkyClaims.islands.remove(owner);
+		IslandStore.addIsland(this);
 		PLUGIN.getDatabase().removeIsland(this);
 	}
 }

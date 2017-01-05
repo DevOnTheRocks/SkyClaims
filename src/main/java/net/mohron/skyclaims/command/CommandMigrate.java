@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.command;
 
+import net.mohron.skyclaims.IslandStore;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Arguments;
@@ -45,7 +46,7 @@ public class CommandMigrate implements CommandExecutor {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         Optional<String> user = args.getOne(Arguments.VERSION);
         if (user.isPresent() && user.get().equals("1")) {
-            for (Island island : SkyClaims.islands.values()) {
+            for (Island island : IslandStore.getIslands().values()) {
                 island.migrate();
             }
             src.sendMessage(Text.of(TextColors.GREEN, "Successfully migrated database from data version 1."));

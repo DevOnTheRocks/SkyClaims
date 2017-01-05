@@ -4,6 +4,7 @@ import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.PlayerData;
 import me.ryanhamshire.griefprevention.claim.Claim;
 import me.ryanhamshire.griefprevention.claim.CreateClaimResult;
+import net.mohron.skyclaims.IslandStore;
 import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
@@ -51,11 +52,11 @@ public class IslandUtil {
 	}
 
 	public static boolean hasIsland(UUID owner) {
-		return SkyClaims.islands.containsKey(owner);
+		return IslandStore.getIslands().containsKey(owner);
 	}
 
 	public static Optional<Island> getIsland(UUID owner) {
-		return (hasIsland(owner)) ? Optional.of(SkyClaims.islands.get(owner)) : Optional.empty();
+		return (hasIsland(owner)) ? Optional.of(IslandStore.getIslands().get(owner)) : Optional.empty();
 	}
 
 	public static Optional<Island> getIslandByLocation(Location<World> location) {

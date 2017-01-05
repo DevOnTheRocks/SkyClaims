@@ -26,7 +26,7 @@ public class Region {
 	}
 
 	public static boolean isTaken(Region inputRegion) {
-        return SkyClaims.occupiedRegions.contains(inputRegion);
+        return IslandStore.getOccupiedRegions().contains(inputRegion);
     }
 
 	@Override

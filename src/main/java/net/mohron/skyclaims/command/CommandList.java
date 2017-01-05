@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.command;
 
+import net.mohron.skyclaims.IslandStore;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Permissions;
@@ -38,12 +39,12 @@ public class CommandList implements CommandExecutor {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (SkyClaims.islands.isEmpty())
+		if (IslandStore.getIslands().isEmpty())
 			src.sendMessage(Text.of("There are currently no islands!"));
 		Text listText = Text.EMPTY;
 		boolean newline = false;
 
-		for (Island island : SkyClaims.islands.values()) {
+		for (Island island : IslandStore.getIslands().values()) {
 			listText = Text.join(listText, Text.of(
 					(newline) ? "\n" : "",
 					TextColors.AQUA, island.getOwnerName(), TextColors.GRAY, " (",
