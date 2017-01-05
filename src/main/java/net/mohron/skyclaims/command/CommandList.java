@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.command;
 
+import net.mohron.skyclaims.IslandStore;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.lib.Permissions;
@@ -38,19 +39,19 @@ public class CommandList implements CommandExecutor {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (SkyClaims.islands.isEmpty())
+		if (IslandStore.getIslands().isEmpty())
 			src.sendMessage(Text.of("There are currently no islands!"));
 		Text listText = Text.EMPTY;
 		boolean newline = false;
 
-		for (Island island : SkyClaims.islands.values()) {
+		for (Island island : IslandStore.getIslands().values()) {
 			listText = Text.join(listText, Text.of(
 					(newline) ? "\n" : "",
 					TextColors.AQUA, island.getOwnerName(), TextColors.GRAY, " (",
 					TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ",
 					TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ",
-					TextColors.GREEN, Text.builder(island.getClaimId().toString()).
-							onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getID().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
+					TextColors.GREEN, Text.builder(island.getClaimId() == null ? "Broken-Claim-Relation" : island.getClaimId().toString()).
+							onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim() == null ? "Broken-Claim-Relation" : island.getClaim().getID().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
 							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
 			));
 			newline = true;

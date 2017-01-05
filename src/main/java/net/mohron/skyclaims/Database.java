@@ -5,12 +5,7 @@ import net.mohron.skyclaims.config.type.DatabaseConfig;
 import net.mohron.skyclaims.island.Island;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,12 +35,14 @@ public class Database {
 
 			// Create the database schema
 			String table = String.format("CREATE TABLE IF NOT EXISTS %s (" +
-					"owner		STRING PRIMARY KEY," +
-					"id			STRING," +
-					"x			INT," +
-					"y			INT," +
-					"z			INT," +
-					"worldName		STRING" +
+					"ownerUUID	STRING PRIMARY KEY," +
+					"claimUUID	STRING," +
+					"worldUUID	STRING" +
+					"regionX	STRING," +
+					"regionZ    STRING," +
+					"spawnX			INT," +
+					"spawnY			INT," +
+					"spawnZ			INT" +
 					")", islandTableName);
 
 			// Create the islands table (execute statement)
@@ -78,16 +75,20 @@ public class Database {
 			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.tableName));
 
 			while (results.next()) {
-				UUID claimId = UUID.fromString(results.getString("id"));
-				UUID ownerId = UUID.fromString(results.getString("owner"));
-				UUID worldId = UUID.fromString(results.getString("worldName"));
-				int x = results.getInt("x");
-				int y = results.getInt("y");
-				int z = results.getInt("z");
+				UUID ownerId = UUID.fromString(results.getString("ownerUUID"));
+				UUID claimId = results.getString("claimUUID") == null ? null : UUID.fromString(results.getString("claimUUID"));
+				UUID worldId = UUID.fromString(results.getString("worldUUID"));
+				int regionX = results.getInt("regionX");
+				int regionZ = results.getInt("regionZ");
+				int spawnX = results.getInt("spawnX");
+				int spawnY = results.getInt("spawnY");
+				int spawnZ = results.getInt("spawnZ");
 
-				Vector3i spawnLocation = new Vector3i(x, y, z);
+				Vector3i spawnLocation = new Vector3i(spawnX, spawnY, spawnZ);
 
-				Island island = new Island(ownerId, worldId, claimId, spawnLocation);
+				Region region = new Region(regionX, regionZ);
+
+				Island island = new Island(ownerId, claimId, worldId, region, spawnLocation);
 				islands.put(ownerId, island);
 			}
 			return islands;
@@ -106,19 +107,10 @@ public class Database {
 	 */
 	public void saveData(Map<UUID, Island> islands) {
 		for (Island island : islands.values()) {
-			String sql = String.format("INSERT OR REPLACE INTO %s(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)", config.tableName);
-
-			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-				statement.setString(1, island.getOwner().toString());
-				statement.setString(2, island.getClaimId().toString());
-				statement.setInt(3, island.getSpawn().getBlockX());
-				statement.setInt(4, island.getSpawn().getBlockY());
-				statement.setInt(5, island.getSpawn().getBlockZ());
-				statement.setString(6, island.getWorld().getUniqueId().toString());
-
-				statement.execute();
-			} catch (SQLException e) {
-				SkyClaims.getInstance().getLogger().error(String.format("Error updating the database: %s", e.getMessage()));
+			try {
+				saveIsland(island);
+			} catch (Exception e) {
+				SkyClaims.getInstance().getLogger().error("Could not save island " + island.getOwnerName() + " " + island.getOwner());
 			}
 		}
 	}
@@ -129,15 +121,17 @@ public class Database {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = String.format("INSERT OR REPLACE INTO %s(owner, id, x, y, z, worldName) VALUES(?, ?, ?, ?, ?, ?)", config.tableName);
+		String sql = String.format("INSERT OR REPLACE INTO %s(ownerUUID, claimUUID, worldUUID, regionX, regionZ, spawnX, spawnY, spawnZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", config.tableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwner().toString());
-			statement.setString(2, island.getClaimId().toString());
-			statement.setInt(3, island.getSpawn().getBlockX());
-			statement.setInt(4, island.getSpawn().getBlockY());
-			statement.setInt(5, island.getSpawn().getBlockZ());
-			statement.setString(6, island.getWorld().getUniqueId().toString());
+			statement.setString(2, island.getClaimId() == null ? null : island.getClaimId().toString());
+			statement.setString(3, island.getWorld().getUniqueId().toString());
+			statement.setInt(4, island.getRegion().getX());
+			statement.setInt(5, island.getRegion().getZ());
+			statement.setInt(6, island.getSpawn().getBlockX());
+			statement.setInt(7, island.getSpawn().getBlockY());
+			statement.setInt(8, island.getSpawn().getBlockZ());
 
 			statement.execute();
 		} catch (SQLException e) {
@@ -146,12 +140,12 @@ public class Database {
 	}
 
 	/**
-	 * remove an individual island to the database
+	 * remove an individual island from the database
 	 *
-	 * @param island the island to save
+	 * @param island the island to delete
 	 */
 	public void removeIsland(Island island) {
-		String sql = String.format("DELETE FROM %s WHERE owner = '?'", config.tableName);
+		String sql = String.format("DELETE FROM %s WHERE ownerUUID = '?'", config.tableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwner().toString());

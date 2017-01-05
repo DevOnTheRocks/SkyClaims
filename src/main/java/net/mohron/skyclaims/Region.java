@@ -1,9 +1,5 @@
 package net.mohron.skyclaims;
 
-import net.mohron.skyclaims.island.Island;
-
-import java.util.ArrayList;
-
 public class Region {
 	private int x;
 	private int z;
@@ -30,15 +26,8 @@ public class Region {
 	}
 
 	public static boolean isTaken(Region inputRegion) {
-		ArrayList<Island> islands = new ArrayList<>(SkyClaims.islands.values());
-
-		for (Island island : islands) {
-			if (inputRegion.getX() == island.getRegion().getX() && inputRegion.getZ() == island.getRegion().getZ())
-				return true;
-		}
-
-		return false;
-	}
+        return IslandStore.getOccupiedRegions().contains(inputRegion);
+    }
 
 	@Override
 	public boolean equals(Object o) {

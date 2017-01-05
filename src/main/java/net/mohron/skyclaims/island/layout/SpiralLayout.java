@@ -1,9 +1,9 @@
 package net.mohron.skyclaims.island.layout;
 
+import net.mohron.skyclaims.IslandStore;
 import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
-import net.mohron.skyclaims.island.Island;
 import net.mohron.skyclaims.util.ConfigUtil;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class SpiralLayout implements ILayout {
 	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
 	 */
 	public ArrayList<Region> generateRegionPattern() {
-		int islandCount = SkyClaims.islands.size();
+		int islandCount = IslandStore.getIslands().size();
 		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
 		String log = "Region Pattern: [";
 
@@ -46,7 +46,6 @@ public class SpiralLayout implements ILayout {
 	}
 
 	public Region nextRegion() {
-		ArrayList<Island> currentIslands = new ArrayList<Island>(SkyClaims.islands.values());
 		ArrayList<Region> regions = generateRegionPattern();
 		int iterator = 0;
 
@@ -63,7 +62,6 @@ public class SpiralLayout implements ILayout {
 
 			if (Region.isTaken(region)) {
 				iterator++;
-				continue;
 			} else {
 				return region;
 			}

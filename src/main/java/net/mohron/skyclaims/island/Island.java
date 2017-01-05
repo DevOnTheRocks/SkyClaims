@@ -3,6 +3,7 @@ package net.mohron.skyclaims.island;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.DataStore;
 import me.ryanhamshire.griefprevention.claim.Claim;
+import net.mohron.skyclaims.IslandStore;
 import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -25,11 +26,13 @@ public class Island {
 
 	private UUID owner;
 	private Claim claim;
+	private Region region;
 	private Location<World> spawn;
 
-	public Island(Player owner, Claim claim, String schematic) {
+	public Island(Player owner, Claim claim, Region region, String schematic) {
 		this.owner = owner.getUniqueId();
 		this.claim = claim;
+		this.region = region;
 		this.spawn = getCenter();
 
 		GenerateIslandTask generateIsland = new GenerateIslandTask(owner, this, schematic);
@@ -38,13 +41,29 @@ public class Island {
 		save();
 	}
 
-	public Island(UUID owner, UUID worldId, UUID claimId, Vector3i spawnLocation) {
+	public Island(UUID owner,UUID claimId, UUID worldId, Region region, Vector3i spawnLocation) {
 		World world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld);
 
 		this.owner = owner;
-		this.claim = claimSystem.getClaim(world.getProperties(), claimId);
+		this.region = region;
 		this.spawn = new Location<>(world, spawnLocation);
+
+		this.claim = claimSystem.getClaim(world.getProperties(), claimId);
+
+		if (this.claim == null) {
+			SkyClaims.getInstance().getLogger().error("Claim " + claimId + " not found.");
+			// todo create new claim
+			// Protection creation requires Player Object
+		}
 	}
+
+	public void migrate() {
+        // migrate if necessary
+        if (region.getX() == 0 && region.getZ() == 0) {
+            region = new Region (spawn.getBlockX() >> 5 >> 4, spawn.getBlockZ() >> 5 >> 4);
+            save();
+        }
+    }
 
 	public UUID getOwner() {
 		return owner;
@@ -67,9 +86,10 @@ public class Island {
 		return claim;
 	}
 
+
 	public UUID getClaimId() {
-		return claim.getID();
-	}
+        return claim == null ? null : claim.getID();
+    }
 
 	public String getDateCreated() {
 		return claim.getClaimData().getDateCreated();
@@ -93,22 +113,22 @@ public class Island {
 	}
 
 	public int getRadius() {
-		return (claim.getGreaterBoundaryCorner().getBlockX() - claim.getLesserBoundaryCorner().getBlockX()) / 2;
+		return 1 << 5 << 4 >> 1;
 	}
 
 	public Location<World> getCenter() {
 		int radius = this.getRadius();
 		return new Location<>(ConfigUtil.getWorld(),
-				claim.getLesserBoundaryCorner().getX() + radius,
+                region.getLesserBoundary().getX() + radius,
 				ConfigUtil.get(config.world.defaultHeight, 72),
-				claim.getLesserBoundaryCorner().getZ() + radius);
+                region.getLesserBoundary().getZ() + radius);
 	}
 
 	public boolean hasPermissions(Player player) {
-		return player.getUniqueId().equals(claim.getOwnerUniqueId()) ||
+		return claim != null && (player.getUniqueId().equals(claim.getOwnerUniqueId()) ||
 				claim.getClaimData().getContainers().contains(player.getUniqueId()) ||
 				claim.getClaimData().getBuilders().contains(player.getUniqueId()) ||
-				claim.getClaimData().getManagers().contains(player.getUniqueId());
+				claim.getClaimData().getManagers().contains(player.getUniqueId()));
 	}
 
 	public Region getRegion() {
@@ -116,14 +136,14 @@ public class Island {
 	}
 
 	public void save() {
-		SkyClaims.islands.put(owner, this);
+		IslandStore.addIsland(this);
 		PLUGIN.getDatabase().saveIsland(this);
 	}
 
 	public void delete() {
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
-		SkyClaims.islands.remove(owner);
+		IslandStore.removeIsland(this);
 		PLUGIN.getDatabase().removeIsland(this);
 	}
 }
