@@ -84,7 +84,7 @@ public class IslandUtil {
 		});
 	}
 
-	public static CreateClaimResult createProtection(Player owner, Region region) {
+	private static CreateClaimResult createProtection(Player owner, Region region) {
 		PLUGIN.getLogger().info(String.format(
 				"Creating claim for %s with region %s,%s: (%s,%s),(%s,%s)",
 				owner.getName(),

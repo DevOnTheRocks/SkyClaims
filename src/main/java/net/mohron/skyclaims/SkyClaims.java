@@ -5,7 +5,6 @@ import me.ryanhamshire.griefprevention.GriefPrevention;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
-import net.mohron.skyclaims.util.ConfigUtil;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -19,7 +18,6 @@ import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -114,16 +112,8 @@ public class SkyClaims {
 	}
 
 	@Listener
-	public void onWorldSave(SaveWorldEvent.Post event) {
-		if (event.isCancelled() || event.getTargetWorld().equals(ConfigUtil.getWorld())) {
-			database.saveData(IslandStore.getIslands());
-		}
-	}
-
-	@Listener
 	public void onGameStopping(GameStoppingServerEvent event) {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
-		database.saveData(IslandStore.getIslands());
 		getLogger().info("Shutdown actions complete.");
 	}
 
