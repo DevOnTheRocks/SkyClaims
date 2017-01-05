@@ -143,7 +143,7 @@ public class Island {
 	public void delete() {
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
-		IslandStore.addIsland(this);
+		IslandStore.removeIsland(this);
 		PLUGIN.getDatabase().removeIsland(this);
 	}
 }
