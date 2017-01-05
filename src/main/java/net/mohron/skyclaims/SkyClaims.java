@@ -118,13 +118,6 @@ public class SkyClaims {
 	}
 
 	@Listener
-	public void onWorldSave(SaveWorldEvent.Post event) {
-		if (event.isCancelled() || event.getTargetWorld().equals(ConfigUtil.getWorld())) {
-			database.saveData(islands);
-		}
-	}
-
-	@Listener
 	public void onGameStopping(GameStoppingServerEvent event) {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 		database.saveData(islands);
