@@ -125,11 +125,11 @@ public class Island {
 	}
 
 	public boolean hasPermissions(Player player) {
-        return claim != null && (player.getUniqueId().equals(claim.getOwnerUniqueId()) ||
-                !claim.getClaimData().getContainers().contains(player.getUniqueId()) ||
-                !claim.getClaimData().getBuilders().contains(player.getUniqueId()) ||
-                !claim.getClaimData().getManagers().contains(player.getUniqueId()));
-    }
+		return claim != null && (player.getUniqueId().equals(claim.getOwnerUniqueId()) ||
+				claim.getClaimData().getContainers().contains(player.getUniqueId()) ||
+				claim.getClaimData().getBuilders().contains(player.getUniqueId()) ||
+				claim.getClaimData().getManagers().contains(player.getUniqueId()));
+	}
 
 	public Region getRegion() {
 		return new Region(getCenter().getChunkPosition().getX() >> 5, getCenter().getChunkPosition().getZ() >> 5);
