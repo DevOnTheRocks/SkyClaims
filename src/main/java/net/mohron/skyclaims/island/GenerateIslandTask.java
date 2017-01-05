@@ -11,6 +11,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Chunk;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ArchetypeVolume;
 
@@ -51,10 +52,13 @@ public class GenerateIslandTask implements Runnable {
 
 		Optional<Chunk> chunkOptional = WORLD.loadChunk(island.getCenter().getChunkPosition(), true);
 		//Location<World> center = new Location<>(island.getWorld(), island.getCenter().getX(), island.getCenter().getY() + volume.getBlockSize().getY() - 1, island.getCenter().getZ());
+		Location<World> center = island.getCenter();
 		chunkOptional.ifPresent(chunk -> {
-			volume.apply(island.getCenter(), BlockChangeFlag.NONE, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
+			volume.apply(center, BlockChangeFlag.NONE, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(player)));
 			chunk.unloadChunk();
 		});
+
+		island.setSpawn(center);
 
 		player.getPlayer().ifPresent(p1 -> {
 			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(
