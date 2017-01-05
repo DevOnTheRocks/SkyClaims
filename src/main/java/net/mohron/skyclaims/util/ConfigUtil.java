@@ -14,6 +14,7 @@ import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class ConfigUtil {
@@ -40,6 +41,17 @@ public class ConfigUtil {
 	public static int getIslandHeight() {
 		return (config.world == null || config.world.defaultHeight == null) ?
 				72 : config.world.defaultHeight;
+	}
+	public static Optional<List<String>> getCreateCommands() {
+		if (config.misc == null || config.misc.createCommands == null || config.misc.createCommands.isEmpty())
+			return Optional.empty();
+		return Optional.of(config.misc.createCommands);
+	}
+
+	public static Optional<List<String>> getResetCommands() {
+		if (config.misc == null || config.misc.resetCommands == null || config.misc.resetCommands.isEmpty())
+			return Optional.empty();
+		return Optional.of(config.misc.resetCommands);
 	}
 
 	public static int getSpawnRegions() {

@@ -12,10 +12,13 @@ public class GlobalConfig {
 	public DatabaseConfig database;
 	@Setting(value = "World")
 	public WorldConfig world;
+	@Setting(value = "Misc")
+	public MiscConfig misc;
 
 	public GlobalConfig() {
 		version = ConfigManager.CONFIG_VERSION;
 		world = new WorldConfig();
 		database = new DatabaseConfig();
+		misc = new MiscConfig();
 	}
 }
