@@ -29,12 +29,25 @@ public class IslandUtil {
 		if (ConfigUtil.getDefaultBiome().isPresent())
 			WorldUtil.setRegionBiome(region, ConfigUtil.getDefaultBiome().get());
 
-		CreateClaimResult claimResult = createProtection(owner, region);
+		CreateClaimResult claimResult = forceCreateProtection(owner, region);
+		//CreateClaimResult claimResult = createProtection(owner, region);
 		if (!claimResult.succeeded) {
 			PLUGIN.getLogger().error("Failed to create claim. Found overlapping claim: " + claimResult.claim.getID());
 			return Optional.empty();
 		}
-		return Optional.of(new Island(owner, claimResult.claim, schematic));
+		return Optional.of(new Island(owner, claimResult.claim, region, schematic));
+	}
+
+	private static CreateClaimResult forceCreateProtection(Player owner, Region region) {
+		CreateClaimResult claimResult = null;
+		while (claimResult == null || !claimResult.succeeded) {
+			claimResult = createProtection(owner, region);
+			if (!claimResult.succeeded) {
+				PLUGIN.getLogger().error("Failed to create claim. Found overlapping claim: " + claimResult.claim.getID() + " removing overlapping claim.");
+				PLUGIN.getGriefPrevention().dataStore.deleteClaim(claimResult.claim);
+			}
+		}
+		return claimResult;
 	}
 
 	public static boolean hasIsland(UUID owner) {
@@ -70,7 +83,7 @@ public class IslandUtil {
 		});
 	}
 
-	private static CreateClaimResult createProtection(Player owner, Region region) {
+	public static CreateClaimResult createProtection(Player owner, Region region) {
 		PLUGIN.getLogger().info(String.format(
 				"Creating claim for %s with region %s,%s: (%s,%s),(%s,%s)",
 				owner.getName(),

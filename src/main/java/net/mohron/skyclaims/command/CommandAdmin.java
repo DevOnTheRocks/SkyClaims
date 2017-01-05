@@ -23,6 +23,7 @@ public class CommandAdmin {
 			.child(CommandDelete.commandSpec, "delete")
 			.child(CommandReload.commandSpec, "reload")
 			.child(CommandSetup.commandSpec, "setup")
+			.child(CommandMigrate.commandSpec, "migrate")
 			.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
 			.executor(new CommandHelp())
 			.build();

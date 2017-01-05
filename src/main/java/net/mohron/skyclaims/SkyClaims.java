@@ -30,6 +30,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,6 +49,7 @@ public class SkyClaims {
 	private static GriefPrevention griefPrevention;
 	private static PermissionService permissionService;
 	public static Map<UUID, Island> islands = new HashMap<>();
+	public static HashSet<Region> occupiedRegions = new HashSet<>();
 
 	@Inject
 	private PluginContainer pluginContainer;
@@ -114,6 +116,9 @@ public class SkyClaims {
 	public void onServerStarted(GameStartedServerEvent event) {
 		database = new Database(getConfigDir() + File.separator + "skyclaims.db");
 		islands = database.loadData();
+		for (Island island : islands.values()) {
+			occupiedRegions.add(island.getRegion());
+		}
 		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
 	}
