@@ -34,6 +34,13 @@ public class IslandUtil {
 			PLUGIN.getLogger().error("Failed to create claim. Found overlapping claim: " + claimResult.claim.getID());
 			return Optional.empty();
 		}
+
+		ConfigUtil.getCreateCommands().ifPresent(commands -> {
+			for (String command : commands) {
+				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
+			}
+		});
+
 		return Optional.of(new Island(owner, claimResult.claim, schematic));
 	}
 
@@ -63,6 +70,12 @@ public class IslandUtil {
 		owner.getPlayer().ifPresent(
 				player -> CommandUtil.createForceTeleportConsumer(player, WorldUtil.getDefaultWorld().getSpawnLocation())
 		);
+		// Run reset commands
+		ConfigUtil.getCreateCommands().ifPresent(commands -> {
+			for (String command : commands) {
+				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
+			}
+		});
 		// Destroy everything they ever loved!
 		getIsland(owner.getUniqueId()).ifPresent(island -> {
 			RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(owner, island, schematic);

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class ConfigUtil {
@@ -42,6 +43,18 @@ public class ConfigUtil {
 			if (biome.getName().equalsIgnoreCase(config.world.defaultBiome)) return Optional.of(biome);
 		}
 		return Optional.empty();
+	}
+
+	public static Optional<List<String>> getCreateCommands() {
+		if (config.misc == null || config.misc.createCommands == null || config.misc.createCommands.isEmpty())
+			return Optional.empty();
+		return Optional.of(config.misc.createCommands);
+	}
+
+	public static Optional<List<String>> getResetCommands() {
+		if (config.misc == null || config.misc.resetCommands == null || config.misc.resetCommands.isEmpty())
+			return Optional.empty();
+		return Optional.of(config.misc.resetCommands);
 	}
 
 	/**
