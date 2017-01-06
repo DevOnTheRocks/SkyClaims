@@ -27,6 +27,7 @@ public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
 
+	private UUID id;
 	private UUID owner;
 	private Claim claim;
 	private Location<World> spawn;
@@ -42,6 +43,42 @@ public class Island {
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
 
 		save();
+	}
+
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	public Island(UUID id, UUID owner, UUID worldId, UUID claimId, Vector3i spawnLocation) {
+		World world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld);
+
+		this.id = UUID.randomUUID();
+		this.owner = owner;
+		this.spawn = new Location<>(world, spawnLocation);
+
+		// 1st attempt to load claim by ID
+		// 2nd attempt to find claim by location
+		// Finally create a new claim after removing all overlapping claims if any
+		if (CLAIM_MANAGER.getClaimByUUID(claimId).isPresent()) {
+			this.claim = CLAIM_MANAGER.getClaimByUUID(claimId).get();
+		} else if (CLAIM_MANAGER.getClaimAt(spawn, true).getType() == ClaimType.BASIC
+				&& CLAIM_MANAGER.getClaimAt(spawn, true).getOwnerUniqueId().equals(owner)) {
+			this.claim = CLAIM_MANAGER.getClaimAt(spawn, true);
+		} else {
+			ClaimResult claim;
+			do {
+				claim = ClaimUtil.createIslandClaim(getUser().get(), getRegion());
+				switch (claim.getResultType()) {
+					case SUCCESS:
+						this.claim = claim.getClaim().get();
+						break;
+					case OVERLAPPING_CLAIM:
+						CLAIM_MANAGER.deleteClaim(claim.getClaim().get(), Cause.source(PLUGIN).build());
+						PLUGIN.getLogger().error(String.format("Removing overlapping claim (Owner: %s, ID: %s) while restoring %s's island.", claim.getClaim().get().getOwnerName(), claim.getClaim().get().getUniqueId(), getOwnerName()));
+						break;
+					default:
+						PLUGIN.getLogger().error(String.format("Failed to create claim for %s's island, reason: %s", getOwnerName(), claim.getResultType()));
+						break;
+				}
+			} while (claim.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
+		}
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -77,6 +114,10 @@ public class Island {
 				}
 			} while (claim.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
 		}
+	}
+
+	public UUID getUniqueId() {
+		return id;
 	}
 
 	public UUID getOwner() {

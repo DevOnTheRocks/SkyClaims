@@ -6,6 +6,7 @@ import net.mohron.skyclaims.world.Island;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,11 +25,11 @@ public class MysqlDatabase implements IDatabase {
 		return DriverManager.getConnection(databaseLocation, username, password);
 	}
 
-	public Map<UUID, Island> loadData() {
+	public Map<UUID, ArrayList<Island>> loadData() {
 		return null;
 	}
 
-	public void saveData(Map<UUID, Island> islands) {
+	public void saveData(Map<UUID, ArrayList<Island>> islands) {
 
 	}
 
