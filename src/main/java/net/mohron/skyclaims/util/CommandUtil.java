@@ -43,6 +43,7 @@ public class CommandUtil {
 								Text.builder().append(
 										Text.of(TextColors.GREEN, "Are you sure you want to teleport here?"))
 										.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+										.onHover(TextActions.showText(Text.of("Click here to force teleport!")))
 										.style(TextStyles.UNDERLINE).build()
 						).build());
 			} else {
