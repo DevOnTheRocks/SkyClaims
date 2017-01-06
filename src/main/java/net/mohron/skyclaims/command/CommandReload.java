@@ -36,8 +36,12 @@ public class CommandReload implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		Arguments.loadSchematics();
+		// Load Plugin Config
 		PLUGIN.getConfigManager().load();
+		// Load Schematics Directory
+		Arguments.loadSchematics();
+		// Load Database
+		PLUGIN.getDatabase().loadData();
 		src.sendMessage(Text.of(TextColors.GREEN, "Successfully reloaded SkyClaims!"));
 		return CommandResult.success();
 	}
