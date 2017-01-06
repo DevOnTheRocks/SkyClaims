@@ -3,6 +3,9 @@ package net.mohron.skyclaims.world;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
+import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
+import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
+import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
@@ -48,11 +51,32 @@ public class Island {
 		this.owner = owner;
 		this.spawn = new Location<>(world, spawnLocation);
 
-		Claim claim = CLAIM_MANAGER.getClaimByUUID(claimId)
-				.orElse(ClaimUtil.createIslandClaim(getUser().get(), getRegion()).getClaim().get());
-		if (!CLAIM_MANAGER.getClaimByUUID(claim.getUniqueId()).isPresent())
-			CLAIM_MANAGER.addClaim(claim, Cause.source(PLUGIN).build());
-		this.claim = claim;
+		// 1st attempt to load claim by ID
+		// 2nd attempt to find claim by location
+		// Finally create a new claim after removing all overlapping claims if any
+		if (CLAIM_MANAGER.getClaimByUUID(claimId).isPresent()) {
+			this.claim = CLAIM_MANAGER.getClaimByUUID(claimId).get();
+		} else if (CLAIM_MANAGER.getClaimAt(spawn, true).getType() == ClaimType.BASIC
+				&& CLAIM_MANAGER.getClaimAt(spawn, true).getOwnerUniqueId().equals(owner)) {
+			this.claim = CLAIM_MANAGER.getClaimAt(spawn, true);
+		} else {
+			ClaimResult claim;
+			do {
+				claim = ClaimUtil.createIslandClaim(getUser().get(), getRegion());
+				switch (claim.getResultType()) {
+					case SUCCESS:
+						this.claim = claim.getClaim().get();
+						break;
+					case OVERLAPPING_CLAIM:
+						CLAIM_MANAGER.deleteClaim(claim.getClaim().get(), Cause.source(PLUGIN).build());
+						PLUGIN.getLogger().error(String.format("Removing overlapping claim (Owner: %s, ID: %s) while restoring %s's island.", claim.getClaim().get().getOwnerName(), claim.getClaim().get().getUniqueId(), getOwnerName()));
+						break;
+					default:
+						PLUGIN.getLogger().error(String.format("Failed to create claim for %s's island, reason: %s", getOwnerName(), claim.getResultType()));
+						break;
+				}
+			} while (claim.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
+		}
 	}
 
 	public UUID getOwner() {
@@ -94,6 +118,7 @@ public class Island {
 
 	public void setLocked(boolean locked) {
 		this.locked = locked;
+		save();
 	}
 
 	public World getWorld() {
@@ -122,10 +147,10 @@ public class Island {
 	}
 
 	public boolean hasPermissions(Player player) {
-		return player.getUniqueId().equals(claim.getOwnerUniqueId()) ||
-				claim.getTrustManager().getContainers().contains(player.getUniqueId()) ||
-				claim.getTrustManager().getBuilders().contains(player.getUniqueId()) ||
-				claim.getTrustManager().getManagers().contains(player.getUniqueId());
+		return player.getUniqueId().equals(claim.getOwnerUniqueId())
+				|| claim.getTrustManager().getContainers().contains(player.getUniqueId())
+				|| claim.getTrustManager().getBuilders().contains(player.getUniqueId())
+				|| claim.getTrustManager().getManagers().contains(player.getUniqueId());
 	}
 
 	public Region getRegion() {
