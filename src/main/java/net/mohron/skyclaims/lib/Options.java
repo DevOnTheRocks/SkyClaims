@@ -2,13 +2,21 @@ package net.mohron.skyclaims.lib;
 
 public enum Options {
 	// The default radius of an Island upon creation
-	BASE_RADIUS("skyclaims.baseradius", "32");
+	DEFAULT_SCHEMATIC("skyclaims.defaultschematic", "island");
 
-	private String name;
-	private String value;
+	private String key;
+	private String defaultValue;
 
-	Options(String name, String value) {
-		this.name = name;
-		this.value = value;
+	Options(String key, String defaultValue) {
+		this.key = key;
+		this.defaultValue = defaultValue;
+	}
+
+	public String getKey(){
+		return key;
+	}
+
+	public String getDefault() {
+		return defaultValue;
 	}
 }

@@ -2,6 +2,7 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.lib.Arguments;
+import net.mohron.skyclaims.lib.Options;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import org.spongepowered.api.command.CommandException;
@@ -13,6 +14,7 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -44,7 +46,7 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
 
 		Player player = (Player) src;
-		String schematic = "island";
+		String schematic = player.getSubjectData().getOptions(SubjectData.GLOBAL_CONTEXT).getOrDefault(Options.DEFAULT_SCHEMATIC.getKey(), Options.DEFAULT_SCHEMATIC.getDefault());
 
 		if (IslandUtil.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
