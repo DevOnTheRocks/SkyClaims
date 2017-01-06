@@ -101,7 +101,7 @@ public class IslandUtil {
 		Island island;
 		if (claim.getOwnerUniqueId() != null && getIsland(claim.getOwnerUniqueId()).isPresent()) {
 			island = getIsland(claim.getOwnerUniqueId()).get();
-			return (island.getClaimUniqueId().equals(claim.getUniqueId())) ? Optional.of(island) : Optional.empty();
+			return (island.getClaim().getUniqueId().equals(claim.getUniqueId())) ? Optional.of(island) : Optional.empty();
 		} else
 			return Optional.empty();
 	}

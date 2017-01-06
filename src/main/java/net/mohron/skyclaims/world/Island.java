@@ -141,10 +141,6 @@ public class Island {
 		return claim;
 	}
 
-	public UUID getClaimUniqueId() {
-		return claim.getUniqueId();
-	}
-
 	public String getDateCreated() {
 		return claim.getClaimData().getDateCreated().toString();
 	}
