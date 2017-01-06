@@ -1,14 +1,25 @@
 package net.mohron.skyclaims.claim;
 
-public class SkyClaimResult implements IClaimResult {
-	public boolean succeeded;
-	public IClaim claim;
+import me.ryanhamshire.griefprevention.api.claim.Claim;
+import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
+import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 
-	public boolean getStatus() {
-		return succeeded;
+import java.util.Optional;
+
+public class SkyClaimResult implements ClaimResult {
+	private ClaimResultType resultType;
+	private Optional<Claim> claim;
+
+	public SkyClaimResult(ClaimResultType resultType, Optional<Claim> claim) {
+		this.resultType = resultType;
+		this.claim = claim;
 	}
 
-	public IClaim getClaim() {
+	public ClaimResultType getResultType() {
+		return resultType;
+	}
+
+	public Optional<Claim> getClaim() {
 		return claim;
 	}
 }

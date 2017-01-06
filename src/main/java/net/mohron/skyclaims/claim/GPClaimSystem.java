@@ -3,6 +3,8 @@ package net.mohron.skyclaims.claim;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
+import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
+import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.ConfigUtil;
 import org.spongepowered.api.entity.living.player.Player;
@@ -20,7 +22,7 @@ public class GPClaimSystem implements IClaimSystem {
 
 	}
 
-	public IClaimResult createClaim(World world, Vector3i a, Vector3i b, UUID claimId, IClaim parent, IClaim.Type claimType, boolean cuboid, Player player) {
+	public ClaimResult createClaim(World world, Vector3i a, Vector3i b, UUID claimId, Claim parent, ClaimType claimType, boolean cuboid, Player player) {
 		return Claim.builder()
 				.world(ConfigUtil.getWorld())
 				.bounds(a, b)
@@ -31,7 +33,7 @@ public class GPClaimSystem implements IClaimSystem {
 				.build();
 	}
 
-	public Optional<IClaim> getClaim(UUID claimId) {
-		return (Optional<IClaim>) claimManager.getClaimByUUID(claimId);
+	public Optional<Claim> getClaim(UUID claimId) {
+		return claimManager.getClaimByUUID(claimId);
 	}
 }

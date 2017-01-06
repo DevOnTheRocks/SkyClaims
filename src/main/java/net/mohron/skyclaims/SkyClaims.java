@@ -6,8 +6,8 @@ import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
+import net.mohron.skyclaims.database.SqliteDatabase;
 import net.mohron.skyclaims.metrics.Metrics;
-import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -22,7 +22,6 @@ import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -75,7 +74,7 @@ public class SkyClaims {
 	private ConfigManager pluginConfigManager;
 	private GlobalConfig defaultConfig;
 
-	private Database database;
+	private SqliteDatabase database;
 
 	@Listener
 	public void onPostInitialization(GamePostInitializationEvent event) {
@@ -111,7 +110,7 @@ public class SkyClaims {
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
-		database = new Database(getConfigDir() + File.separator + "skyclaims.db");
+		database = new SqliteDatabase(getConfigDir() + File.separator + "skyclaims.db");
 		islands = database.loadData();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
@@ -182,7 +181,7 @@ public class SkyClaims {
 		return schematicDir;
 	}
 
-	public Database getDatabase() {
+	public SqliteDatabase getDatabase() {
 		return database;
 	}
 }
