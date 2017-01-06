@@ -92,6 +92,7 @@ public class SkyClaims {
 		//TODO Setup the worldName with a sponge:void worldName gen modifier if not already created
 	}
 
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Listener(order = Order.LATE)
 	public void onAboutToStart(GameAboutToStartServerEvent event) {
 		SkyClaims.permissionService = Sponge.getServiceManager().provide(PermissionService.class).get();
