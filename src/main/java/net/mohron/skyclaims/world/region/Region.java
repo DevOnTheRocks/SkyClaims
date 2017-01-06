@@ -48,7 +48,7 @@ public class Region {
 		ArrayList<Island> islands = new ArrayList<>(SkyClaims.islands.values());
 
 		for (Island island : islands) {
-			if (region.getX() == island.getRegion().getX() && region.getZ() == island.getRegion().getZ())
+			if (region.equals(island.getRegion()))
 				return true;
 		}
 
