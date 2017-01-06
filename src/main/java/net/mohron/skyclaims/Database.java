@@ -110,7 +110,7 @@ public class Database {
 
 			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 				statement.setString(1, island.getOwner().toString());
-				statement.setString(2, island.getClaimId().toString());
+				statement.setString(2, island.getClaimUniqueId().toString());
 				statement.setInt(3, island.getSpawn().getBlockX());
 				statement.setInt(4, island.getSpawn().getBlockY());
 				statement.setInt(5, island.getSpawn().getBlockZ());
@@ -133,7 +133,7 @@ public class Database {
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwner().toString());
-			statement.setString(2, island.getClaimId().toString());
+			statement.setString(2, island.getClaimUniqueId().toString());
 			statement.setInt(3, island.getSpawn().getBlockX());
 			statement.setInt(4, island.getSpawn().getBlockY());
 			statement.setInt(5, island.getSpawn().getBlockZ());

@@ -100,7 +100,7 @@ public class Island {
 		return claim;
 	}
 
-	public UUID getClaimId() {
+	public UUID getClaimUniqueId() {
 		return claim.getUniqueId();
 	}
 
