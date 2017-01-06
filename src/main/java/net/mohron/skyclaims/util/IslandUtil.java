@@ -77,7 +77,7 @@ public class IslandUtil {
 				player -> CommandUtil.createForceTeleportConsumer(player, WorldUtil.getDefaultWorld().getSpawnLocation())
 		);
 		// Run reset commands
-		ConfigUtil.getCreateCommands().ifPresent(commands -> {
+		ConfigUtil.getResetCommands().ifPresent(commands -> {
 			for (String command : commands) {
 				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
 			}
