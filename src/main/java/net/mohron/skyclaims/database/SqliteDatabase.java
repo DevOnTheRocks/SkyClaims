@@ -77,14 +77,14 @@ public class SqliteDatabase implements IDatabase {
 	 *
 	 * @return Returns a new DataStore generated from the database data
 	 */
-	public Map<UUID, ArrayList<Island>> loadData() {
-		Map<UUID, ArrayList<Island>> islands = new HashMap<>();
+	public Map<UUID, HashMap<UUID, Island>> loadData() {
+		Map<UUID, HashMap<UUID, Island>> islands = new HashMap<>();
 
 		try (Statement statement = getConnection().createStatement()) {
 			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.tableName));
 
 			while (results.next()) {
-				ArrayList<Island> islandList = new ArrayList<>();
+				HashMap<UUID, Island> islandMap = new HashMap<>();
 
 				UUID islandId = UUID.fromString(results.getString("island"));
 				UUID ownerId = UUID.fromString(results.getString("owner"));
@@ -95,14 +95,13 @@ public class SqliteDatabase implements IDatabase {
 				int z = results.getInt("spawnZ");
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
-
 				Island island = new Island(islandId, ownerId, worldId, claimId, spawnLocation);
-				islandList.add(island);
+				islandMap.put(ownerId, island);
 
 				if (islands.containsKey(ownerId))
-					islands.get(ownerId).add(island);
+					islands.get(ownerId).put(ownerId, island);
 				else
-					islands.put(ownerId, islandList);
+					islands.put(ownerId, islandMap);
 			}
 			return islands;
 		} catch (SQLException e) {
@@ -118,9 +117,9 @@ public class SqliteDatabase implements IDatabase {
 	 *
 	 * @param islands The map in memory to pull the data from
 	 */
-	public void saveData(Map<UUID, ArrayList<Island>> islands) {
-		for (ArrayList<Island> islandList : islands.values())
-			for (Island island : islandList)
+	public void saveData(Map<UUID, HashMap<UUID, Island>> islands) {
+		for (HashMap<UUID, Island> islandList : islands.values())
+			for (Island island : islandList.values())
 				saveIsland(island);
 	}
 

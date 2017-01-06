@@ -49,7 +49,7 @@ public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPreventionApi griefPrevention;
 	private static PermissionService permissionService;
-	public static Map<UUID, ArrayList<Island>> islands = new HashMap<>();
+	public static Map<UUID, HashMap<UUID,Island>> islands = new HashMap<>();
 
 	@Inject
 	private PluginContainer pluginContainer;

@@ -45,7 +45,11 @@ public class Region {
 
 	public static boolean isOccupied(Region region) {
 		if (SkyClaims.islands.isEmpty()) return false;
-		ArrayList<Island> islands = new ArrayList<>(SkyClaims.islands.values());
+		ArrayList<Island> islands = new ArrayList<>();
+
+		SkyClaims.islands.values().forEach(allIslands -> {
+			allIslands.values().forEach(islands::add);
+		});
 
 		for (Island island : islands) {
 			if (region.equals(island.getRegion()))
