@@ -43,7 +43,7 @@ public class SqliteDatabase implements IDatabase {
 
 			// Create the database schema
 			String table = "CREATE TABLE IF NOT EXISTS islands (" +
-				"island			STRING PRIMARY KEY" +
+				"island			STRING PRIMARY KEY," +
 				"owner			STRING," +
 				"claim			STRING," +
 				"spawnX			INT," +
