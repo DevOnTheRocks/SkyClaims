@@ -74,7 +74,7 @@ public class ClaimUtil {
 
 	public void setClaimSettings(User user, Claim claim) {
 		claim.getClaimData().setResizable(false);
+		claim.getClaimData().setClaimExpiration(false);
 		claim.getClaimData().setName(Text.of(user.getName(), "'s Island"));
-
 	}
 }
