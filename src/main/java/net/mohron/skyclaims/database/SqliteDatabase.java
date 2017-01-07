@@ -191,7 +191,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = "REPLACE INTO islands(island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?)";
+		String sql = "REPLACE INTO islands(island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
