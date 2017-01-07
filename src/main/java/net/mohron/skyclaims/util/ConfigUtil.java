@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.util;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.config.type.DatabaseConfig;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.lib.Arguments;
 import org.spongepowered.api.Game;
@@ -54,11 +55,21 @@ public class ConfigUtil {
 		return Optional.of(config.misc.resetCommands);
 	}
 
+	public static DatabaseConfig getDatabaseConfig() {
+		return (config != null && config.database != null) ? config.database : new DatabaseConfig();
+	}
+
 	public static int getSpawnRegions() {
 		return (config.world == null ||
 				config.world.spawnRegions == null ||
 				config.world.spawnRegions < 1) ?
 				1 : (int) Math.pow(config.world.spawnRegions, 2);
+	}
+
+	public static Integer getDatabasePort() {
+		return (config.database == null ||
+				config.database.port == null) ?
+				3306 : config.database.port;
 	}
 
 	public static void setVoidGenerator() {

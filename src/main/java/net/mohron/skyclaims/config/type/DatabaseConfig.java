@@ -13,10 +13,12 @@ public class DatabaseConfig {
 	public String databaseName;
 	@Setting
 	public String tableName;
-//	@Setting
-//	public String username;
-//	@Setting
-//	public String password;
+	@Setting
+	public String username;
+	@Setting
+	public String password;
+	@Setting
+	public Integer port;
 
 	public DatabaseConfig() {
 		type = "SQLite";

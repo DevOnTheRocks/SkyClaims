@@ -107,5 +107,5 @@ public class IslandUtil {
 			return (island.getClaim().getUniqueId().equals(claim.getUniqueId())) ? Optional.of(island) : Optional.empty();
 		} else
 			return Optional.empty();
-	}
+	} 
 }
