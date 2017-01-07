@@ -77,15 +77,13 @@ public class SqliteDatabase implements IDatabase {
 	 *
 	 * @return Returns a new DataStore generated from the database data
 	 */
-	public Map<UUID, HashMap<UUID, Island>> loadData() {
-		Map<UUID, HashMap<UUID, Island>> islands = new HashMap<>();
+	public HashMap<UUID, Island> loadData() {
+		HashMap<UUID, Island> islands = new HashMap<>();
 
 		try (Statement statement = getConnection().createStatement()) {
 			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.tableName));
 
 			while (results.next()) {
-				HashMap<UUID, Island> islandMap = new HashMap<>();
-
 				UUID islandId = UUID.fromString(results.getString("island"));
 				UUID ownerId = UUID.fromString(results.getString("owner"));
 				UUID claimId = UUID.fromString(results.getString("claim"));
@@ -96,12 +94,8 @@ public class SqliteDatabase implements IDatabase {
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
 				Island island = new Island(islandId, ownerId, worldId, claimId, spawnLocation);
-				islandMap.put(ownerId, island);
 
-				if (islands.containsKey(ownerId))
-					islands.get(ownerId).put(ownerId, island);
-				else
-					islands.put(ownerId, islandMap);
+				islands.put(islandId, island);
 			}
 			return islands;
 		} catch (SQLException e) {

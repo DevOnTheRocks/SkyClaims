@@ -22,7 +22,7 @@ public class MysqlDatabase implements IDatabase {
 		return DriverManager.getConnection(databaseLocation, username, password);
 	}
 
-	public Map<UUID, HashMap<UUID, Island>> loadData() {
+	public HashMap<UUID, Island> loadData() {
 		return null;
 	}
 

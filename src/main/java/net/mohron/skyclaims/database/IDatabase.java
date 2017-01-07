@@ -7,11 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface IDatabase {
-	Map<UUID, HashMap<UUID, Island>> loadData();
-
+	HashMap<UUID, Island> loadData();
 	void saveData(Map<UUID, Island> islands);
-
 	void saveIsland(Island island);
-
 	void removeIsland(Island island);
 }
