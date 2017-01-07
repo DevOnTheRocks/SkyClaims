@@ -39,6 +39,7 @@ public class SqliteDatabase implements IDatabase {
 		}
 
 		createTable();
+		migrate();
 	}
 
 	/**
@@ -68,8 +69,6 @@ public class SqliteDatabase implements IDatabase {
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
-
-			migrate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
