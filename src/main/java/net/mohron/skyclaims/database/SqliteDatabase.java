@@ -88,7 +88,7 @@ public class SqliteDatabase implements IDatabase {
 
 			islands = loadLegacyData();
 
-			String sql = "DROP TABLE islands";
+			String sql = "DROP TABLE IF EXISTS islands";
 			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 
 				SkyClaims.getInstance().getLogger().info("Dropping the islands table..");
@@ -157,9 +157,9 @@ public class SqliteDatabase implements IDatabase {
 			while (results.next()) {
 				UUID ownerId = UUID.fromString(results.getString("owner"));
 				UUID claimId = UUID.fromString(results.getString("id"));
-				int x = results.getInt("spawnX");
-				int y = results.getInt("spawnY");
-				int z = results.getInt("spawnZ");
+				int x = results.getInt("x");
+				int y = results.getInt("y");
+				int z = results.getInt("z");
 
 				UUID id = UUID.randomUUID();
 				Vector3i spawnLocation = new Vector3i(x, y, z);
