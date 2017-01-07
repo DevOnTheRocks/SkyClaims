@@ -25,9 +25,9 @@ public class SqliteDatabase implements IDatabase {
 	private String databaseName;
 	private String databaseLocation;
 
-	public SqliteDatabase(String databaseName) {
+	public SqliteDatabase() {
 		this.config = ConfigUtil.getSqliteDatabaseConfig();
-		this.databaseName = databaseName;
+		this.databaseName = config.databaseName;
 		this.databaseLocation = config.location;
 
 		// Load the SQLite JDBC driver

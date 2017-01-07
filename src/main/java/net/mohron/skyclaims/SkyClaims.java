@@ -112,7 +112,7 @@ public class SkyClaims {
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
-		database = new SqliteDatabase(getConfigDir() + File.separator + "skyclaims.db");
+		database = new SqliteDatabase();
 		islands = database.loadData();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
