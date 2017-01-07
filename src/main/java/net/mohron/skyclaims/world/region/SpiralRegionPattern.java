@@ -1,6 +1,8 @@
 package net.mohron.skyclaims.world.region;
 
+import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
 
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 
 public class SpiralRegionPattern implements IRegionPattern {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final int spawnRegions = ConfigUtil.getSpawnRegions();
+	private static final int SPAWN_REGIONS = ConfigUtil.getSpawnRegions();
 
 	/**
 	 * A method to generate a region-scaled spiral region and return the x/y pairs of each region
@@ -17,7 +19,7 @@ public class SpiralRegionPattern implements IRegionPattern {
 	 */
 	public ArrayList<Region> generateRegionPattern() {
 		int islandCount = SkyClaims.islands.size();
-		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
+		int generationSize = (int) Math.sqrt((double) islandCount + SPAWN_REGIONS) + 1;
 		String log = "Region Pattern: [";
 
 		ArrayList<Region> coordinates = new ArrayList<>(generationSize);
@@ -43,18 +45,28 @@ public class SpiralRegionPattern implements IRegionPattern {
 	}
 
 	public Region nextRegion() {
-		ArrayList<Island> currentIslands = new ArrayList<Island>(SkyClaims.islands.values());
+		ArrayList<Region> spawnRegions = new ArrayList<>(SPAWN_REGIONS);
+		ArrayList<Island> currentIslands = new ArrayList<>(SkyClaims.islands.values());
 		ArrayList<Region> regions = generateRegionPattern();
 		int iterator = 0;
 
-		PLUGIN.getLogger().debug(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
+		PLUGIN.getLogger().debug(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), SPAWN_REGIONS));
 
 		for (Region region : regions) {
-			if (iterator < spawnRegions) {
+			if (iterator < SPAWN_REGIONS) {
+				spawnRegions.add(region);
 				PLUGIN.getLogger().debug(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
 				iterator++;
 				continue;
+			} else {
+				if (SkyClaims.islands.size() > 1) {
+					ClaimResult claimResult = ClaimUtil.createSpawnClaim(spawnRegions);
+					if (claimResult.successful()) {
+						PLUGIN.getLogger().info(String.format("Reserved %s regions for spawn. Admin Claim: %s", SPAWN_REGIONS, claimResult.getClaim().get().getUniqueId()));
+					}
+				}
 			}
+
 
 			PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for world", region.getX(), region.getZ()));
 
