@@ -15,6 +15,7 @@ public class IslandUtil {
 	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
 
 	public static boolean hasIsland(UUID owner) {
+		if (SkyClaims.islands.isEmpty()) return false;
 		for (Island island : SkyClaims.islands.values()) {
 			if (island.getOwnerUniqueId().equals(owner)) return true;
 		}

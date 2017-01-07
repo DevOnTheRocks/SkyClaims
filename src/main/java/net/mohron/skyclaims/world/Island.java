@@ -42,11 +42,12 @@ public class Island {
 	public Island(User owner, String schematic) throws CreateIslandException {
 		this.id = UUID.randomUUID();
 		this.owner = owner.getUniqueId();
+		Region region = PATTERN.nextRegion();
+		this.spawn = region.getCenterBlock();
 		this.locked = false;
 
-		Region region = PATTERN.nextRegion();
+		// Create the island claim
 		ClaimResult claimResult = ClaimUtil.createIslandClaim(owner, region);
-
 		do {
 			switch (claimResult.getResultType()) {
 				case SUCCESS:
@@ -64,6 +65,10 @@ public class Island {
 					throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
 			}
 		} while (claimResult.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
+
+		// Set claims to not expire or be resized
+		this.claim.getClaimData().setResizable(false);
+		this.claim.getClaimData().setClaimExpiration(false);
 
 		// Run commands defined in config on creation
 		ConfigUtil.getCreateCommands().ifPresent(commands -> {
@@ -112,6 +117,10 @@ public class Island {
 				}
 			} while (claim.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
 		}
+
+		// Set claims to not expire or be resized
+		if (this.claim.getClaimData().isResizable()) this.claim.getClaimData().setResizable(false);
+		if (this.claim.getClaimData().allowClaimExpiration()) this.claim.getClaimData().setClaimExpiration(false);
 	}
 
 	public UUID getUniqueId() {
