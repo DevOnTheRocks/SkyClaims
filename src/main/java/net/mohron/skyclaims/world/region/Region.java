@@ -7,8 +7,6 @@ import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.ArrayList;
-
 public class Region {
 	private int x;
 	private int z;
@@ -45,13 +43,8 @@ public class Region {
 
 	public static boolean isOccupied(Region region) {
 		if (SkyClaims.islands.isEmpty()) return false;
-		ArrayList<Island> islands = new ArrayList<>();
 
-		SkyClaims.islands.values().forEach(allIslands -> {
-			allIslands.values().forEach(islands::add);
-		});
-
-		for (Island island : islands) {
+		for (Island island : SkyClaims.islands.values()) {
 			if (region.equals(island.getRegion()))
 				return true;
 		}

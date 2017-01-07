@@ -5,12 +5,14 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ClaimUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -57,6 +59,17 @@ public class ClaimUtil {
 				.cause(Cause.source(PLUGIN).build())
 				.cuboid(false)
 				.build();
+	}
+
+	public static boolean isIslandClaim(Claim claim) {
+		return isIslandClaim(claim.getUniqueId());
+	}
+
+	public static boolean isIslandClaim(UUID uuid) {
+		for (Island island : SkyClaims.islands.values()) {
+			if (island.getClaim().getUniqueId().equals(uuid)) return true;
+		}
+		return false;
 	}
 
 	public void setClaimSettings(User user, Claim claim) {

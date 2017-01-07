@@ -117,9 +117,8 @@ public class SqliteDatabase implements IDatabase {
 	 *
 	 * @param islands The map in memory to pull the data from
 	 */
-	public void saveData(Map<UUID, HashMap<UUID, Island>> islands) {
-		for (HashMap<UUID, Island> islandList : islands.values())
-			for (Island island : islandList.values())
+	public void saveData(Map<UUID, Island> islands) {
+			for (Island island : islands.values())
 				saveIsland(island);
 	}
 

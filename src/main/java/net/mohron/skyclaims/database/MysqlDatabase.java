@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by Cossacksman on 06/01/2017.
- */
 public class MysqlDatabase implements IDatabase {
 	private DatabaseConfig config;
 	private String databaseLocation;
@@ -29,7 +26,7 @@ public class MysqlDatabase implements IDatabase {
 		return null;
 	}
 
-	public void saveData(Map<UUID, HashMap<UUID, Island>> islands) {
+	public void saveData(Map<UUID, Island> islands) {
 
 	}
 

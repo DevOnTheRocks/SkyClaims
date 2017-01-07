@@ -24,7 +24,10 @@ public class IslandUtil {
 	private static IRegionPattern layout = new SpiralRegionPattern();
 
 	public static boolean hasIsland(UUID owner) {
-		return SkyClaims.islands.containsKey(owner);
+		for (Island island : SkyClaims.islands.values()) {
+			if (island.getOwner().equals(owner)) return true;
+		}
+		return false;
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -89,15 +92,8 @@ public class IslandUtil {
 		});
 	}
 
-	public static Optional<Map<UUID, Island>> getIslands(UUID owner) {
-		return (SkyClaims.islands.get(owner).isEmpty()) ? Optional.empty() : Optional.of(SkyClaims.islands.get(owner));
-	}
-
-	public static Optional<Island> getIsland(UUID islandId) {
-		for (Map<UUID, Island> islands : SkyClaims.islands.values()) {
-			if (islands.containsKey(islandId)) return Optional.of(islands.get(islandId));
-		}
-		return Optional.empty();
+	public static Optional<Island> getIsland(UUID islandUniqueId) {
+		return (SkyClaims.islands.containsKey(islandUniqueId)) ? Optional.of(SkyClaims.islands.get(islandUniqueId)) : Optional.empty();
 	}
 
 	public static Optional<Island> getIslandByLocation(Location<World> location) {

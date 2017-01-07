@@ -15,9 +15,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.Map;
-import java.util.UUID;
-
 public class CommandList implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -46,23 +43,21 @@ public class CommandList implements CommandExecutor {
 		Text listText = Text.EMPTY;
 		boolean newline = false;
 
-		for (Map<UUID, Island> islands : SkyClaims.islands.values()) {
-			for (Island island : islands.values()) {
-				if (!island.isLocked() && !src.hasPermission(Permissions.COMMAND_LIST_ALL)) continue;
-				listText = Text.join(listText, Text.of(
-						(newline) ? "\n" : "",
-						TextColors.AQUA, island.getName().toBuilder().onClick(TextActions
-								.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn())))
-								.onHover(TextActions.showText(Text.of("Click here to teleport to this island."))), TextColors.GRAY, " (",
-						TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ",
-						TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ",
-						TextColors.GREEN, Text.builder(island.getName(), island.getName().toString()).
-								onClick(TextActions.executeCallback(CommandUtil
-										.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
-								.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
-				));
-				newline = true;
-			}
+		for (Island island : SkyClaims.islands.values()) {
+			if (!island.isLocked() && !src.hasPermission(Permissions.COMMAND_LIST_ALL)) continue;
+			listText = Text.join(listText, Text.of(
+					(newline) ? "\n" : "",
+					TextColors.AQUA, island.getName().toBuilder().onClick(TextActions
+							.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn())))
+							.onHover(TextActions.showText(Text.of("Click here to teleport to this island."))), TextColors.GRAY, " (",
+					TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ",
+					TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ",
+					TextColors.GREEN, Text.builder(island.getName(), island.getName().toString()).
+							onClick(TextActions.executeCallback(CommandUtil
+									.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
+							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
+			));
+			newline = true;
 		}
 
 		PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island List")).padding(Text.of(TextColors.AQUA, "-")).contents(listText);
