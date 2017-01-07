@@ -120,7 +120,6 @@ public class SqliteDatabase implements IDatabase {
 			while (results.next()) {
 				UUID ownerId = UUID.fromString(results.getString("owner"));
 				UUID claimId = UUID.fromString(results.getString("id"));
-				UUID worldId = UUID.fromString(results.getString("worldName"));
 				int x = results.getInt("spawnX");
 				int y = results.getInt("spawnY");
 				int z = results.getInt("spawnZ");
