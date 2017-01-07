@@ -232,7 +232,7 @@ public class SqliteDatabase implements IDatabase {
 	private int countColumns() {
 		int total = 0;
 
-		String sql = "SELECT COUNT(*) FROM islands";
+		String sql = "SELECT * FROM islands LIMIT 1";
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			return statement.executeQuery().getMetaData().getColumnCount();
 		} catch (SQLException e) {
