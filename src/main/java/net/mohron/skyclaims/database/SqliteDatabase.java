@@ -83,7 +83,7 @@ public class SqliteDatabase implements IDatabase {
 
 		SkyClaims.getInstance().getLogger().info(String.format("Table size: %s", countColumns()));
 
-		if (countColumns() == 7) {
+		if (countColumns() == 6) {
 			SkyClaims.getInstance().getLogger().info("Migrating the database..");
 
 			islands = loadLegacyData();
