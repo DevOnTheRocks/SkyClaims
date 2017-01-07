@@ -1,10 +1,12 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Options;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -71,8 +73,11 @@ public class CommandCreate implements CommandExecutor {
 
 		player.sendMessage(Text.of("Your island is being created. You will be teleported shortly."));
 
-		if (!IslandUtil.createIsland(player, schematic).isPresent())
-			throw new CommandException(Text.of("Unable to create island due to claim creation failure!"));
+		try {
+			new Island(player, schematic);
+		} catch (CreateIslandException e) {
+			throw new CommandException(Text.of("Unable to create island! " + e.getMessage()));
+		}
 
 		return CommandResult.success();
 	}
