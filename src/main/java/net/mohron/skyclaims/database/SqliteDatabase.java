@@ -93,7 +93,7 @@ public class SqliteDatabase implements IDatabase {
 
 				SkyClaims.getInstance().getLogger().info("Dropping the islands table..");
 
-				statement.executeUpdate(sql);
+				statement.executeUpdate();
 				SkyClaims.getInstance().getLogger().info("Dropped the islands table.");
 
 				SkyClaims.getInstance().getLogger().info("Re-initializing islands table...");
