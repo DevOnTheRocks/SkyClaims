@@ -122,7 +122,7 @@ public class SqliteDatabase implements IDatabase {
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
-			statement.setString(2, island.getOwner().toString());
+			statement.setString(2, island.getOwnerUniqueId().toString());
 			statement.setString(3, island.getClaim().getUniqueId().toString());
 			statement.setInt(4, island.getSpawn().getBlockX());
 			statement.setInt(5, island.getSpawn().getBlockY());
@@ -143,7 +143,7 @@ public class SqliteDatabase implements IDatabase {
 		String sql = String.format("DELETE FROM %s WHERE island = '?'", config.tableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-			statement.setString(1, island.getOwner().toString());
+			statement.setString(1, island.getOwnerUniqueId().toString());
 
 			statement.execute();
 		} catch (SQLException e) {

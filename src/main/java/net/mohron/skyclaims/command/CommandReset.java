@@ -3,8 +3,11 @@ package net.mohron.skyclaims.command;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.RegenerateRegionTask;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -16,6 +19,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.common.text.serializer.xml.I;
 
 import java.util.Optional;
 
@@ -78,8 +82,13 @@ public class CommandReset implements CommandExecutor {
 			player.getEnderChestInventory().clear();
 			player.getInventory().clear();
 
+			// Teleport the player running the command if they're currently on the island
+			if (island.get().isWithinIsland(player.getLocation())) CommandUtil.createForceTeleportConsumer(player, WorldUtil.getDefaultWorld().getSpawnLocation());
+
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
-			IslandUtil.resetIsland(player, schematic);
+
+			RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(island.get(), schematic);
+			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 		}
 
 		return CommandResult.success();

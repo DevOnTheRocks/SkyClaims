@@ -7,16 +7,20 @@ import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
+import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
+import net.mohron.skyclaims.world.region.SpiralRegionPattern;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -26,6 +30,7 @@ import java.util.UUID;
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
+	private static final IRegionPattern PATTERN = new SpiralRegionPattern();
 
 	private UUID id;
 	private UUID owner;
@@ -33,12 +38,41 @@ public class Island {
 	private Location<World> spawn;
 	private boolean locked;
 
-	public Island(Player owner, Claim claim, String schematic) {
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	public Island(User owner, String schematic) throws CreateIslandException {
+		this.id = UUID.randomUUID();
 		this.owner = owner.getUniqueId();
-		this.claim = claim;
-		this.spawn = getCenter();
 		this.locked = false;
 
+		Region region = PATTERN.nextRegion();
+		ClaimResult claimResult = ClaimUtil.createIslandClaim(owner, region);
+
+		do {
+			switch (claimResult.getResultType()) {
+				case SUCCESS:
+					CLAIM_MANAGER.addClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
+					this.claim = claimResult.getClaim().get();
+					break;
+				case OVERLAPPING_CLAIM:
+					if (ClaimUtil.isIslandClaim(claimResult.getClaim().get())) {
+						throw new CreateIslandException(Text.of(TextColors.RED, "Failed to create island claim: The claim at the target location belongs to another island!"));
+					} else {
+						CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
+					}
+					break;
+				default:
+					throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
+			}
+		} while (claimResult.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
+
+		// Run commands defined in config on creation
+		ConfigUtil.getCreateCommands().ifPresent(commands -> {
+			for (String command : commands) {
+				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
+			}
+		});
+
+		// Generate the island using the specified schematic
 		GenerateIslandTask generateIsland = new GenerateIslandTask(owner, this, schematic);
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
 
@@ -46,12 +80,11 @@ public class Island {
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public Island(UUID id, UUID owner, UUID worldId, UUID claimId, Vector3i spawnLocation) {
-		World world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld);
+	public Island(UUID id, UUID owner, UUID claimId, Vector3i spawnLocation) {
 
-		this.id = UUID.randomUUID();
+		this.id = id;
 		this.owner = owner;
-		this.spawn = new Location<>(world, spawnLocation);
+		this.spawn = new Location<>(ConfigUtil.getWorld(), spawnLocation);
 
 		// 1st attempt to load claim by ID
 		// 2nd attempt to find claim by location
@@ -64,42 +97,7 @@ public class Island {
 		} else {
 			ClaimResult claim;
 			do {
-				claim = ClaimUtil.createIslandClaim(getUser().get(), getRegion());
-				switch (claim.getResultType()) {
-					case SUCCESS:
-						this.claim = claim.getClaim().get();
-						break;
-					case OVERLAPPING_CLAIM:
-						CLAIM_MANAGER.deleteClaim(claim.getClaim().get(), Cause.source(PLUGIN).build());
-						PLUGIN.getLogger().error(String.format("Removing overlapping claim (Owner: %s, ID: %s) while restoring %s's island.", claim.getClaim().get().getOwnerName(), claim.getClaim().get().getUniqueId(), getOwnerName()));
-						break;
-					default:
-						PLUGIN.getLogger().error(String.format("Failed to create claim for %s's island, reason: %s", getOwnerName(), claim.getResultType()));
-						break;
-				}
-			} while (claim.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
-		}
-	}
-
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public Island(UUID owner, UUID worldId, UUID claimId, Vector3i spawnLocation) {
-		World world = PLUGIN.getGame().getServer().getWorld(worldId).orElseGet(WorldUtil::getDefaultWorld);
-
-		this.owner = owner;
-		this.spawn = new Location<>(world, spawnLocation);
-
-		// 1st attempt to load claim by ID
-		// 2nd attempt to find claim by location
-		// Finally create a new claim after removing all overlapping claims if any
-		if (CLAIM_MANAGER.getClaimByUUID(claimId).isPresent()) {
-			this.claim = CLAIM_MANAGER.getClaimByUUID(claimId).get();
-		} else if (CLAIM_MANAGER.getClaimAt(spawn, true).getType() == ClaimType.BASIC
-				&& CLAIM_MANAGER.getClaimAt(spawn, true).getOwnerUniqueId().equals(owner)) {
-			this.claim = CLAIM_MANAGER.getClaimAt(spawn, true);
-		} else {
-			ClaimResult claim;
-			do {
-				claim = ClaimUtil.createIslandClaim(getUser().get(), getRegion());
+				claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
 				switch (claim.getResultType()) {
 					case SUCCESS:
 						this.claim = claim.getClaim().get();
@@ -120,15 +118,15 @@ public class Island {
 		return id;
 	}
 
-	public UUID getOwner() {
+	public UUID getOwnerUniqueId() {
 		return owner;
 	}
 
 	public String getOwnerName() {
-		return (getUser().isPresent()) ? getUser().get().getName() : "Unknown";
+		return (getOwner().isPresent()) ? getOwner().get().getName() : "Unknown";
 	}
 
-	public Optional<User> getUser() {
+	public Optional<User> getOwner() {
 		Optional<UserStorageService> optStorage = Sponge.getServiceManager().provide(UserStorageService.class);
 		if (optStorage.isPresent()) {
 			UserStorageService storage = optStorage.get();
@@ -179,10 +177,6 @@ public class Island {
 		return (claim.getGreaterBoundaryCorner().getBlockX() - claim.getLesserBoundaryCorner().getBlockX()) / 2;
 	}
 
-	public Location<World> getCenter() {
-		return getRegion().getCenterBlock();
-	}
-
 	public boolean hasPermissions(Player player) {
 		return player.getUniqueId().equals(claim.getOwnerUniqueId())
 				|| claim.getTrustManager().getContainers().contains(player.getUniqueId())
@@ -202,7 +196,7 @@ public class Island {
 	public void delete() {
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
-		SkyClaims.islands.remove(owner);
+		SkyClaims.islands.remove(id);
 		PLUGIN.getDatabase().removeIsland(this);
 	}
 }

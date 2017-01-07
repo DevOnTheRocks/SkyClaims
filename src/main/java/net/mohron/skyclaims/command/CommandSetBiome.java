@@ -61,7 +61,7 @@ public class CommandSetBiome implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must be on an island to use this command"));
 
-		if (!player.getUniqueId().equals(island.get().getOwner()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
+		if (!player.getUniqueId().equals(island.get().getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
 			throw new CommandException(Text.of("You do not have permission to use setbiome on this island"));
 
 		if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biome.getName().toLowerCase()))

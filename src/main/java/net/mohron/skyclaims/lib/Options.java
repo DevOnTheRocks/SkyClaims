@@ -2,7 +2,8 @@ package net.mohron.skyclaims.lib;
 
 public enum Options {
 	// The default radius of an Island upon creation
-	DEFAULT_SCHEMATIC("skyclaims.defaultschematic", "island");
+	DEFAULT_SCHEMATIC("skyclaims.defaultschematic", "island"),
+	DEFAULT_BIOME("skyclaims.defaultbiome", "");
 
 	private String key;
 	private String defaultValue;

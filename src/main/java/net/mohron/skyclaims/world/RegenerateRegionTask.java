@@ -27,10 +27,10 @@ public class RegenerateRegionTask implements Runnable {
 		this.genIsland = false;
 	}
 
-	public RegenerateRegionTask(User owner, Island island, String schematic) {
+	public RegenerateRegionTask(Island island, String schematic) {
 		this.region = island.getRegion();
 		this.genIsland = true;
-		this.owner = owner;
+		this.owner = island.getOwner().get();
 		this.island = island;
 		this.schematic = schematic;
 	}
@@ -57,6 +57,13 @@ public class RegenerateRegionTask implements Runnable {
 				});
 			}
 		}
+
+		// Run reset commands
+		ConfigUtil.getResetCommands().ifPresent(commands -> {
+			for (String command : commands) {
+				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+			}
+		});
 
 		if (genIsland) {
 			GenerateIslandTask generateIsland = new GenerateIslandTask(owner, island, schematic);
