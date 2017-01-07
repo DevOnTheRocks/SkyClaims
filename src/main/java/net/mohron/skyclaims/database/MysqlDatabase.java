@@ -64,9 +64,10 @@ public class MysqlDatabase implements IDatabase {
 				int x = results.getInt("spawnX");
 				int y = results.getInt("spawnY");
 				int z = results.getInt("spawnZ");
+				boolean locked = results.getBoolean("locked");
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
-				Island island = new Island(islandId, ownerId, claimId, spawnLocation);
+				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
 
 				islands.put(islandId, island);
 			}
@@ -94,6 +95,7 @@ public class MysqlDatabase implements IDatabase {
 			statement.setInt(4, island.getSpawn().getBlockX());
 			statement.setInt(5, island.getSpawn().getBlockY());
 			statement.setInt(6, island.getSpawn().getBlockZ());
+			statement.setBoolean(7, island.isLocked());
 
 			statement.execute();
 		} catch (SQLException e) {
