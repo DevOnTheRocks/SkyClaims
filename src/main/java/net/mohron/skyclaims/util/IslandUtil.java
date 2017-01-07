@@ -48,7 +48,7 @@ public class IslandUtil {
 	private static Optional<Island> getIslandByClaim(Claim claim) {
 		if (claim.getOwnerUniqueId() != null)
 			for (Island island : SkyClaims.islands.values())
-				if (island.getClaim().getUniqueId().equals(claim.getUniqueId())) return Optional.of(island);
+				if (island.getClaim().equals(claim)) return Optional.of(island);
 		return Optional.empty();
 	}
 }
