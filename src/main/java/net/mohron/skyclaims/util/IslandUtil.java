@@ -89,8 +89,15 @@ public class IslandUtil {
 		});
 	}
 
-	public static Optional<Island> getIsland(UUID owner) {
-		return (hasIsland(owner)) ? Optional.of(SkyClaims.islands.get(owner)) : Optional.empty();
+	public static Optional<Map<UUID, Island>> getIslands(UUID owner) {
+		return (SkyClaims.islands.get(owner).isEmpty()) ? Optional.empty() : Optional.of(SkyClaims.islands.get(owner));
+	}
+
+	public static Optional<Island> getIsland(UUID islandId) {
+		for (Map<UUID, Island> islands : SkyClaims.islands.values()) {
+			if (islands.containsKey(islandId)) return Optional.of(islands.get(islandId));
+		}
+		return Optional.empty();
 	}
 
 	public static Optional<Island> getIslandByLocation(Location<World> location) {
