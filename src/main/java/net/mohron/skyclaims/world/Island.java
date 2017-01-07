@@ -80,11 +80,11 @@ public class Island {
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public Island(UUID id, UUID owner, UUID claimId, Vector3i spawnLocation) {
-
+	public Island(UUID id, UUID owner, UUID claimId, Vector3i spawnLocation, boolean locked) {
 		this.id = id;
 		this.owner = owner;
 		this.spawn = new Location<>(ConfigUtil.getWorld(), spawnLocation);
+		this.locked = locked;
 
 		// 1st attempt to load claim by ID
 		// 2nd attempt to find claim by location
