@@ -11,7 +11,7 @@ public class SqliteConfig {
 	public String location;
 
 	public SqliteConfig() {
-		location = "./";
 		databaseName = "skyclaims";
+		location = "./";
 	}
 }
