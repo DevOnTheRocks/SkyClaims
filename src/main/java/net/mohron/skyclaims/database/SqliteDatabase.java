@@ -38,28 +38,7 @@ public class SqliteDatabase implements IDatabase {
 			SkyClaims.getInstance().getLogger().error("Unable to load the JDBC driver");
 		}
 
-		try (Statement statement = getConnection().createStatement()) {
-			statement.setQueryTimeout(30);
-
-			// Create the database schema
-			String table = "CREATE TABLE IF NOT EXISTS islands (" +
-				"island			STRING PRIMARY KEY," +
-				"owner			STRING," +
-				"claim			STRING," +
-				"spawnX			INT," +
-				"spawnY			INT," +
-				"spawnZ			INT," +
-				"locked			BOOLEAN" +
-			")";
-
-			// Create the islands table (execute statement)
-			statement.executeUpdate(table);
-
-			migrate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
-		}
+		createTable();
 	}
 
 	/**
@@ -72,12 +51,48 @@ public class SqliteDatabase implements IDatabase {
 		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s.db", databaseLocation, File.separator, databaseName));
 	}
 
+	private void createTable() {
+		try (Statement statement = getConnection().createStatement()) {
+			statement.setQueryTimeout(30);
+
+			// Create the database schema
+			String table = "CREATE TABLE IF NOT EXISTS islands (" +
+					"island			STRING PRIMARY KEY," +
+					"owner			STRING," +
+					"claim			STRING," +
+					"spawnX			INT," +
+					"spawnY			INT," +
+					"spawnZ			INT," +
+					"locked			BOOLEAN" +
+					")";
+
+			// Create the islands table (execute statement)
+			statement.executeUpdate(table);
+
+			migrate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
+		}
+	}
+
 	/**
 	 * Migrates the database from an old schema to a new one
 	 */
 	public void migrate() {
-		if (countColumns() == 7)
-			saveData(loadLegacyData());
+		HashMap<UUID, Island> islands = new HashMap<>();
+		if (countColumns() == 7) {
+			String sql = "DROP TABLE islands";
+			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+				statement.executeUpdate(sql);
+				createTable();
+				saveData(islands);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				SkyClaims.getInstance().getLogger().error("Unable to drop islands table, check the console");
+			}
+		}
+
 	}
 
 	/**
