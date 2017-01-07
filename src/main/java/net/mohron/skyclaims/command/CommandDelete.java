@@ -44,7 +44,7 @@ public class CommandDelete implements CommandExecutor {
 		Optional<User> user = args.getOne(Arguments.USER);
 		if (!user.isPresent()) throw new CommandException(Text.of("Invalid user"));
 
-		Optional<Island> island = IslandUtil.getIsland(user.get().getUniqueId());
+		Optional<Island> island = IslandUtil.getIslandByOwner(user.get().getUniqueId());
 		if (!island.isPresent()) throw new CommandException(Text.of("Invalid island"));
 
 		island.get().delete();

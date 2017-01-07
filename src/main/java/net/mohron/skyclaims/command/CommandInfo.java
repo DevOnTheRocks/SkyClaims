@@ -55,7 +55,7 @@ public class CommandInfo implements CommandExecutor {
 					throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use this command!"));
 			}
 			User user = (args.getOne(Arguments.USER).isPresent()) ? (User) args.getOne(Arguments.USER).get() : (User) src;
-			Optional<Island> islandOptional = IslandUtil.getIsland(user.getUniqueId());
+			Optional<Island> islandOptional = IslandUtil.getIslandByOwner(user.getUniqueId());
 			String name = (user.getName().equalsIgnoreCase(src.getName())) ? user.getName() : "You";
 
 			if (!islandOptional.isPresent())

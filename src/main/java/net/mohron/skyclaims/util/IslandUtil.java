@@ -33,6 +33,14 @@ public class IslandUtil {
 		return (SkyClaims.islands.containsKey(islandUniqueId)) ? Optional.of(SkyClaims.islands.get(islandUniqueId)) : Optional.empty();
 	}
 
+	@Deprecated
+	public static Optional<Island> getIslandByOwner(UUID owner) {
+		for (Island island : SkyClaims.islands.values()) {
+			if (island.getOwnerUniqueId().equals(owner)) return Optional.of(island);
+		}
+		return Optional.empty();
+	}
+
 	public static Optional<Island> getIslandByLocation(Location<World> location) {
 		return getIslandByClaim(CLAIM_MANAGER.getClaimAt(location, true));
 	}

@@ -54,7 +54,7 @@ public class CommandReset implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		Optional<Island> island = IslandUtil.getIsland(player.getUniqueId());
+		Optional<Island> island = IslandUtil.getIslandByOwner(player.getUniqueId());
 
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must have an island to run this command!"));
