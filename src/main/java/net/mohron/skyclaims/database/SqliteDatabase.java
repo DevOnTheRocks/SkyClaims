@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -21,13 +22,11 @@ public class SqliteDatabase implements IDatabase {
 	private DatabaseConfig config;
 	private String databaseName;
 	private String databaseLocation;
-	private String islandTableName;
 
 	public SqliteDatabase(String databaseName) {
 		this.config = ConfigUtil.getDatabaseConfig();
 		this.databaseName = databaseName;
 		this.databaseLocation = config.location;
-		this.islandTableName = config.tableName;
 
 		// Load the SQLite JDBC driver
 		try {
@@ -41,15 +40,15 @@ public class SqliteDatabase implements IDatabase {
 			statement.setQueryTimeout(30);
 
 			// Create the database schema
-			String table = String.format("CREATE TABLE IF NOT EXISTS %s (" +
-					"island			STRING PRIMARY KEY" +
-					"owner			STRING," +
-					"claim			STRING," +
-					"spawnX			INT," +
-					"spawnY			INT," +
-					"spawnZ			INT," +
-					"locked			BOOLEAN" +
-					")", islandTableName);
+			String table = "CREATE TABLE IF NOT EXISTS islands (" +
+				"island			STRING PRIMARY KEY" +
+				"owner			STRING," +
+				"claim			STRING," +
+				"spawnX			INT," +
+				"spawnY			INT," +
+				"spawnZ			INT," +
+				"locked			BOOLEAN" +
+			")";
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
@@ -68,7 +67,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s.db", databaseLocation, File.separator, islandTableName));
+		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s.db", databaseLocation, File.separator, databaseName));
 	}
 
 	/**
@@ -88,7 +87,7 @@ public class SqliteDatabase implements IDatabase {
 		HashMap<UUID, Island> islands = new HashMap<>();
 
 		try (Statement statement = getConnection().createStatement()) {
-			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", islandTableName));
+			ResultSet results = statement.executeQuery("SELECT * FROM islands");
 
 			while (results.next()) {
 				UUID islandId = UUID.fromString(results.getString("island"));
@@ -112,11 +111,15 @@ public class SqliteDatabase implements IDatabase {
 		return islands;
 	}
 
+	/**
+	 * Load legacy data from the database from the previous schema
+	 * @return A hashmap of the ported islands
+	 */
 	private HashMap<UUID, Island> loadLegacyData() {
 		HashMap<UUID, Island> islands = new HashMap<>();
 
 		try (Statement statement = getConnection().createStatement()) {
-			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", islandTableName));
+			ResultSet results = statement.executeQuery("SELECT * FROM islands");
 
 			while (results.next()) {
 				UUID ownerId = UUID.fromString(results.getString("owner"));
@@ -155,7 +158,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = String.format("REPLACE INTO %s(island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?)", islandTableName);
+		String sql = "REPLACE INTO islands(island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
@@ -178,7 +181,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @param island the island to remove
 	 */
 	public void removeIsland(Island island) {
-		String sql = String.format("DELETE FROM %s WHERE island = '?'", islandTableName);
+		String sql = "DELETE FROM islands WHERE island = '?'";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwnerUniqueId().toString());
@@ -189,16 +192,16 @@ public class SqliteDatabase implements IDatabase {
 		}
 	}
 
+	/**
+	 * Count the columns of a row in the database
+	 * @return The column count of the schema
+	 */
 	private int countColumns() {
 		int total = 0;
 
-		String sql = String.format("SELECT COUNT(*) AS total FROM %s", islandTableName);
-
+		String sql = String.format("SELECT COUNT(*) AS total FROM islands");
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-			ResultSet results = statement.executeQuery();
-
-			if (results.next())
-				total = results.getInt("total");
+			return statement.executeQuery().getMetaData().getColumnCount();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
