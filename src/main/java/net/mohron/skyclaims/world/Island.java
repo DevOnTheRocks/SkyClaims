@@ -7,7 +7,6 @@ import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.claim.SkyClaim;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
@@ -21,7 +20,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -197,12 +195,7 @@ public class Island {
 	}
 
 	public void save() {
-		HashMap<UUID, Island> island = new HashMap<>();
-		island.put(id, this);
-
-		if (SkyClaims.islands.containsKey(owner))
-			SkyClaims.islands.put(owner, island);
-
+		SkyClaims.islands.put(id, this);
 		PLUGIN.getDatabase().saveIsland(this);
 	}
 
