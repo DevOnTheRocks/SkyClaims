@@ -81,6 +81,8 @@ public class SqliteDatabase implements IDatabase {
 	public void migrate() {
 		HashMap<UUID, Island> islands = new HashMap<>();
 
+		SkyClaims.getInstance().getLogger().info(String.format("Table size: %s", countColumns()));
+
 		if (countColumns() == 7) {
 			SkyClaims.getInstance().getLogger().info("Migrating the database..");
 
