@@ -80,12 +80,27 @@ public class SqliteDatabase implements IDatabase {
 	 */
 	public void migrate() {
 		HashMap<UUID, Island> islands = new HashMap<>();
+
 		if (countColumns() == 7) {
+			SkyClaims.getInstance().getLogger().info("Migrating the database..");
+
+			islands = loadLegacyData();
+
 			String sql = "DROP TABLE islands";
 			try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+
+				SkyClaims.getInstance().getLogger().info("Dropping the islands table..");
+
 				statement.executeUpdate(sql);
+				SkyClaims.getInstance().getLogger().info("Dropped the islands table.");
+
+				SkyClaims.getInstance().getLogger().info("Re-initializing islands table...");
 				createTable();
+				SkyClaims.getInstance().getLogger().info("Re-initialized islands table.");
+
+				SkyClaims.getInstance().getLogger().info("Repopulating islands table...");
 				saveData(islands);
+				SkyClaims.getInstance().getLogger().info("Repopulated islands table, migration complete.");
 			} catch (SQLException e) {
 				e.printStackTrace();
 				SkyClaims.getInstance().getLogger().error("Unable to drop islands table, check the console");
