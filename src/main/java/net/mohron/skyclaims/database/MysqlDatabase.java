@@ -3,8 +3,10 @@ package net.mohron.skyclaims.database;
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.DatabaseConfig;
+import net.mohron.skyclaims.config.type.MysqlConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
+import org.sqlite.SQLiteConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MysqlDatabase implements IDatabase {
-	private DatabaseConfig config;
+	private MysqlConfig config;
 	private String connectionString;
 	private String databaseLocation;
 	private String databaseTableName;
@@ -25,9 +27,8 @@ public class MysqlDatabase implements IDatabase {
 	private String password;
 	private Integer port;
 
-	public MysqlDatabase()
-	{
-		this.config = ConfigUtil.getDatabaseConfig();
+	public MysqlDatabase() {
+		this.config = ConfigUtil.getMysqlDatabaseConfig();
 		databaseLocation = config.location;
 		databaseTableName = config.tableName;
 		username = config.username;
@@ -44,6 +45,27 @@ public class MysqlDatabase implements IDatabase {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to connect to the database, check the console");
+		}
+
+		try (Statement statement = getConnection().createStatement()) {
+			statement.setQueryTimeout(30);
+
+			// Create the database schema
+			String table = String.format("CREATE TABLE IF NOT EXISTS %s (" +
+					"island			STRING PRIMARY KEY" +
+					"owner			STRING," +
+					"claim			STRING," +
+					"spawnX			INT," +
+					"spawnY			INT," +
+					"spawnZ			INT," +
+					"locked			BOOLEAN" +
+					")", databaseTableName);
+
+			// Create the islands table (execute statement)
+			statement.executeUpdate(table);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
 		}
 	}
 

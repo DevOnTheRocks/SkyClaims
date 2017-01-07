@@ -3,8 +3,10 @@ package net.mohron.skyclaims.database;
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.DatabaseConfig;
+import net.mohron.skyclaims.config.type.SqliteConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
+import org.sqlite.SQLiteConfig;
 
 import java.io.File;
 import java.sql.Connection;
@@ -19,12 +21,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SqliteDatabase implements IDatabase {
-	private DatabaseConfig config;
+	private SqliteConfig config;
 	private String databaseName;
 	private String databaseLocation;
 
 	public SqliteDatabase(String databaseName) {
-		this.config = ConfigUtil.getDatabaseConfig();
+		this.config = ConfigUtil.getSqliteDatabaseConfig();
 		this.databaseName = databaseName;
 		this.databaseLocation = config.location;
 
@@ -199,7 +201,7 @@ public class SqliteDatabase implements IDatabase {
 	private int countColumns() {
 		int total = 0;
 
-		String sql = String.format("SELECT COUNT(*) AS total FROM islands");
+		String sql = "SELECT COUNT(*) AS total FROM islands";
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			return statement.executeQuery().getMetaData().getColumnCount();
 		} catch (SQLException e) {

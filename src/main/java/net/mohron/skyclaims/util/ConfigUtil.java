@@ -3,6 +3,8 @@ package net.mohron.skyclaims.util;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.DatabaseConfig;
 import net.mohron.skyclaims.config.type.GlobalConfig;
+import net.mohron.skyclaims.config.type.MysqlConfig;
+import net.mohron.skyclaims.config.type.SqliteConfig;
 import net.mohron.skyclaims.lib.Arguments;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
@@ -55,8 +57,16 @@ public class ConfigUtil {
 		return Optional.of(config.misc.resetCommands);
 	}
 
-	public static DatabaseConfig getDatabaseConfig() {
-		return (config != null && config.database != null) ? config.database : new DatabaseConfig();
+	public static SqliteConfig getSqliteDatabaseConfig() {
+		return (config == null ||
+				config.database == null ||
+				config.database.sqlite == null) ? new SqliteConfig() : config.database.sqlite;
+	}
+
+	public static MysqlConfig getMysqlDatabaseConfig() {
+		return (config == null ||
+				config.database == null ||
+				config.database.mysql == null) ? new MysqlConfig() : config.database.mysql;
 	}
 
 	public static int getSpawnRegions() {
@@ -68,8 +78,9 @@ public class ConfigUtil {
 
 	public static Integer getDatabasePort() {
 		return (config.database == null ||
-				config.database.port == null) ?
-				3306 : config.database.port;
+				config.database.mysql == null ||
+				config.database.mysql.port == null) ?
+				3306 : config.database.mysql.port;
 	}
 
 	public static void setVoidGenerator() {
