@@ -97,7 +97,7 @@ public class SqliteDatabase implements IDatabase {
 				int x = results.getInt("spawnX");
 				int y = results.getInt("spawnY");
 				int z = results.getInt("spawnZ");
-				boolean locked = results.getBoolean("lock");
+				boolean locked = results.getBoolean("locked");
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
 				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
@@ -155,7 +155,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = String.format("REPLACE INTO %s(island, owner, claim, spawnX, spawnY, spawnZ) VALUES(?, ?, ?, ?, ?, ?)", islandTableName);
+		String sql = String.format("REPLACE INTO %s(island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?)", islandTableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
