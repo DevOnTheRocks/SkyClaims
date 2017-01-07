@@ -53,6 +53,8 @@ public class SqliteDatabase implements IDatabase {
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
+
+			migrate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
@@ -66,7 +68,15 @@ public class SqliteDatabase implements IDatabase {
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s.db", databaseLocation, File.separator, config.databaseName));
+		return DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s.db", databaseLocation, File.separator, islandTableName));
+	}
+
+	/**
+	 * Migrates the database from an old schema to a new one
+	 */
+	public void migrate() {
+		if (countColumns() == 7)
+			saveData(loadLegacyData());
 	}
 
 	/**
@@ -78,7 +88,7 @@ public class SqliteDatabase implements IDatabase {
 		HashMap<UUID, Island> islands = new HashMap<>();
 
 		try (Statement statement = getConnection().createStatement()) {
-			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.tableName));
+			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", islandTableName));
 
 			while (results.next()) {
 				UUID islandId = UUID.fromString(results.getString("island"));
@@ -93,7 +103,34 @@ public class SqliteDatabase implements IDatabase {
 
 				islands.put(islandId, island);
 			}
-			return islands;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
+		}
+
+		return islands;
+	}
+
+	private HashMap<UUID, Island> loadLegacyData() {
+		HashMap<UUID, Island> islands = new HashMap<>();
+
+		try (Statement statement = getConnection().createStatement()) {
+			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", islandTableName));
+
+			while (results.next()) {
+				UUID ownerId = UUID.fromString(results.getString("owner"));
+				UUID claimId = UUID.fromString(results.getString("id"));
+				UUID worldId = UUID.fromString(results.getString("worldName"));
+				int x = results.getInt("spawnX");
+				int y = results.getInt("spawnY");
+				int z = results.getInt("spawnZ");
+
+				UUID id = UUID.randomUUID();
+				Vector3i spawnLocation = new Vector3i(x, y, z);
+				Island island = new Island(id, ownerId, claimId, spawnLocation);
+
+				islands.put(id, island);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
@@ -118,7 +155,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = String.format("REPLACE INTO %s(island, owner, claim, spawnX, spawnY, spawnZ) VALUES(?, ?, ?, ?, ?, ?)", config.tableName);
+		String sql = String.format("REPLACE INTO %s(island, owner, claim, spawnX, spawnY, spawnZ) VALUES(?, ?, ?, ?, ?, ?)", islandTableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
@@ -140,7 +177,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @param island the island to remove
 	 */
 	public void removeIsland(Island island) {
-		String sql = String.format("DELETE FROM %s WHERE island = '?'", config.tableName);
+		String sql = String.format("DELETE FROM %s WHERE island = '?'", islandTableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getOwnerUniqueId().toString());
@@ -149,5 +186,22 @@ public class SqliteDatabase implements IDatabase {
 		} catch (SQLException e) {
 			SkyClaims.getInstance().getLogger().error(String.format("Error removing Island from the database: %s", e.getMessage()));
 		}
+	}
+
+	private int countColumns() {
+		int total = 0;
+
+		String sql = String.format("SELECT COUNT(*) AS total FROM %s", islandTableName);
+
+		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+			ResultSet results = statement.executeQuery();
+
+			if (results.next())
+				total = results.getInt("total");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return total;
 	}
 }
