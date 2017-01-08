@@ -55,11 +55,12 @@ public class Island {
 					this.claim = claimResult.getClaim().get();
 					break;
 				case OVERLAPPING_CLAIM:
-					if (ClaimUtil.isIslandClaim(claimResult.getClaim().get())) {
-						throw new CreateIslandException(Text.of(TextColors.RED, "Failed to create island claim: The claim at the target location belongs to another island!"));
-					} else {
-						CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
-					}
+					PLUGIN.getLogger().info(String.format("Removing overlapping claim (Owner: %s, ID: %s) while creating %s's island.",
+							claimResult.getClaim().get().getOwnerName(),
+							claimResult.getClaim().get().getUniqueId(),
+							owner.getName()
+					));
+					CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
 					break;
 				default:
 					throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));

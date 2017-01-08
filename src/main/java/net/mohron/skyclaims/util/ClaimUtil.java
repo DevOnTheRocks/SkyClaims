@@ -61,17 +61,6 @@ public class ClaimUtil {
 				.build();
 	}
 
-	public static boolean isIslandClaim(Claim claim) {
-		return isIslandClaim(claim.getUniqueId());
-	}
-
-	public static boolean isIslandClaim(UUID uuid) {
-		for (Island island : SkyClaims.islands.values()) {
-			if (island.getClaim().getUniqueId().equals(uuid)) return true;
-		}
-		return false;
-	}
-
 	public void setClaimSettings(User user, Claim claim) {
 		claim.getClaimData().setResizable(false);
 		claim.getClaimData().setClaimExpiration(false);
