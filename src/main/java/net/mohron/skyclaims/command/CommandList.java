@@ -52,7 +52,7 @@ public class CommandList implements CommandExecutor {
 							.onHover(TextActions.showText(Text.of("Click here to teleport to this island."))), TextColors.GRAY, " (",
 					TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ",
 					TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ",
-					TextColors.GREEN, Text.builder(island.getName(), island.getName().toString()).
+					TextColors.GREEN, Text.builder(island.getName(), island.getClaim().getUniqueId().toString()).
 							onClick(TextActions.executeCallback(CommandUtil
 									.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
 							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
