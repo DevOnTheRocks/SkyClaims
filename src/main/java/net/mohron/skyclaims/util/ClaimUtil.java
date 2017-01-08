@@ -5,27 +5,17 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 
 import java.util.List;
-import java.util.UUID;
 
 public class ClaimUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
 	public static ClaimResult createIslandClaim(User owner, Region region) {
-		PLUGIN.getLogger().info(String.format(
-				"Creating claim for %s with region (%s, %s): (%s, %s), (%s, %s)",
-				owner.getName(),
-				region.getX(), region.getZ(),
-				region.getLesserBoundary().getX(), region.getLesserBoundary().getZ(),
-				region.getGreaterBoundary().getX(), region.getGreaterBoundary().getZ()
-		));
-
 		return Claim.builder()
 				.world(ConfigUtil.getWorld())
 				.bounds(

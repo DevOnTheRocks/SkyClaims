@@ -8,6 +8,7 @@ import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
+import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
@@ -42,8 +43,14 @@ public class Island {
 	public Island(User owner, String schematic) throws CreateIslandException {
 		this.id = UUID.randomUUID();
 		this.owner = owner.getUniqueId();
-		Region region = PATTERN.nextRegion();
+		Region region;
+		try {
+			region = PATTERN.nextRegion();
+		} catch (InvalidRegionException e) {
+			throw new CreateIslandException(e.getText());
+		}
 		this.spawn = region.getCenterBlock();
+		PLUGIN.getLogger().info(String.format("Set Island spawn to %s", region.getCenterBlock().toString()));
 		this.locked = false;
 
 		// Create the island claim
@@ -51,16 +58,23 @@ public class Island {
 		do {
 			switch (claimResult.getResultType()) {
 				case SUCCESS:
-					CLAIM_MANAGER.addClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
 					this.claim = claimResult.getClaim().get();
+					CLAIM_MANAGER.addClaim(claim, Cause.source(PLUGIN).build());
+					PLUGIN.getLogger().info(String.format(
+							"Creating claim for %s in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
+							owner.getName(),
+							region.getX(), region.getZ(),
+							claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
+							claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
+					));
 					break;
 				case OVERLAPPING_CLAIM:
+					CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
 					PLUGIN.getLogger().info(String.format("Removing overlapping claim (Owner: %s, ID: %s) while creating %s's island.",
 							claimResult.getClaim().get().getOwnerName(),
 							claimResult.getClaim().get().getUniqueId(),
 							owner.getName()
 					));
-					CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
 					break;
 				default:
 					throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
@@ -107,6 +121,7 @@ public class Island {
 				switch (claim.getResultType()) {
 					case SUCCESS:
 						this.claim = claim.getClaim().get();
+						CLAIM_MANAGER.addClaim(claim.getClaim().get(), Cause.source(PLUGIN).build());
 						break;
 					case OVERLAPPING_CLAIM:
 						CLAIM_MANAGER.deleteClaim(claim.getClaim().get(), Cause.source(PLUGIN).build());
@@ -154,7 +169,7 @@ public class Island {
 	}
 
 	public Text getName() {
-		return (claim.getName().isPresent()) ? claim.getName().get() : Text.of(claim.getUniqueId().toString());
+		return (claim.getName().isPresent()) ? claim.getName().get() : Text.of(getOwnerName(), "'s Island");
 	}
 
 	public boolean isLocked() {

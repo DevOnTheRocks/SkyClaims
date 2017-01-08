@@ -2,9 +2,11 @@ package net.mohron.skyclaims.world.region;
 
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
+import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
 
@@ -44,9 +46,8 @@ public class SpiralRegionPattern implements IRegionPattern {
 		return coordinates;
 	}
 
-	public Region nextRegion() {
+	public Region nextRegion() throws InvalidRegionException {
 		ArrayList<Region> spawnRegions = new ArrayList<>(SPAWN_REGIONS);
-		ArrayList<Island> currentIslands = new ArrayList<>(SkyClaims.islands.values());
 		ArrayList<Region> regions = generateRegionPattern();
 		int iterator = 0;
 
@@ -59,7 +60,7 @@ public class SpiralRegionPattern implements IRegionPattern {
 				iterator++;
 				continue;
 			} else {
-				if (SkyClaims.islands.size() > 1) {
+				if (SkyClaims.islands.isEmpty()) {
 					ClaimResult claimResult = ClaimUtil.createSpawnClaim(spawnRegions);
 					if (claimResult.successful()) {
 						PLUGIN.getLogger().info(String.format("Reserved %s regions for spawn. Admin Claim: %s", SPAWN_REGIONS, claimResult.getClaim().get().getUniqueId()));
@@ -68,16 +69,13 @@ public class SpiralRegionPattern implements IRegionPattern {
 			}
 
 
-			PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for world", region.getX(), region.getZ()));
+			PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
 
-			if (Region.isOccupied(region)) {
-				iterator++;
-				continue;
-			} else {
+			if (!Region.isOccupied(region)) {
 				return region;
 			}
 		}
 
-		return regions.get(regions.size() - 1);
+		throw new InvalidRegionException(Text.of("Failed to find a valid region!"));
 	}
 }
