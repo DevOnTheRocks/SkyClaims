@@ -30,5 +30,5 @@ repositories {
 
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
-    compile ("me.ryanhamshire:griefprevention:1.10.2-2.3.0.208")
+    compile ("me.ryanhamshire:griefprevention:1.10.2-2.3.0.218")
 }
