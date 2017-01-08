@@ -37,7 +37,7 @@ public class Region {
 				ConfigUtil.getWorld(),
 				(getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2,
 				ConfigUtil.getIslandHeight(),
-				(getGreaterBoundary().getZ() - getLesserBoundary().getZ()) / 2
+				(getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2
 		);
 	}
 
