@@ -178,6 +178,7 @@ public class Island {
 
 	public void setLocked(boolean locked) {
 		this.locked = locked;
+		ClaimUtil.setEntryFlag(claim, locked);
 		save();
 	}
 

@@ -47,12 +47,12 @@ public class CommandList implements CommandExecutor {
 			if (!island.isLocked() && !src.hasPermission(Permissions.COMMAND_LIST_ALL)) continue;
 			listText = Text.join(listText, Text.of(
 					(newline) ? "\n" : "",
-					TextColors.AQUA, island.getName().toBuilder().onClick(TextActions
+					(island.isLocked()) ? TextColors.DARK_PURPLE : TextColors.AQUA, island.getName().toBuilder().onClick(TextActions
 							.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn())))
 							.onHover(TextActions.showText(Text.of("Click here to teleport to this island."))), TextColors.GRAY, " (",
 					TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ",
 					TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ",
-					TextColors.GREEN, Text.builder(island.getName(), island.getClaim().getUniqueId().toString()).
+					TextColors.GREEN, Text.builder(island.getClaim().getUniqueId().toString()).
 							onClick(TextActions.executeCallback(CommandUtil
 									.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
 							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))

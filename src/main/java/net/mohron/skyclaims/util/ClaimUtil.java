@@ -51,9 +51,7 @@ public class ClaimUtil {
 				.build();
 	}
 
-	public void setClaimSettings(User user, Claim claim) {
-		claim.getClaimData().setResizable(false);
-		claim.getClaimData().setClaimExpiration(false);
-		claim.getClaimData().setName(Text.of(user.getName(), "'s Island"));
+	public static void setEntryFlag(Claim claim, boolean entry) {
+		// Set ENTER_CLAIM flag in the claim supplied to the defined value
 	}
 }
