@@ -2,8 +2,8 @@ package net.mohron.skyclaims.config;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
-import ninja.leaping.configurate.SimpleConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -40,7 +40,7 @@ public class ConfigManager {
 	 */
 	public void save() {
 		try {
-			SimpleConfigurationNode out = SimpleConfigurationNode.root();
+			SimpleCommentedConfigurationNode out = SimpleCommentedConfigurationNode.root();
 			this.configMapper.serialize(out);
 			this.loader.save(out);
 		} catch (ObjectMappingException | IOException e) {
