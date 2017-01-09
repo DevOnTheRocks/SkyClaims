@@ -88,14 +88,14 @@ public class Island {
 		} else {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
-				// Set claim to not expire or be resizable
-				if (this.claim.getClaimData().isResizable()) this.claim.getClaimData().setResizable(false);
-				if (this.claim.getClaimData().allowClaimExpiration())
-					this.claim.getClaimData().setClaimExpiration(false);
+
 			} catch (CreateIslandException e) {
 				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
 		}
+		// Set claim to not expire or be resizable, if not already
+		if (this.claim.getClaimData().isResizable()) this.claim.getClaimData().setResizable(false);
+		if (this.claim.getClaimData().allowClaimExpiration()) this.claim.getClaimData().setClaimExpiration(false);
 	}
 
 	public UUID getUniqueId() {
