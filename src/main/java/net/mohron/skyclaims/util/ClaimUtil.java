@@ -91,6 +91,7 @@ public class ClaimUtil {
 						new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())
 				)
 				.type(ClaimType.ADMIN)
+				.owner(UUID.randomUUID())
 				.cause(Cause.source(PLUGIN).build())
 				.cuboid(false)
 				.build();
