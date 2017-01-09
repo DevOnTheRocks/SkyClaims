@@ -45,17 +45,20 @@ public class CommandList implements CommandExecutor {
 
 		for (Island island : SkyClaims.islands.values()) {
 			if (!island.isLocked() && !src.hasPermission(Permissions.COMMAND_LIST_ALL)) continue;
+			Text name = Text.of((island.isLocked()) ? TextColors.DARK_PURPLE : TextColors.AQUA, island.getName());
+			Text coords = Text.of(TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ", TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ");
+
 			listText = Text.join(listText, Text.of(
 					(newline) ? "\n" : "",
-					(island.isLocked()) ? TextColors.DARK_PURPLE : TextColors.AQUA, island.getName().toBuilder().onClick(TextActions
-							.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn())))
-							.onHover(TextActions.showText(Text.of("Click here to teleport to this island."))), TextColors.GRAY, " (",
-					TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ",
-					TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ",
-					TextColors.GREEN, Text.builder(island.getClaim().getUniqueId().toString()).
-							onClick(TextActions.executeCallback(CommandUtil
-									.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
-							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
+					name.toBuilder()
+							.onHover(TextActions.showText(Text.of("Click here to view island info")))
+							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "is info", island.getOwnerName(), CommandUtil.createReturnIslandInfoConsumer(src, "")))),
+					coords.toBuilder()
+							.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
+							.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn()))),
+					TextColors.GREEN, Text.builder("Claim").
+							onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), CommandUtil.createReturnIslandInfoConsumer(src, ""))))
+							.onHover(TextActions.showText(Text.of("Click here to view claim info.")))
 			));
 			newline = true;
 		}
