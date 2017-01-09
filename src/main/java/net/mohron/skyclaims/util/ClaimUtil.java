@@ -8,6 +8,7 @@ import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
+import net.mohron.skyclaims.lib.Options;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
@@ -15,6 +16,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ClaimUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -53,11 +55,12 @@ public class ClaimUtil {
 	}
 
 	private static ClaimResult createIslandClaimResult(User owner, Region region) {
+		int claimRadius = Options.getIntOption(owner.getUniqueId(), Options.MIN_RADIUS, 32);
 		return Claim.builder()
 				.world(ConfigUtil.getWorld())
 				.bounds(
-						new Vector3i(region.getLesserBoundary().getX(), 0, region.getLesserBoundary().getZ()),
-						new Vector3i(region.getGreaterBoundary().getX(), 255, region.getGreaterBoundary().getZ())
+						new Vector3i(region.getCenterBlock().getX() + claimRadius, 0, region.getCenterBlock().getZ() + claimRadius),
+						new Vector3i(region.getCenterBlock().getX() - claimRadius, 255, region.getCenterBlock().getZ() - claimRadius)
 				)
 				.owner(owner.getUniqueId())
 				.type(ClaimType.BASIC)

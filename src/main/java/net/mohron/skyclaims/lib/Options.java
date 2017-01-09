@@ -12,12 +12,16 @@ public class Options {
 	private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
 	public static final Map<String, String> DEFAULT_OPTIONS = Maps.newHashMap();
 
-	public static final String DEFAULT_SCHEMATIC = "skyclaims.defaultschematic";
-	public static final String DEFAULT_BIOME = "skyclaims.defaultbiome";
-	public static final String MAX_ISLANDS = "skyclaims.maxislands";
+	public static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
+	public static final String DEFAULT_BIOME = "skyclaims.default-biome";
+	public static final String MIN_RADIUS = "skyclaims.min-radius";
+	public static final String MAX_RADIUS = "skyclaims.max-radius";
+	public static final String MAX_ISLANDS = "skyclaims.max-islands";
 
 	static {
 		DEFAULT_OPTIONS.put(DEFAULT_SCHEMATIC, "island");
+		DEFAULT_OPTIONS.put(DEFAULT_SCHEMATIC, "32");
+		DEFAULT_OPTIONS.put(DEFAULT_SCHEMATIC, "48");
 		DEFAULT_OPTIONS.put(DEFAULT_BIOME, null);
 		DEFAULT_OPTIONS.put(MAX_ISLANDS, "1");
 	}
