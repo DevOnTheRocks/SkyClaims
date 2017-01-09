@@ -8,7 +8,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class GlobalConfig {
 	@Setting(value = "Config-Version")
 	public Integer version;
-	@Setting(value = "SqliteDatabase")
+	@Setting(value = "Database")
 	public DatabaseConfig database;
 	@Setting(value = "World")
 	public WorldConfig world;
