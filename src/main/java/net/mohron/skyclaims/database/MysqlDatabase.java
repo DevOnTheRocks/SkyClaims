@@ -2,11 +2,9 @@ package net.mohron.skyclaims.database;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.DatabaseConfig;
 import net.mohron.skyclaims.config.type.MysqlConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
-import org.sqlite.SQLiteConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

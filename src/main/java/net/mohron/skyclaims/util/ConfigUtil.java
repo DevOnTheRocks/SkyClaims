@@ -1,7 +1,6 @@
 package net.mohron.skyclaims.util;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.DatabaseConfig;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.config.type.MysqlConfig;
 import net.mohron.skyclaims.config.type.SqliteConfig;
@@ -45,6 +44,7 @@ public class ConfigUtil {
 		return (config.world == null || config.world.defaultHeight == null) ?
 				72 : config.world.defaultHeight;
 	}
+
 	public static Optional<List<String>> getCreateCommands() {
 		if (config.misc == null || config.misc.createCommands == null || config.misc.createCommands.isEmpty())
 			return Optional.empty();

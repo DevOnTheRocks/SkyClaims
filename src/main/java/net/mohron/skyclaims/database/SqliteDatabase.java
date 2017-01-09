@@ -2,18 +2,15 @@ package net.mohron.skyclaims.database;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.DatabaseConfig;
 import net.mohron.skyclaims.config.type.SqliteConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
-import org.sqlite.SQLiteConfig;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -146,6 +143,7 @@ public class SqliteDatabase implements IDatabase {
 
 	/**
 	 * Load legacy data from the database from the previous schema
+	 *
 	 * @return A hashmap of the ported islands
 	 */
 	private HashMap<UUID, Island> loadLegacyData() {
@@ -227,6 +225,7 @@ public class SqliteDatabase implements IDatabase {
 
 	/**
 	 * Count the columns of a row in the database
+	 *
 	 * @return The column count of the schema
 	 */
 	private int countColumns() {
