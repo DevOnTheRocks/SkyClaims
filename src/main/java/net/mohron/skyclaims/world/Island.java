@@ -107,16 +107,11 @@ public class Island {
 	}
 
 	public String getOwnerName() {
-		return (getOwner().isPresent()) ? getOwner().get().getName() : "Unknown";
+		return  (getOwner().isPresent()) ? getOwner().get().getName() : "Somebody";
 	}
 
 	public Optional<User> getOwner() {
-		Optional<UserStorageService> optStorage = Sponge.getServiceManager().provide(UserStorageService.class);
-		if (optStorage.isPresent()) {
-			UserStorageService storage = optStorage.get();
-			return (storage.get(owner).isPresent()) ? Optional.of(storage.get(owner).get()) : Optional.empty();
-		}
-		return Optional.empty();
+		return PLUGIN.getGame().getServiceManager().provide(UserStorageService.class).get().get(owner);
 	}
 
 	public Claim getClaim() {

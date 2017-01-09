@@ -2,7 +2,9 @@ package net.mohron.skyclaims.util;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -12,6 +14,7 @@ import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class CommandUtil {
@@ -66,15 +69,6 @@ public class CommandUtil {
 			if (postConsumerTask != null) {
 				postConsumerTask.accept(src);
 			}
-		};
-	}
-
-	public static Consumer<CommandSource> createReturnIslandInfoConsumer(CommandSource src, String arguments) {
-		return consumer -> {
-			Text claimListReturnCommand = Text.builder().append(Text.of(
-					TextColors.WHITE, "\n[", TextColors.AQUA, "Return to island info", TextColors.WHITE, "]\n"))
-					.onClick(TextActions.executeCallback(createCommandConsumer(src, "is info", arguments, null))).build();
-			src.sendMessage(claimListReturnCommand);
 		};
 	}
 }
