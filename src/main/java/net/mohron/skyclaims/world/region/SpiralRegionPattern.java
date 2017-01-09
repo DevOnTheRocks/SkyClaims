@@ -1,11 +1,9 @@
 package net.mohron.skyclaims.world.region;
 
-import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
-import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
@@ -59,15 +57,8 @@ public class SpiralRegionPattern implements IRegionPattern {
 				PLUGIN.getLogger().debug(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
 				iterator++;
 				continue;
-			} else {
-				if (SkyClaims.islands.isEmpty()) {
-					ClaimResult claimResult = ClaimUtil.createSpawnClaim(spawnRegions);
-					if (claimResult.successful()) {
-						PLUGIN.getLogger().info(String.format("Reserved %s regions for spawn. Admin Claim: %s", SPAWN_REGIONS, claimResult.getClaim().get().getUniqueId()));
-					}
-				}
-			}
-
+			} else if (SkyClaims.islands.isEmpty())
+				ClaimUtil.createSpawnClaim(spawnRegions);
 
 			PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
 

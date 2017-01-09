@@ -2,20 +2,57 @@ package net.mohron.skyclaims.util;
 
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
+import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
+import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 
 public class ClaimUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
 
-	public static ClaimResult createIslandClaim(User owner, Region region) {
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	public static Claim createIslandClaim(User owner, Region region) throws CreateIslandException {
+		Claim claim = null;
+		ClaimResult claimResult = ClaimUtil.createIslandClaimResult(owner, region);
+		do {
+			switch (claimResult.getResultType()) {
+				case SUCCESS:
+					claim = claimResult.getClaim().get();
+					CLAIM_MANAGER.addClaim(claim, Cause.source(PLUGIN).build());
+					PLUGIN.getLogger().info(String.format(
+							"Creating claim for %s in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
+							owner.getName(),
+							region.getX(), region.getZ(),
+							claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
+							claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
+					));
+					break;
+				case OVERLAPPING_CLAIM:
+					CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
+					PLUGIN.getLogger().info(String.format("Removing overlapping claim (Owner: %s, ID: %s) while creating %s's island.",
+							claimResult.getClaim().get().getOwnerName(),
+							claimResult.getClaim().get().getUniqueId(),
+							owner.getName()
+					));
+					break;
+				default:
+					throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
+			}
+		} while (claimResult.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
+		return claim;
+	}
+
+	private static ClaimResult createIslandClaimResult(User owner, Region region) {
 		return Claim.builder()
 				.world(ConfigUtil.getWorld())
 				.bounds(
@@ -29,7 +66,15 @@ public class ClaimUtil {
 				.build();
 	}
 
-	public static ClaimResult createSpawnClaim(List<Region> regions) {
+	public static void createSpawnClaim(List<Region> regions) {
+		ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
+		if (claimResult.successful()) {
+			PLUGIN.getLogger().info(String.format("Reserved %s regions for spawn. Admin Claim: %s", regions.size(), claimResult.getClaim().get().getUniqueId()));
+			CLAIM_MANAGER.addClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
+		}
+	}
+
+	private static ClaimResult createSpawnClaimResult(List<Region> regions) {
 		Region lesserRegion = new Region(0, 0);
 		Region greaterRegion = new Region(0, 0);
 		for (Region region : regions) {
