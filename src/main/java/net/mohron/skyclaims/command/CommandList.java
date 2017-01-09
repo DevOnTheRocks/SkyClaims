@@ -1,13 +1,10 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.lib.Options;
 import net.mohron.skyclaims.lib.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandManager;
-import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -17,8 +14,8 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class CommandList implements CommandExecutor {
@@ -35,7 +32,7 @@ public class CommandList implements CommandExecutor {
 
 	public static void register() {
 		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec,"islandlist");
+			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandlist");
 			PLUGIN.getLogger().debug("Registered command: CommandList");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
@@ -69,7 +66,7 @@ public class CommandList implements CommandExecutor {
 			newline = true;
 		}
 
-		PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island List")).padding(Text.of(TextColors.AQUA, "-")).contents(listText);
+		PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island List")).padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-")).contents(listText);
 		paginationBuilder.sendTo(src);
 
 		return CommandResult.success();
