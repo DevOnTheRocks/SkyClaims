@@ -78,7 +78,7 @@ public class CommandInfo implements CommandExecutor {
 			Island island = islandOptional.get();
 			Text members = Text.of(TextColors.YELLOW, "Members", TextColors.WHITE, " : ");
 			if (island.getMembers().isEmpty())
-				members = members.concat(Text.of(TextColors.GRAY, "none"));
+				members = members.concat(Text.of(TextColors.GRAY, "None"));
 			else {
 				int i = 1;
 				for (UUID member : island.getMembers()) {
