@@ -24,6 +24,8 @@ public class ClaimUtil {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static Claim createIslandClaim(User owner, Region region) throws CreateIslandException {
+		final int MAX_CLAIM_ATTEMPTS = 10; // limit claim removals to prevent an infinite loop
+		int i = 0;
 		Claim claim = null;
 		ClaimResult claimResult = ClaimUtil.createIslandClaimResult(owner, region);
 		do {
@@ -50,7 +52,8 @@ public class ClaimUtil {
 				default:
 					throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
 			}
-		} while (claimResult.getResultType() == ClaimResultType.OVERLAPPING_CLAIM);
+			i++;
+		} while (claimResult.getResultType() == ClaimResultType.OVERLAPPING_CLAIM && i < MAX_CLAIM_ATTEMPTS);
 		return claim;
 	}
 
@@ -94,7 +97,6 @@ public class ClaimUtil {
 						new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())
 				)
 				.type(ClaimType.ADMIN)
-				.owner(UUID.randomUUID())
 				.cause(Cause.source(PLUGIN).build())
 				.cuboid(false)
 				.build();
