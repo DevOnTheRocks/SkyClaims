@@ -115,7 +115,15 @@ public class Island {
 	}
 
 	public Claim getClaim() {
-		return claim;
+		Optional<Claim> claim = CLAIM_MANAGER.getClaimByUUID(this.claim.getUniqueId());
+		if (!claim.isPresent()) {
+			try {
+				this.claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
+			} catch (CreateIslandException e) {
+
+			}
+		}
+		return this.claim;
 	}
 
 	public Date getDateCreated() {
