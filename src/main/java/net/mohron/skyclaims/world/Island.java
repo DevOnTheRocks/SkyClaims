@@ -15,6 +15,7 @@ import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
@@ -193,6 +194,7 @@ public class Island {
 	}
 
 	public void delete() {
+		CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build());
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 		SkyClaims.islands.remove(id);
