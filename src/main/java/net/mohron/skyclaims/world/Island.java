@@ -13,7 +13,6 @@ import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -21,6 +20,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
@@ -107,7 +107,7 @@ public class Island {
 	}
 
 	public String getOwnerName() {
-		return  (getOwner().isPresent()) ? getOwner().get().getName() : "Somebody";
+		return (getOwner().isPresent()) ? getOwner().get().getName() : "Somebody";
 	}
 
 	public Optional<User> getOwner() {
@@ -118,8 +118,8 @@ public class Island {
 		return claim;
 	}
 
-	public String getDateCreated() {
-		return claim.getClaimData().getDateCreated().toString();
+	public Date getDateCreated() {
+		return Date.from(claim.getClaimData().getDateCreated());
 	}
 
 	public Text getName() {
