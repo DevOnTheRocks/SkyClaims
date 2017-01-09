@@ -30,7 +30,6 @@ import org.spongepowered.api.service.permission.PermissionService;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -77,6 +76,8 @@ public class SkyClaims {
 
 	private SqliteDatabase database;
 
+	private boolean enabled = true;
+
 	@Listener
 	public void onPostInitialization(GamePostInitializationEvent event) {
 		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
@@ -86,8 +87,10 @@ public class SkyClaims {
 		SkyClaims.griefPrevention = GriefPrevention.getApi();
 		if (SkyClaims.griefPrevention != null)
 			getLogger().info("GriefPrevention Integration Successful!");
-		else
-			getLogger().error("GriefPrevention Integration Failed!");
+		else {
+			getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
+			enabled = false;
+		}
 
 		//TODO Setup the worldName with a sponge:void worldName gen modifier if not already created
 	}
@@ -95,9 +98,11 @@ public class SkyClaims {
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Listener(order = Order.LATE)
 	public void onAboutToStart(GameAboutToStartServerEvent event) {
+		if (!enabled) return;
 		SkyClaims.permissionService = Sponge.getServiceManager().provide(PermissionService.class).get();
 		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
-			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin.");
+			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+			enabled = false;
 			return;
 		}
 
@@ -112,6 +117,7 @@ public class SkyClaims {
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
+		if (!enabled) return;
 		database = new SqliteDatabase();
 		islands = database.loadData();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
@@ -120,6 +126,7 @@ public class SkyClaims {
 
 	@Listener
 	public void onGameStopping(GameStoppingServerEvent event) {
+		if (!enabled) return;
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 		database.saveData(islands);
 		getLogger().info("Shutdown actions complete.");
