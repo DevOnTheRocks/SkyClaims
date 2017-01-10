@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.world;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.collect.Sets;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
@@ -22,8 +23,8 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public class Island {
@@ -166,8 +167,8 @@ public class Island {
 		return (claim.getGreaterBoundaryCorner().getBlockX() - claim.getLesserBoundaryCorner().getBlockX()) / 2;
 	}
 
-	public HashSet<UUID> getMembers() {
-		HashSet<UUID> members = new HashSet<>();
+	public Set<UUID> getMembers() {
+		Set<UUID> members = Sets.newHashSet();
 		for (UUID member : claim.getTrustManager().getBuilders()) {
 			members.add(member);
 		}
