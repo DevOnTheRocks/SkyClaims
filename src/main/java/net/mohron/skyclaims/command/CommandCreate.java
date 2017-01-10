@@ -1,9 +1,11 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.lib.Arguments;
-import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.exception.CreateIslandException;
+import net.mohron.skyclaims.permissions.Options;
+import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -44,7 +46,7 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
 
 		Player player = (Player) src;
-		String schematic = "island";
+		String schematic = Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC);
 
 		if (IslandUtil.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
@@ -67,10 +69,13 @@ public class CommandCreate implements CommandExecutor {
 			throw new CommandException(Text.of("The value supplied is not a valid schematic. Choose from: ", TextColors.AQUA, schems));
 		}
 
-		player.sendMessage(Text.of("Your Island is being created. You will be teleported shortly."));
+		player.sendMessage(Text.of("Your island is being created. You will be teleported shortly."));
 
-		if (!IslandUtil.createIsland(player, schematic).isPresent())
-			throw new CommandException(Text.of("Unable to create island due to claim creation failure!"));
+		try {
+			new Island(player, schematic);
+		} catch (CreateIslandException e) {
+			throw new CommandException(Text.of("Unable to create island! " + e.getMessage()));
+		}
 
 		return CommandResult.success();
 	}

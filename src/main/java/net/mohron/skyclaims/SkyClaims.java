@@ -1,12 +1,19 @@
 package net.mohron.skyclaims;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import me.ryanhamshire.griefprevention.GriefPrevention;
+import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
+import me.ryanhamshire.griefprevention.api.claim.Claim;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
-import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.database.SqliteDatabase;
+import net.mohron.skyclaims.listener.ClaimEventHandler;
+import net.mohron.skyclaims.listener.SchematicHandler;
+import net.mohron.skyclaims.metrics.Metrics;
+import net.mohron.skyclaims.world.Island;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -20,7 +27,6 @@ import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -29,8 +35,8 @@ import org.spongepowered.api.service.permission.PermissionService;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static net.mohron.skyclaims.PluginInfo.*;
@@ -41,13 +47,14 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		description = DESCRIPTION,
 		authors = AUTHORS,
 		dependencies = {
-				@Dependency(id = "griefprevention", optional = true)
+				@Dependency(id = "griefprevention")
 		})
 public class SkyClaims {
 	private static SkyClaims instance;
-	private static GriefPrevention griefPrevention;
+	private static GriefPreventionApi griefPrevention;
 	private static PermissionService permissionService;
-	public static Map<UUID, Island> islands = new HashMap<>();
+	public static Map<UUID, Island> islands = Maps.newHashMap();
+	public static Set<Claim> islandClaims = Sets.newHashSet();
 
 	@Inject
 	private PluginContainer pluginContainer;
@@ -58,8 +65,8 @@ public class SkyClaims {
 	@Inject
 	private Game game;
 
-	//@Inject
-	//private Metrics metrics;
+	@Inject
+	private Metrics metrics;
 
 	@Inject
 	@ConfigDir(sharedRoot = false)
@@ -73,7 +80,9 @@ public class SkyClaims {
 	private ConfigManager pluginConfigManager;
 	private GlobalConfig defaultConfig;
 
-	private Database database;
+	private SqliteDatabase database;
+
+	private boolean enabled = true;
 
 	@Listener
 	public void onPostInitialization(GamePostInitializationEvent event) {
@@ -81,24 +90,26 @@ public class SkyClaims {
 
 		instance = this;
 
+		SkyClaims.griefPrevention = GriefPrevention.getApi();
+		if (SkyClaims.griefPrevention != null)
+			getLogger().info("GriefPrevention Integration Successful!");
+		else {
+			getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
+			enabled = false;
+		}
+
 		//TODO Setup the worldName with a sponge:void worldName gen modifier if not already created
 	}
 
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Listener(order = Order.LATE)
 	public void onAboutToStart(GameAboutToStartServerEvent event) {
+		if (!enabled) return;
 		SkyClaims.permissionService = Sponge.getServiceManager().provide(PermissionService.class).get();
 		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
-			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin.");
+			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+			enabled = false;
 			return;
-		}
-
-		// GriefPrevention integration
-		try {
-			Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
-			SkyClaims.griefPrevention = GriefPrevention.instance;
-			getLogger().info("GriefPrevention Integration Successful!");
-		} catch (ClassNotFoundException e) {
-			getLogger().info("GriefPrevention Integration Failed!");
 		}
 
 		defaultConfig = new GlobalConfig();
@@ -106,27 +117,23 @@ public class SkyClaims {
 		pluginConfigManager.save();
 
 		Sponge.getGame().getEventManager().registerListeners(this, new SchematicHandler());
+		Sponge.getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
 
 		registerCommands();
 	}
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
-		database = new Database(getConfigDir() + File.separator + "skyclaims.db");
+		if (!enabled) return;
+		database = new SqliteDatabase();
 		islands = database.loadData();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
 	}
 
 	@Listener
-	public void onWorldSave(SaveWorldEvent.Post event) {
-		if (event.isCancelled() || event.getTargetWorld().equals(ConfigUtil.getWorld())) {
-			database.saveData(islands);
-		}
-	}
-
-	@Listener
 	public void onGameStopping(GameStoppingServerEvent event) {
+		if (!enabled) return;
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 		database.saveData(islands);
 		getLogger().info("Shutdown actions complete.");
@@ -137,23 +144,24 @@ public class SkyClaims {
 		CommandCreate.register();
 		CommandCreateSchematic.register();
 		CommandDelete.register();
-		CommandHelp.register();
 		CommandInfo.register();
 		CommandIsland.register();
 		CommandList.register();
+		CommandLock.register();
 		CommandReload.register();
 		CommandReset.register();
 		CommandSetBiome.register();
 		CommandSetSpawn.register();
 		CommandSetup.register();
 		CommandSpawn.register();
+		CommandUnlock.register();
 	}
 
 	public static SkyClaims getInstance() {
 		return instance;
 	}
 
-	public GriefPrevention getGriefPrevention() {
+	public GriefPreventionApi getGriefPrevention() {
 		return griefPrevention;
 	}
 
@@ -189,7 +197,7 @@ public class SkyClaims {
 		return schematicDir;
 	}
 
-	public Database getDatabase() {
+	public SqliteDatabase getDatabase() {
 		return database;
 	}
 }

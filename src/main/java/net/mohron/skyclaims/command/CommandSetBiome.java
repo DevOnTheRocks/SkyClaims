@@ -1,11 +1,10 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.lib.Arguments;
-import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -61,7 +60,7 @@ public class CommandSetBiome implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must be on an island to use this command"));
 
-		if (!player.getUniqueId().equals(island.get().getOwner()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
+		if (!player.getUniqueId().equals(island.get().getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
 			throw new CommandException(Text.of("You do not have permission to use setbiome on this island"));
 
 		if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biome.getName().toLowerCase()))

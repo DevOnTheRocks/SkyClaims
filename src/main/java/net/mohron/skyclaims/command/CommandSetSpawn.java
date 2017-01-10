@@ -1,9 +1,9 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -43,16 +43,16 @@ public class CommandSetSpawn implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
 
 		Player player = (Player) src;
-		Optional<Island> island = IslandUtil.getIsland(player.getUniqueId());
+		Optional<Island> island = IslandUtil.getIslandByLocation(player.getLocation());
 
 		if (!island.isPresent())
-			throw new CommandException(Text.of("You must have an island to use this command!"));
+			throw new CommandException(Text.of("You must be on an island to use this command!"));
 
-		if (!island.get().isWithinIsland(player.getLocation()))
-			throw new CommandException(Text.of("You must be on your island to use this command!"));
+		if (!island.get().getOwnerUniqueId().equals(player.getUniqueId()))
+			throw new CommandException(Text.of("Only the island owner may use this command!"));
 
 		island.get().setSpawn(player.getLocation());
-		player.sendMessage(Text.of("Your Island spawn has been set to ", TextColors.GRAY, "(",
+		player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
 				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockX(), TextColors.GRAY, " ,",
 				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockY(), TextColors.GRAY, " ,",
 				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockZ(), TextColors.GRAY, ")"));

@@ -1,10 +1,12 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.island.Island;
-import net.mohron.skyclaims.lib.Arguments;
-import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.IslandUtil;
+import net.mohron.skyclaims.util.WorldUtil;
+import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.RegenerateRegionTask;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -18,6 +20,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class CommandReset implements CommandExecutor {
 
@@ -50,14 +53,14 @@ public class CommandReset implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		Optional<Island> island = IslandUtil.getIsland(player.getUniqueId());
+		Optional<Island> island = IslandUtil.getIslandByOwner(player.getUniqueId());
 
 		if (!island.isPresent())
-			throw new CommandException(Text.of("You must have an Island to run this command!"));
+			throw new CommandException(Text.of("You must have an island to run this command!"));
 
 		if (!args.hasAny(Arguments.CONFIRM)) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
-			player.sendMessage(Text.of("To continue, run ", "/is reset", " confirm [schematic]"));
+			player.sendMessage(Text.of("To continue, run ", "/is reset confirm", (args.hasAny(Arguments.SCHEMATIC)) ? " [schematic]" : ""));
 		} else {
 			String schematic = "island";
 			if (args.getOne(Arguments.SCHEMATIC).isPresent()) {
@@ -78,8 +81,16 @@ public class CommandReset implements CommandExecutor {
 			player.getEnderChestInventory().clear();
 			player.getInventory().clear();
 
+			// Teleport any players located in the island's region to spawn
+			Set<Player> players = island.get().getPlayers();
+			if (!players.isEmpty())
+				for (Player p : players)
+					CommandUtil.createForceTeleportConsumer(p, WorldUtil.getDefaultWorld().getSpawnLocation());
+
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
-			IslandUtil.resetIsland(player, schematic);
+
+			RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(island.get(), schematic);
+			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 		}
 
 		return CommandResult.success();

@@ -2,20 +2,29 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
-public class CommandAdmin {
+import static net.mohron.skyclaims.PluginInfo.NAME;
+import static net.mohron.skyclaims.PluginInfo.VERSION;
+
+public class CommandAdmin implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = String.format("use to run %s's admin commands", PluginInfo.NAME);
+	public static String helpText = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_ADMIN)
@@ -24,7 +33,8 @@ public class CommandAdmin {
 			.child(CommandReload.commandSpec, "reload")
 			.child(CommandSetup.commandSpec, "setup")
 			.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
-			.executor(new CommandHelp())
+			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(Arguments.HELP))))
+			.executor(new CommandAdmin())
 			.build();
 
 	public static void register() {
@@ -38,7 +48,47 @@ public class CommandAdmin {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		// Not used, CommandAdmin is used exclusively as a parent command. Runs /is help when not supplied with a subcommand.
+		Text helpContents = Text.EMPTY;
+		boolean hasPerms = false;
+
+		if (src.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
+			helpContents = Text.join(helpContents, Text.of(
+					TextColors.AQUA, "isa cs",
+					TextColors.GOLD, " <name>",
+					TextColors.DARK_GRAY, " - ",
+					TextColors.DARK_GREEN, CommandCreateSchematic.helpText));
+			hasPerms = true;
+		}
+
+		if (src.hasPermission(Permissions.COMMAND_DELETE)) {
+			helpContents = Text.join(helpContents, Text.of(
+					(hasPerms) ? "\n" : "",
+					TextColors.AQUA, "isa delete",
+					TextColors.GOLD, " <player>",
+					TextColors.DARK_GRAY, " - ",
+					TextColors.DARK_GREEN, CommandDelete.helpText));
+			hasPerms = true;
+		}
+
+		if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
+			helpContents = Text.join(helpContents, Text.of(
+					(hasPerms) ? "\n" : "",
+					TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
+					TextColors.DARK_GRAY, " - ",
+					TextColors.DARK_GREEN, CommandReload.helpText));
+			hasPerms = true;
+		}
+
+		if (hasPerms) {
+			PaginationList.Builder paginationBuilder = PaginationList.builder()
+					.title(Text.of(TextColors.AQUA, NAME, " Admin Help"))
+					.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+					.contents(helpContents);
+			paginationBuilder.sendTo(src);
+		} else {
+			src.sendMessage(Text.of(NAME + " " + VERSION));
+		}
+
 		return CommandResult.success();
 	}
 }

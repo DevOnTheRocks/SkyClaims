@@ -1,26 +1,25 @@
-package net.mohron.skyclaims.island.layout;
+package net.mohron.skyclaims.world.region;
 
-import net.mohron.skyclaims.Region;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.GlobalConfig;
-import net.mohron.skyclaims.island.Island;
+import net.mohron.skyclaims.exception.InvalidRegionException;
+import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
+import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
 
-public class SpiralLayout implements ILayout {
+public class SpiralRegionPattern implements IRegionPattern {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static GlobalConfig config = PLUGIN.getConfig();
-	private static final int spawnRegions = (int) Math.pow(ConfigUtil.get(config.world.spawnRegions, 1), 2);
+	private static final int SPAWN_REGIONS = ConfigUtil.getSpawnRegions();
 
 	/**
-	 * A method to generate a region-scaled spiral pattern and return the x/y pairs of each region
+	 * A method to generate a region-scaled spiral region and return the x/y pairs of each region
 	 *
 	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
 	 */
 	public ArrayList<Region> generateRegionPattern() {
 		int islandCount = SkyClaims.islands.size();
-		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
+		int generationSize = (int) Math.sqrt((double) islandCount + SPAWN_REGIONS) + 1;
 		String log = "Region Pattern: [";
 
 		ArrayList<Region> coordinates = new ArrayList<>(generationSize);
@@ -45,30 +44,29 @@ public class SpiralLayout implements ILayout {
 		return coordinates;
 	}
 
-	public Region nextRegion() {
-		ArrayList<Island> currentIslands = new ArrayList<Island>(SkyClaims.islands.values());
+	public Region nextRegion() throws InvalidRegionException {
+		ArrayList<Region> spawnRegions = new ArrayList<>(SPAWN_REGIONS);
 		ArrayList<Region> regions = generateRegionPattern();
 		int iterator = 0;
 
-		PLUGIN.getLogger().debug(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), spawnRegions));
+		PLUGIN.getLogger().debug(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), SPAWN_REGIONS));
 
 		for (Region region : regions) {
-			if (iterator < spawnRegions) {
+			if (iterator < SPAWN_REGIONS) {
+				spawnRegions.add(region);
 				PLUGIN.getLogger().debug(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
 				iterator++;
 				continue;
-			}
+			} else if (SkyClaims.islands.isEmpty())
+				ClaimUtil.createSpawnClaim(spawnRegions);
 
 			PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
 
-			if (Region.isTaken(region)) {
-				iterator++;
-				continue;
-			} else {
+			if (!Region.isOccupied(region)) {
 				return region;
 			}
 		}
 
-		return regions.get(regions.size() - 1);
+		throw new InvalidRegionException(Text.of("Failed to find a valid region!"));
 	}
 }
