@@ -2,11 +2,12 @@ package net.mohron.skyclaims.database;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.config.type.SqliteConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
 
-import java.io.File;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -83,6 +84,7 @@ public class SqliteDatabase implements IDatabase {
 		if (countColumns() == 6) {
 			SkyClaims.getInstance().getLogger().info("Migrating the database..");
 
+			backup();
 			islands = loadLegacyData();
 
 			String sql = "DROP TABLE IF EXISTS islands";
@@ -106,6 +108,30 @@ public class SqliteDatabase implements IDatabase {
 			}
 		}
 
+	}
+
+	/**
+	 * Creates a file backup of the existing database in the configured directory
+	 */
+	public void backup() {
+		File inputFile = new File(String.format("%s%s%s", databaseLocation, File.pathSeparator, databaseName));
+		File outputFile = new File(String.format("%s%s%s_backup.db", databaseLocation, File.separator, databaseName));
+
+		byte[] buffer = new byte[1024];
+		int bytesRead;
+
+		try (InputStream is = new BufferedInputStream(new FileInputStream(inputFile))) {
+			try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+				while ((bytesRead = is.read()) != -1)
+					os.write(buffer, 0, bytesRead);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			SkyClaims.getInstance().getLogger().error("Unable to find original database file, make sure it's there!");
+		} catch (IOException e) {
+			e.printStackTrace();
+			SkyClaims.getInstance().getLogger().error("Error occured whilst writing to file, check the console.");
+		}
 	}
 
 	/**
