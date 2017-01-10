@@ -120,8 +120,10 @@ public class Island {
 	public Claim getClaim() {
 		Optional<Claim> claim = CLAIM_MANAGER.getClaimByUUID(this.claim.getUniqueId());
 		if (!claim.isPresent()) {
+			SkyClaims.islandClaims.remove(this.claim);
 			try {
 				this.claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
+				SkyClaims.islandClaims.add(this.claim);
 			} catch (CreateIslandException e) {
 
 			}
@@ -211,6 +213,7 @@ public class Island {
 
 	public void delete() {
 		CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build());
+		SkyClaims.islandClaims.remove(claim);
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 		SkyClaims.islands.remove(id);
