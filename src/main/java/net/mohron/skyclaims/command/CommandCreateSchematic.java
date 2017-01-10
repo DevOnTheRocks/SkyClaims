@@ -1,7 +1,7 @@
 package net.mohron.skyclaims.command;
 
 import com.flowpowered.math.vector.Vector3i;
-import net.mohron.skyclaims.SchematicHandler;
+import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.lib.Arguments;
 import net.mohron.skyclaims.lib.Permissions;

@@ -1,4 +1,4 @@
-package net.mohron.skyclaims;
+package net.mohron.skyclaims.listener;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Maps;
