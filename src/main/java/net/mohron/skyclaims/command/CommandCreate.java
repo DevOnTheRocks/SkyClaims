@@ -2,9 +2,8 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
-import net.mohron.skyclaims.lib.Arguments;
-import net.mohron.skyclaims.lib.Options;
-import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.permissions.Options;
+import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;

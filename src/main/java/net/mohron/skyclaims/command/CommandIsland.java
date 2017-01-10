@@ -2,8 +2,7 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.lib.Arguments;
-import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;

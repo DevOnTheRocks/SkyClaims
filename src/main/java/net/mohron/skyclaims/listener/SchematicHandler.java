@@ -2,7 +2,7 @@ package net.mohron.skyclaims.listener;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Maps;
-import net.mohron.skyclaims.lib.Permissions;
+import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;

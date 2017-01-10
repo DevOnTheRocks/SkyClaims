@@ -1,4 +1,4 @@
-package net.mohron.skyclaims.lib;
+package net.mohron.skyclaims.permissions;
 
 public class Permissions {
 	// User Permissions

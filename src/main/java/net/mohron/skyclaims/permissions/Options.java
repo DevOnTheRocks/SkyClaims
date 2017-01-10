@@ -1,4 +1,4 @@
-package net.mohron.skyclaims.lib;
+package net.mohron.skyclaims.permissions;
 
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;

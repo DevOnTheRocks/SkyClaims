@@ -1,4 +1,4 @@
-package net.mohron.skyclaims.lib;
+package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.text.Text;

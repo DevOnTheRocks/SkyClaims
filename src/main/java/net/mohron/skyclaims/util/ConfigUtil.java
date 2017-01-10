@@ -4,7 +4,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.config.type.MysqlConfig;
 import net.mohron.skyclaims.config.type.SqliteConfig;
-import net.mohron.skyclaims.lib.Arguments;
+import net.mohron.skyclaims.command.Arguments;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.world.World;
