@@ -190,14 +190,10 @@ public class Island {
 
 	public Set<Player> getPlayers() {
 		Set<Player> players = Sets.newHashSet();
-		for (int x = getRegion().getLesserBoundary().getX(); x < getRegion().getGreaterBoundary().getX(); x += 16) {
-			for (int z = getRegion().getLesserBoundary().getZ(); z < getRegion().getGreaterBoundary().getZ(); z += 16) {
-				ConfigUtil.getWorld().getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
-					for (Entity entity : chunk.getEntities()) {
-						if (entity instanceof Player) players.add((Player) entity);
-					}
-				});
-			}
+		for (Player player : PLUGIN.getGame().getServer().getOnlinePlayers()) {
+			if (player.getLocation().getChunkPosition().getX() >> 5 == getRegion().getX()
+					&& player.getLocation().getChunkPosition().getZ() >> 5 == getRegion().getZ())
+				players.add(player);
 		}
 		return players;
 	}
