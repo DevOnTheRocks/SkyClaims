@@ -19,7 +19,7 @@ import java.util.Optional;
 public class CommandUnlock implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "used to allow untrusted players from visiting to your island.";
+	public static String helpText = "used to allow untrusted players to visit your island.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_LOCK)
