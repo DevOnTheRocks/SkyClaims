@@ -16,6 +16,7 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
 import static net.mohron.skyclaims.PluginInfo.NAME;
 import static net.mohron.skyclaims.PluginInfo.VERSION;
@@ -62,6 +63,7 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_DELETE)) {
 			helpContents = Text.join(helpContents, Text.of(
+					(hasPerms) ? "\n" : "",
 					TextColors.AQUA, "isa delete",
 					TextColors.GOLD, " <player>",
 					TextColors.DARK_GRAY, " - ",
@@ -71,6 +73,7 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
 			helpContents = Text.join(helpContents, Text.of(
+					(hasPerms) ? "\n" : "",
 					TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandReload.helpText));
@@ -79,8 +82,8 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (hasPerms) {
 			PaginationList.Builder paginationBuilder = PaginationList.builder()
-					.title(Text.of(TextColors.AQUA, NAME, " Help"))
-					.padding(Text.of(TextColors.AQUA, "-"))
+					.title(Text.of(TextColors.AQUA, NAME, " Admin Help"))
+					.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
 					.contents(helpContents);
 			paginationBuilder.sendTo(src);
 		} else {
