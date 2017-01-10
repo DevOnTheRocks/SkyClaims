@@ -21,6 +21,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class CommandReset implements CommandExecutor {
 
@@ -81,9 +82,11 @@ public class CommandReset implements CommandExecutor {
 			player.getEnderChestInventory().clear();
 			player.getInventory().clear();
 
-			// Teleport the player running the command if they're currently on the island
-			if (island.get().isWithinIsland(player.getLocation()))
-				CommandUtil.createForceTeleportConsumer(player, WorldUtil.getDefaultWorld().getSpawnLocation());
+			// Teleport any players located in the island's region to spawn
+			Set<Player> players = island.get().getPlayers();
+			if (!players.isEmpty())
+				for (Player p : players)
+					CommandUtil.createForceTeleportConsumer(p, WorldUtil.getDefaultWorld().getSpawnLocation());
 
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
 

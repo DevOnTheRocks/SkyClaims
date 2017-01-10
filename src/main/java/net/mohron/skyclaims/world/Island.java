@@ -14,6 +14,7 @@ import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
@@ -183,6 +184,20 @@ public class Island {
 				|| claim.getTrustManager().getContainers().contains(player.getUniqueId())
 				|| claim.getTrustManager().getBuilders().contains(player.getUniqueId())
 				|| claim.getTrustManager().getManagers().contains(player.getUniqueId());
+	}
+
+	public Set<Player> getPlayers() {
+		Set<Player> players = Sets.newHashSet();
+		for (int x = getRegion().getLesserBoundary().getX(); x < getRegion().getGreaterBoundary().getX(); x += 16) {
+			for (int z = getRegion().getLesserBoundary().getZ(); z < getRegion().getGreaterBoundary().getZ(); z += 16) {
+				ConfigUtil.getWorld().getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
+					for (Entity entity : chunk.getEntities()) {
+						if (entity instanceof Player) players.add((Player) entity);
+					}
+				});
+			}
+		}
+		return players;
 	}
 
 	public Region getRegion() {
