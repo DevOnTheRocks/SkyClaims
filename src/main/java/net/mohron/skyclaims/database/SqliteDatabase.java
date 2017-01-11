@@ -241,7 +241,7 @@ public class SqliteDatabase implements IDatabase {
 		String sql = "DELETE FROM islands WHERE island = '?'";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-			statement.setString(1, island.getOwnerUniqueId().toString());
+			statement.setString(1, island.getUniqueId().toString());
 
 			statement.execute();
 		} catch (SQLException e) {
