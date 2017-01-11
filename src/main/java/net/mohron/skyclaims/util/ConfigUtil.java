@@ -83,6 +83,10 @@ public class ConfigUtil {
 				3306 : config.database.mysql.port;
 	}
 
+	public static boolean createIslandOnJoin() {
+		return (config.misc == null || config.misc.islandOnJoin == null) ? false : config.misc.islandOnJoin;
+	}
+
 	public static void setVoidGenerator() {
 		Optional<WorldProperties> worldProperties = GAME.getServer().getDefaultWorld();
 		if (!worldProperties.isPresent()) {

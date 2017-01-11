@@ -11,6 +11,7 @@ import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.SqliteDatabase;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
+import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.metrics.Metrics;
@@ -120,6 +121,7 @@ public class SkyClaims {
 		Sponge.getGame().getEventManager().registerListeners(this, new SchematicHandler());
 		Sponge.getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
 		Sponge.getGame().getEventManager().registerListeners(this, new RespawnHandler());
+		Sponge.getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
 
 		registerCommands();
 	}
