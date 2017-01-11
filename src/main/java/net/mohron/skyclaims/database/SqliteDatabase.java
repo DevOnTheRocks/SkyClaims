@@ -238,7 +238,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @param island the island to remove
 	 */
 	public void removeIsland(Island island) {
-		String sql = "DELETE FROM islands WHERE island = '?'";
+		String sql = "DELETE FROM islands WHERE island = ?";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());

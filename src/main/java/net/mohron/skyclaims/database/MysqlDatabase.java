@@ -124,10 +124,10 @@ public class MysqlDatabase implements IDatabase {
 	}
 
 	public void removeIsland(Island island) {
-		String sql = String.format("DELETE FROM %s WHERE island = '?'", config.tableName);
+		String sql = String.format("DELETE FROM %s WHERE island = ?", config.tableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-			statement.setString(1, island.getOwner().toString());
+			statement.setString(1, island.getUniqueId().toString());
 
 			statement.execute();
 		} catch (SQLException e) {
