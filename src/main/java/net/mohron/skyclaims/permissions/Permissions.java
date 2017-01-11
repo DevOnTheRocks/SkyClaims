@@ -19,7 +19,6 @@ public class Permissions {
 	public static final String COMMAND_ARGUMENTS_BIOMES = "skyclaims.arguments.biomes";
 
 	// Admin Permissions
-	public static final String ADMIN_OVERRIDE = "skyclaims.admin.override";
 	public static final String COMMAND_ADMIN = "skyclaims.admin.base";
 	public static final String COMMAND_CREATE_SCHEMATIC = "skyclaims.admin.schematic.create";
 	public static final String COMMAND_DELETE = "skyclaims.admin.delete";
