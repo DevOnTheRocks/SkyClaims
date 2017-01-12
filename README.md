@@ -1,4 +1,4 @@
-# SkyClaims
+# SkyClaims [![Build Status](https://travis-ci.org/Mohron/SkyClaims.svg?branch=master)](https://travis-ci.org/Mohron/SkyClaims)
 SkyClaims is an Island plugin that integrates with GriefPrevention for Sponge servers
 
 [Forum Post](https://forums.spongepowered.org/t/skyclaims-a-skyblock-plugin-designed-for-griefprevention/16445)
