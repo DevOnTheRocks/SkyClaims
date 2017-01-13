@@ -85,9 +85,6 @@ public class Island {
 		// Finally create a new claim after removing all overlapping claims if any
 		if (CLAIM_MANAGER.getClaimByUUID(claimId).isPresent()) {
 			this.claim = CLAIM_MANAGER.getClaimByUUID(claimId).get();
-		} else if (CLAIM_MANAGER.getClaimAt(spawn, true).getType() == ClaimType.BASIC
-				&& CLAIM_MANAGER.getClaimAt(spawn, true).getOwnerUniqueId().equals(owner)) {
-			this.claim = CLAIM_MANAGER.getClaimAt(spawn, true);
 		} else {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
