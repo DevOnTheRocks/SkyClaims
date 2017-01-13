@@ -131,6 +131,7 @@ public class SkyClaims {
 		if (!enabled) return;
 		database = new SqliteDatabase();
 		islands = database.loadData();
+		addCustomMetrics();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
 	}
@@ -159,6 +160,15 @@ public class SkyClaims {
 		CommandSetup.register();
 		CommandSpawn.register();
 		CommandUnlock.register();
+	}
+
+	private void addCustomMetrics() {
+		metrics.addCustomChart(new Metrics.SingleLineChart("islands") {
+			@Override
+			public int getValue() {
+				return islands.size();
+			}
+		});
 	}
 
 	public static SkyClaims getInstance() {
