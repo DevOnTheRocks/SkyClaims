@@ -114,7 +114,7 @@ public class SqliteDatabase implements IDatabase {
 	 * Creates a file backup of the existing database in the configured directory
 	 */
 	public void backup() {
-		File inputFile = new File(String.format("%s%s%s", databaseLocation, File.pathSeparator, databaseName));
+		File inputFile = new File(String.format("%s%s%s.db", databaseLocation, File.pathSeparator, databaseName));
 		File outputFile = new File(String.format("%s%s%s_backup.db", databaseLocation, File.separator, databaseName));
 
 		byte[] buffer = new byte[1024];
@@ -122,7 +122,7 @@ public class SqliteDatabase implements IDatabase {
 
 		try (InputStream is = new BufferedInputStream(new FileInputStream(inputFile))) {
 			try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-				while ((bytesRead = is.read()) != -1)
+				while ((bytesRead = is.read()) > 0)
 					os.write(buffer, 0, bytesRead);
 			}
 		} catch (FileNotFoundException e) {
