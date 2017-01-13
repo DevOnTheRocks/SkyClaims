@@ -37,7 +37,7 @@ public class CommandIsland implements CommandExecutor {
 			.child(CommandSetSpawn.commandSpec, "setspawn", "sethome")
 			.child(CommandSpawn.commandSpec, "spawn", "tp", "home")
 			.child(CommandUnlock.commandSpec, "unlock")
-			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(Arguments.HELP))))
+			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(Arguments.HELP, "help"))))
 			.executor(new CommandIsland())
 			.build();
 

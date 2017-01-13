@@ -33,7 +33,7 @@ public class CommandAdmin implements CommandExecutor {
 			.child(CommandReload.commandSpec, "reload")
 			.child(CommandSetup.commandSpec, "setup")
 			.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
-			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(Arguments.HELP))))
+			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(Arguments.HELP, "help"))))
 			.executor(new CommandAdmin())
 			.build();
 
