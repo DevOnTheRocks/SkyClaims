@@ -1,12 +1,12 @@
 package net.mohron.skyclaims.command;
 
+import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Arguments {
@@ -23,9 +23,9 @@ public class Arguments {
 	public static final Text UUID = Text.of("uuid");
 
 	// Maps for Choice Command Arguments
-	public static final Map<String, String> SCHEMATICS = new HashMap<>();
-	public static final Map<String, BiomeType> BIOMES = new HashMap<>();
-	public static final Map<String, Target> TARGETS = new HashMap<>();
+	public static final Map<String, String> SCHEMATICS = Maps.newHashMap();
+	public static final Map<String, BiomeType> BIOMES = Maps.newHashMap();
+	public static final Map<String, Target> TARGETS = Maps.newHashMap();
 
 	static {
 		loadSchematics();
