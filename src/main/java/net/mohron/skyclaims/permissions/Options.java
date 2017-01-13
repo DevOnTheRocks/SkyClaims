@@ -41,4 +41,9 @@ public class Options {
 			return defaultValue;
 		}
 	}
+
+	public static int getIntOption(UUID playerUniqueId, String option, int defaultValue, int minValue, int maxValue) {
+		int value = getIntOption(playerUniqueId, option, defaultValue);
+		return (value >= minValue && value <= maxValue) ? value : defaultValue;
+	}
 }

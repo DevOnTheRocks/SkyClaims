@@ -58,7 +58,7 @@ public class ClaimUtil {
 	}
 
 	private static ClaimResult createIslandClaimResult(User owner, Region region) {
-		int claimRadius = Options.getIntOption(owner.getUniqueId(), Options.MIN_RADIUS, 32);
+		int claimRadius = Options.getIntOption(owner.getUniqueId(), Options.MIN_RADIUS, 32, 8, 255);
 		return Claim.builder()
 				.world(ConfigUtil.getWorld())
 				.bounds(
