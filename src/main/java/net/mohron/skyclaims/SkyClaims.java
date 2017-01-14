@@ -93,13 +93,13 @@ public class SkyClaims {
 		instance = this;
 
 		SkyClaims.griefPrevention = GriefPrevention.getApi();
-		if (SkyClaims.griefPrevention != null)
+		if (SkyClaims.griefPrevention != null) {
 			getLogger().info("GriefPrevention Integration Successful!");
 			if (griefPrevention.getApiVersion() < GP_API_VERSION) {
 				getLogger().info(String.format("GriefPrevention API version %s is unsupported! Please update to API version %s+.", griefPrevention.getApiVersion(), GP_API_VERSION));
 				enabled = false;
 			}
-		else {
+		} else {
 			getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
 			enabled = false;
 		}
