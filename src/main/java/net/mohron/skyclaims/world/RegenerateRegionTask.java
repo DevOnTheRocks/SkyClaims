@@ -8,12 +8,9 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.World;
 
-import java.io.File;
-
 public class RegenerateRegionTask implements Runnable {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final World WORLD = ConfigUtil.getWorld();
-	private static final File CONFIG_DIR = new File(PLUGIN.getConfigDir().toString());
 
 	private Region region;
 	private boolean genIsland;
@@ -58,14 +55,14 @@ public class RegenerateRegionTask implements Runnable {
 			}
 		}
 
-		// Run reset commands
-		ConfigUtil.getResetCommands().ifPresent(commands -> {
-			for (String command : commands) {
-				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
-			}
-		});
-
 		if (genIsland) {
+			// Run reset commands
+			ConfigUtil.getResetCommands().ifPresent(commands -> {
+				for (String command : commands) {
+					PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+				}
+			});
+
 			GenerateIslandTask generateIsland = new GenerateIslandTask(owner, island, schematic);
 			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
 		}
