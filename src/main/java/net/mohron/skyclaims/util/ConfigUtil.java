@@ -59,14 +59,14 @@ public class ConfigUtil {
 
 	public static SqliteConfig getSqliteDatabaseConfig() {
 		return (config == null ||
-				config.database == null ||
-				config.database.sqlite == null) ? new SqliteConfig() : config.database.sqlite;
+				config.storage == null ||
+				config.storage.sqlite == null) ? new SqliteConfig() : config.storage.sqlite;
 	}
 
 	public static MysqlConfig getMysqlDatabaseConfig() {
 		return (config == null ||
-				config.database == null ||
-				config.database.mysql == null) ? new MysqlConfig() : config.database.mysql;
+				config.storage == null ||
+				config.storage.mysql == null) ? new MysqlConfig() : config.storage.mysql;
 	}
 
 	public static int getSpawnRegions() {
@@ -77,10 +77,10 @@ public class ConfigUtil {
 	}
 
 	public static Integer getDatabasePort() {
-		return (config.database == null ||
-				config.database.mysql == null ||
-				config.database.mysql.port == null) ?
-				3306 : config.database.mysql.port;
+		return (config.storage == null ||
+				config.storage.mysql == null ||
+				config.storage.mysql.port == null) ?
+				3306 : config.storage.mysql.port;
 	}
 
 	public static boolean createIslandOnJoin() {
