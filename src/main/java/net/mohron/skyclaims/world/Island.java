@@ -30,7 +30,7 @@ import java.util.UUID;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
 	private static final IRegionPattern PATTERN = new SpiralRegionPattern();
 
 	private UUID id;

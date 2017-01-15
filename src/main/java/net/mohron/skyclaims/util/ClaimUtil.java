@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ClaimUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static Claim createIslandClaim(User owner, Region region) throws CreateIslandException {

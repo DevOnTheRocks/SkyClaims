@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class IslandUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WorldUtil.getDefaultWorld());
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
 
 	public static boolean hasIsland(UUID owner) {
 		if (SkyClaims.islands.isEmpty()) return false;

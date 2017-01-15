@@ -3,6 +3,7 @@ package net.mohron.skyclaims.command;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
+import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.Island;
@@ -85,7 +86,7 @@ public class CommandReset implements CommandExecutor {
 			Set<Player> players = island.get().getPlayers();
 			if (!players.isEmpty())
 				for (Player p : players)
-					CommandUtil.createForceTeleportConsumer(p, WorldUtil.getDefaultWorld().getSpawnLocation());
+					CommandUtil.createForceTeleportConsumer(p, ConfigUtil.getWorld().getSpawnLocation());
 
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
 

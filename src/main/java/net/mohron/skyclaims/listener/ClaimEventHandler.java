@@ -5,6 +5,7 @@ import me.ryanhamshire.griefprevention.api.event.CreateClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.DeleteClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.ResizeClaimEvent;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -16,7 +17,7 @@ public class ClaimEventHandler {
 	@Listener
 	public void onClaimCreate(CreateClaimEvent event, @Root Player player) {
 		Claim claim = event.getClaim();
-		if (event.isCancelled() || (claim.getWorld() != WorldUtil.getDefaultWorld() && claim.isBasicClaim())) return;
+		if (event.isCancelled() || (claim.getWorld() != ConfigUtil.getWorld() && claim.isBasicClaim())) return;
 
 		player.sendMessage(Text.of(TextColors.RED, "You cannot create claims in this dimension!"));
 		event.setCancelled(true);

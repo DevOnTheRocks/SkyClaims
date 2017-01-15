@@ -28,8 +28,7 @@ public class ConfigUtil {
 	public static World getWorld() {
 		Server server = GAME.getServer();
 		Optional<World> world = (config.world != null) ? server.getWorld(config.world.worldName) : Optional.empty();
-		Optional<World> defaultWorld = server.getWorld(server.getDefaultWorldName());
-		return world.isPresent() ? world.get() : defaultWorld.get();
+		return world.isPresent() ? world.get() : WorldUtil.getDefaultWorld();
 	}
 
 	public static Optional<BiomeType> getDefaultBiome() {
