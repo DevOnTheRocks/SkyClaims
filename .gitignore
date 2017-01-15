@@ -4,6 +4,7 @@
 !/.gitignore
 !/build.gradle
 !/gradlew*
+!/CHANGELOG.md
 !/LICENSE.md
 !/README.md
 !/settings.gradle
