@@ -144,8 +144,6 @@ public class SkyClaims {
 	public void onGameStopping(GameStoppingServerEvent event) {
 		if (!enabled) return;
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
-		database.saveData(islands);
-		getLogger().info("Shutdown actions complete.");
 	}
 
 	private void registerCommands() {
