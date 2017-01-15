@@ -76,14 +76,16 @@ public class ConfigManager {
 			try {
 				Files.createFile(defaultSchematic);
 
-				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("/island.schematic")) {
-					try (OutputStream outputStream = new FileOutputStream(defaultSchematic.toString())) {
-						try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream)) {
-							byte[] buffer = new byte[1024];
-							int bytesRead;
+				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic")) {
+					try (GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream)) {
+						try (OutputStream outputStream = new FileOutputStream(defaultSchematic.toString())) {
+							try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream)) {
+								byte[] buffer = new byte[1024];
+								int bytesRead;
 
-							while ((bytesRead = inputStream.read()) != -1)
-								gzipOutputStream.write(buffer, 0, bytesRead);
+								while ((bytesRead = gzipInputStream.read()) > 0)
+									gzipOutputStream.write(buffer, 0, bytesRead);
+							}
 						}
 					}
 				}
