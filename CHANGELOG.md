@@ -1,4 +1,7 @@
 # Change Log
+### Beta 7
+**REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
+- Fixes `is list` not creating pages and causing IndexOutOfBoundsException
 ### Beta 6
 **REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
 - Removed redundant DB save on server stopping

@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'idea'
+    id 'signing'
     id 'org.spongepowered.plugin' version '0.6'
 }
 
@@ -8,7 +9,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group 'net.mohron.skyclaims'
-version '1.0.0-beta6'
+version '1.0.0-beta7'
 description = 'SkyClaims is an Island plugin that integrates with GriefPrevention for Sponge servers'
 
 repositories {
@@ -31,4 +32,8 @@ repositories {
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
     compile ("me.ryanhamshire:griefprevention:1.10.2-2.3.0.219")
+}
+
+signing {
+    sign configurations.archives
 }
