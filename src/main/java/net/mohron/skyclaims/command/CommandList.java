@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.command;
 
+import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
@@ -17,6 +18,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class CommandList implements CommandExecutor {
@@ -44,11 +46,9 @@ public class CommandList implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (SkyClaims.islands.isEmpty())
 			src.sendMessage(Text.of("There are currently no islands!"));
-		Text listText = Text.EMPTY;
+		List<Text> listText = Lists.newArrayList();
 		Player player = null;
 		if (src instanceof Player) player = (Player) src;
-
-		boolean newline = false;
 
 		for (Island island : SkyClaims.islands.values()) {
 			if (island.isLocked() && ((player == null || !island.hasPermissions(player)) || !src.hasPermission(Permissions.COMMAND_LIST_ALL)))
@@ -56,8 +56,7 @@ public class CommandList implements CommandExecutor {
 			Text name = Text.of((island.isLocked()) ? TextColors.DARK_PURPLE : TextColors.AQUA, island.getName());
 			Text coords = Text.of(TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ", TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ");
 
-			listText = Text.join(listText, Text.of(
-					(newline) ? "\n" : "",
+			listText.add(Text.of(
 					name.toBuilder()
 							.onHover(TextActions.showText(Text.of("Click here to view island info")))
 							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))),
@@ -68,10 +67,14 @@ public class CommandList implements CommandExecutor {
 							onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), createReturnConsumer(src))))
 							.onHover(TextActions.showText(Text.of("Click here to view claim info.")))
 			));
-			newline = true;
 		}
+		if (listText.isEmpty())
+			listText.add(Text.of(TextColors.RED, "There are no islands to display!"));
 
-		PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island List")).padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-")).contents(listText);
+		PaginationList.Builder paginationBuilder = PaginationList.builder()
+				.title(Text.of(TextColors.AQUA, "Island List"))
+				.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+				.contents(listText);
 		paginationBuilder.sendTo(src);
 
 		return CommandResult.success();
