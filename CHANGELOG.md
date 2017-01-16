@@ -1,36 +1,38 @@
 # Change Log
+### Beta 8
+
 ### Beta 7
-**REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
+**REQUIRES: SF 2022+ & GP 228+ (latest versions are highly recommended)**
 - Fixes `is list` not creating pages and causing IndexOutOfBoundsException
 ### Beta 6
-**REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
+**REQUIRES: SF 2022+ & GP 228+ (latest versions are highly recommended)**
 - Removed redundant DB save on server stopping
 - Renamed Database Config to Storage
 - Fixed using the default world instead of the configured world
 ### Beta 5
-**REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
+**REQUIRES: SF 2022+ & GP 228+ (latest versions are highly recommended)**
 - Fix DB backup on migrate
 - Added Island count to Metrics
 - Plugin now checks GP API version before initializing
 - No longer runs Reset Commands on /is delete
 ### Beta 4
-**REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
+**REQUIRES: SF 2022+ & GP 228+ (latest versions are highly recommended)**
 - Check radius option for valid int before applying
 - Fix using /is help & /isa help to view help
 - Removed unneeded check when restoring claims on restart(edited)
 ### Beta 3
-**REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
+**REQUIRES: SF 2022+ & GP 228+ (latest versions are highly recommended)**
 - Actually fix is delete removing db entry(edited)
 ### Beta 2
-**REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
+**REQUIRES: SF 2022+ & GP 228+ (latest versions are highly recommended)**
 - Fixes default options
 - Should prevent creation of basic claims in island world
 - Should prevent deletion or resizing of island claims
 - Should respawn a player without a bed on their island
 - Should fix island deletion(edited)
 ### Beta 1
-**REQUIRES: SF 2022+ & GP 219+ (latest versions are highly recommended)**
-- Added Support for the GP API. Requires GP 219+
+**REQUIRES: SF 2022+ & GP 228+ (latest versions are highly recommended)**
+- Added Support for the GP API. Requires GP 228+
 - New Database Schema supports island ids and locks (automatic migration and backup)
 - Improved claim handling
 - Added island lock capability
