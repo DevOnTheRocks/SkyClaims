@@ -9,7 +9,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group 'net.mohron.skyclaims'
-version '1.0.0-beta7'
+version '1.0.0-beta8'
 description = 'SkyClaims is an Island plugin that integrates with GriefPrevention for Sponge servers'
 
 repositories {
@@ -31,7 +31,7 @@ repositories {
 
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
-    compile ("me.ryanhamshire:griefprevention:1.10.2-2.3.0.219")
+    compile ("me.ryanhamshire:griefprevention:1.10.2-2.3.0.229")
 }
 
 signing {
