@@ -4,17 +4,14 @@ import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Sets;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
-import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
-import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
-import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
@@ -89,13 +86,13 @@ public class Island {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
 
+				// Set claim to not expire or be resizable, if not already
+				if (this.claim.getClaimData().isResizable()) this.claim.getClaimData().setResizable(false);
+				if (this.claim.getClaimData().allowClaimExpiration()) this.claim.getClaimData().setClaimExpiration(false);
 			} catch (CreateIslandException e) {
 				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
 		}
-		// Set claim to not expire or be resizable, if not already
-		if (this.claim.getClaimData().isResizable()) this.claim.getClaimData().setResizable(false);
-		if (this.claim.getClaimData().allowClaimExpiration()) this.claim.getClaimData().setClaimExpiration(false);
 	}
 
 	public UUID getUniqueId() {
