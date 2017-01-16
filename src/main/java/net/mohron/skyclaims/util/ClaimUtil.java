@@ -54,6 +54,11 @@ public class ClaimUtil {
 			}
 			i++;
 		} while (claimResult.getResultType() == ClaimResultType.OVERLAPPING_CLAIM && i < MAX_CLAIM_ATTEMPTS);
+
+		// Set claim to not expire or be resizable
+		claim.getClaimData().setResizable(false);
+		claim.getClaimData().setClaimExpiration(false);
+
 		return claim;
 	}
 

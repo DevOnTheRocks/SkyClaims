@@ -52,9 +52,6 @@ public class Island {
 
 		// Create the island claim
 		this.claim = ClaimUtil.createIslandClaim(owner, region);
-		// Set claim to not expire or be resizable
-		this.claim.getClaimData().setResizable(false);
-		this.claim.getClaimData().setClaimExpiration(false);
 
 		// Run commands defined in config on creation
 		ConfigUtil.getCreateCommands().ifPresent(commands -> {
@@ -82,13 +79,13 @@ public class Island {
 		// Finally create a new claim after removing all overlapping claims if any
 		if (CLAIM_MANAGER.getClaimByUUID(claimId).isPresent()) {
 			this.claim = CLAIM_MANAGER.getClaimByUUID(claimId).get();
+
+			// Set claim to not expire or be resizable, if not already
+			if (this.claim.getClaimData().isResizable()) this.claim.getClaimData().setResizable(false);
+			if (this.claim.getClaimData().allowClaimExpiration()) this.claim.getClaimData().setClaimExpiration(false);
 		} else {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
-
-				// Set claim to not expire or be resizable, if not already
-				if (this.claim.getClaimData().isResizable()) this.claim.getClaimData().setResizable(false);
-				if (this.claim.getClaimData().allowClaimExpiration()) this.claim.getClaimData().setClaimExpiration(false);
 			} catch (CreateIslandException e) {
 				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
