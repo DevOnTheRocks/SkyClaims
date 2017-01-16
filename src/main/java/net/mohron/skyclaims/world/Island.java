@@ -149,12 +149,17 @@ public class Island {
 	}
 
 	public void setSpawn(Location<World> spawn) {
-		this.spawn = spawn;
-		save();
+		if (isWithinIsland(spawn)) {
+			if (spawn.getY() < 0 || spawn.getY() > 255) {
+				spawn = new Location<>(spawn.getExtent(), spawn.getX(), ConfigUtil.getIslandHeight(), spawn.getZ());
+			}
+			this.spawn = spawn;
+			save();
+		}
 	}
 
-	public boolean isWithinIsland(Location<World> location) {
-		return claim.contains(location, true, false);
+	private boolean isWithinIsland(Location<World> location) {
+		return location.getChunkPosition().getX() >> 5 == getRegion().getX() && location.getChunkPosition().getZ() >> 5 == getRegion().getZ();
 	}
 
 	public int getRadius() {

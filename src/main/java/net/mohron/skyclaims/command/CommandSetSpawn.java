@@ -48,7 +48,7 @@ public class CommandSetSpawn implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must be on an island to use this command!"));
 
-		if (!island.get().getOwnerUniqueId().equals(player.getUniqueId()))
+		if (!island.get().getOwnerUniqueId().equals(player.getUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS))
 			throw new CommandException(Text.of("Only the island owner may use this command!"));
 
 		island.get().setSpawn(player.getLocation());
