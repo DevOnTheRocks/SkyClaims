@@ -53,20 +53,8 @@ public class SqliteDatabase implements IDatabase {
 	private void createTable() {
 		try (Statement statement = getConnection().createStatement()) {
 			statement.setQueryTimeout(30);
-
-			// Create the database schema
-			String table = "CREATE TABLE IF NOT EXISTS islands (" +
-					"island			STRING PRIMARY KEY," +
-					"owner			STRING," +
-					"claim			STRING," +
-					"spawnX			INT," +
-					"spawnY			INT," +
-					"spawnZ			INT," +
-					"locked			BOOLEAN" +
-					")";
-
-			// Create the islands table (execute statement)
-			statement.executeUpdate(table);
+			//Create Table with appropriate Schema
+			statement.executeUpdate(String.format(Schemas.IslandTable,"islands"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");

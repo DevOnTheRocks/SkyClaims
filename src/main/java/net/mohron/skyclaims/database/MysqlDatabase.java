@@ -47,10 +47,7 @@ public class MysqlDatabase implements IDatabase {
 
 		try (Statement statement = getConnection().createStatement()) {
 			statement.setQueryTimeout(30);
-
-			// Create the database schema
-
-			// Create the islands table (execute statement)
+			//Create Table with appropriate Schema
 			statement.executeUpdate(String.format(Schemas.IslandTable,databaseTableName));
 		} catch (SQLException e) {
 			e.printStackTrace();
