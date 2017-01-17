@@ -40,6 +40,10 @@ public class ClaimUtil {
 							claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
 							claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
 					));
+
+					// Set claim to not expire or be resizable
+					claim.getClaimData().setResizable(false);
+					claim.getClaimData().setClaimExpiration(false);
 					break;
 				case OVERLAPPING_CLAIM:
 					CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
@@ -57,10 +61,6 @@ public class ClaimUtil {
 
 		if (claim == null)
 			throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
-
-		// Set claim to not expire or be resizable
-		claim.getClaimData().setResizable(false);
-		claim.getClaimData().setClaimExpiration(false);
 
 		return claim;
 	}
