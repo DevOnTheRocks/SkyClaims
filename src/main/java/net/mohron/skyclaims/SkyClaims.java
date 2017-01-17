@@ -9,6 +9,8 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
+import net.mohron.skyclaims.config.type.MysqlConfig;
+import net.mohron.skyclaims.database.MysqlDatabase;
 import net.mohron.skyclaims.database.SqliteDatabase;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
@@ -82,7 +84,7 @@ public class SkyClaims {
 	private ConfigManager pluginConfigManager;
 	private GlobalConfig defaultConfig;
 
-	private SqliteDatabase database;
+	private MysqlDatabase database;
 
 	private boolean enabled = true;
 
@@ -133,7 +135,7 @@ public class SkyClaims {
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
 		if (!enabled) return;
-		database = new SqliteDatabase();
+		database = new MysqlDatabase();
 		islands = database.loadData();
 		addCustomMetrics();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
@@ -213,7 +215,7 @@ public class SkyClaims {
 		return schematicDir;
 	}
 
-	public SqliteDatabase getDatabase() {
+	public MysqlDatabase getDatabase() {
 		return database;
 	}
 }
