@@ -63,16 +63,16 @@ public class MysqlDatabase implements IDatabase {
 		HashMap<UUID, Island> islands = new HashMap<>();
 
 		try (Statement statement = getConnection().createStatement()) {
-			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.databaseName));
+			ResultSet results = statement.executeQuery(String.format("SELECT * FROM islands"));
 
 			while (results.next()) {
-				UUID islandId = UUID.fromString(results.getString("island"));
-				UUID ownerId = UUID.fromString(results.getString("owner"));
-				UUID claimId = UUID.fromString(results.getString("claim"));
+				UUID islandId = UUID.fromString(results.getString("UUID"));
+				UUID ownerId = UUID.fromString(results.getString("Player"));
+				UUID claimId = UUID.fromString(results.getString("Claim"));
 				int x = results.getInt("spawnX");
 				int y = results.getInt("spawnY");
 				int z = results.getInt("spawnZ");
-				boolean locked = results.getBoolean("locked");
+				//boolean locked = results.getBoolean("locked");
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
 				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
