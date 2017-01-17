@@ -54,8 +54,10 @@ public class Island {
 		this.locked = false;
 
 		// Create the island claim
+		PLUGIN.getLogger().info("Trying to make this guy a claim.....");
 		this.claim = ClaimUtil.createIslandClaim(owner, region);
 		// Set claim to not expire or be resizable
+		PLUGIN.getLogger().info("Claim Made Now We're going to try to not resize it or something.");
 		this.claim.getClaimData().setResizable(false);
 		this.claim.getClaimData().setClaimExpiration(false);
 

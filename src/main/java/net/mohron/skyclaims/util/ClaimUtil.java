@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.util;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.sun.org.apache.bcel.internal.generic.TargetLostException;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
@@ -27,7 +28,9 @@ public class ClaimUtil {
 		int i = 0;
 		Claim claim = null;
 		ClaimResult claimResult = ClaimUtil.createIslandClaimResult(owner, region);
+		PLUGIN.getLogger().info("Lets start checking the Result of the claim creation.");
 		do {
+			PLUGIN.getLogger().info("Iteration" + i);
 			switch (claimResult.getResultType()) {
 				case SUCCESS:
 					claim = claimResult.getClaim().get();
