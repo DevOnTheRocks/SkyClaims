@@ -51,7 +51,7 @@ public class MysqlDatabase implements IDatabase {
 			// Create the database schema
 
 			// Create the islands table (execute statement)
-			statement.executeUpdate(String.format(Schemas.IslandDB,databaseTableName));
+			statement.executeUpdate(String.format(Schemas.IslandTable,databaseTableName));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
