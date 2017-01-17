@@ -86,20 +86,26 @@ public class ConfigUtil {
 		return(config.storage == null ||
 		       config.storage.mysql == null ||
 			   config.storage.mysql.databaseName == null) ?
-			   "localhost" : config.storage.mysql.databaseName;
+			   "skyclaims" : config.storage.mysql.databaseName;
 	}
 
 	public static String getDatabaseHostname(){
 		return(config.storage == null ||
 				config.storage.mysql == null ||
 				config.storage.mysql.hostname == null) ?
-				"localhost" : config.storage.mysql.databaseName;
+				"localhost" : config.storage.mysql.hostname;
 	}
-	public static String getDatabaseName(){
+	public static String getDatabaseUsername(){
 		return(config.storage == null ||
 				config.storage.mysql == null ||
-				config.storage.mysql.databaseName == null) ?
-				"localhost" : config.storage.mysql.databaseName;
+				config.storage.mysql.username == null) ?
+				"skyclaims" : config.storage.mysql.username;
+	}
+	public static String getDatabasePassword(){
+		return(config.storage == null ||
+				config.storage.mysql == null ||
+				config.storage.mysql.password == null) ?
+				"skyclaims" : config.storage.mysql.password;
 	}
 
 	public static boolean createIslandOnJoin() {
