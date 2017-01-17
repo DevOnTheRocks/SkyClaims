@@ -29,8 +29,8 @@ public class MysqlDatabase implements IDatabase {
 		this.config = ConfigUtil.getMysqlDatabaseConfig();
 		hostname = ConfigUtil.getDatabaseHostname();
 		databaseName = ConfigUtil.getDatabaseName();
-		username = ConfigUtil.getDatabaseUsername()
-		password = ConfigUtil.getDatabasePassword()
+		username = ConfigUtil.getDatabaseUsername();
+		password = ConfigUtil.getDatabasePassword();
 		port = ConfigUtil.getDatabasePort();
 		connectionString = String.format("jdbc:mysql://%s:%s/%s", hostname, port, databaseName);
 
