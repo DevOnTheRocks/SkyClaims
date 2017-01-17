@@ -9,7 +9,7 @@ public class MysqlConfig {
 	public String databaseName;
 	@Setting("Location")
 	public String location;
-	@Setting("Table-Name")
+	@Setting("DatabaseName")
 	public String tableName;
 	@Setting("Username")
 	public String username;

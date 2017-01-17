@@ -48,7 +48,7 @@ public class MysqlDatabase implements IDatabase {
 		try (Statement statement = getConnection().createStatement()) {
 			statement.setQueryTimeout(30);
 			//Create Table with appropriate Schema
-			statement.executeUpdate(String.format(Schemas.IslandTable,databaseTableName));
+			statement.executeUpdate(String.format(Schemas.IslandTable,"islands"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
