@@ -9,8 +9,7 @@ public class MysqlConfig {
 	public String databaseName;
 	@Setting("Location")
 	public String location;
-	@Setting("DatabaseName")
-	public String tableName;
+
 	@Setting("Username")
 	public String username;
 	@Setting("Password")
@@ -19,11 +18,12 @@ public class MysqlConfig {
 	public Integer port;
 
 	public MysqlConfig() {
-		tableName = "islands";
 		location = "localhost";
+		port = 3306;
+
 		databaseName = "skyclaims";
+
 		username = "skyclaims";
 		password = "skyclaims";
-		port = 3306;
 	}
 }
