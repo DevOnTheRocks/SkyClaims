@@ -57,6 +57,7 @@ public class ClaimUtil {
 			}
 			i++;
 		} while (claimResult.getResultType() == ClaimResultType.OVERLAPPING_CLAIM && i < MAX_CLAIM_ATTEMPTS);
+
 		return claim;
 	}
 
