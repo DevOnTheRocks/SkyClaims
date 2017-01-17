@@ -4,12 +4,10 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.config.type.MysqlConfig;
 import net.mohron.skyclaims.config.type.SqliteConfig;
-import net.mohron.skyclaims.command.Arguments;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.WorldArchetypes;
-import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.gen.WorldGeneratorModifiers;
 import org.spongepowered.api.world.storage.WorldProperties;
@@ -29,14 +27,6 @@ public class ConfigUtil {
 		Server server = GAME.getServer();
 		Optional<World> world = (config.world != null) ? server.getWorld(config.world.worldName) : Optional.empty();
 		return world.isPresent() ? world.get() : WorldUtil.getDefaultWorld();
-	}
-
-	public static Optional<BiomeType> getDefaultBiome() {
-		if (config.world == null || config.world.defaultBiome == null) return Optional.empty();
-		for (BiomeType biome : Arguments.BIOMES.values()) {
-			if (biome.getName().equalsIgnoreCase(config.world.defaultBiome)) return Optional.of(biome);
-		}
-		return Optional.empty();
 	}
 
 	public static int getIslandHeight() {

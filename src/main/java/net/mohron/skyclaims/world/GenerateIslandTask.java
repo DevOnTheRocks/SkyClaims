@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.world;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
@@ -66,8 +67,10 @@ public class GenerateIslandTask implements Runnable {
 		island.setSpawn(spawn);
 		volume.apply(spawn, BlockChangeFlag.NONE, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(user)));
 
-		if (ConfigUtil.getDefaultBiome().isPresent())
-			WorldUtil.setRegionBiome(island.getRegion(), ConfigUtil.getDefaultBiome().get());
+		// Set the region's BiomeType using the default biome option if set
+		Options.getDefaultBiome(user.getUniqueId()).ifPresent(biomeType -> {
+			WorldUtil.setRegionBiome(island.getRegion(), biomeType);
+		});
 
 		user.getPlayer().ifPresent(p1 -> {
 			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(
