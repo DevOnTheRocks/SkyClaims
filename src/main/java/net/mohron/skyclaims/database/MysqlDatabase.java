@@ -19,20 +19,20 @@ import java.util.UUID;
 public class MysqlDatabase implements IDatabase {
 	private MysqlConfig config;
 	private String connectionString;
-	private String databaseLocation;
-	private String databaseTableName;
+	private String hostname;
+	private String databaseName;
 	private String username;
 	private String password;
 	private Integer port;
 
 	public MysqlDatabase() {
 		this.config = ConfigUtil.getMysqlDatabaseConfig();
-		databaseLocation = config.location;
-		databaseTableName = config.tableName;
+		hostname = config.location;
+		databaseName = config.tableName;
 		username = config.username;
 		password = config.password;
 		port = ConfigUtil.getDatabasePort();
-		connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, databaseTableName);
+		connectionString = String.format("jdbc:mysql://%s:%s/%s", hostname, port, databaseName);
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
