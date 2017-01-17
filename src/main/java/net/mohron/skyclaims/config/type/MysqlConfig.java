@@ -5,11 +5,10 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class MysqlConfig {
-	@Setting("Name")
+	@Setting("DatabaseName")
 	public String databaseName;
 	@Setting("Location")
 	public String location;
-
 	@Setting("Username")
 	public String username;
 	@Setting("Password")
@@ -20,9 +19,7 @@ public class MysqlConfig {
 	public MysqlConfig() {
 		location = "localhost";
 		port = 3306;
-
 		databaseName = "skyclaims";
-
 		username = "skyclaims";
 		password = "skyclaims";
 	}
