@@ -89,6 +89,19 @@ public class ConfigUtil {
 			   "localhost" : config.storage.mysql.databaseName;
 	}
 
+	public static String getDatabaseHostname(){
+		return(config.storage == null ||
+				config.storage.mysql == null ||
+				config.storage.mysql.hostname == null) ?
+				"localhost" : config.storage.mysql.databaseName;
+	}
+	public static String getDatabaseName(){
+		return(config.storage == null ||
+				config.storage.mysql == null ||
+				config.storage.mysql.databaseName == null) ?
+				"localhost" : config.storage.mysql.databaseName;
+	}
+
 	public static boolean createIslandOnJoin() {
 		return (config.misc == null || config.misc.islandOnJoin == null) ? false : config.misc.islandOnJoin;
 	}

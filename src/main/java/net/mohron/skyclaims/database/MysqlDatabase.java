@@ -28,7 +28,7 @@ public class MysqlDatabase implements IDatabase {
 	public MysqlDatabase() {
 		this.config = ConfigUtil.getMysqlDatabaseConfig();
 		hostname = config.location;
-		databaseName = config.databaseName;
+		databaseName = ConfigUtil.getDatabaseName();
 		username = config.username;
 		password = config.password;
 		port = ConfigUtil.getDatabasePort();
@@ -63,7 +63,7 @@ public class MysqlDatabase implements IDatabase {
 		HashMap<UUID, Island> islands = new HashMap<>();
 
 		try (Statement statement = getConnection().createStatement()) {
-			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.tableName));
+			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.databaseName));
 
 			while (results.next()) {
 				UUID islandId = UUID.fromString(results.getString("island"));
