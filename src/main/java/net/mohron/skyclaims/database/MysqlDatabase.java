@@ -94,12 +94,14 @@ public class MysqlDatabase implements IDatabase {
 	}
 
 	public void saveIsland(Island island) {
-		String sql = "REPLACE INTO islands(UUID, Player, Claim, RegionX, RegionY, spawnX, spawnY, spawnZ, Yaw, Pitch, Created, PlayTime, Size,) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "REPLACE INTO islands(UUID, Player, Claim, RegionX, RegionY, spawnX, spawnY, spawnZ) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
 			statement.setString(2, island.getOwner().toString());
 			statement.setString(3, island.getClaim().getUniqueId().toString());
+			statement.setInt(4, island.getRegion().getX());
+			statement.setInt(5, island.getRegion().getZ());
 			statement.setInt(6, island.getSpawn().getBlockX());
 			statement.setInt(7, island.getSpawn().getBlockY());
 			statement.setInt(8, island.getSpawn().getBlockZ());

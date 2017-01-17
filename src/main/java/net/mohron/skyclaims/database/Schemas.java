@@ -9,9 +9,9 @@ public class Schemas {
             "CREATE TABLE IF NOT EXISTS %s " +
                     "(" +
                     "id 		INTEGER  		AUTO_INCREMENT  ," +
-                    "UUID 		MEDIUMTEXT(36) ," +
-                    "Player 	MEDIUMTEXT(36) ," +
-                    "Claim 	    MEDIUMTEXT(36)," +
+                    "UUID 		VarChar(36) ," +
+                    "Player 	VarChar(36) ," +
+                    "Claim 	    VarChar(36)," +
                     "RegionX 	INTEGER," +
                     "RegionY 	INTEGER," +
                     "SpawnX 	INTEGER," +
@@ -28,7 +28,7 @@ public class Schemas {
             "CREATE TABLE IF NOT EXISTS %s " +
                     "(" +
                     "id 		INTEGER  		AUTO_INCREMENT  ," +
-                    "Player 		MEDIUMTEXT(36) ," +
+                    "Player 		STRING ," +
                     "PRIMARY KEY (id), KEY (Player)" +
                     ")";
 }
