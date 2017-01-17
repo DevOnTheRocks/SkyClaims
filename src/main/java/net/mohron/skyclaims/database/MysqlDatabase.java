@@ -75,7 +75,7 @@ public class MysqlDatabase implements IDatabase {
 				//boolean locked = results.getBoolean("locked");
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
-				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
+				Island island = new Island(islandId, ownerId, claimId, spawnLocation, false);
 
 				islands.put(islandId, island);
 			}
@@ -94,7 +94,7 @@ public class MysqlDatabase implements IDatabase {
 	}
 
 	public void saveIsland(Island island) {
-		String sql = String.format("REPLACE INTO %s(UUID, Player, Claim, RegionX, RegionY, spawnX, spawnY, spawnZ, Yaw, Pitch, Created, PlayTime, Size,) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", config.tableName);
+		String sql = "REPLACE INTO islands(UUID, Player, Claim, RegionX, RegionY, spawnX, spawnY, spawnZ, Yaw, Pitch, Created, PlayTime, Size,) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
@@ -114,7 +114,7 @@ public class MysqlDatabase implements IDatabase {
 	}
 
 	public void removeIsland(Island island) {
-		String sql = String.format("DELETE FROM %s WHERE island = ?", config.tableName);
+		String sql = "DELETE FROM islands WHERE UUID = ?";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
