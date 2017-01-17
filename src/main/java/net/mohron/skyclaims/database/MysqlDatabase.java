@@ -49,18 +49,9 @@ public class MysqlDatabase implements IDatabase {
 			statement.setQueryTimeout(30);
 
 			// Create the database schema
-			String table = String.format("CREATE TABLE IF NOT EXISTS %s (" +
-					"island			STRING PRIMARY KEY" +
-					"owner			STRING," +
-					"claim			STRING," +
-					"spawnX			INT," +
-					"spawnY			INT," +
-					"spawnZ			INT," +
-					"locked			BOOLEAN" +
-					")", databaseTableName);
 
 			// Create the islands table (execute statement)
-			statement.executeUpdate(table);
+			statement.executeUpdate(String.format(Schemas.IslandDB,databaseTableName));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");

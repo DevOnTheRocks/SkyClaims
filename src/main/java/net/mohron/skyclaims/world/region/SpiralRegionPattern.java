@@ -4,6 +4,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.world.Coordinate;
 import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
@@ -68,5 +69,10 @@ public class SpiralRegionPattern implements IRegionPattern {
 		}
 
 		throw new InvalidRegionException(Text.of("Failed to find a valid region!"));
+	}
+
+	@Override
+	public Coordinate lastLocation() {
+		return null;
 	}
 }

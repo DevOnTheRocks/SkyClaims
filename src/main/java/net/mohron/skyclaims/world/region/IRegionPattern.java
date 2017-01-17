@@ -6,9 +6,10 @@ import net.mohron.skyclaims.world.Coordinate;
 import java.util.ArrayList;
 
 public interface IRegionPattern {
-	ArrayList<Region> generateRegionPattern();
 
-	public Region nextRegion() throws InvalidRegionException;
+	public abstract ArrayList<Region> generateRegionPattern();
 
-	public Coordinate lastLocation();
+	public abstract Region nextRegion() throws InvalidRegionException;
+
+	public abstract Coordinate lastLocation();
 }
