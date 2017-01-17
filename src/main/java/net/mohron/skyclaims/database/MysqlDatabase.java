@@ -94,16 +94,18 @@ public class MysqlDatabase implements IDatabase {
 	}
 
 	public void saveIsland(Island island) {
-		String sql = String.format("REPLACE INTO %s(island, owner, claim, spawnX, spawnY, spawnZ) VALUES(?, ?, ?, ?, ?, ?)", config.tableName);
+		String sql = String.format("REPLACE INTO %s(UUID, Player, Claim, RegionX, RegionY, spawnX, spawnY, spawnZ, Yaw, Pitch, Created, PlayTime, Size,) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", config.tableName);
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
 			statement.setString(2, island.getOwner().toString());
 			statement.setString(3, island.getClaim().getUniqueId().toString());
-			statement.setInt(4, island.getSpawn().getBlockX());
-			statement.setInt(5, island.getSpawn().getBlockY());
-			statement.setInt(6, island.getSpawn().getBlockZ());
-			statement.setBoolean(7, island.isLocked());
+			statement.setInt(6, island.getSpawn().getBlockX());
+			statement.setInt(7, island.getSpawn().getBlockY());
+			statement.setInt(8, island.getSpawn().getBlockZ());
+			//statement.setFloat(9, island.getSpawn().getYaw());
+			//statement.setFloat(10, island.getSpawn().getPitch());
+			//statement.setBoolean(7, island.isLocked());
 
 			statement.execute();
 		} catch (SQLException e) {
