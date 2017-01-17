@@ -34,16 +34,6 @@ public class MysqlDatabase implements IDatabase {
 		port = ConfigUtil.getDatabasePort();
 		connectionString = String.format("jdbc:mysql://%s:%s/%s", hostname, port, databaseName);
 
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			getConnection();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Unable to load the JDBC driver");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Unable to connect to the database, check the console");
-		}
 
 		try (Statement statement = getConnection().createStatement()) {
 			statement.setQueryTimeout(30);

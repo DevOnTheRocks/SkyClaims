@@ -56,6 +56,19 @@ public class Island {
 		// Create the island claim
 		PLUGIN.getLogger().info("Trying to make this guy a claim.....");
 		this.claim = ClaimUtil.createIslandClaim(owner, region);
+
+		//This is a workaround for GP not properly deleting claims
+		while(this.claim == null){
+			PLUGIN.getLogger().info("Claim Creation Failed.....We have to try again....");
+			try {
+				region = PATTERN.nextRegion();
+			} catch (InvalidRegionException e) {
+				throw new CreateIslandException(e.getText());
+			}
+			this.claim = ClaimUtil.createIslandClaim(owner, region);
+		}
+
+
 		// Set claim to not expire or be resizable
 		PLUGIN.getLogger().info("Claim Made Now We're going to try to not resize it or something.");
 		this.claim.getClaimData().setResizable(false);
