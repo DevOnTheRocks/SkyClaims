@@ -65,6 +65,11 @@ public class ConfigUtil {
 				1 : (int) Math.pow(config.world.spawnRegions, 2);
 	}
 
+	public static String getDatabaseType() {
+		return (config.storage == null ||
+				config.storage.type == null) ? "sqlite" : config.storage.type;
+	}
+
 	public static Integer getDatabasePort() {
 		return (config.storage == null ||
 				config.storage.mysql == null ||

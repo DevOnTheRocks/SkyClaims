@@ -9,12 +9,15 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
+import net.mohron.skyclaims.database.IDatabase;
+import net.mohron.skyclaims.database.MysqlDatabase;
 import net.mohron.skyclaims.database.SqliteDatabase;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.metrics.Metrics;
+import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -82,7 +85,7 @@ public class SkyClaims {
 	private ConfigManager pluginConfigManager;
 	private GlobalConfig defaultConfig;
 
-	private SqliteDatabase database;
+	private IDatabase database;
 
 	private boolean enabled = true;
 
@@ -133,7 +136,14 @@ public class SkyClaims {
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
 		if (!enabled) return;
-		database = new SqliteDatabase();
+
+		if (ConfigUtil.getDatabaseType().equalsIgnoreCase("sqlite"))
+			database = new SqliteDatabase();
+		else if (ConfigUtil.getDatabaseType().equalsIgnoreCase("mysql"))
+			database = new MysqlDatabase();
+		else
+			throw new UnsupportedOperationException("Database type not supported, should not continue.");
+
 		islands = database.loadData();
 		addCustomMetrics();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
@@ -213,7 +223,7 @@ public class SkyClaims {
 		return schematicDir;
 	}
 
-	public SqliteDatabase getDatabase() {
+	public IDatabase getDatabase() {
 		return database;
 	}
 }
