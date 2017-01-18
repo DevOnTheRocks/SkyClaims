@@ -10,32 +10,31 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.region.Region;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ClaimUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	public static Claim createIslandClaim(User owner, Region region) throws CreateIslandException {
+	public static Claim createIslandClaim(UUID ownerUniqueId, Region region) throws CreateIslandException {
 		final int MAX_CLAIM_ATTEMPTS = 10; // limit claim removals to prevent an infinite loop
 		int i = 0;
 		Claim claim = null;
-		ClaimResult claimResult = ClaimUtil.createIslandClaimResult(owner, region);
+		ClaimResult claimResult = ClaimUtil.createIslandClaimResult(ownerUniqueId, region);
 		do {
 			switch (claimResult.getResultType()) {
 				case SUCCESS:
 					claim = claimResult.getClaim().get();
 					CLAIM_MANAGER.addClaim(claim, Cause.source(PLUGIN).build());
 					SkyClaims.islandClaims.add(claim);
-					PLUGIN.getLogger().info(String.format(
-							"Creating claim for %s in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
-							owner.getName(),
+					PLUGIN.getLogger().debug(String.format(
+							"Creating claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
 							region.getX(), region.getZ(),
 							claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
 							claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
@@ -47,10 +46,9 @@ public class ClaimUtil {
 					break;
 				case OVERLAPPING_CLAIM:
 					CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
-					PLUGIN.getLogger().info(String.format("Removing overlapping claim (Owner: %s, ID: %s) while creating %s's island.",
+					PLUGIN.getLogger().info(String.format("Removing overlapping claim (Owner: %s, ID: %s).",
 							claimResult.getClaim().get().getOwnerName(),
-							claimResult.getClaim().get().getUniqueId(),
-							owner.getName()
+							claimResult.getClaim().get().getUniqueId()
 					));
 					break;
 				default:
@@ -65,15 +63,15 @@ public class ClaimUtil {
 		return claim;
 	}
 
-	private static ClaimResult createIslandClaimResult(User owner, Region region) {
-		int claimRadius = Options.getIntOption(owner.getUniqueId(), Options.INITIAL_SIZE, 32, 8, 255);
+	private static ClaimResult createIslandClaimResult(UUID ownerUniqueId, Region region) {
+		int claimRadius = Options.getIntOption(ownerUniqueId, Options.INITIAL_SIZE, 32, 8, 255);
 		return Claim.builder()
 				.world(ConfigUtil.getWorld())
 				.bounds(
 						new Vector3i(region.getCenterBlock().getX() + claimRadius, 0, region.getCenterBlock().getZ() + claimRadius),
 						new Vector3i(region.getCenterBlock().getX() - claimRadius, 255, region.getCenterBlock().getZ() - claimRadius)
 				)
-				.owner(owner.getUniqueId())
+				.owner(ownerUniqueId)
 				.type(ClaimType.BASIC)
 				.cause(Cause.source(PLUGIN).build())
 				.cuboid(false)
@@ -83,7 +81,7 @@ public class ClaimUtil {
 	public static void createSpawnClaim(List<Region> regions) {
 		ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
 		if (claimResult.successful()) {
-			PLUGIN.getLogger().info(String.format("Reserved %s regions for spawn. Admin Claim: %s", regions.size(), claimResult.getClaim().get().getUniqueId()));
+			PLUGIN.getLogger().debug(String.format("Reserved %s regions for spawn. Admin Claim: %s", regions.size(), claimResult.getClaim().get().getUniqueId()));
 			CLAIM_MANAGER.addClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
 		}
 	}

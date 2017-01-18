@@ -51,7 +51,7 @@ public class Island {
 		this.locked = false;
 
 		// Create the island claim
-		this.claim = ClaimUtil.createIslandClaim(owner, region);
+		this.claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region);
 
 		// Run commands defined in config on creation
 		ConfigUtil.getCreateCommands().ifPresent(commands -> {
@@ -85,7 +85,7 @@ public class Island {
 			if (this.claim.getClaimData().allowClaimExpiration()) this.claim.getClaimData().setClaimExpiration(false);
 		} else {
 			try {
-				this.claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
+				this.claim = ClaimUtil.createIslandClaim(owner, getRegion());
 			} catch (CreateIslandException e) {
 				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
@@ -113,10 +113,10 @@ public class Island {
 		if (!claim.isPresent()) {
 			SkyClaims.islandClaims.remove(this.claim);
 			try {
-				this.claim = ClaimUtil.createIslandClaim(getOwner().get(), getRegion());
+				this.claim = ClaimUtil.createIslandClaim(owner, getRegion());
 				SkyClaims.islandClaims.add(this.claim);
 			} catch (CreateIslandException e) {
-
+				PLUGIN.getLogger().warn(String.format("Failed to get %s's island claim.", getName()));
 			}
 		}
 		return this.claim;
