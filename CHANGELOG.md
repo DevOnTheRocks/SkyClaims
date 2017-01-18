@@ -1,4 +1,12 @@
 # Change Log
+### Beta 9
+**REQUIRES: SF 2022+ & GP 229+ (latest versions are highly recommended)**
+- Renamed option `skyclaims.min-radius` to `skyclaims.initial-size`
+- Replaced default biome config with `skyclaims.default-biome` option
+- Fixed NPE when claim creation fails due to reaching max attempts
+- Fixed exception caused by expired users
+- Prevented plugin from initializing if GP API fails to load
+- Database Type config setting implemented (MySQL still WIP)
 ### Beta 8
 **REQUIRES: SF 2022+ & GP 229+ (latest versions are highly recommended)**
 - Fix possible NPE on database load
