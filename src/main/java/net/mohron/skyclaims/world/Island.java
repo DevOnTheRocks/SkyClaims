@@ -61,7 +61,7 @@ public class Island {
 		});
 
 		// Generate the island using the specified schematic
-		GenerateIslandTask generateIsland = new GenerateIslandTask(owner, this, schematic);
+		GenerateIslandTask generateIsland = new GenerateIslandTask(owner.getUniqueId(), this, schematic);
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
 
 		save();

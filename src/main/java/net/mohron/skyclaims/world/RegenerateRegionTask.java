@@ -8,6 +8,8 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.World;
 
+import java.util.UUID;
+
 public class RegenerateRegionTask implements Runnable {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final World WORLD = ConfigUtil.getWorld();
@@ -15,7 +17,7 @@ public class RegenerateRegionTask implements Runnable {
 	private Region region;
 	private boolean genIsland;
 
-	private User owner;
+	private UUID owner;
 	private Island island;
 	private String schematic;
 
@@ -27,7 +29,7 @@ public class RegenerateRegionTask implements Runnable {
 	public RegenerateRegionTask(Island island, String schematic) {
 		this.region = island.getRegion();
 		this.genIsland = true;
-		this.owner = island.getOwner().get();
+		this.owner = island.getOwnerUniqueId();
 		this.island = island;
 		this.schematic = schematic;
 	}

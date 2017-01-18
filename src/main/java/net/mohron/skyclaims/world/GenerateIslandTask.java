@@ -5,12 +5,11 @@ import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -18,6 +17,7 @@ import org.spongepowered.api.world.extent.ArchetypeVolume;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 public class GenerateIslandTask implements Runnable {
@@ -25,12 +25,12 @@ public class GenerateIslandTask implements Runnable {
 	private static final World WORLD = ConfigUtil.getWorld();
 	private static final File CONFIG_DIR = new File(PLUGIN.getConfigDir().toString());
 
-	private User user;
+	private UUID owner;
 	private Island island;
 	private String schematic;
 
-	public GenerateIslandTask(User user, Island island, String schematic) {
-		this.user = user;
+	public GenerateIslandTask(UUID owner, Island island, String schematic) {
+		this.owner = owner;
 		this.island = island;
 		this.schematic = schematic;
 	}
@@ -65,14 +65,14 @@ public class GenerateIslandTask implements Runnable {
 
 		Location<World> spawn = new Location<>(island.getWorld(), centerBlock.getX(), centerBlock.getY() + volume.getBlockSize().getY() - 1, centerBlock.getZ());
 		island.setSpawn(spawn);
-		volume.apply(spawn, BlockChangeFlag.NONE, Cause.of(NamedCause.of("plugin", PLUGIN.getPluginContainer()), NamedCause.source(user)));
+		volume.apply(spawn, BlockChangeFlag.NONE, Cause.source(PLUGIN.getPluginContainer()).build());
 
 		// Set the region's BiomeType using the default biome option if set
-		Options.getDefaultBiome(user.getUniqueId()).ifPresent(biomeType -> {
+		Options.getDefaultBiome(owner).ifPresent(biomeType -> {
 			WorldUtil.setRegionBiome(island.getRegion(), biomeType);
 		});
 
-		user.getPlayer().ifPresent(p1 -> {
+		Sponge.getServer().getPlayer(owner).ifPresent(p1 -> {
 			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(
 					CommandUtil.createTeleportConsumer(p1, spawn)
 			).submit(PLUGIN);

@@ -110,7 +110,7 @@ public class MysqlDatabase implements IDatabase {
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
-			statement.setString(2, island.getOwner().toString());
+			statement.setString(2, island.getOwnerUniqueId().toString());
 			statement.setString(3, island.getClaim().getUniqueId().toString());
 			statement.setInt(4, island.getSpawn().getBlockX());
 			statement.setInt(5, island.getSpawn().getBlockY());
