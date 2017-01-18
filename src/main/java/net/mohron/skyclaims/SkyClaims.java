@@ -35,9 +35,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -74,9 +72,6 @@ public class SkyClaims {
 	@Inject
 	@ConfigDir(sharedRoot = false)
 	private Path configDir;
-	@Inject
-	@ConfigDir(sharedRoot = false)
-	private Path schematicDir = Paths.get(configDir + File.separator + "schematics");
 	@Inject
 	@DefaultConfig(sharedRoot = false)
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
@@ -215,10 +210,6 @@ public class SkyClaims {
 
 	public Path getConfigDir() {
 		return configDir;
-	}
-
-	public Path getSchematicDir() {
-		return schematicDir;
 	}
 
 	public IDatabase getDatabase() {
