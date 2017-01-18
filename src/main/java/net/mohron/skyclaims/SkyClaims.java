@@ -93,14 +93,12 @@ public class SkyClaims {
 
 		instance = this;
 
-		Sponge.getPlatform().getImplementation().getVersion().ifPresent(version -> {
-			version = version.substring(Math.max(version.length() - 4, 0));
-			if (Integer.parseInt(version) < 2022) {
-				getLogger().error("Unable to initialize SkyClaims. Detected SpongeForge build " + version + " but SkyClaims requires build 2022+.");
-			}
-		});
+		try {
+			SkyClaims.griefPrevention = GriefPrevention.getApi();
+		} catch (IllegalStateException e) {
+			getLogger().error("GriefPrevention API failed to load.");
+		}
 
-		SkyClaims.griefPrevention = GriefPrevention.getApi();
 		if (SkyClaims.griefPrevention != null) {
 			if (griefPrevention.getApiVersion() < GP_API_VERSION) {
 				getLogger().error(String.format("GriefPrevention API version %s is unsupported! Please update to API version %s+.", griefPrevention.getApiVersion(), GP_API_VERSION));
