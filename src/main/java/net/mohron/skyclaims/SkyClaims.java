@@ -10,8 +10,6 @@ import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
-import net.mohron.skyclaims.database.MysqlDatabase;
-import net.mohron.skyclaims.database.SqliteDatabase;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
@@ -95,13 +93,20 @@ public class SkyClaims {
 
 		instance = this;
 
+		Sponge.getPlatform().getImplementation().getVersion().ifPresent(version -> {
+			version = version.substring(Math.max(version.length() - 4, 0));
+			if (Integer.parseInt(version) < 2022) {
+				getLogger().error("Unable to initialize SkyClaims. Detected SpongeForge build " + version + " but SkyClaims requires build 2022+.");
+			}
+		});
+
 		SkyClaims.griefPrevention = GriefPrevention.getApi();
 		if (SkyClaims.griefPrevention != null) {
-			getLogger().info("GriefPrevention Integration Successful!");
 			if (griefPrevention.getApiVersion() < GP_API_VERSION) {
-				getLogger().info(String.format("GriefPrevention API version %s is unsupported! Please update to API version %s+.", griefPrevention.getApiVersion(), GP_API_VERSION));
+				getLogger().error(String.format("GriefPrevention API version %s is unsupported! Please update to API version %s+.", griefPrevention.getApiVersion(), GP_API_VERSION));
 				enabled = false;
-			}
+			} else
+				getLogger().info("GriefPrevention Integration Successful!");
 		} else {
 			getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
 			enabled = false;
