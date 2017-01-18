@@ -137,12 +137,7 @@ public class SkyClaims {
 	public void onServerStarted(GameStartedServerEvent event) {
 		if (!enabled) return;
 
-		if (ConfigUtil.getDatabaseType().equalsIgnoreCase("sqlite"))
-			database = new SqliteDatabase();
-		else if (ConfigUtil.getDatabaseType().equalsIgnoreCase("mysql"))
-			database = new MysqlDatabase();
-		else
-			throw new UnsupportedOperationException("Database type not supported, should not continue.");
+		database = ConfigUtil.getDatabase();
 
 		islands = database.loadData();
 		addCustomMetrics();

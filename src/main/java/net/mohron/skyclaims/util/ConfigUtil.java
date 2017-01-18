@@ -4,6 +4,9 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.config.type.MysqlConfig;
 import net.mohron.skyclaims.config.type.SqliteConfig;
+import net.mohron.skyclaims.database.IDatabase;
+import net.mohron.skyclaims.database.MysqlDatabase;
+import net.mohron.skyclaims.database.SqliteDatabase;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.world.World;
@@ -65,9 +68,17 @@ public class ConfigUtil {
 				1 : (int) Math.pow(config.world.spawnRegions, 2);
 	}
 
-	public static String getDatabaseType() {
-		return (config.storage == null ||
-				config.storage.type == null) ? "sqlite" : config.storage.type;
+	public static IDatabase getDatabase() {
+		if (config.storage != null && config.storage.type != null) {
+			if (config.storage.type.equalsIgnoreCase("sqlite"))
+				return (PLUGIN.getDatabase() != null) ? PLUGIN.getDatabase() : new SqliteDatabase();
+			else if (config.storage.type.equalsIgnoreCase("mysql"))
+				return (PLUGIN.getDatabase() != null) ? PLUGIN.getDatabase() : new MysqlDatabase();
+			else
+				throw new UnsupportedOperationException("Database type not supported, should not continue.");
+		}
+
+		return new SqliteDatabase();
 	}
 
 	public static Integer getDatabasePort() {
