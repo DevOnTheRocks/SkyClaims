@@ -1,5 +1,6 @@
 package net.mohron.skyclaims;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -36,7 +37,10 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static net.mohron.skyclaims.PluginInfo.*;
 
@@ -53,7 +57,7 @@ public class SkyClaims {
 	private static GriefPreventionApi griefPrevention;
 	private static PermissionService permissionService;
 	public static Map<UUID, Island> islands = Maps.newHashMap();
-	public static LinkedList<Island> saveQueue = new LinkedList<Island>();
+	private static LinkedList<Island> saveQueue = Lists.newLinkedList();
 	public static Set<Claim> islandClaims = Sets.newHashSet();
 
 	@Inject
@@ -141,7 +145,7 @@ public class SkyClaims {
 		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
 
-		for(int ix = 0; ix < saveQueue.size(); ix++){
+		for (int ix = 0; ix < saveQueue.size(); ix++) {
 			saveQueue.poll().save();
 		}
 	}
@@ -219,7 +223,7 @@ public class SkyClaims {
 		return database;
 	}
 
-	public void queueForSaving(Island island){
+	public void queueForSaving(Island island) {
 		saveQueue.add(island);
 	}
 }
