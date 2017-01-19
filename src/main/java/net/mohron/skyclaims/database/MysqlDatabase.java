@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.database;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.MysqlConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
@@ -72,7 +73,7 @@ public class MysqlDatabase implements IDatabase {
 	}
 
 	public HashMap<UUID, Island> loadData() {
-		HashMap<UUID, Island> islands = new HashMap<>();
+		HashMap<UUID, Island> islands = Maps.newHashMap();
 
 		try (Statement statement = getConnection().createStatement()) {
 			ResultSet results = statement.executeQuery(String.format("SELECT * FROM %s", config.tableName));

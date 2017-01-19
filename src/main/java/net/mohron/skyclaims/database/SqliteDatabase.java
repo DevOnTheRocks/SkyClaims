@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.database;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.SqliteConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
@@ -139,7 +140,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @return Returns a new DataStore generated from the database data
 	 */
 	public HashMap<UUID, Island> loadData() {
-		HashMap<UUID, Island> islands = new HashMap<>();
+		HashMap<UUID, Island> islands = Maps.newHashMap();
 
 		try (Statement statement = getConnection().createStatement()) {
 			ResultSet results = statement.executeQuery("SELECT * FROM islands");
@@ -174,7 +175,7 @@ public class SqliteDatabase implements IDatabase {
 	 * @return A hashmap of the ported islands
 	 */
 	private HashMap<UUID, Island> loadLegacyData() {
-		HashMap<UUID, Island> islands = new HashMap<>();
+		HashMap<UUID, Island> islands = Maps.newHashMap();
 
 		try (Statement statement = getConnection().createStatement()) {
 			ResultSet results = statement.executeQuery("SELECT * FROM islands");
