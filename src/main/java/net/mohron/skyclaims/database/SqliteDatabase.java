@@ -155,7 +155,7 @@ public class SqliteDatabase implements IDatabase {
 				boolean locked = results.getBoolean("locked");
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
-				SkyClaims.getInstance().getLogger().debug(String.format("Loading %s, %s, %s, %s, %s", islandId, ownerId, claimId, spawnLocation.toString(), locked));
+//				SkyClaims.getInstance().getLogger().debug(String.format("Loading %s, %s, %s, %s, %s", islandId, ownerId, claimId, spawnLocation.toString(), locked));
 				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
 
 				islands.put(islandId, island);

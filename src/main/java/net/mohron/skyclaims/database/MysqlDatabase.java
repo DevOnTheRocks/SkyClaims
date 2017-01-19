@@ -98,6 +98,7 @@ public class MysqlDatabase implements IDatabase {
 			SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
 		}
 
+		SkyClaims.getInstance().getLogger().info("Loaded SkyClaims MySQL Data. Count: " + islands.size());
 		return islands;
 	}
 
