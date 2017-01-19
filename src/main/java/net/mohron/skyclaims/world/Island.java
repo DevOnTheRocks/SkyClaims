@@ -84,7 +84,8 @@ public class Island {
 		} else {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(owner, getRegion());
-				//save(); TODO: Need to save if a new claim is created but after data loading completes
+				//Send to Save Queue
+				PLUGIN.queueForSaving(this);
 			} catch (CreateIslandException e) {
 				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
@@ -204,7 +205,7 @@ public class Island {
 		return new Region(getSpawn().getChunkPosition().getX() >> 5, getSpawn().getChunkPosition().getZ() >> 5);
 	}
 
-	private void save() {
+	public void save() {
 		SkyClaims.islands.put(id, this);
 		PLUGIN.getDatabase().saveIsland(this);
 	}
