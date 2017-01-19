@@ -86,6 +86,7 @@ public class Island {
 		} else {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(owner, getRegion());
+				save();
 			} catch (CreateIslandException e) {
 				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
