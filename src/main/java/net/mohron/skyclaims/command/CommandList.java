@@ -54,7 +54,7 @@ public class CommandList implements CommandExecutor {
 			if (island.isLocked() && ((player == null || !island.hasPermissions(player)) || !src.hasPermission(Permissions.COMMAND_LIST_ALL)))
 				continue;
 			Text name = Text.of((island.isLocked()) ? TextColors.DARK_PURPLE : TextColors.AQUA, island.getName());
-			Text coords = Text.of(TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ", TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ") - ");
+			Text coords = Text.of(TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ", TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ")");
 
 			listText.add(Text.of(
 					name.toBuilder()
@@ -62,10 +62,7 @@ public class CommandList implements CommandExecutor {
 							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))),
 					coords.toBuilder()
 							.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
-							.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn()))),
-					TextColors.GREEN, Text.builder("Claim").
-							onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), createReturnConsumer(src))))
-							.onHover(TextActions.showText(Text.of("Click here to view claim info.")))
+							.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn())))
 			));
 		}
 		if (listText.isEmpty())
