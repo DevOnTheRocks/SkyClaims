@@ -1,5 +1,6 @@
 package net.mohron.skyclaims.command;
 
+import me.ryanhamshire.griefprevention.api.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
@@ -87,6 +88,8 @@ public class CommandInfo implements CommandExecutor {
 				}
 			}
 
+			Claim claim = island.getClaim();
+
 			Text infoText = Text.of(
 					TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), "\n",
 					TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",
@@ -96,9 +99,11 @@ public class CommandInfo implements CommandExecutor {
 					TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, "z", "\n",
 					TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), "\n",
 					TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), "\n",
-					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getClaim().getOwnerUniqueId().toString())
-							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaim().getUniqueId().toString(), createReturnConsumer(src, island.getUniqueId().toString()))))
-							.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
+					(claim != null) ? Text.of(
+							TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(claim.getOwnerUniqueId().toString())
+									.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", claim.getUniqueId().toString(), createReturnConsumer(src, island.getUniqueId().toString()))))
+									.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
+					) : Text.EMPTY
 			);
 
 			PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island Info")).padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-")).contents(infoText);

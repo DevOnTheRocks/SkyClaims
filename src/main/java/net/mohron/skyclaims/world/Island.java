@@ -118,6 +118,7 @@ public class Island {
 				SkyClaims.islandClaims.add(this.claim);
 			} catch (CreateIslandException e) {
 				PLUGIN.getLogger().warn(String.format("Failed to get %s's island claim.", getName()));
+				return null;
 			}
 		}
 		return this.claim;
