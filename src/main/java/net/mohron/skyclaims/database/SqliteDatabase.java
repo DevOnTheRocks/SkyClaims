@@ -2,7 +2,6 @@ package net.mohron.skyclaims.database;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.config.type.SqliteConfig;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
@@ -155,6 +154,7 @@ public class SqliteDatabase implements IDatabase {
 				boolean locked = results.getBoolean("locked");
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
+				SkyClaims.getInstance().getLogger().debug(String.format("Loading %s, %s, %s, %s, %s", islandId.node(), ownerId.node(), claimId.node(), spawnLocation.toString(), locked));
 				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
 
 				islands.put(islandId, island);
@@ -164,6 +164,7 @@ public class SqliteDatabase implements IDatabase {
 			SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
 		}
 
+		SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Data. Count: " + islands.size());
 		return islands;
 	}
 
@@ -196,6 +197,7 @@ public class SqliteDatabase implements IDatabase {
 			SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
 		}
 
+		SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Legacy Data. Count: " + islands.size());
 		return islands;
 	}
 
