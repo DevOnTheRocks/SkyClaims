@@ -32,7 +32,7 @@ public class Island {
 
 	private UUID id;
 	private UUID owner;
-	private Claim claim;
+	private UUID claim;
 	private Location<World> spawn;
 	private boolean locked;
 
@@ -50,7 +50,7 @@ public class Island {
 		this.locked = false;
 
 		// Create the island claim
-		this.claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region);
+		this.claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region).getUniqueId();
 
 		// Run commands defined in config on creation
 		ConfigUtil.getCreateCommands().ifPresent(commands -> {
@@ -76,14 +76,10 @@ public class Island {
 		// 2nd attempt to find claim by location
 		// Finally create a new claim after removing all overlapping claims if any
 		if (CLAIM_MANAGER.getClaimByUUID(claimId).isPresent()) {
-			this.claim = CLAIM_MANAGER.getClaimByUUID(claimId).get();
-
-			// Set claim to not expire or be resizable, if not already
-			if (this.claim.getClaimData().isResizable()) this.claim.getClaimData().setResizable(false);
-			if (this.claim.getClaimData().allowClaimExpiration()) this.claim.getClaimData().setClaimExpiration(false);
+			this.claim = claimId;
 		} else {
 			try {
-				this.claim = ClaimUtil.createIslandClaim(owner, getRegion());
+				this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
 				//Send to Save Queue
 				PLUGIN.queueForSaving(this);
 			} catch (CreateIslandException e) {
@@ -114,27 +110,20 @@ public class Island {
 		}
 	}
 
-	public Claim getClaim() {
-		Optional<Claim> claim = CLAIM_MANAGER.getClaimByUUID(this.claim.getUniqueId());
-		if (!claim.isPresent()) {
-			SkyClaims.islandClaims.remove(this.claim);
-			try {
-				this.claim = ClaimUtil.createIslandClaim(owner, getRegion());
-				SkyClaims.islandClaims.add(this.claim);
-			} catch (CreateIslandException e) {
-				PLUGIN.getLogger().warn(String.format("Failed to get %s's island claim.", getName()));
-				return null;
-			}
-		}
-		return this.claim;
+	public UUID getClaimUniqueId() {
+		return claim;
+	}
+
+	public Optional<Claim> getClaim() {
+		return CLAIM_MANAGER.getClaimByUUID(this.claim);
 	}
 
 	public Date getDateCreated() {
-		return Date.from(claim.getClaimData().getDateCreated());
+		return (getClaim().isPresent()) ? Date.from(getClaim().get().getClaimData().getDateCreated()) : null;
 	}
 
 	public Text getName() {
-		return (claim.getName().isPresent()) ? claim.getName().get() : Text.of(getOwnerName(), "'s Island");
+		return (getClaim().isPresent()) ? (getClaim().get().getName().isPresent()) ? getClaim().get().getName().get() : Text.of(getOwnerName(), "'s Island") : Text.of(getOwnerName(), "'s Island");
 	}
 
 	public boolean isLocked() {
@@ -143,7 +132,7 @@ public class Island {
 
 	public void setLocked(boolean locked) {
 		this.locked = locked;
-		ClaimUtil.setEntryFlag(claim, locked);
+		// Set protection flags if possible
 		save();
 	}
 
@@ -170,25 +159,27 @@ public class Island {
 	}
 
 	public int getRadius() {
-		return (claim.getGreaterBoundaryCorner().getBlockX() - claim.getLesserBoundaryCorner().getBlockX()) / 2;
+		return (getClaim().isPresent()) ? (getClaim().get().getGreaterBoundaryCorner().getBlockX() - getClaim().get().getLesserBoundaryCorner().getBlockX()) / 2 : 256;
 	}
 
 	public Set<UUID> getMembers() {
 		Set<UUID> members = Sets.newHashSet();
-		for (UUID member : claim.getTrustManager().getBuilders()) {
+		if (!getClaim().isPresent()) return members;
+		for (UUID member : getClaim().get().getTrustManager().getBuilders()) {
 			members.add(member);
 		}
-		for (UUID member : claim.getTrustManager().getManagers()) {
+		for (UUID member : getClaim().get().getTrustManager().getManagers()) {
 			members.add(member);
 		}
 		return members;
 	}
 
 	public boolean hasPermissions(Player player) {
-		return player.getUniqueId().equals(claim.getOwnerUniqueId())
-				|| claim.getTrustManager().getContainers().contains(player.getUniqueId())
-				|| claim.getTrustManager().getBuilders().contains(player.getUniqueId())
-				|| claim.getTrustManager().getManagers().contains(player.getUniqueId());
+		return player.getUniqueId().equals(owner)
+				|| getClaim().isPresent()
+				&& (getClaim().get().getTrustManager().getContainers().contains(player.getUniqueId())
+				|| getClaim().get().getTrustManager().getBuilders().contains(player.getUniqueId())
+				|| getClaim().get().getTrustManager().getManagers().contains(player.getUniqueId()));
 	}
 
 	public Set<Player> getPlayers() {
@@ -211,8 +202,10 @@ public class Island {
 	}
 
 	public void delete() {
-		CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build());
-		SkyClaims.islandClaims.remove(claim);
+		getClaim().ifPresent(claim -> {
+			CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build());
+			SkyClaims.islandClaims.remove(claim);
+		});
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 		SkyClaims.islands.remove(id);

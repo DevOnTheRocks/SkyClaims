@@ -223,7 +223,7 @@ public class SqliteDatabase implements IDatabase {
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
 			statement.setString(2, island.getOwnerUniqueId().toString());
-			statement.setString(3, island.getClaim().getUniqueId().toString());
+			statement.setString(3, island.getClaimUniqueId().toString());
 			statement.setInt(4, island.getSpawn().getBlockX());
 			statement.setInt(5, island.getSpawn().getBlockY());
 			statement.setInt(6, island.getSpawn().getBlockZ());

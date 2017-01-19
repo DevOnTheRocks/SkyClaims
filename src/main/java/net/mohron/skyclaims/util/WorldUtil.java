@@ -34,19 +34,21 @@ public class WorldUtil {
 	}
 
 	public static void setIslandBiome(Island island, BiomeType biomeType) {
-		int x1 = island.getClaim().getLesserBoundaryCorner().getBlockX();
-		int x2 = island.getClaim().getGreaterBoundaryCorner().getBlockX();
-		int z1 = island.getClaim().getLesserBoundaryCorner().getBlockZ();
-		int z2 = island.getClaim().getGreaterBoundaryCorner().getBlockZ();
-		for (int x = x1; x < x2; x++) {
-			for (int z = z1; z < z2; z++) {
-				island.getWorld().setBiome(
-						x,
-						0,
-						z,
-						biomeType);
+		if (island.getClaim().isPresent()) {
+			int x1 = island.getClaim().get().getLesserBoundaryCorner().getBlockX();
+			int x2 = island.getClaim().get().getGreaterBoundaryCorner().getBlockX();
+			int z1 = island.getClaim().get().getLesserBoundaryCorner().getBlockZ();
+			int z2 = island.getClaim().get().getGreaterBoundaryCorner().getBlockZ();
+			for (int x = x1; x < x2; x++) {
+				for (int z = z1; z < z2; z++) {
+					island.getWorld().setBiome(
+							x,
+							0,
+							z,
+							biomeType);
+				}
 			}
-		}
+		} else setRegionBiome(island.getRegion(), biomeType);
 	}
 
 	public static void setRegionBiome(Region region, BiomeType biomeType) {
