@@ -146,23 +146,14 @@ public class SqliteDatabase implements IDatabase {
 
 			while (results.next()) {
 				UUID islandId = UUID.fromString(results.getString("island"));
-				SkyClaims.getInstance().getLogger().debug("Loading: " + islandId);
 				UUID ownerId = UUID.fromString(results.getString("owner"));
-				SkyClaims.getInstance().getLogger().debug("Loading: " + ownerId);
 				UUID claimId = UUID.fromString(results.getString("claim"));
-				SkyClaims.getInstance().getLogger().debug("Loading: " + claimId);
 				int x = results.getInt("spawnX");
-				SkyClaims.getInstance().getLogger().debug("Loading: " + x);
 				int y = results.getInt("spawnY");
-				SkyClaims.getInstance().getLogger().debug("Loading: " + y);
 				int z = results.getInt("spawnZ");
-				SkyClaims.getInstance().getLogger().debug("Loading: " + z);
 				boolean locked = results.getBoolean("locked");
-				SkyClaims.getInstance().getLogger().debug("Loading: " + locked);
 
 				Vector3i spawnLocation = new Vector3i(x, y, z);
-				SkyClaims.getInstance().getLogger().debug("Loading: " + spawnLocation.toString());
-
 				SkyClaims.getInstance().getLogger().debug(String.format("Loading %s, %s, %s, %s, %s", islandId, ownerId, claimId, spawnLocation.toString(), locked));
 				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
 
