@@ -102,11 +102,16 @@ public class Island {
 	}
 
 	public String getOwnerName() {
-		return (getOwner().isPresent()) ? getOwner().get().getName() : "Somebody";
-	}
-
-	public Optional<User> getOwner() {
-		return PLUGIN.getGame().getServiceManager().provide(UserStorageService.class).get().get(owner);
+		Optional<User> player = PLUGIN.getGame().getServiceManager().provide(UserStorageService.class).get().get(owner);
+		if (player.isPresent()) {
+			return player.get().getName();
+		} else {
+			try {
+				return PLUGIN.getGame().getServer().getGameProfileManager().get(owner).get().getName().get();
+			} catch (Exception e) {
+				return "somebody";
+			}
+		}
 	}
 
 	public Claim getClaim() {
