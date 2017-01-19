@@ -1,4 +1,11 @@
 # Change Log
+### Beta 10
+- Added log on successful DB load
+- Fixed new claims failing to generate on DB load (which prevented successful data loading)
+- Removed claim from `/is list`
+- Fix possible NPE fro `/is info`
+- Improved username resolution (less "somebody")
+- Save islands that required a new claim on startup
 ### Beta 9
 **REQUIRES: SF 2022+ & GP 229+ (latest versions are highly recommended)**
 - Renamed option `skyclaims.min-radius` to `skyclaims.initial-size`
