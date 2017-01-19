@@ -36,7 +36,6 @@ public class Island {
 	private Location<World> spawn;
 	private boolean locked;
 
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public Island(User owner, String schematic) throws CreateIslandException {
 		this.id = UUID.randomUUID();
 		this.owner = owner.getUniqueId();
@@ -67,7 +66,6 @@ public class Island {
 		save();
 	}
 
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public Island(UUID id, UUID owner, UUID claimId, Vector3i spawnLocation, boolean locked) {
 		this.id = id;
 		this.owner = owner;
@@ -86,7 +84,7 @@ public class Island {
 		} else {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(owner, getRegion());
-				save();
+				//save(); TODO: Need to save if a new claim is created but after data loading completes
 			} catch (CreateIslandException e) {
 				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
@@ -101,6 +99,7 @@ public class Island {
 		return owner;
 	}
 
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public String getOwnerName() {
 		Optional<User> player = PLUGIN.getGame().getServiceManager().provide(UserStorageService.class).get().get(owner);
 		if (player.isPresent()) {
@@ -205,7 +204,7 @@ public class Island {
 		return new Region(getSpawn().getChunkPosition().getX() >> 5, getSpawn().getChunkPosition().getZ() >> 5);
 	}
 
-	public void save() {
+	private void save() {
 		SkyClaims.islands.put(id, this);
 		PLUGIN.getDatabase().saveIsland(this);
 	}
