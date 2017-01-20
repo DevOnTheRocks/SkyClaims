@@ -1,4 +1,10 @@
 # Change Log
+### Beta 11
+- Fixes saving new claim ids, if required, after DB loading completes
+- More changes to prevent claim related errors from breaking the plugin (`/is create` will still fail, by design)
+- Create DB connection on initialization instead of on each query
+- Replaced "+" in biome names with "plus"
+- Region centers are calculated with "double" accuracy
 ### Beta 10
 - Added log on successful DB load
 - Fixed new claims failing to generate on DB load (which prevented successful data loading)
