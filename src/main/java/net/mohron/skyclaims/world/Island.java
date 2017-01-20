@@ -46,8 +46,8 @@ public class Island {
 		} catch (InvalidRegionException e) {
 			throw new CreateIslandException(e.getText());
 		}
-		this.spawn = region.getCenterBlock();
-		PLUGIN.getLogger().info(String.format("Set Island spawn to %s", region.getCenterBlock().toString()));
+		this.spawn = region.getCenter();
+		PLUGIN.getLogger().info(String.format("Set Island spawn to %s", region.getCenter().toString()));
 		this.locked = false;
 
 		// Create the island claim

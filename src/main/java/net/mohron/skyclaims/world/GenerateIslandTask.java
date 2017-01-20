@@ -55,9 +55,10 @@ public class GenerateIslandTask implements Runnable {
 		} catch (InvalidDataException e) {
 			volume = DataTranslators.LEGACY_SCHEMATIC.translate(schematicData);
 			PLUGIN.getLogger().warn("Loaded legacy schematic: " + e.getMessage());
+			return;
 		}
 
-		Location<World> centerBlock = island.getRegion().getCenterBlock();
+		Location<World> centerBlock = island.getRegion().getCenter();
 		// Loads center chunks
 		for (int x = -1; x <= 1; x++) {
 			for (int z = -1; z <= 1; z++) {

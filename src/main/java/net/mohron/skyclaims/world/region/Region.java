@@ -32,12 +32,12 @@ public class Region {
 		return new Coordinate((((x + 1) << 5) << 4) - 1, (((z + 1) << 5) << 4) - 1);
 	}
 
-	public Location<World> getCenterBlock() {
+	public Location<World> getCenter() {
 		return new Location<>(
 				ConfigUtil.getWorld(),
-				(getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2,
+				(getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2.0,
 				ConfigUtil.getIslandHeight(),
-				(getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2
+				(getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2.0
 		);
 	}
 

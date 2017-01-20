@@ -69,8 +69,8 @@ public class ClaimUtil {
 		return Claim.builder()
 				.world(ConfigUtil.getWorld())
 				.bounds(
-						new Vector3i(region.getCenterBlock().getX() + claimRadius, 0, region.getCenterBlock().getZ() + claimRadius),
-						new Vector3i(region.getCenterBlock().getX() - claimRadius, 255, region.getCenterBlock().getZ() - claimRadius)
+						new Vector3i(region.getCenter().getBlockX() + claimRadius, 0, region.getCenter().getBlockZ() + claimRadius),
+						new Vector3i(region.getCenter().getBlockX() - claimRadius, 255, region.getCenter().getBlockZ() - claimRadius)
 				)
 				.owner(ownerUniqueId)
 				.type(ClaimType.BASIC)
