@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface IDatabase {
 	HashMap<UUID, Island> loadData();
 
-	void saveData(Collection< Island> islands);
+	void saveData(Collection<Island> islands);
 
 	void saveData(Map<UUID, Island> islands);
 
