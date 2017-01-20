@@ -24,7 +24,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class CommandInfo implements CommandExecutor {
-
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
 	public static String helpText = "display detailed information on your island";

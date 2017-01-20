@@ -144,6 +144,7 @@ public class SkyClaims {
 		addCustomMetrics();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
+		getLogger().info("Saving " + saveQueue.size() + " claims that were malformed");
 
 		for (int ix = 0; ix < saveQueue.size(); ix++) {
 			saveQueue.poll().save();

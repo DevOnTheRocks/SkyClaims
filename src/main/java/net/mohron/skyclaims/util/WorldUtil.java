@@ -1,13 +1,26 @@
 package net.mohron.skyclaims.util;
 
+import me.ryanhamshire.griefprevention.api.claim.Claim;
+import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.region.Region;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
+import org.spongepowered.api.world.storage.WorldProperties;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 
 public class WorldUtil {
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
+
+
 	public static World getDefaultWorld() {
 		String defaultWorldName = SkyClaims.getInstance().getGame().getServer().getDefaultWorldName();
 		return SkyClaims.getInstance().getGame().getServer().getWorld(defaultWorldName).get();

@@ -1,5 +1,7 @@
 package net.mohron.skyclaims.world;
 
+
+
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Sets;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
@@ -35,9 +37,11 @@ public class Island {
 	private UUID claim;
 	private Location<World> spawn;
 	private boolean locked;
+	private Claim workingClaim;
 
 	public Island(User owner, String schematic) throws CreateIslandException {
 		this.id = UUID.randomUUID();
+
 		this.owner = owner.getUniqueId();
 		Region region;
 		try {
@@ -71,19 +75,22 @@ public class Island {
 		this.owner = owner;
 		this.spawn = new Location<>(ConfigUtil.getWorld(), spawnLocation);
 		this.locked = locked;
-
+		this.claim = claimId;
 		// 1st attempt to load claim by ID
 		// 2nd attempt to find claim by location
 		// Finally create a new claim after removing all overlapping claims if any
+
 		if (CLAIM_MANAGER.getClaimByUUID(claimId).isPresent()) {
 			this.claim = claimId;
 		} else {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
 				//Send to Save Queue
-				PLUGIN.queueForSaving(this);
+				//PLUGIN.queueForSaving(this);
+				delete();
+
 			} catch (CreateIslandException e) {
-				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
+				//PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
 		}
 	}
