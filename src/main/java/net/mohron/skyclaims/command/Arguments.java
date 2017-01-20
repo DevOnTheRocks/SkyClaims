@@ -124,6 +124,6 @@ public class Arguments {
 	}
 
 	private static String getCommandArg(BiomeType biomeType) {
-		return biomeType.getName().replaceAll(" ", "_").toLowerCase();
+		return biomeType.getName().replaceAll(" ", "_").replaceAll("[+]", "_plus").toLowerCase();
 	}
 }
