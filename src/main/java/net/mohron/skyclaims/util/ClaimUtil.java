@@ -10,11 +10,14 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.region.Region;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ClaimUtil {
@@ -35,7 +38,8 @@ public class ClaimUtil {
 					CLAIM_MANAGER.addClaim(claim, Cause.source(PLUGIN).build());
 					SkyClaims.islandClaims.add(claim);
 					PLUGIN.getLogger().debug(String.format(
-							"Creating claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
+							"Creating %s's claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
+							getName(ownerUniqueId),
 							region.getX(), region.getZ(),
 							claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
 							claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
@@ -47,7 +51,8 @@ public class ClaimUtil {
 					break;
 				case OVERLAPPING_CLAIM:
 					CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
-					PLUGIN.getLogger().info(String.format("Removing overlapping claim (Owner: %s, ID: %s).",
+					PLUGIN.getLogger().info(String.format("Removing claim overlapping %s's island (Owner: %s, ID: %s).",
+							getName(ownerUniqueId),
 							claimResult.getClaim().get().getOwnerName(),
 							claimResult.getClaim().get().getUniqueId()
 					));
@@ -111,5 +116,19 @@ public class ClaimUtil {
 
 	public static void setEntryFlag(Claim claim, boolean entry) {
 		// Set ENTER_CLAIM flag in the claim supplied to the defined value
+	}
+
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	private static String getName(UUID uuid) {
+		Optional<User> user = PLUGIN.getGame().getServiceManager().provide(UserStorageService.class).get().get(uuid);
+		if (user.isPresent()) {
+			return user.get().getName();
+		} else {
+			try {
+				return PLUGIN.getGame().getServer().getGameProfileManager().get(uuid).get().getName().get();
+			} catch (Exception e) {
+				return "somebody";
+			}
+		}
 	}
 }
