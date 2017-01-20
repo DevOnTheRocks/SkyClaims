@@ -120,7 +120,7 @@ public class SqliteDatabase implements IDatabase {
 	 * Creates a file backup of the existing database in the configured directory
 	 */
 	public void backup() {
-		File inputFile = new File(String.format("%s%s%s.db", databaseLocation, File.pathSeparator, databaseName));
+		File inputFile = new File(String.format("%s%s%s.db", databaseLocation, File.separator, databaseName));
 		File outputFile = new File(String.format("%s%s%s_backup.db", databaseLocation, File.separator, databaseName));
 
 		byte[] buffer = new byte[1024];
