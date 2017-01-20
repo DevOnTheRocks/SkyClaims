@@ -9,9 +9,11 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -30,6 +32,7 @@ public class CommandList implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_LIST)
 			.description(Text.of(helpText))
+			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.user(Arguments.USER))))
 			.executor(new CommandList())
 			.build();
 
@@ -50,9 +53,14 @@ public class CommandList implements CommandExecutor {
 		Player player = null;
 		if (src instanceof Player) player = (Player) src;
 
+		User user = (User) args.getOne(Arguments.USER).orElse(null);
+
 		for (Island island : SkyClaims.islands.values()) {
 			if (island.isLocked() && ((player == null || !island.hasPermissions(player)) || !src.hasPermission(Permissions.COMMAND_LIST_ALL)))
 				continue;
+			if (user != null && !island.hasPermissions(user))
+				continue;
+
 			Text name = Text.of((island.isLocked()) ? TextColors.DARK_PURPLE : TextColors.AQUA, island.getName());
 			Text coords = Text.of(TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ", TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ")");
 

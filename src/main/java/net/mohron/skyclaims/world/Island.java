@@ -172,7 +172,7 @@ public class Island {
 		return members;
 	}
 
-	public boolean hasPermissions(Player player) {
+	public boolean hasPermissions(User player) {
 		return player.getUniqueId().equals(owner)
 				|| getClaim().isPresent()
 				&& (getClaim().get().getTrustManager().getContainers().contains(player.getUniqueId())
