@@ -35,7 +35,6 @@ public class Island {
 	private UUID claim;
 	private Location<World> spawn;
 	private boolean locked;
-	private Claim workingClaim;
 
 	public Island(User owner, String schematic) throws CreateIslandException {
 		this.id = UUID.randomUUID();
@@ -74,21 +73,15 @@ public class Island {
 		this.spawn = new Location<>(ConfigUtil.getWorld(), spawnLocation);
 		this.locked = locked;
 		this.claim = claimId;
-		// 1st attempt to load claim by ID
-		// 2nd attempt to find claim by location
-		// Finally create a new claim after removing all overlapping claims if any
 
 		if (CLAIM_MANAGER.getClaimByUUID(claimId).isPresent()) {
 			this.claim = claimId;
 		} else {
 			try {
 				this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
-				//Send to Save Queue
-				//PLUGIN.queueForSaving(this);
-				delete();
-
+				PLUGIN.queueForSaving(this);
 			} catch (CreateIslandException e) {
-				//PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
+				PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
 			}
 		}
 	}
