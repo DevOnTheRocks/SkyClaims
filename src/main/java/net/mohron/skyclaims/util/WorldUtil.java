@@ -1,19 +1,12 @@
 package net.mohron.skyclaims.util;
 
-import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.region.Region;
-import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
-import org.spongepowered.api.world.storage.WorldProperties;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 
 public class WorldUtil {

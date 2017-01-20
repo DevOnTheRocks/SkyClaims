@@ -5,7 +5,6 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.IslandUtil;
-import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.RegenerateRegionTask;
 import org.spongepowered.api.command.CommandException;

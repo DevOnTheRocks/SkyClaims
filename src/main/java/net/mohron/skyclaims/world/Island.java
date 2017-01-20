@@ -1,7 +1,6 @@
 package net.mohron.skyclaims.world;
 
 
-
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Sets;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
