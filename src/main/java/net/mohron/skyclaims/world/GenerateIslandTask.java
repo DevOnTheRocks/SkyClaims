@@ -9,6 +9,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
+import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Location;
@@ -48,7 +49,13 @@ public class GenerateIslandTask implements Runnable {
 			return;
 		}
 
-		ArchetypeVolume volume = DataTranslators.SCHEMATIC.translate(schematicData);
+		ArchetypeVolume volume;
+		try {
+			volume = DataTranslators.SCHEMATIC.translate(schematicData);
+		} catch (InvalidDataException e) {
+			volume = DataTranslators.LEGACY_SCHEMATIC.translate(schematicData);
+			PLUGIN.getLogger().warn("Loaded legacy schematic: " + e.getMessage());
+		}
 
 		Location<World> centerBlock = island.getRegion().getCenterBlock();
 		// Loads center chunks
