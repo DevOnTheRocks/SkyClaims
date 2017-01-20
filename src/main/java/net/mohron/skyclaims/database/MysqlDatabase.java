@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -100,6 +101,11 @@ public class MysqlDatabase implements IDatabase {
 
 		SkyClaims.getInstance().getLogger().info("Loaded SkyClaims MySQL Data. Count: " + islands.size());
 		return islands;
+	}
+
+	public void saveData(Collection<Island> islands) {
+		for (Island island : islands)
+			saveIsland(island);
 	}
 
 	public void saveData(Map<UUID, Island> islands) {

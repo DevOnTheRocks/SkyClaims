@@ -1,6 +1,5 @@
 package net.mohron.skyclaims;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -37,7 +36,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 
 import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -57,8 +55,8 @@ public class SkyClaims {
 	private static GriefPreventionApi griefPrevention;
 	private static PermissionService permissionService;
 	public static Map<UUID, Island> islands = Maps.newHashMap();
-	private static LinkedList<Island> saveQueue = Lists.newLinkedList();
 	public static Set<Claim> islandClaims = Sets.newHashSet();
+	private static Set<Island> saveQueue = Sets.newHashSet();
 
 	@Inject
 	private PluginContainer pluginContainer;
@@ -144,10 +142,10 @@ public class SkyClaims {
 		addCustomMetrics();
 		getLogger().info("ISLAND LENGTH: " + islands.size());
 		getLogger().info("Initialization complete.");
-		getLogger().info("Saving " + saveQueue.size() + " claims that were malformed");
 
-		for (int ix = 0; ix < saveQueue.size(); ix++) {
-			saveQueue.poll().save();
+		if (!saveQueue.isEmpty()) {
+			getLogger().info("Saving " + saveQueue.size() + " claims that were malformed");
+			database.saveData(saveQueue);
 		}
 	}
 

@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -210,6 +211,16 @@ public class SqliteDatabase implements IDatabase {
 
 		SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Legacy Data. Count: " + islands.size());
 		return islands;
+	}
+
+	/**
+	 * Inserts/Updates the database with the data-storage in memory
+	 *
+	 * @param islands The collection in memory to pull the data from
+	 */
+	public void saveData(Collection<Island> islands) {
+		for (Island island : islands)
+			saveIsland(island);
 	}
 
 	/**
