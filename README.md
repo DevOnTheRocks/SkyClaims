@@ -1,4 +1,4 @@
-# SkyClaims [![Build Status](https://travis-ci.org/DevOnTheRocks/SkyClaims.svg?branch=development)](https://travis-ci.org/DevOnTheRocks/SkyClaims)
+# SkyClaims [![Build Status](https://travis-ci.org/DevOnTheRocks/SkyClaims.svg?branch=development)](http://ci.devonthe.rocks/job/SkyClaims/)
 SkyClaims is a plugin/addon for SkyBlock servers that run [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) for protection.
 Instead of reinventing the wheel and adding custom protection for islands, SkyClaims will implement claims from one of Sponge's most powerful plugins,  GriefPrevention!
 With this design, nearly every GriefPrevention feature will be available to players for managing their islands.
@@ -17,7 +17,7 @@ This plugin is in Beta but I expect to have a release soon™. Live support for 
 - Add an island messaging channel so you can chat within your island _(for after release)_
 
 ### Required Plugins
-- [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) -  1.10.2-2.3.0.229+
+- [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-2.3.0.229+
 
 ### More details are available on our [Wiki](https://github.com/DevOnTheRocks/SkyClaims/wiki/).
 
