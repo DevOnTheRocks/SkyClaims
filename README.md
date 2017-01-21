@@ -1,9 +1,4 @@
-# SkyClaims 
-
-| CI            | Status        |
-|:-------------:|:-------------:|
-| Travis        | [![Build Status](https://travis-ci.org/DevOnTheRocks/SkyClaims.svg?branch=development)](https://travis-ci.org/DevOnTheRocks/SkyClaims) |
-| Jenkins       | [![Build Status](http://ci.devonthe.rocks/buildStatus/icon?job=SkyClaims)](http://ci.devonthe.rocks/job/SkyClaims/) |
+# SkyClaims [![Build Status](http://ci.devonthe.rocks/buildStatus/icon?job=SkyClaims)](http://ci.devonthe.rocks/job/SkyClaims/)
 
 SkyClaims is a plugin/addon for SkyBlock servers that run [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) for protection.
 Instead of reinventing the wheel and adding custom protection for islands, SkyClaims will implement claims from one of Sponge's most powerful plugins,  GriefPrevention!
