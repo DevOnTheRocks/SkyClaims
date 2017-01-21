@@ -47,66 +47,64 @@ public class CommandInfo implements CommandExecutor {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player) && !args.hasAny(Arguments.UUID)) {
-			throw new CommandException(Text.of(TextColors.RED, "You must supply an island uuid use this command."));
-		} else {
+		if (!(src instanceof Player) && !args.hasAny(Arguments.UUID))
+			throw new CommandException(Text.of(TextColors.RED, "You must supply an island uuid to use this command."));
 
-			Optional<Island> islandOptional;
-			UUID uuid = null;
-			if (args.hasAny(Arguments.UUID)) {
-				try {
-					uuid = UUID.fromString((String) args.getOne(Arguments.UUID).get());
-				} catch (IllegalArgumentException e) {
-					throw new CommandException(Text.of(TextColors.RED, "The island id supplied is not a valid UUID."));
-				}
+		Optional<Island> islandOptional;
+		UUID uuid = null;
+		String uuidArgument = (String) args.getOne(Arguments.UUID).orElse(null);
+		if (uuidArgument != null) {
+			try {
+				uuid = UUID.fromString(uuidArgument);
+			} catch (IllegalArgumentException e) {
+				throw new CommandException(Text.of(TextColors.RED, "The island id supplied is not a valid UUID."));
 			}
-
-			if (uuid != null)
-				islandOptional = IslandUtil.getIsland(uuid);
-			else
-				//noinspection ConstantConditions - Other src types have to supply a UUID and will never reach this line
-				islandOptional = IslandUtil.getIslandByLocation(((Player) src).getLocation());
-
-
-			if (!islandOptional.isPresent()) {
-				if (uuid != null)
-					throw new CommandException(Text.of(TextColors.RED, "The UUID supplied does not have a corresponding island."));
-				throw new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command."));
-			}
-
-			Island island = islandOptional.get();
-			Text members = Text.of(TextColors.YELLOW, "Members", TextColors.WHITE, " : ");
-			if (island.getMembers().isEmpty())
-				members = members.concat(Text.of(TextColors.GRAY, "None"));
-			else {
-				int i = 1;
-				for (UUID member : island.getMembers()) {
-					members = Text.join(members, Text.of(TextColors.AQUA, member.toString(), TextColors.GRAY, (i == island.getMembers().size()) ? "" : ", "));
-					i++;
-				}
-			}
-
-			Text infoText = Text.of(
-					TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), "\n",
-					TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",
-					members, "\n",
-					TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getRadius() * 2, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getRadius() * 2, "\n",
-					TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockX(), TextColors.GRAY, "x ",
-					TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, "z", "\n",
-					TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), "\n",
-					TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), "\n",
-					(island.getClaim().isPresent()) ? Text.of(
-							TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getClaimUniqueId().toString())
-									.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaimUniqueId().toString(), createReturnConsumer(src, island.getUniqueId().toString()))))
-									.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
-					) : Text.EMPTY
-			);
-
-			PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island Info")).padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-")).contents(infoText);
-			paginationBuilder.sendTo(src);
-
-			return CommandResult.success();
 		}
+
+		if (uuid != null)
+			islandOptional = IslandUtil.getIsland(uuid);
+		else
+			//noinspection ConstantConditions - Other src types have to supply a UUID and will never reach this line
+			islandOptional = IslandUtil.getIslandByLocation(((Player) src).getLocation());
+
+		if (!islandOptional.isPresent()) {
+			if (uuid != null)
+				throw new CommandException(Text.of(TextColors.RED, "The UUID supplied does not have a corresponding island."));
+			throw new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command."));
+		}
+
+		Island island = islandOptional.get();
+		Text members = Text.of(TextColors.YELLOW, "Members", TextColors.WHITE, " : ");
+		if (island.getMembers().isEmpty())
+			members = members.concat(Text.of(TextColors.GRAY, "None"));
+		else {
+			int i = 1;
+			for (UUID member : island.getMembers()) {
+				members = Text.join(members, Text.of(TextColors.AQUA, member.toString(), TextColors.GRAY, (i == island.getMembers().size()) ? "" : ", "));
+				i++;
+			}
+		}
+
+		Text infoText = Text.of(
+				TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), "\n",
+				TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",
+				members, "\n",
+				TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getRadius() * 2, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getRadius() * 2, "\n",
+				TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockX(), TextColors.GRAY, "x ",
+				TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, "z", "\n",
+				TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), "\n",
+				TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), "\n",
+				(island.getClaim().isPresent()) ? Text.of(
+						TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getClaimUniqueId().toString())
+								.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaimUniqueId().toString(), createReturnConsumer(src, island.getUniqueId().toString()))))
+								.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
+				) : Text.EMPTY
+		);
+
+		PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island Info")).padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-")).contents(infoText);
+		paginationBuilder.sendTo(src);
+
+		return CommandResult.success();
 	}
 
 	private static Consumer<CommandSource> createReturnConsumer(CommandSource src, String arguments) {
