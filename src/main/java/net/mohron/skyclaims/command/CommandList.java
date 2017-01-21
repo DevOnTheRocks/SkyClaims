@@ -32,7 +32,7 @@ public class CommandList implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_LIST)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.user(Arguments.USER))))
+			.arguments(GenericArguments.optionalWeak(GenericArguments.user(Arguments.USER)))
 			.executor(new CommandList())
 			.build();
 
