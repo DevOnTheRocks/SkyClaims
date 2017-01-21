@@ -194,6 +194,14 @@ public class Island {
 		return new Region(getSpawn().getChunkPosition().getX() >> 5, getSpawn().getChunkPosition().getZ() >> 5);
 	}
 
+	public void transfer(User user) {
+		getClaim().ifPresent(claim -> {
+			//transfer claim
+		});
+		this.owner = user.getUniqueId();
+		save();
+	}
+
 	public void save() {
 		SkyClaims.islands.put(id, this);
 		PLUGIN.getDatabase().saveIsland(this);
