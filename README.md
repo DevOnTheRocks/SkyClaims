@@ -1,7 +1,7 @@
 # SkyClaims 
 
 | CI            | Status        |
-| ------------- |:-------------:|
+|:-------------:|:-------------:|
 | Travis        | [![Build Status](https://travis-ci.org/DevOnTheRocks/SkyClaims.svg?branch=development)](https://travis-ci.org/DevOnTheRocks/SkyClaims) |
 | Jenkins       | [![Build Status](http://ci.devonthe.rocks/buildStatus/icon?job=SkyClaims)](http://ci.devonthe.rocks/job/SkyClaims/) |
 
