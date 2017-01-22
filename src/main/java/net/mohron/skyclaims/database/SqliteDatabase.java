@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class SqliteDatabase implements IDatabase {
+public class SqliteDatabase extends Database {
 	private SqliteConfig config;
 	private String databaseName;
 	private String databaseLocation;
@@ -52,31 +52,8 @@ public class SqliteDatabase implements IDatabase {
 	 * @return A Connection object to the database
 	 * @throws SQLException Thrown if connection issues are encountered
 	 */
-	private Connection getConnection() throws SQLException {
+	Connection getConnection() throws SQLException {
 		return dbConnection;
-	}
-
-	private void createTable() {
-		try (Statement statement = getConnection().createStatement()) {
-			statement.setQueryTimeout(30);
-
-			// Create the database schema
-			String table = "CREATE TABLE IF NOT EXISTS islands (" +
-					"island			STRING PRIMARY KEY," +
-					"owner			STRING," +
-					"claim			STRING," +
-					"spawnX			INT," +
-					"spawnY			INT," +
-					"spawnZ			INT," +
-					"locked			BOOLEAN" +
-					")";
-
-			// Create the islands table (execute statement)
-			statement.executeUpdate(table);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
-		}
 	}
 
 	/**
@@ -145,6 +122,7 @@ public class SqliteDatabase implements IDatabase {
 	 *
 	 * @return Returns a new DataStore generated from the database data
 	 */
+	@Override
 	public HashMap<UUID, Island> loadData() {
 		HashMap<UUID, Island> islands = Maps.newHashMap();
 
@@ -211,83 +189,5 @@ public class SqliteDatabase implements IDatabase {
 
 		SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Legacy Data. Count: " + islands.size());
 		return islands;
-	}
-
-	/**
-	 * Inserts/Updates the database with the data-storage in memory
-	 *
-	 * @param islands The collection in memory to pull the data from
-	 */
-	public void saveData(Collection<Island> islands) {
-		for (Island island : islands)
-			saveIsland(island);
-	}
-
-	/**
-	 * Inserts/Updates the database with the data-storage in memory
-	 *
-	 * @param islands The map in memory to pull the data from
-	 */
-	public void saveData(Map<UUID, Island> islands) {
-		for (Island island : islands.values())
-			saveIsland(island);
-	}
-
-	/**
-	 * Saves an individual island to the database
-	 *
-	 * @param island the island to save
-	 */
-	public void saveIsland(Island island) {
-		String sql = "REPLACE INTO islands(island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?, ?)";
-
-		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-			statement.setString(1, island.getUniqueId().toString());
-			statement.setString(2, island.getOwnerUniqueId().toString());
-			statement.setString(3, island.getClaimUniqueId().toString());
-			statement.setInt(4, island.getSpawn().getBlockX());
-			statement.setInt(5, island.getSpawn().getBlockY());
-			statement.setInt(6, island.getSpawn().getBlockZ());
-			statement.setBoolean(7, island.isLocked());
-
-			statement.execute();
-		} catch (SQLException e) {
-			SkyClaims.getInstance().getLogger().error(String.format("Error inserting Island into the database: %s", e.getMessage()));
-		}
-	}
-
-	/**
-	 * remove an individual island to the database
-	 *
-	 * @param island the island to remove
-	 */
-	public void removeIsland(Island island) {
-		String sql = "DELETE FROM islands WHERE island = ?";
-
-		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-			statement.setString(1, island.getUniqueId().toString());
-
-			statement.execute();
-		} catch (SQLException e) {
-			SkyClaims.getInstance().getLogger().error(String.format("Error removing Island from the database: %s", e.getMessage()));
-		}
-	}
-
-	/**
-	 * Count the columns of a row in the database
-	 *
-	 * @return The column count of the schema
-	 */
-	private int countColumns() {
-		int total = 0;
-
-		String sql = "SELECT * FROM islands LIMIT 1";
-		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-			return statement.executeQuery().getMetaData().getColumnCount();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return total;
 	}
 }
