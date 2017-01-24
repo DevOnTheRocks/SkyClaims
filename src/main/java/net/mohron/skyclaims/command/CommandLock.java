@@ -2,7 +2,6 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -43,7 +42,7 @@ public class CommandLock implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		Optional<Island> island = IslandUtil.getIslandByOwner(player.getUniqueId());
+		Optional<Island> island = Island.getByOwner(player.getUniqueId());
 
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must have an Island to run this command!"));

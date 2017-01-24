@@ -1,6 +1,6 @@
 package net.mohron.skyclaims.database;
 
-import com.flowpowered.math.vector.Vector3i;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.SqliteConfig;
@@ -14,9 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class SqliteDatabase extends Database {
@@ -143,7 +141,7 @@ public class SqliteDatabase extends Database {
 				int z = results.getInt("spawnZ");
 				boolean locked = results.getBoolean("locked");
 
-				Vector3i spawnLocation = new Vector3i(x, y, z);
+				Vector3d spawnLocation = new Vector3d(x, y, z);
 //				SkyClaims.getInstance().getLogger().debug(String.format("Loading %s, %s, %s, %s, %s", islandId, ownerId, claimId, spawnLocation.toString(), locked));
 				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
 
@@ -177,7 +175,7 @@ public class SqliteDatabase extends Database {
 				int z = results.getInt("z");
 
 				UUID id = UUID.randomUUID();
-				Vector3i spawnLocation = new Vector3i(x, y, z);
+				Vector3d spawnLocation = new Vector3d(x, y, z);
 				Island island = new Island(id, ownerId, claimId, spawnLocation, false);
 
 				islands.put(id, island);

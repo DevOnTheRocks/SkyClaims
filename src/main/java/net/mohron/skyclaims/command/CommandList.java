@@ -70,7 +70,7 @@ public class CommandList implements CommandExecutor {
 							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))),
 					coords.toBuilder()
 							.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
-							.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn())))
+							.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
 			));
 		}
 		if (listText.isEmpty())

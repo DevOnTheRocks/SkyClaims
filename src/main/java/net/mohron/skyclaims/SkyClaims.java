@@ -170,6 +170,7 @@ public class SkyClaims {
 		CommandSetSpawn.register();
 		CommandSetup.register();
 		CommandSpawn.register();
+		CommandTransfer.register();
 		CommandUnlock.register();
 	}
 

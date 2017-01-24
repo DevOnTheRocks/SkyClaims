@@ -45,12 +45,14 @@ public class ClaimUtil {
 							claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
 					));
 
-					// Set claim to not expire or be resizable
-					claim.getClaimData().setResizable(false);
-					claim.getClaimData().setClaimExpiration(false);
+					claim.getData().setResizable(false);
+					claim.getData().setClaimExpiration(false);
+					claim.getData().setRequiresClaimBlocks(false);
 					break;
 				case OVERLAPPING_CLAIM:
-					CLAIM_MANAGER.deleteClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
+					for (Claim claim1 : claimResult.getClaims()) {
+						CLAIM_MANAGER.deleteClaim(claim1, Cause.source(PLUGIN).build());
+					}
 					PLUGIN.getLogger().info(String.format("Removing claim overlapping %s's island (Owner: %s, ID: %s).",
 							getName(ownerUniqueId),
 							claimResult.getClaim().get().getOwnerName(),
@@ -79,11 +81,13 @@ public class ClaimUtil {
 				)
 				.owner(ownerUniqueId)
 				.type(ClaimType.BASIC)
+				.requiresClaimBlocks(false)
 				.cause(Cause.source(PLUGIN).build())
 				.cuboid(false)
 				.build();
 	}
 
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static void createSpawnClaim(List<Region> regions) {
 		ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
 		if (claimResult.successful()) {

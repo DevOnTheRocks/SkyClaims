@@ -6,6 +6,7 @@ import net.mohron.skyclaims.world.Coordinate;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.extent.Extent;
 
 public class Region {
 	private int x;
@@ -67,5 +68,9 @@ public class Region {
 		int result = x;
 		result = 31 * result + z;
 		return result;
+	}
+
+	public static Region get(Location<World> location) {
+		return new Region(location.getBlockX() >> 4 >> 5, location.getBlockZ() >> 4 >> 5);
 	}
 }

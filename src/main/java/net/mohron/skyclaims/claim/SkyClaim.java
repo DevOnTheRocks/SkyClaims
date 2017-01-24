@@ -3,7 +3,8 @@ package net.mohron.skyclaims.claim;
 import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
-import me.ryanhamshire.griefprevention.api.claim.TrustManager;
+import me.ryanhamshire.griefprevention.api.claim.ClaimType;
+import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import me.ryanhamshire.griefprevention.api.data.ClaimData;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.service.context.Context;
@@ -76,7 +77,17 @@ public class SkyClaim implements Claim {
 	}
 
 	@Override
-	public ClaimResult resizeClaim(int i, int i1, int i2, int i3, int i4, int i5, Cause cause) {
+	public ClaimResult transferOwner(UUID uuid) {
+		return null;
+	}
+
+	@Override
+	public ClaimResult convertToType(ClaimType claimType, Optional<UUID> optional) {
+		return null;
+	}
+
+	@Override
+	public ClaimResult resize(int i, int i1, int i2, int i3, int i4, int i5, Cause cause) {
 		return null;
 	}
 
@@ -91,7 +102,27 @@ public class SkyClaim implements Claim {
 	}
 
 	@Override
-	public TrustManager getTrustManager() {
+	public List<UUID> getTrusts(TrustType trustType) {
+		return null;
+	}
+
+	@Override
+	public ClaimResult addTrust(UUID uuid, TrustType trustType, Cause cause) {
+		return null;
+	}
+
+	@Override
+	public ClaimResult addTrusts(List<UUID> list, TrustType trustType, Cause cause) {
+		return null;
+	}
+
+	@Override
+	public ClaimResult removeTrust(UUID uuid, TrustType trustType, Cause cause) {
+		return null;
+	}
+
+	@Override
+	public ClaimResult removeTrusts(List<UUID> list, TrustType trustType, Cause cause) {
 		return null;
 	}
 
@@ -106,7 +137,7 @@ public class SkyClaim implements Claim {
 	}
 
 	@Override
-	public boolean extendClaim(int i) {
+	public boolean extend(int i) {
 		return false;
 	}
 
@@ -116,7 +147,7 @@ public class SkyClaim implements Claim {
 	}
 
 	@Override
-	public ClaimData getClaimData() {
+	public ClaimData getData() {
 		return null;
 	}
 

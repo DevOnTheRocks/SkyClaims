@@ -2,7 +2,6 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -24,7 +23,7 @@ public class CommandDelete implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_DELETE)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.user(Arguments.USER))
+			.arguments(GenericArguments.user(Arguments.USER), GenericArguments.optional(GenericArguments.bool(Arguments.REGEN)))
 			.executor(new CommandDelete())
 			.build();
 
@@ -43,9 +42,11 @@ public class CommandDelete implements CommandExecutor {
 		Optional<User> user = args.getOne(Arguments.USER);
 		if (!user.isPresent()) throw new CommandException(Text.of("Invalid user"));
 
-		Optional<Island> island = IslandUtil.getIslandByOwner(user.get().getUniqueId());
+		Optional<Island> island = Island.getByOwner(user.get().getUniqueId());
 		if (!island.isPresent()) throw new CommandException(Text.of("Invalid island"));
 
+		boolean regen = (boolean) args.getOne(Arguments.REGEN).orElse(true);
+		if (regen) island.get().regen();
 		island.get().delete();
 
 		src.sendMessage(Text.of(island.get().getOwnerName(), "'s island has been deleted!"));
