@@ -102,6 +102,11 @@ public class SkyClaim implements Claim {
 	}
 
 	@Override
+	public List<UUID> getAllTrusts() {
+		return null;
+	}
+
+	@Override
 	public List<UUID> getTrusts(TrustType trustType) {
 		return null;
 	}
@@ -123,6 +128,11 @@ public class SkyClaim implements Claim {
 
 	@Override
 	public ClaimResult removeTrusts(List<UUID> list, TrustType trustType, Cause cause) {
+		return null;
+	}
+
+	@Override
+	public ClaimResult removeAllTrusts(Cause cause) {
 		return null;
 	}
 

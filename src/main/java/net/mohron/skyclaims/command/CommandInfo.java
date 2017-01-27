@@ -81,7 +81,7 @@ public class CommandInfo implements CommandExecutor {
 		else {
 			int i = 1;
 			for (String member : island.getMembers()) {
-				members = Text.join(members, Text.of(TextColors.AQUA, member, TextColors.GRAY, (i == island.getMembers().size()) ? "" : ", "));
+				members = Text.join(members, Text.of(TextColors.BLUE, member, TextColors.GRAY, (i == island.getMembers().size()) ? "" : ", "));
 				i++;
 			}
 		}

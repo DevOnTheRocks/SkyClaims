@@ -36,7 +36,6 @@ public class ClaimUtil {
 				case SUCCESS:
 					claim = claimResult.getClaim().get();
 					CLAIM_MANAGER.addClaim(claim, Cause.source(PLUGIN).build());
-					SkyClaims.islandClaims.add(claim);
 					PLUGIN.getLogger().debug(String.format(
 							"Creating %s's claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
 							getName(ownerUniqueId),

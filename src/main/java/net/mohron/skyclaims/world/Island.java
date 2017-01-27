@@ -271,7 +271,6 @@ public class Island {
 	public void delete() {
 		getClaim().ifPresent(claim -> {
 			CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build());
-			SkyClaims.islandClaims.remove(claim);
 		});
 		SkyClaims.islands.remove(id);
 		PLUGIN.getDatabase().removeIsland(this);
