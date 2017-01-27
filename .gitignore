@@ -1,6 +1,7 @@
 /*
 !/gradle/
 !/src/
+!/lib/
 !/.gitignore
 !/build.gradle
 !/gradlew*
