@@ -1,7 +1,7 @@
 # Change Log
 
 ## Beta 12
-**REQUIRES: SF 2022+ & GP 250+ (latest versions are highly recommended)**
+**REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
 - Updated to GP API v0.2
 - Fixed bug affecting all commands designed to detect current island
 - Added `/isa transfer` command to transfer island ownership
