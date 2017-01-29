@@ -30,6 +30,5 @@ repositories {
 
 dependencies {
     compile ("org.spongepowered:spongeapi:5.0.0")
-    compile files("lib/griefprevention-1.10.2-2.3.0-APITEST10.jar")
-    //compile ("me.ryanhamshire:griefprevention:1.10.2-2.3.0.229")
+    compile ("me.ryanhamshire:griefprevention:1.10.2-2.3.1.250")
 }

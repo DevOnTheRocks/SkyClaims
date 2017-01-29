@@ -47,7 +47,7 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		description = DESCRIPTION,
 		authors = AUTHORS,
 		dependencies = {
-				@Dependency(id = "griefprevention", version = "2.3.0")
+				@Dependency(id = "griefprevention", version = "2.3.1")
 		})
 public class SkyClaims {
 	private static SkyClaims instance;

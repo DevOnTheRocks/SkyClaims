@@ -7,11 +7,11 @@
 - Added `/isa transfer` command to transfer island ownership
 - Island claims no longer use a player's claim blocks
 - Using `/deleteclaim` on an island claim requires confirmation to delete the island
-- Island spawns are now set with the player's current rotation (Not saved yet)
+- Island spawns are now set with the player's current rotation (runtime only)
 - `/isa delete <user> [regen]` now accepts a optional boolean to disable region regeneration
 
 ## Beta 11
-**REQUIRES: SF 2022+ & GP 229+ (latest versions are highly recommended)**
+**REQUIRES: SF 2022+ & GP 229-249**
 - Fixes saving new claim ids, if required, after DB loading completes
 - More changes to prevent claim related errors from breaking the plugin (`/is create` will still fail, by design)
 - Create DB connection on initialization instead of on each query
