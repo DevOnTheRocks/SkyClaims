@@ -2,7 +2,6 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -10,9 +9,11 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.extent.Extent;
 
 import java.util.Optional;
 
@@ -43,7 +44,7 @@ public class CommandSetSpawn implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
 
 		Player player = (Player) src;
-		Optional<Island> island = IslandUtil.getIslandByLocation(player.getLocation());
+		Optional<Island> island = Island.get(player.getLocation());
 
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must be on an island to use this command!"));
@@ -51,11 +52,11 @@ public class CommandSetSpawn implements CommandExecutor {
 		if (!island.get().getOwnerUniqueId().equals(player.getUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS))
 			throw new CommandException(Text.of("Only the island owner may use this command!"));
 
-		island.get().setSpawn(player.getLocation());
+		island.get().setSpawn(player.getTransform());
 		player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
-				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockX(), TextColors.GRAY, " ,",
-				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockY(), TextColors.GRAY, " ,",
-				TextColors.LIGHT_PURPLE, island.get().getSpawn().getBlockZ(), TextColors.GRAY, ")"));
+				TextColors.LIGHT_PURPLE, island.get().getSpawn().getPosition().getX(), TextColors.GRAY, " ,",
+				TextColors.LIGHT_PURPLE, island.get().getSpawn().getPosition().getY(), TextColors.GRAY, " ,",
+				TextColors.LIGHT_PURPLE, island.get().getSpawn().getPosition().getZ(), TextColors.GRAY, ")"));
 
 		return CommandResult.success();
 	}

@@ -1,12 +1,11 @@
 package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.world.Island;
-import net.mohron.skyclaims.world.RegenerateRegionTask;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -53,7 +52,7 @@ public class CommandReset implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		Optional<Island> island = IslandUtil.getIslandByOwner(player.getUniqueId());
+		Optional<Island> island = Island.getByOwner(player.getUniqueId());
 
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must have an island to run this command!"));
@@ -62,7 +61,8 @@ public class CommandReset implements CommandExecutor {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
 			player.sendMessage(Text.of("To continue, run ", "/is reset confirm", (args.hasAny(Arguments.SCHEMATIC)) ? " [schematic]" : ""));
 		} else {
-			String schematic = "island";
+			String schematic = Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC);
+
 			if (args.getOne(Arguments.SCHEMATIC).isPresent()) {
 				schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
 				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + schematic.toLowerCase()))
@@ -89,8 +89,7 @@ public class CommandReset implements CommandExecutor {
 
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
 
-			RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(island.get(), schematic);
-			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
+			island.get().regen();
 		}
 
 		return CommandResult.success();

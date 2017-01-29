@@ -17,6 +17,7 @@ public class Arguments {
 	public static final Text CONFIRM = Text.of("confirm");
 	public static final Text HELP = Text.of("help");
 	public static final Text NAME = Text.of("name");
+	public static final Text REGEN = Text.of("regen");
 	public static final Text SCHEMATIC = Text.of("schematic");
 	public static final Text TARGET = Text.of("target");
 	public static final Text USER = Text.of("user");

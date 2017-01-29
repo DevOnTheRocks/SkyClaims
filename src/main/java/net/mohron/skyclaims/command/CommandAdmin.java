@@ -33,6 +33,7 @@ public class CommandAdmin implements CommandExecutor {
 			.child(CommandReload.commandSpec, "reload")
 			.child(CommandSetup.commandSpec, "setup")
 			.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
+			.child(CommandTransfer.commandSpec, "transfer")
 			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(Arguments.HELP, "help"))))
 			.executor(new CommandAdmin())
 			.build();
@@ -65,6 +66,7 @@ public class CommandAdmin implements CommandExecutor {
 					(hasPerms) ? "\n" : "",
 					TextColors.AQUA, "isa delete",
 					TextColors.GOLD, " <player>",
+					TextColors.GRAY, " [regen]",
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandDelete.helpText));
 			hasPerms = true;
@@ -76,6 +78,16 @@ public class CommandAdmin implements CommandExecutor {
 					TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandReload.helpText));
+			hasPerms = true;
+		}
+
+		if (src.hasPermission(Permissions.COMMAND_TRANSFER)) {
+			helpContents = Text.join(helpContents, Text.of(
+					(hasPerms) ? "\n" : "",
+					TextColors.AQUA, "isa transfer",
+					TextColors.GOLD, " <player>",
+					TextColors.DARK_GRAY, " - ",
+					TextColors.DARK_GREEN, CommandDelete.helpText));
 			hasPerms = true;
 		}
 

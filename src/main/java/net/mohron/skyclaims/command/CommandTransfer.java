@@ -2,7 +2,6 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -14,17 +13,19 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
 
 public class CommandTransfer implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "used to transfer an island to another user.";
+	public static String helpText = "used to transfer island ownership to another player.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_SETUP)
+			.permission(Permissions.COMMAND_TRANSFER)
 			.description(Text.of(helpText))
 			.arguments(GenericArguments.seq(
-					//GenericArguments.optional(GenericArguments.onlyOne(GenericArguments.user(Arguments.OWNER))),
+					//GenericArguments.optional(GenericArguments.user(Arguments.OWNER)),
 					GenericArguments.user(Arguments.USER)
 			))
 			.executor(new CommandTransfer())
@@ -42,16 +43,22 @@ public class CommandTransfer implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		//if (!(src instanceof Player) && !args.hasAny(Arguments.OWNER))
-		//	throw new CommandException(Text.of(TextColors.RED, "You must supply a user to use this command."));
+		if (!(src instanceof Player) /*&& !args.hasAny(Arguments.OWNER)*/)
+			throw new CommandException(Text.of(TextColors.RED, "You must supply a user to use this command."));
+
 		User user = (User) args.getOne(Arguments.USER).orElse(null);
+		if (user == null || Island.hasIsland(user.getUniqueId()))
+			throw new CommandException(Text.of(TextColors.RED, "Unable to complete island transfer to ", user.getName(), ": player has reached the max islands owned!"));
+
 		Player player = (src instanceof Player) ? (Player) src : null;
-		Island island = (false) ? IslandUtil.getIslandByOwner(user.getUniqueId()).orElse(null) : IslandUtil.getIslandByLocation(player.getLocation()).orElse(null);
+		Island island = (false) ? Island.getByOwner(user.getUniqueId()).orElse(null) : Island.get(player.getLocation()).orElse(null);
 
-		throw new CommandException(Text.of("Command is not yet implemented."));
+		if (island == null)
+			throw new CommandException(Text.of(TextColors.RED, "This command must be run on the island you wish to transfer!"));
 
-		//island.transfer(user);
+		src.sendMessage(Text.of(TextColors.GREEN, "Completed transfer of ", TextColors.GOLD, island.getOwnerName(), TextColors.GREEN, "'s island to ", TextColors.GOLD, user.getName(), TextColors.GREEN, "."));
+		island.transfer(user);
 
-		//return CommandResult.empty();
+		return CommandResult.success();
 	}
 }

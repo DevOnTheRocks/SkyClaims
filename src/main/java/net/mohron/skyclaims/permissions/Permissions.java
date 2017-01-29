@@ -4,6 +4,7 @@ public class Permissions {
 	// User Permissions
 	public static final String COMMAND_CREATE = "skyclaims.command.create";
 	public static final String COMMAND_INFO = "skyclaims.command.info";
+	public static final String COMMAND_INVITE = "skyclaims.command.invite";
 	public static final String COMMAND_LIST = "skyclaims.command.list";
 	public static final String COMMAND_LOCK = "skyclaims.command.lock";
 	public static final String COMMAND_RESET = "skyclaims.command.reset";
@@ -29,4 +30,5 @@ public class Permissions {
 	public static final String COMMAND_SETUP = "skyclaims.admin.setup";
 	public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
 	public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
+	public static final String COMMAND_TRANSFER = "skyclaims.admin.transfer";
 }

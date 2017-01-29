@@ -4,7 +4,6 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
@@ -27,7 +26,7 @@ public class CommandCreate implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
 			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.onlyOne(GenericArguments.string(Arguments.SCHEMATIC))))
+			.arguments(GenericArguments.optional(GenericArguments.string(Arguments.SCHEMATIC)))
 			.executor(new CommandCreate())
 			.build();
 
@@ -48,7 +47,7 @@ public class CommandCreate implements CommandExecutor {
 		Player player = (Player) src;
 		String schematic = Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC);
 
-		if (IslandUtil.hasIsland(player.getUniqueId()))
+		if (Island.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
 		if (Arguments.SCHEMATICS.isEmpty())

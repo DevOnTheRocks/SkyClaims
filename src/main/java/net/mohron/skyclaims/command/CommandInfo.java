@@ -3,7 +3,6 @@ package net.mohron.skyclaims.command;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
-import net.mohron.skyclaims.util.IslandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -61,11 +60,13 @@ public class CommandInfo implements CommandExecutor {
 			}
 		}
 
-		if (uuid != null)
-			islandOptional = IslandUtil.getIsland(uuid);
-		else
+		if (uuid != null) {
+			islandOptional = Island.get(uuid);
+		} else {
 			//noinspection ConstantConditions - Other src types have to supply a UUID and will never reach this line
-			islandOptional = IslandUtil.getIslandByLocation(((Player) src).getLocation());
+			Player player = (Player) src;
+			islandOptional = Island.get(player.getLocation());
+		}
 
 		if (!islandOptional.isPresent()) {
 			if (uuid != null)
@@ -79,19 +80,19 @@ public class CommandInfo implements CommandExecutor {
 			members = members.concat(Text.of(TextColors.GRAY, "None"));
 		else {
 			int i = 1;
-			for (UUID member : island.getMembers()) {
-				members = Text.join(members, Text.of(TextColors.AQUA, member.toString(), TextColors.GRAY, (i == island.getMembers().size()) ? "" : ", "));
+			for (String member : island.getMembers()) {
+				members = Text.join(members, Text.of(TextColors.BLUE, member, TextColors.GRAY, (i == island.getMembers().size()) ? "" : ", "));
 				i++;
 			}
 		}
 
 		Text infoText = Text.of(
 				TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), "\n",
-				TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GRAY, island.getOwnerName(), "\n",
+				TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), "\n",
 				members, "\n",
 				TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getRadius() * 2, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getRadius() * 2, "\n",
-				TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockX(), TextColors.GRAY, "x ",
-				TextColors.LIGHT_PURPLE, island.getSpawn().getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn().getBlockZ(), TextColors.GRAY, "z", "\n",
+				TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockX(), TextColors.GRAY, "x ",
+				TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockZ(), TextColors.GRAY, "z", "\n",
 				TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), "\n",
 				TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), "\n",
 				(island.getClaim().isPresent()) ? Text.of(

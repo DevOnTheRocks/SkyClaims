@@ -1,6 +1,6 @@
 package net.mohron.skyclaims.database;
 
-import com.flowpowered.math.vector.Vector3i;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
@@ -15,9 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by Cossacksman on 22/01/2017.
- */
 public abstract class Database implements IDatabase {
 	abstract Connection getConnection() throws SQLException;
 
@@ -67,7 +64,7 @@ public abstract class Database implements IDatabase {
 				int z = results.getInt("spawnZ");
 				boolean locked = results.getBoolean("locked");
 
-				Vector3i spawnLocation = new Vector3i(x, y, z);
+				Vector3d spawnLocation = new Vector3d(x, y, z);
 				Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
 
 				islands.put(islandId, island);
@@ -108,15 +105,15 @@ public abstract class Database implements IDatabase {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = "REPLACE INTO islands(island, owner, claim, spawnX, spawnY, spawnZ) VALUES(?, ?, ?, ?, ?, ?)";
+		String sql = "REPLACE INTO islands(island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
 			statement.setString(2, island.getOwnerUniqueId().toString());
 			statement.setString(3, island.getClaimUniqueId().toString());
-			statement.setInt(4, island.getSpawn().getBlockX());
-			statement.setInt(5, island.getSpawn().getBlockY());
-			statement.setInt(6, island.getSpawn().getBlockZ());
+			statement.setInt(4, island.getSpawn().getLocation().getBlockX());
+			statement.setInt(5, island.getSpawn().getLocation().getBlockY());
+			statement.setInt(6, island.getSpawn().getLocation().getBlockZ());
 			statement.setBoolean(7, island.isLocked());
 
 			statement.execute();

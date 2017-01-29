@@ -5,7 +5,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
-import me.ryanhamshire.griefprevention.api.claim.Claim;
 import net.mohron.skyclaims.command.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -55,7 +54,6 @@ public class SkyClaims {
 	private static GriefPreventionApi griefPrevention;
 	private static PermissionService permissionService;
 	public static Map<UUID, Island> islands = Maps.newHashMap();
-	public static Set<Claim> islandClaims = Sets.newHashSet();
 	private static Set<Island> saveQueue = Sets.newHashSet();
 
 	@Inject
@@ -140,13 +138,14 @@ public class SkyClaims {
 
 		islands = database.loadData();
 		addCustomMetrics();
-		getLogger().info("ISLAND LENGTH: " + islands.size());
-		getLogger().info("Initialization complete.");
+		getLogger().info("Islands Loaded: " + islands.size());
 
 		if (!saveQueue.isEmpty()) {
 			getLogger().info("Saving " + saveQueue.size() + " claims that were malformed");
 			database.saveData(saveQueue);
 		}
+
+		getLogger().info("Initialization complete.");
 	}
 
 	@Listener
@@ -170,6 +169,7 @@ public class SkyClaims {
 		CommandSetSpawn.register();
 		CommandSetup.register();
 		CommandSpawn.register();
+		CommandTransfer.register();
 		CommandUnlock.register();
 	}
 

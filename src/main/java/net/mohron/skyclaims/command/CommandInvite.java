@@ -2,26 +2,25 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
-import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
-import java.util.Optional;
-
-public class CommandLock implements CommandExecutor {
+public class CommandInvite implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "used to prevent untrusted players from visiting to your island.";
+	public static String helpText = "used to invite players to your island or list your pending invites.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_LOCK)
+			.permission(Permissions.COMMAND_INVITE)
+			.arguments(GenericArguments.optional(GenericArguments.user(Arguments.USER)))
 			.description(Text.of(helpText))
 			.executor(new CommandLock())
 			.build();
@@ -29,10 +28,10 @@ public class CommandLock implements CommandExecutor {
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandLock");
+			PLUGIN.getLogger().debug("Registered command: CommandInvite");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandLock");
+			PLUGIN.getLogger().error("Failed to register command: CommandInvite");
 		}
 	}
 
@@ -42,14 +41,16 @@ public class CommandLock implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		Optional<Island> island = Island.getByOwner(player.getUniqueId());
+		User user = (User) args.getOne(Arguments.USER).orElse(null);
 
-		if (!island.isPresent())
-			throw new CommandException(Text.of("You must have an Island to run this command!"));
+		if (user == null) {
+			//TODO List invites
+		} else {
+			//TODO Send invite to online player or save for login
+		}
 
-		island.get().setLocked(true);
+		throw new CommandException(Text.of("Command not yet implemented"));
 
-		src.sendMessage(Text.of(TextColors.GREEN, "Your island is now locked!"));
-		return CommandResult.success();
+		//return CommandResult.success();
 	}
 }
