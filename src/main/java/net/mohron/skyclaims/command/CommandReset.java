@@ -89,7 +89,7 @@ public class CommandReset implements CommandExecutor {
 
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
 
-			island.get().regen();
+			island.get().regen(schematic);
 		}
 
 		return CommandResult.success();

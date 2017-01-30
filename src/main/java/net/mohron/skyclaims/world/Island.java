@@ -268,6 +268,12 @@ public class Island {
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 	}
 
+
+	public void regen(String schematic) {
+		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic);
+		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
+	}
+
 	public void delete() {
 		getClaim().ifPresent(claim -> {
 			CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build());
