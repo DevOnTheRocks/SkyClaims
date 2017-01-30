@@ -66,8 +66,7 @@ public class CommandSetBiome implements CommandExecutor {
 		if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biome.getName().toLowerCase()))
 			throw new CommandPermissionException(Text.of("You do not have permission to use the designated biome type."));
 
-		Arguments.Target target = Arguments.Target.CHUNK;
-		if (args.getOne(Arguments.TARGET).isPresent()) target = (Arguments.Target) args.getOne(Arguments.TARGET).get();
+		Arguments.Target target = (Arguments.Target) args.getOne(Arguments.TARGET).orElse(Arguments.Target.ISLAND);
 
 		switch (target) {
 			case BLOCK:
