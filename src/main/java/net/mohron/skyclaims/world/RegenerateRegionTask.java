@@ -20,6 +20,7 @@ public class RegenerateRegionTask implements Runnable {
 
 	public RegenerateRegionTask(Region region) {
 		this.region = region;
+		this.island = null;
 	}
 
 	public RegenerateRegionTask(Island island, String schematic) {
@@ -51,7 +52,7 @@ public class RegenerateRegionTask implements Runnable {
 			}
 		}
 
-		if (schematic != null) {
+		if (island != null) {
 			// Run reset commands
 			ConfigUtil.getResetCommands().ifPresent(commands -> {
 				for (String command : commands) {

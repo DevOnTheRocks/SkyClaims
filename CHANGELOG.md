@@ -1,5 +1,10 @@
 # Change Log
 
+## Beta 13
+**REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
+- Fixed `is reset` not generating a new island
+- Changed `is setbiome`'s default target to island
+
 ## Beta 12
 **REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
 - Updated to GP API v0.2
