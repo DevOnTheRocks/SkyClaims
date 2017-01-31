@@ -1,5 +1,9 @@
 # Change Log
 
+## TBD
+**REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
+- Default initial-size option increase from `32` to `48`
+
 ## Beta 13
 **REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
 - Fixed `is reset` not generating a new island
