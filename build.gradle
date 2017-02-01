@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'idea'
+    id 'signing'
     id 'org.spongepowered.plugin' version '0.6'
 }
 
@@ -29,6 +30,12 @@ repositories {
 }
 
 dependencies {
-    compile ("org.spongepowered:spongeapi:5.0.0")
-    compile ("me.ryanhamshire:griefprevention:1.10.2-2.3.1.251")
+    compile("org.spongepowered:spongeapi:5.0.0")
+    compile("me.ryanhamshire:griefprevention:1.10.2-2.3.1.251")
+}
+
+signing {
+    if (project.hasProperty('signing.keyId') && project.hasProperty('signing.password') && project.hasProperty('signing.secretKeyRingFile')) {
+        sign configurations.archives
+    }
 }
