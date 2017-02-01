@@ -71,12 +71,12 @@ public class ClaimUtil {
 	}
 
 	private static ClaimResult createIslandClaimResult(UUID ownerUniqueId, Region region) {
-		int claimRadius = Options.getIntOption(ownerUniqueId, Options.INITIAL_SIZE, 32, 8, 255);
+		int initialSize = Options.getIntOption(ownerUniqueId, Options.INITIAL_SIZE, 32, 8, 255);
 		return Claim.builder()
 				.world(ConfigUtil.getWorld())
 				.bounds(
-						new Vector3i(region.getCenter().getBlockX() + claimRadius, 0, region.getCenter().getBlockZ() + claimRadius),
-						new Vector3i(region.getCenter().getBlockX() - claimRadius, 255, region.getCenter().getBlockZ() - claimRadius)
+						new Vector3i(region.getCenter().getBlockX() + initialSize, 0, region.getCenter().getBlockZ() + initialSize),
+						new Vector3i(region.getCenter().getBlockX() - initialSize, 255, region.getCenter().getBlockZ() - initialSize)
 				)
 				.owner(ownerUniqueId)
 				.type(ClaimType.BASIC)

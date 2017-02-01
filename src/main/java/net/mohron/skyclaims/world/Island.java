@@ -8,6 +8,7 @@ import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
+import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
@@ -78,6 +79,19 @@ public class Island {
 		Claim claim = CLAIM_MANAGER.getClaimByUUID(claimId).orElse(null);
 		if (claim != null) {
 			this.claim = claimId;
+			int initialSize = Options.getIntOption(owner, Options.INITIAL_SIZE, 32, 8, 255);
+			// Resize claims smaller than the player's initial-size
+			if (claim.getWidth() < initialSize) {
+				claim.resize(
+						getRegion().getCenter().getBlockX() + initialSize,
+						0,
+						getRegion().getCenter().getBlockZ() + initialSize,
+						getRegion().getCenter().getBlockX() - initialSize,
+						255,
+						getRegion().getCenter().getBlockZ() - initialSize,
+						Cause.source(PLUGIN).build()
+				);
+			}
 			claim.getData().setResizable(false);
 			claim.getData().setClaimExpiration(false);
 			claim.getData().setRequiresClaimBlocks(false);

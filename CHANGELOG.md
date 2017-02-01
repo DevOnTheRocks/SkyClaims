@@ -2,6 +2,7 @@
 
 ## TBD
 **REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
+- Claim size is automatically expanded during startup if it is less than the owner's `initial-size`
 - Default initial-size option increase from `32` to `48`
 
 ## Beta 13
