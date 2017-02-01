@@ -17,11 +17,11 @@ public class CommandSetup implements CommandExecutor {
 
 	private static final PermissionService PERMS = PLUGIN.getPermissionService();
 
-	public static String helpText = "used to assist in setting up the plugin";
+	public static final String HELP_TEXT = "used to assist in setting up the plugin";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SETUP)
-			.description(Text.of(helpText))
+			.description(Text.of(HELP_TEXT))
 			.executor(new CommandSetup())
 			.build();
 

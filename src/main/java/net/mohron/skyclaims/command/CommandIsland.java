@@ -24,10 +24,12 @@ public class CommandIsland implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
+	private static final String HELP_TEXT = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
+
+	private static final Text HELP = Text.of("help");
 
 	private static CommandSpec commandSpec = CommandSpec.builder()
-			.description(Text.of(helpText))
+			.description(Text.of(HELP_TEXT))
 			.child(CommandAdmin.commandSpec, "admin")
 			.child(CommandCreate.commandSpec, "create")
 			.child(CommandInfo.commandSpec, "info")
@@ -38,7 +40,7 @@ public class CommandIsland implements CommandExecutor {
 			.child(CommandSetSpawn.commandSpec, "setspawn", "sethome")
 			.child(CommandSpawn.commandSpec, "spawn", "tp", "home")
 			.child(CommandUnlock.commandSpec, "unlock")
-			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(Arguments.HELP, "help"))))
+			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
 			.executor(new CommandIsland())
 			.build();
 
@@ -66,7 +68,7 @@ public class CommandIsland implements CommandExecutor {
 					TextColors.AQUA, Text.builder("is create").onClick(TextActions.runCommand("/is create")),
 					TextColors.GRAY, " [schematic]",
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandCreate.helpText));
+					TextColors.DARK_GREEN, CommandCreate.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -76,7 +78,7 @@ public class CommandIsland implements CommandExecutor {
 					TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
 					TextColors.GRAY, " [island id]",
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandInfo.helpText));
+					TextColors.DARK_GREEN, CommandInfo.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -85,7 +87,7 @@ public class CommandIsland implements CommandExecutor {
 					"\n",
 					TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandLock.helpText));
+					TextColors.DARK_GREEN, CommandLock.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -95,7 +97,7 @@ public class CommandIsland implements CommandExecutor {
 					TextColors.AQUA, Text.builder("is reset").onClick(TextActions.runCommand("/is reset")),
 					TextColors.GRAY, " [schematic]",
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandReset.helpText));
+					TextColors.DARK_GREEN, CommandReset.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -106,7 +108,7 @@ public class CommandIsland implements CommandExecutor {
 					TextColors.GOLD, " <biome>",
 					TextColors.GRAY, " [target]",
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandSetBiome.helpText));
+					TextColors.DARK_GREEN, CommandSetBiome.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -115,7 +117,7 @@ public class CommandIsland implements CommandExecutor {
 					"\n",
 					TextColors.AQUA, Text.builder("is setspawn").onClick(TextActions.runCommand("/is setspawn")),
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandSetSpawn.helpText));
+					TextColors.DARK_GREEN, CommandSetSpawn.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -125,7 +127,7 @@ public class CommandIsland implements CommandExecutor {
 					TextColors.AQUA, Text.builder("is spawn").onClick(TextActions.runCommand("/is spawn")),
 					TextColors.GRAY, " [player]",
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandSpawn.helpText));
+					TextColors.DARK_GREEN, CommandSpawn.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -134,7 +136,7 @@ public class CommandIsland implements CommandExecutor {
 					"\n",
 					TextColors.AQUA, Text.builder("is unlock").onClick(TextActions.runCommand("/is unlock")),
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandUnlock.helpText));
+					TextColors.DARK_GREEN, CommandUnlock.HELP_TEXT));
 			hasPerms = true;
 		}
 

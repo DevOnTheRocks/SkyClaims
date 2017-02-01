@@ -1,7 +1,6 @@
 package net.mohron.skyclaims.command.team;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -17,12 +16,14 @@ import org.spongepowered.api.text.Text;
 public class CommandInvite implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "used to invite players to your island or list your pending invites.";
+	public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
+
+	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_INVITE)
-			.arguments(GenericArguments.optional(GenericArguments.user(Arguments.USER)))
-			.description(Text.of(helpText))
+			.arguments(GenericArguments.optional(GenericArguments.user(USER)))
+			.description(Text.of(HELP_TEXT))
 			.executor(new CommandInvite())
 			.build();
 
@@ -42,7 +43,7 @@ public class CommandInvite implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		User user = (User) args.getOne(Arguments.USER).orElse(null);
+		User user = (User) args.getOne(USER).orElse(null);
 
 		if (user == null) {
 			//TODO List invites

@@ -16,11 +16,11 @@ public class CommandReload implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "used to reload plugin config and schematics.";
+	public static final String HELP_TEXT = "used to reload plugin config and schematics.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_RELOAD)
-			.description(Text.of(helpText))
+			.description(Text.of(HELP_TEXT))
 			.executor(new CommandReload())
 			.build();
 

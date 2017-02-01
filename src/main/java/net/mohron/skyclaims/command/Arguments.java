@@ -12,21 +12,9 @@ import java.util.Map;
 public class Arguments {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	// Command Argument Keys
-	public static final Text BIOME = Text.of("biome");
-	public static final Text CONFIRM = Text.of("confirm");
-	public static final Text HELP = Text.of("help");
-	public static final Text NAME = Text.of("name");
-	public static final Text REGEN = Text.of("regen");
-	public static final Text SCHEMATIC = Text.of("schematic");
-	public static final Text TARGET = Text.of("target");
-	public static final Text USER = Text.of("user");
-	public static final Text UUID = Text.of("uuid");
-
 	// Maps for Choice Command Arguments
 	public static final Map<String, String> SCHEMATICS = Maps.newHashMap();
 	public static final Map<String, BiomeType> BIOMES = Maps.newHashMap();
-	public static final Map<String, Target> TARGETS = Maps.newHashMap();
 
 	static {
 		loadSchematics();
@@ -95,10 +83,6 @@ public class Arguments {
 		BIOMES.put(getCommandArg(BiomeTypes.SWAMPLAND_MOUNTAINS), BiomeTypes.SWAMPLAND_MOUNTAINS);
 		BIOMES.put(getCommandArg(BiomeTypes.TAIGA_MOUNTAINS), BiomeTypes.TAIGA_MOUNTAINS);
 		BIOMES.put(getCommandArg(BiomeTypes.VOID), BiomeTypes.VOID);
-
-		TARGETS.put("block", Target.BLOCK);
-		TARGETS.put("chunk", Target.CHUNK);
-		TARGETS.put("island", Target.ISLAND);
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -118,10 +102,6 @@ public class Arguments {
 		} catch (NullPointerException e) {
 			PLUGIN.getLogger().error("Failed to read schematics directory!");
 		}
-	}
-
-	public enum Target {
-		BLOCK, CHUNK, ISLAND;
 	}
 
 	private static String getCommandArg(BiomeType biomeType) {

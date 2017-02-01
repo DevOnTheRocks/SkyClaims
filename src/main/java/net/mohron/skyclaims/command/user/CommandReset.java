@@ -26,14 +26,17 @@ public class CommandReset implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "delete your island and inventory so you can start over";
+	public static final String HELP_TEXT = "delete your island and inventory so you can start over";
+
+	private static final Text CONFIRM = Text.of("confirm");
+	private static final Text SCHEMATIC = Text.of("schematic");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_RESET)
-			.description(Text.of(helpText))
+			.description(Text.of(HELP_TEXT))
 			.arguments(GenericArguments.optional(GenericArguments.seq(
-					GenericArguments.onlyOne(GenericArguments.literal(Arguments.CONFIRM, "confirm")),
-					GenericArguments.optional(GenericArguments.onlyOne(GenericArguments.string(Arguments.SCHEMATIC)))
+					GenericArguments.onlyOne(GenericArguments.literal(CONFIRM, "confirm")),
+					GenericArguments.optional(GenericArguments.onlyOne(GenericArguments.string(SCHEMATIC)))
 			)))
 			.executor(new CommandReset())
 			.build();
@@ -58,14 +61,14 @@ public class CommandReset implements CommandExecutor {
 		if (!island.isPresent())
 			throw new CommandException(Text.of("You must have an island to run this command!"));
 
-		if (!args.hasAny(Arguments.CONFIRM)) {
+		if (!args.hasAny(CONFIRM)) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
-			player.sendMessage(Text.of("To continue, run ", "/is reset confirm", (args.hasAny(Arguments.SCHEMATIC)) ? " [schematic]" : ""));
+			player.sendMessage(Text.of("To continue, run ", "/is reset confirm", (args.hasAny(SCHEMATIC)) ? " [schematic]" : ""));
 		} else {
 			String schematic = Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC);
 
-			if (args.getOne(Arguments.SCHEMATIC).isPresent()) {
-				schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
+			if (args.getOne(SCHEMATIC).isPresent()) {
+				schematic = (String) args.getOne(SCHEMATIC).get();
 				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + schematic.toLowerCase()))
 					throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use the ", TextColors.YELLOW, schematic, TextColors.RED, " schematic!"));
 			}

@@ -19,11 +19,11 @@ public class CommandSetSpawn implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "set your spawn location for your island.";
+	public static final String HELP_TEXT = "set your spawn location for your island.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SET_SPAWN)
-			.description(Text.of(helpText))
+			.description(Text.of(HELP_TEXT))
 			.executor(new CommandSetSpawn())
 			.build();
 

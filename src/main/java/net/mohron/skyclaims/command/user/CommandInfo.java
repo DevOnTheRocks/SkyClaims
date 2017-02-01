@@ -1,7 +1,6 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
@@ -19,19 +18,20 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class CommandInfo implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "display detailed information on your island";
+	public static final String HELP_TEXT = "display detailed information on your island";
+
+	private static final Text UUID_ARG = Text.of("uuid");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_INFO)
-			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.string(Arguments.UUID)))
+			.description(Text.of(HELP_TEXT))
+			.arguments(GenericArguments.optional(GenericArguments.string(UUID_ARG)))
 			.executor(new CommandInfo())
 			.build();
 
@@ -47,35 +47,22 @@ public class CommandInfo implements CommandExecutor {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player) && !args.hasAny(Arguments.UUID))
-			throw new CommandException(Text.of(TextColors.RED, "You must supply an island uuid to use this command."));
-
-		Optional<Island> islandOptional;
-		UUID uuid = null;
-		String uuidArgument = (String) args.getOne(Arguments.UUID).orElse(null);
-		if (uuidArgument != null) {
-			try {
-				uuid = UUID.fromString(uuidArgument);
-			} catch (IllegalArgumentException e) {
-				throw new CommandException(Text.of(TextColors.RED, "The island id supplied is not a valid UUID."));
-			}
-		}
-
-		if (uuid != null) {
-			islandOptional = Island.get(uuid);
+		Island island;
+		if (src instanceof Player && !args.hasAny(UUID_ARG)) {
+			island = Island.get(((Player) src).getLocation())
+					.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command.")));
 		} else {
-			//noinspection ConstantConditions - Other src types have to supply a UUID and will never reach this line
-			Player player = (Player) src;
-			islandOptional = Island.get(player.getLocation());
+			UUID uuid;
+			try {
+				uuid = UUID.fromString((String) args.getOne(UUID_ARG).orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must supply an island uuid to use this command."))));
+			} catch (IllegalArgumentException e) {
+				throw new CommandException(Text.of(TextColors.RED, "The island id supplied is not a valid UUID_ARG."));
+			}
+
+			island = Island.get(uuid)
+					.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The UUID_ARG supplied does not have a corresponding island.")));
 		}
 
-		if (!islandOptional.isPresent()) {
-			if (uuid != null)
-				throw new CommandException(Text.of(TextColors.RED, "The UUID supplied does not have a corresponding island."));
-			throw new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command."));
-		}
-
-		Island island = islandOptional.get();
 		Text members = Text.of(TextColors.YELLOW, "Members", TextColors.WHITE, " : ");
 		if (island.getMembers().isEmpty())
 			members = members.concat(Text.of(TextColors.GRAY, "None"));
@@ -95,7 +82,7 @@ public class CommandInfo implements CommandExecutor {
 				TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockX(), TextColors.GRAY, "x ",
 				TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockZ(), TextColors.GRAY, "z", "\n",
 				TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), "\n",
-				TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), "\n",
+				TextColors.YELLOW, "UUID_ARG", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), "\n",
 				(island.getClaim().isPresent()) ? Text.of(
 						TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getClaimUniqueId().toString())
 								.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaimUniqueId().toString(), createReturnConsumer(src, island.getUniqueId().toString()))))

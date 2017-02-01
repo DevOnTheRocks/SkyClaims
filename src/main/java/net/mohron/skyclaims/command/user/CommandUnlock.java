@@ -18,11 +18,11 @@ import java.util.Optional;
 public class CommandUnlock implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "used to allow untrusted players to visit your island.";
+	public static final String HELP_TEXT = "used to allow untrusted players to visit your island.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_LOCK)
-			.description(Text.of(helpText))
+			.description(Text.of(HELP_TEXT))
 			.executor(new CommandUnlock())
 			.build();
 

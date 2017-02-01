@@ -22,12 +22,14 @@ public class CommandCreate implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "create an island.";
+	public static final String HELP_TEXT = "create an island.";
+
+	private static final Text SCHEMATIC = Text.of("schematic");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
-			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.string(Arguments.SCHEMATIC)))
+			.description(Text.of(HELP_TEXT))
+			.arguments(GenericArguments.optional(GenericArguments.string(SCHEMATIC)))
 			.executor(new CommandCreate())
 			.build();
 
@@ -54,8 +56,8 @@ public class CommandCreate implements CommandExecutor {
 		if (Arguments.SCHEMATICS.isEmpty())
 			throw new CommandException(Text.of("There are no valid schematics to create an island with!"));
 
-		if (args.getOne(Arguments.SCHEMATIC).isPresent()) {
-			schematic = (String) args.getOne(Arguments.SCHEMATIC).get();
+		if (args.getOne(SCHEMATIC).isPresent()) {
+			schematic = (String) args.getOne(SCHEMATIC).get();
 			if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + schematic.toLowerCase()))
 				throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use the ", TextColors.YELLOW, schematic, TextColors.RED, " schematic!"));
 		}

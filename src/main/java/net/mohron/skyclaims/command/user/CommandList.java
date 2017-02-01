@@ -28,12 +28,14 @@ public class CommandList implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "display a list of the current islands";
+	public static final String HELP_TEXT = "display a list of the current islands";
+
+	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_LIST)
-			.description(Text.of(helpText))
-			.arguments(GenericArguments.optionalWeak(GenericArguments.user(Arguments.USER)))
+			.description(Text.of(HELP_TEXT))
+			.arguments(GenericArguments.optionalWeak(GenericArguments.user(USER)))
 			.executor(new CommandList())
 			.build();
 
@@ -54,7 +56,7 @@ public class CommandList implements CommandExecutor {
 		Player player = null;
 		if (src instanceof Player) player = (Player) src;
 
-		User user = (User) args.getOne(Arguments.USER).orElse(null);
+		User user = (User) args.getOne(USER).orElse(null);
 
 		for (Island island : SkyClaims.islands.values()) {
 			if (island.isLocked() && ((player == null || !island.hasPermissions(player)) || !src.hasPermission(Permissions.COMMAND_LIST_ALL)))

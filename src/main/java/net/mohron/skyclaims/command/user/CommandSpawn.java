@@ -1,7 +1,6 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
@@ -17,17 +16,17 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.Optional;
-
 public class CommandSpawn implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = "teleport to an island's spawn point";
+	public static final String HELP_TEXT = "teleport to an island's spawn point";
+
+	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SPAWN)
-			.description(Text.of(helpText))
-			.arguments(GenericArguments.optional(GenericArguments.user(Arguments.USER)))
+			.description(Text.of(HELP_TEXT))
+			.arguments(GenericArguments.optional(GenericArguments.user(USER)))
 			.executor(new CommandSpawn())
 			.build();
 
@@ -46,17 +45,16 @@ public class CommandSpawn implements CommandExecutor {
 		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
 		}
+
 		Player player = (Player) src;
-		User user = (args.getOne(Arguments.USER).isPresent()) ? (User) args.getOne(Arguments.USER).get() : (User) src;
-		Optional<Island> island = Island.getByOwner(user.getUniqueId());
+		User user = (User) args.getOne(USER).orElse(player);
+		Island island = Island.getByOwner(user.getUniqueId())
+				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
 
-		if (!island.isPresent())
-			throw new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!"));
-
-		if (!island.get().hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
+		if (!island.hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
 			throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
 
-		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(CommandUtil.createTeleportConsumer((Player) src, island.get().getSpawn().getLocation())).submit(PLUGIN);
+		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(CommandUtil.createTeleportConsumer((Player) src, island.getSpawn().getLocation())).submit(PLUGIN);
 
 		return CommandResult.success();
 	}

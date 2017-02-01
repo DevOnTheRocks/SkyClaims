@@ -2,7 +2,11 @@ package net.mohron.skyclaims.command;
 
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.admin.*;
+import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
+import net.mohron.skyclaims.command.admin.CommandDelete;
+import net.mohron.skyclaims.command.admin.CommandReload;
+import net.mohron.skyclaims.command.admin.CommandSetup;
+import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -25,17 +29,19 @@ public class CommandAdmin implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static String helpText = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
+	public static final String HELP_TEXT = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
+
+	private static final Text HELP = Text.of("help");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_ADMIN)
-			.description(Text.of(helpText))
+			.description(Text.of(HELP_TEXT))
 			.child(CommandDelete.commandSpec, "delete")
 			.child(CommandReload.commandSpec, "reload")
 			.child(CommandSetup.commandSpec, "setup")
 			.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
 			.child(CommandTransfer.commandSpec, "transfer")
-			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(Arguments.HELP, "help"))))
+			.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
 			.executor(new CommandAdmin())
 			.build();
 
@@ -58,7 +64,7 @@ public class CommandAdmin implements CommandExecutor {
 					TextColors.AQUA, "isa cs",
 					TextColors.GOLD, " <name>",
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandCreateSchematic.helpText));
+					TextColors.DARK_GREEN, CommandCreateSchematic.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -69,7 +75,7 @@ public class CommandAdmin implements CommandExecutor {
 					TextColors.GOLD, " <player>",
 					TextColors.GRAY, " [regen]",
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandDelete.helpText));
+					TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -78,7 +84,7 @@ public class CommandAdmin implements CommandExecutor {
 					(hasPerms) ? "\n" : "",
 					TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandReload.helpText));
+					TextColors.DARK_GREEN, CommandReload.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -88,7 +94,7 @@ public class CommandAdmin implements CommandExecutor {
 					TextColors.AQUA, "isa transfer",
 					TextColors.GOLD, " <player>",
 					TextColors.DARK_GRAY, " - ",
-					TextColors.DARK_GREEN, CommandDelete.helpText));
+					TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
 			hasPerms = true;
 		}
 

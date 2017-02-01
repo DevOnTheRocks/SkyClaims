@@ -31,12 +31,14 @@ public class CommandCreateSchematic implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final File CONFIG_DIR = new File(PLUGIN.getConfigDir().toString());
 
-	public static String helpText = "used to save the selected area as an island schematic";
+	public static final String HELP_TEXT = "used to save the selected area as an island schematic";
+
+	public static final Text NAME = Text.of("name");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE_SCHEMATIC)
-			.description(Text.of(helpText))
-			.arguments(string(Arguments.NAME))
+			.description(Text.of(HELP_TEXT))
+			.arguments(string(NAME))
 			.executor(new CommandCreateSchematic())
 			.build();
 
@@ -66,7 +68,7 @@ public class CommandCreateSchematic implements CommandExecutor {
 		Vector3i max = data.getPos1().max(data.getPos2());
 		ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, player.getLocation().getPosition().toInt());
 
-		String name = args.getOne(Arguments.NAME).get().toString();
+		String name = args.getOne(NAME).get().toString();
 
 		Schematic schematic = Schematic.builder()
 				.volume(volume)
