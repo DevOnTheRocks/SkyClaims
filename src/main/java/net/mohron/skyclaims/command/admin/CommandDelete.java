@@ -1,6 +1,7 @@
-package net.mohron.skyclaims.command;
+package net.mohron.skyclaims.command.admin;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;

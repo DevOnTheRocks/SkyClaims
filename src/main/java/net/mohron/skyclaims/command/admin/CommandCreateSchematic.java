@@ -1,7 +1,8 @@
-package net.mohron.skyclaims.command;
+package net.mohron.skyclaims.command.admin;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.Arguments;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;

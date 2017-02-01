@@ -1,6 +1,7 @@
-package net.mohron.skyclaims.command;
+package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.Island;
@@ -15,7 +16,6 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.biome.BiomeType;
 
 import java.util.Optional;

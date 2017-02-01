@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.*;
+import net.mohron.skyclaims.command.admin.*;
+import net.mohron.skyclaims.command.user.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
