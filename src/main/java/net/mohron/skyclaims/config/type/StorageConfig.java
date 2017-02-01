@@ -6,15 +6,21 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class StorageConfig {
 	@Setting(value = "Type", comment = "The type of data storage to use. Supports [SQLite, MySQL]")
-	public String type;
+	private String type = "SQLite";
 	@Setting(value = "SQLite")
-	public SqliteConfig sqlite;
+	private SqliteConfig sqliteConfig = new SqliteConfig();
 	@Setting(value = "MySQL")
-	public MysqlConfig mysql;
+	private MysqlConfig mysqlConfig = new MysqlConfig();
 
-	public StorageConfig() {
-		type = "SQLite";
-		sqlite = new SqliteConfig();
-		mysql = new MysqlConfig();
+	public String getType() {
+		return type;
+	}
+
+	public MysqlConfig getMysqlConfig() {
+		return mysqlConfig;
+	}
+
+	public SqliteConfig getSqliteConfig() {
+		return sqliteConfig;
 	}
 }

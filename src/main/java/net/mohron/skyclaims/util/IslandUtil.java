@@ -3,6 +3,7 @@ package net.mohron.skyclaims.util;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -12,7 +13,8 @@ import java.util.UUID;
 
 public class IslandUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
+	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WORLD);
 
 	public static boolean hasIsland(UUID owner) {
 		if (SkyClaims.islands.isEmpty()) return false;

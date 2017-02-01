@@ -1,11 +1,11 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
+import net.mohron.skyclaims.command.argument.SchematicArgument;
+import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
-import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
@@ -73,9 +73,9 @@ public class CommandReset implements CommandExecutor {
 					throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use the ", TextColors.YELLOW, schematic, TextColors.RED, " schematic!"));
 			}
 
-			if (!Arguments.SCHEMATICS.containsKey(schematic.toLowerCase())) {
+			if (!SchematicArgument.SCHEMATICS.containsKey(schematic.toLowerCase())) {
 				String schems = "";
-				for (String s : Arguments.SCHEMATICS.values()) {
+				for (String s : SchematicArgument.SCHEMATICS.values()) {
 					schems += s + ", ";
 				}
 				schems = schems.substring(0, schems.length() - 2);
@@ -89,7 +89,7 @@ public class CommandReset implements CommandExecutor {
 			Set<Player> players = island.get().getPlayers();
 			if (!players.isEmpty())
 				for (Player p : players)
-					CommandUtil.createForceTeleportConsumer(p, ConfigUtil.getWorld().getSpawnLocation());
+					CommandUtil.createForceTeleportConsumer(p, PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation());
 
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
 

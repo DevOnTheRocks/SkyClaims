@@ -2,7 +2,7 @@ package net.mohron.skyclaims.command;
 
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
-import org.spongepowered.api.text.Text;
+import net.mohron.skyclaims.command.argument.SchematicArgument;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
@@ -10,15 +10,10 @@ import java.io.File;
 import java.util.Map;
 
 public class Arguments {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	// Maps for Choice Command Arguments
-	public static final Map<String, String> SCHEMATICS = Maps.newHashMap();
 	public static final Map<String, BiomeType> BIOMES = Maps.newHashMap();
 
 	static {
-		loadSchematics();
-
 		// Standard Biomes
 		BIOMES.put(getCommandArg(BiomeTypes.BEACH), BiomeTypes.BEACH);
 		BIOMES.put(getCommandArg(BiomeTypes.BIRCH_FOREST), BiomeTypes.BIRCH_FOREST);
@@ -83,25 +78,6 @@ public class Arguments {
 		BIOMES.put(getCommandArg(BiomeTypes.SWAMPLAND_MOUNTAINS), BiomeTypes.SWAMPLAND_MOUNTAINS);
 		BIOMES.put(getCommandArg(BiomeTypes.TAIGA_MOUNTAINS), BiomeTypes.TAIGA_MOUNTAINS);
 		BIOMES.put(getCommandArg(BiomeTypes.VOID), BiomeTypes.VOID);
-	}
-
-	@SuppressWarnings("ConstantConditions")
-	public static void loadSchematics() {
-		SCHEMATICS.clear();
-		File schemDir = new File(PLUGIN.getConfigDir() + File.separator + "schematics");
-		try {
-			PLUGIN.getLogger().info("Attempting to retrieve all schematics!");
-			for (File file : schemDir.listFiles()) {
-				PLUGIN.getLogger().info("Found File: " + file);
-				String schem = file.getName();
-				if (schem.endsWith(".schematic")) {
-					SCHEMATICS.put(schem.replace(".schematic", "").toLowerCase(), schem.replace(".schematic", ""));
-					PLUGIN.getLogger().info("Added Schematic: " + schem);
-				}
-			}
-		} catch (NullPointerException e) {
-			PLUGIN.getLogger().error("Failed to read schematics directory!");
-		}
 	}
 
 	private static String getCommandArg(BiomeType biomeType) {

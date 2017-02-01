@@ -6,12 +6,15 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class SqliteConfig {
 	@Setting("Name")
-	public String databaseName;
+	private String databaseName = "skyclaims";
 	@Setting("Location")
-	public String location;
+	private String location = "/";
 
-	public SqliteConfig() {
-		databaseName = "skyclaims";
-		location = "./";
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	public String getLocation() {
+		return location;
 	}
 }

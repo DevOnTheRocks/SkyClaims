@@ -2,7 +2,7 @@ package net.mohron.skyclaims.command.admin;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
+import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
@@ -82,7 +82,7 @@ public class CommandCreateSchematic implements CommandExecutor {
 		try {
 			DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(outputFile)), schematicData);
 			player.sendMessage(Text.of(TextColors.GREEN, "Saved schematic to " + outputFile.getAbsolutePath()));
-			Arguments.SCHEMATICS.put(name.toLowerCase(), name);
+			SchematicArgument.SCHEMATICS.put(name.toLowerCase(), name);
 		} catch (Exception e) {
 			e.printStackTrace();
 			player.sendMessage(Text.of(TextColors.DARK_RED, "Error saving schematic: " + e.getMessage()));

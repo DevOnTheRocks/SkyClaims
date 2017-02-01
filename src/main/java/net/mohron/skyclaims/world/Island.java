@@ -10,7 +10,6 @@ import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.util.ClaimUtil;
-import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
@@ -30,7 +29,8 @@ import java.util.UUID;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
+	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WORLD);
 	private static final IRegionPattern PATTERN = new SpiralRegionPattern();
 
 	private UUID id;
@@ -56,11 +56,9 @@ public class Island {
 		this.claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region).getUniqueId();
 
 		// Run commands defined in config on creation
-		ConfigUtil.getCreateCommands().ifPresent(commands -> {
-			for (String command : commands) {
-				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
-			}
-		});
+		for (String command : PLUGIN.getConfig().getMiscConfig().getCreateCommands()) {
+			PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
+		}
 
 		// Generate the island using the specified schematic
 		GenerateIslandTask generateIsland = new GenerateIslandTask(owner.getUniqueId(), this, schematic);
@@ -72,7 +70,7 @@ public class Island {
 	public Island(UUID id, UUID owner, UUID claimId, Vector3d spawnLocation, boolean locked) {
 		this.id = id;
 		this.owner = owner;
-		this.spawn = new Transform<>(ConfigUtil.getWorld(), spawnLocation);
+		this.spawn = new Transform<>(WORLD, spawnLocation);
 		this.locked = locked;
 		this.claim = claimId;
 
@@ -200,7 +198,7 @@ public class Island {
 	}
 
 	public World getWorld() {
-		return ConfigUtil.getWorld();
+		return WORLD;
 	}
 
 	public Transform<World> getSpawn() {
@@ -209,14 +207,12 @@ public class Island {
 
 	public void setSpawn(Transform<World> transform) {
 		if (contains(transform.getLocation())) {
-			Transform<World> spawn = new Transform<>(ConfigUtil.getWorld(), transform.getPosition(), transform.getRotation());
+			Transform<World> spawn = new Transform<>(WORLD, transform.getPosition(), transform.getRotation());
 			if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 255) {
-				spawn.setPosition(new Vector3d(spawn.getLocation().getX(), ConfigUtil.getIslandHeight(), spawn.getLocation().getZ()));
+				spawn.setPosition(new Vector3d(spawn.getLocation().getX(), PLUGIN.getConfig().getWorldConfig().getDefaultHeight(), spawn.getLocation().getZ()));
 			}
 			this.spawn = spawn;
-			getClaim().ifPresent(claim -> {
-				claim.getData().setSpawnPos(spawn.getPosition().toInt());
-			});
+			getClaim().ifPresent(claim -> claim.getData().setSpawnPos(spawn.getPosition().toInt()));
 			save();
 		}
 	}
@@ -265,9 +261,7 @@ public class Island {
 	}
 
 	public void transfer(User user) {
-		getClaim().ifPresent(claim -> {
-			claim.transferOwner(user.getUniqueId());
-		});
+		getClaim().ifPresent(claim -> claim.transferOwner(user.getUniqueId()));
 		this.owner = user.getUniqueId();
 		save();
 	}
@@ -289,9 +283,7 @@ public class Island {
 	}
 
 	public void delete() {
-		getClaim().ifPresent(claim -> {
-			CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build());
-		});
+		getClaim().ifPresent(claim -> CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build()));
 		SkyClaims.islands.remove(id);
 		PLUGIN.getDatabase().removeIsland(this);
 	}

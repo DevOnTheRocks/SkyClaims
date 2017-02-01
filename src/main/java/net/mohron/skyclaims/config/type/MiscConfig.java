@@ -9,15 +9,21 @@ import java.util.List;
 @ConfigSerializable
 public class MiscConfig {
 	@Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join")
-	public Boolean islandOnJoin;
+	private boolean islandOnJoin = false;
 	@Setting(value = "Create-Commands", comment = "Commands to run on island creation and reset")
-	public List<String> createCommands;
+	private List<String> createCommands = new ArrayList<>();
 	@Setting(value = "Reset-Commands", comment = "Commands to run on island resets only")
-	public List<String> resetCommands;
+	private List<String> resetCommands = new ArrayList<>();
 
-	MiscConfig() {
-		islandOnJoin = false;
-		createCommands = new ArrayList<>();
-		resetCommands = new ArrayList<>();
+	public boolean createIslandOnJoin() {
+		return islandOnJoin;
+	}
+
+	public List<String> getCreateCommands() {
+		return createCommands;
+	}
+
+	public List<String> getResetCommands() {
+		return resetCommands;
 	}
 }

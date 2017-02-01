@@ -6,7 +6,7 @@ import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.config.type.WorldConfig;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.World;
@@ -15,8 +15,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class GPClaimSystem implements IClaimSystem {
+	private static final World WORLD = SkyClaims.getInstance().getConfig().getWorldConfig().getWorld();
 
-	ClaimManager claimManager = SkyClaims.getInstance().getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
+	ClaimManager claimManager = SkyClaims.getInstance().getGriefPrevention().getClaimManager(WORLD);
 
 	public GPClaimSystem() {
 
@@ -24,7 +25,7 @@ public class GPClaimSystem implements IClaimSystem {
 
 	public ClaimResult createClaim(World world, Vector3i a, Vector3i b, UUID claimId, Claim parent, ClaimType claimType, boolean cuboid, Player player) {
 		return Claim.builder()
-				.world(ConfigUtil.getWorld())
+				.world(WORLD)
 				.bounds(a, b)
 				.owner(player.getUniqueId())
 				.type(claimType)

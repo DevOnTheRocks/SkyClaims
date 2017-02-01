@@ -5,18 +5,24 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
-import net.mohron.skyclaims.command.*;
-import net.mohron.skyclaims.command.admin.*;
+import net.mohron.skyclaims.command.CommandAdmin;
+import net.mohron.skyclaims.command.CommandIsland;
+import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
+import net.mohron.skyclaims.command.admin.CommandDelete;
+import net.mohron.skyclaims.command.admin.CommandReload;
+import net.mohron.skyclaims.command.admin.CommandSetup;
+import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.command.user.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
+import net.mohron.skyclaims.database.MysqlDatabase;
+import net.mohron.skyclaims.database.SqliteDatabase;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.metrics.Metrics;
-import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -136,7 +142,7 @@ public class SkyClaims {
 	public void onServerStarted(GameStartedServerEvent event) {
 		if (!enabled) return;
 
-		database = ConfigUtil.getDatabase();
+		database = initializeDatabase();
 
 		islands = database.loadData();
 		addCustomMetrics();
@@ -173,6 +179,17 @@ public class SkyClaims {
 		CommandSpawn.register();
 		CommandTransfer.register();
 		CommandUnlock.register();
+	}
+
+	private IDatabase initializeDatabase() {
+		String type = defaultConfig.getStorageConfig().getType();
+		if (type.equalsIgnoreCase("SQLite")) {
+			return new SqliteDatabase();
+		} else if (type.equalsIgnoreCase("MySQL")) {
+			return new MysqlDatabase();
+		} else {
+			return new SqliteDatabase();
+		}
 	}
 
 	private void addCustomMetrics() {

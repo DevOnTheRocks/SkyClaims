@@ -4,7 +4,6 @@ import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.SqliteConfig;
-import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.world.Island;
 
 import java.io.*;
@@ -24,14 +23,14 @@ public class SqliteDatabase extends Database {
 	private Connection dbConnection;
 
 	public SqliteDatabase() {
-		this.config = ConfigUtil.getSqliteDatabaseConfig();
-		this.databaseName = config.databaseName;
-		this.databaseLocation = config.location;
+		this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getSqliteConfig();
+		this.databaseName = config.getDatabaseName();
+		this.databaseLocation = config.getLocation();
 
 		// Load the SQLite JDBC driver
 		try {
-			Class.forName("org.sqlite.JDBC");
-			dbConnection = DriverManager.getConnection(String.format("jdbc:sqlite:%s%s%s.db", databaseLocation, File.separator, databaseName));
+			Class.forName("org.sqliteConfig.JDBC");
+			dbConnection = DriverManager.getConnection(String.format("jdbc:sqliteConfig:%s%s%s.db", databaseLocation, File.separator, databaseName));
 			SkyClaims.getInstance().getLogger().info("Successfully connected to SkyClaims SQLite DB.");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

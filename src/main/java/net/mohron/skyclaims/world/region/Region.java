@@ -1,12 +1,11 @@
 package net.mohron.skyclaims.world.region;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.world.Coordinate;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.Extent;
 
 public class Region {
 	private int x;
@@ -35,9 +34,9 @@ public class Region {
 
 	public Location<World> getCenter() {
 		return new Location<>(
-				ConfigUtil.getWorld(),
+				SkyClaims.getInstance().getConfig().getWorldConfig().getWorld(),
 				(getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2.0,
-				ConfigUtil.getIslandHeight(),
+				SkyClaims.getInstance().getConfig().getWorldConfig().getDefaultHeight(),
 				(getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2.0
 		);
 	}

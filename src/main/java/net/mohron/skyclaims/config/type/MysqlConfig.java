@@ -6,24 +6,39 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class MysqlConfig {
 	@Setting("Name")
-	public String databaseName;
+	private String databaseName = "skyclaims";
 	@Setting("Location")
-	public String location;
-	@Setting("Table-Name")
-	public String tableName;
+	private String location = "localhost";
+	@Setting("Table-Prefix")
+	private String tablePrefix = "";
 	@Setting("Username")
-	public String username;
+	private String username = "skyclaims";
 	@Setting("Password")
-	public String password;
+	private String password = "skyclaims";
 	@Setting("Port")
-	public Integer port;
+	private int port = 3306;
 
-	public MysqlConfig() {
-		tableName = "islands";
-		location = "localhost";
-		databaseName = "skyclaims";
-		username = "skyclaims";
-		password = "skyclaims";
-		port = 3306;
+	public int getPort() {
+		return port;
+	}
+
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getTablePrefix() {
+		return tablePrefix;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 }

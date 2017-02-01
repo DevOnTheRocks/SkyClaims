@@ -15,6 +15,7 @@ import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.World;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,8 @@ import java.util.UUID;
 
 public class ClaimUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(ConfigUtil.getWorld());
+	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
+	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WORLD);
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static Claim createIslandClaim(UUID ownerUniqueId, Region region) throws CreateIslandException {
@@ -73,7 +75,7 @@ public class ClaimUtil {
 	private static ClaimResult createIslandClaimResult(UUID ownerUniqueId, Region region) {
 		int initialSize = Options.getIntOption(ownerUniqueId, Options.INITIAL_SIZE, 32, 8, 255);
 		return Claim.builder()
-				.world(ConfigUtil.getWorld())
+				.world(WORLD)
 				.bounds(
 						new Vector3i(region.getCenter().getBlockX() + initialSize, 0, region.getCenter().getBlockZ() + initialSize),
 						new Vector3i(region.getCenter().getBlockX() - initialSize, 255, region.getCenter().getBlockZ() - initialSize)
@@ -106,7 +108,7 @@ public class ClaimUtil {
 		}
 
 		return Claim.builder()
-				.world(ConfigUtil.getWorld())
+				.world(WORLD)
 				.bounds(
 						new Vector3i(lesserRegion.getLesserBoundary().getX(), 0, lesserRegion.getLesserBoundary().getZ()),
 						new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())

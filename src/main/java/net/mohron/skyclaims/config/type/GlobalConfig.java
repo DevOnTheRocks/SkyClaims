@@ -7,18 +7,33 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class GlobalConfig {
 	@Setting(value = "Config-Version")
-	public Integer version;
-	@Setting(value = "Storage")
-	public StorageConfig storage;
-	@Setting(value = "World")
-	public WorldConfig world;
+	private int version = ConfigManager.CONFIG_VERSION;
+	@Setting(value = "Commands")
+	private CommandConfig commandConfig = new CommandConfig();
 	@Setting(value = "Misc")
-	public MiscConfig misc;
+	private MiscConfig miscConfig = new MiscConfig();
+	@Setting(value = "Storage")
+	private StorageConfig storageConfig = new StorageConfig();
+	@Setting(value = "World")
+	private WorldConfig worldConfig = new WorldConfig();
 
-	public GlobalConfig() {
-		version = ConfigManager.CONFIG_VERSION;
-		world = new WorldConfig();
-		storage = new StorageConfig();
-		misc = new MiscConfig();
+	public int getVersion() {
+		return version;
+	}
+
+	public CommandConfig getCommandConfig() {
+		return commandConfig;
+	}
+
+	public MiscConfig getMiscConfig() {
+		return miscConfig;
+	}
+
+	public StorageConfig getStorageConfig() {
+		return storageConfig;
+	}
+
+	public WorldConfig getWorldConfig() {
+		return worldConfig;
 	}
 }

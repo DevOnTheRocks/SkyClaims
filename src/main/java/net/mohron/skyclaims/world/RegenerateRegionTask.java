@@ -1,17 +1,15 @@
 package net.mohron.skyclaims.world;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.util.ConfigUtil;
+import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.World;
 
-import java.util.UUID;
-
 public class RegenerateRegionTask implements Runnable {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final World WORLD = ConfigUtil.getWorld();
+	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
 
 	private Region region;
 
@@ -54,11 +52,9 @@ public class RegenerateRegionTask implements Runnable {
 
 		if (island != null) {
 			// Run reset commands
-			ConfigUtil.getResetCommands().ifPresent(commands -> {
-				for (String command : commands) {
-					PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
-				}
-			});
+			for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
+				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+			}
 
 			GenerateIslandTask generateIsland = new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic);
 			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);

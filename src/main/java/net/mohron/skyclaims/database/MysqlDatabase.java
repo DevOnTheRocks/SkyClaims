@@ -1,43 +1,32 @@
 package net.mohron.skyclaims.database;
 
-import com.flowpowered.math.vector.Vector3i;
-import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.MysqlConfig;
-import net.mohron.skyclaims.util.ConfigUtil;
-import net.mohron.skyclaims.world.Island;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class MysqlDatabase extends Database {
 	private MysqlConfig config;
 	private String connectionString;
 	private String databaseLocation;
-	private String databaseTableName;
+	private String databaseTablePrefix;
 	private String username;
 	private String password;
 	private Integer port;
 
 	public MysqlDatabase() {
-		this.config = ConfigUtil.getMysqlDatabaseConfig();
-		databaseLocation = config.location;
-		databaseTableName = config.tableName;
-		username = config.username;
-		password = config.password;
-		port = ConfigUtil.getDatabasePort();
-		connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, databaseTableName);
+		this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getMysqlConfig();
+		databaseLocation = config.getLocation();
+		databaseTablePrefix = config.getTablePrefix();
+		username = config.getUsername();
+		password = config.getPassword();
+		port = config.getPort();
+		connectionString = String.format("jdbc:mysqlConfig://%s:%s/%s", databaseLocation, port, "islands");
 
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("com.mysqlConfig.jdbc.Driver");
 			getConnection();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

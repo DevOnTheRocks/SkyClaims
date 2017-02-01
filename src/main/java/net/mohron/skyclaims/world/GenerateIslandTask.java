@@ -3,7 +3,6 @@ package net.mohron.skyclaims.world;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.util.CommandUtil;
-import net.mohron.skyclaims.util.ConfigUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
@@ -16,7 +15,6 @@ import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ArchetypeVolume;
-import org.spongepowered.api.world.extent.Extent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +23,7 @@ import java.util.zip.GZIPInputStream;
 
 public class GenerateIslandTask implements Runnable {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final World WORLD = ConfigUtil.getWorld();
+	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
 	private static final File CONFIG_DIR = new File(PLUGIN.getConfigDir().toString());
 
 	private UUID owner;

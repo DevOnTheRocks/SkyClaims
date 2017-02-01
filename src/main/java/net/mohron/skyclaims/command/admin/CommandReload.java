@@ -1,7 +1,7 @@
 package net.mohron.skyclaims.command.admin;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
+import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -39,7 +39,7 @@ public class CommandReload implements CommandExecutor {
 		// Load Plugin Config
 		PLUGIN.getConfigManager().load();
 		// Load Schematics Directory
-		Arguments.loadSchematics();
+		SchematicArgument.load();
 		// Load Database
 		PLUGIN.getDatabase().loadData();
 		src.sendMessage(Text.of(TextColors.GREEN, "Successfully reloaded SkyClaims!"));

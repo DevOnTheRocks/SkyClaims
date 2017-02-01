@@ -1,7 +1,7 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
+import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -53,7 +53,7 @@ public class CommandCreate implements CommandExecutor {
 		if (Island.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
-		if (Arguments.SCHEMATICS.isEmpty())
+		if (SchematicArgument.SCHEMATICS.isEmpty())
 			throw new CommandException(Text.of("There are no valid schematics to create an island with!"));
 
 		if (args.getOne(SCHEMATIC).isPresent()) {
@@ -62,9 +62,9 @@ public class CommandCreate implements CommandExecutor {
 				throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use the ", TextColors.YELLOW, schematic, TextColors.RED, " schematic!"));
 		}
 
-		if (!Arguments.SCHEMATICS.containsKey(schematic.toLowerCase())) {
+		if (!SchematicArgument.SCHEMATICS.containsKey(schematic.toLowerCase())) {
 			String schems = "";
-			for (String s : Arguments.SCHEMATICS.values()) {
+			for (String s : SchematicArgument.SCHEMATICS.values()) {
 				schems += s + ", ";
 			}
 			schems = schems.substring(0, schems.length() - 2);

@@ -3,14 +3,13 @@ package net.mohron.skyclaims.world.region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.util.ClaimUtil;
-import net.mohron.skyclaims.util.ConfigUtil;
 import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
 
 public class SpiralRegionPattern implements IRegionPattern {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final int SPAWN_REGIONS = ConfigUtil.getSpawnRegions();
+	private static final int SPAWN_REGIONS = PLUGIN.getConfig().getWorldConfig().getSpawnRegions();
 
 	/**
 	 * A method to generate a region-scaled spiral region and return the x/y pairs of each region

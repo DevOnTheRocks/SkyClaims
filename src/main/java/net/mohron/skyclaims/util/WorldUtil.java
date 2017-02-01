@@ -1,6 +1,7 @@
 package net.mohron.skyclaims.util;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.world.Location;
@@ -54,7 +55,7 @@ public class WorldUtil {
 	}
 
 	public static void setRegionBiome(Region region, BiomeType biomeType) {
-		World world = ConfigUtil.getWorld();
+		World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 		for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x++) {
 			for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z++) {
 				world.setBiome(x, 0, z, biomeType);
