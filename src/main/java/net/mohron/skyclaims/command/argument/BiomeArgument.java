@@ -104,7 +104,7 @@ public class BiomeArgument extends CommandElement {
 		if (BIOMES.containsKey(arg)) {
 			BiomeType biomeType = BIOMES.get(arg);
 			if (!hasPermission(source, getArgument(biomeType)))
-				throw new ArgumentParseException(Text.of(TextColors.RED, "You do not have permission to use supplied biome type."), arg, 0);
+				throw new ArgumentParseException(Text.of(TextColors.RED, "You do not have permission to use the supplied biome type."), arg, 0);
 			return biomeType;
 		}
 		throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid biome type."), arg, 0);

@@ -37,15 +37,22 @@ public class SchematicArgument extends CommandElement {
 	@Override
 	protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
 		String schem = args.next().toLowerCase();
-		if (SCHEMATICS.containsKey(schem)) return schem;
-		throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid Argument!"), schem, 0);
+		if (SCHEMATICS.containsKey(schem)) {
+			if (!hasPermission(source, schem))
+				throw new ArgumentParseException(Text.of(TextColors.RED, "You do not have permission to use the supplied schematic!"), schem, 0);
+			return SCHEMATICS.get(schem);
+		}
+		throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid Schematic!"), schem, 0);
 	}
 
 	@Override
 	public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
 		try {
 			String name = args.peek().toLowerCase();
-			return SCHEMATICS.entrySet().stream().filter(x -> x.getKey().toLowerCase().startsWith(name)).filter(x -> hasPermission(src, name)).map(Map.Entry::getKey).collect(Collectors.toList());
+			return SCHEMATICS.keySet().stream()
+					.filter(s -> s.startsWith(name))
+					.filter(s -> hasPermission(src, name))
+					.collect(Collectors.toList());
 		} catch (ArgumentParseException e) {
 			return Lists.newArrayList();
 		}
