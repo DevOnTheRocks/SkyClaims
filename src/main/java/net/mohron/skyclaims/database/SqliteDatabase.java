@@ -19,24 +19,24 @@ import java.util.UUID;
 public class SqliteDatabase extends Database {
 	private SqliteConfig config;
 	private String databaseName;
-	private String databaseLocation;
 	private Connection dbConnection;
 
 	public SqliteDatabase() {
 		this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getSqliteConfig();
 		this.databaseName = config.getDatabaseName();
-		this.databaseLocation = config.getLocation();
 
 		// Load the SQLite JDBC driver
 		try {
-			Class.forName("org.sqliteConfig.JDBC");
-			dbConnection = DriverManager.getConnection(String.format("jdbc:sqliteConfig:%s%s%s.db", databaseLocation, File.separator, databaseName));
+			Class.forName("org.sqlite.JDBC");
+			dbConnection = DriverManager.getConnection(String.format("jdbc:sqlite:%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
 			SkyClaims.getInstance().getLogger().info("Successfully connected to SkyClaims SQLite DB.");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			SkyClaims.getInstance().getLogger().error("Unable to load the JDBC driver");
+			return;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return;
 		}
 
 		createTable();
@@ -57,7 +57,7 @@ public class SqliteDatabase extends Database {
 	 * Migrates the database from an old schema to a new one
 	 */
 	public void migrate() {
-		HashMap<UUID, Island> islands = new HashMap<>();
+		HashMap<UUID, Island> islands;
 
 		SkyClaims.getInstance().getLogger().info(String.format("Table size: %s", countColumns()));
 
@@ -94,8 +94,8 @@ public class SqliteDatabase extends Database {
 	 * Creates a file backup of the existing database in the configured directory
 	 */
 	public void backup() {
-		File inputFile = new File(String.format("%s%s%s.db", databaseLocation, File.separator, databaseName));
-		File outputFile = new File(String.format("%s%s%s_backup.db", databaseLocation, File.separator, databaseName));
+		File inputFile = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
+		File outputFile = new File(String.format("%s%sdata%s%s_backup.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
 
 		byte[] buffer = new byte[1024];
 		int bytesRead;

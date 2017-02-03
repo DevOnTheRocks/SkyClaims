@@ -32,6 +32,7 @@ public class ConfigManager {
 		}
 
 		this.load();
+		this.initializeData();
 		this.initializeSchematic();
 	}
 
@@ -56,6 +57,20 @@ public class ConfigManager {
 			this.configMapper.populate(this.loader.load());
 		} catch (ObjectMappingException | IOException e) {
 			LOGGER.error(String.format("Failed to load config.\r\n %s", e.getMessage()));
+		}
+	}
+
+	/**
+	 * Create the data directory if it does not exist
+	 */
+	private void initializeData() {
+		Path path = Paths.get(PLUGIN.getConfigDir() + File.separator + "data");
+		if (!Files.exists(path)) {
+			try {
+				Files.createDirectory(path);
+			} catch (IOException e) {
+				LOGGER.error(String.format("Failed to create data directory.\r\n %s", e.getMessage()));
+			}
 		}
 	}
 

@@ -2,7 +2,6 @@ package net.mohron.skyclaims.command.user;
 
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;

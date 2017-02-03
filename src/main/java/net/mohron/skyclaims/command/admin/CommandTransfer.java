@@ -26,7 +26,7 @@ public class CommandTransfer implements CommandExecutor {
 			.permission(Permissions.COMMAND_TRANSFER)
 			.description(Text.of(HELP_TEXT))
 			.arguments(GenericArguments.seq(
-					//GenericArguments.optional(GenericArguments.user(Arguments.OWNER)),
+					//GenericArguments.optional(GenericArguments.user(OWNER)),
 					GenericArguments.user(USER)
 			))
 			.executor(new CommandTransfer())
@@ -44,7 +44,7 @@ public class CommandTransfer implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player) /*&& !args.hasAny(Arguments.OWNER)*/)
+		if (!(src instanceof Player) /*&& !args.hasAny(OWNER)*/)
 			throw new CommandException(Text.of(TextColors.RED, "You must supply a user to use this command."));
 
 		User user = (User) args.getOne(USER).orElse(null);
