@@ -218,7 +218,7 @@ public class Island {
 	}
 
 	private boolean contains(Location<World> location) {
-		return Region.get(location).equals(getRegion());
+		return location.getExtent().equals(getWorld()) && Region.get(location).equals(getRegion());
 	}
 
 	public int getRadius() {

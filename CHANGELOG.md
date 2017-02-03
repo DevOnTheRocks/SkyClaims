@@ -1,17 +1,18 @@
 # Change Log
 
 ## TBD
-**REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
+**REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
+- Fixed island commands returning an island outside the configured dimension
 - Claim size is automatically expanded during startup if it is less than the owner's `initial-size`
 - Default initial-size option increase from `32` to `48`
 
 ## Beta 13
-**REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
+**REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
 - Fixed `is reset` not generating a new island
 - Changed `is setbiome`'s default target to island
 
 ## Beta 12
-**REQUIRES: SF 2022+ & GP 251+ (latest versions are highly recommended)**
+**REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
 - Updated to GP API v0.2
 - Fixed bug affecting all commands designed to detect current island
 - Added `/isa transfer` command to transfer island ownership
