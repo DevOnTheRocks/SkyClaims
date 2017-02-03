@@ -1,7 +1,6 @@
 package net.mohron.skyclaims.world;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.cause.Cause;

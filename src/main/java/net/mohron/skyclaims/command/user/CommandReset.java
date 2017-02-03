@@ -2,7 +2,6 @@ package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.SchematicArgument;
-import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;

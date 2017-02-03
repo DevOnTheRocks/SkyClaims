@@ -1,7 +1,6 @@
 package net.mohron.skyclaims.world.region;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.world.Coordinate;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.world.Location;

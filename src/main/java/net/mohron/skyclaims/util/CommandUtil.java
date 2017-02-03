@@ -3,7 +3,6 @@ package net.mohron.skyclaims.util;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -12,7 +11,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.Extent;
 
 import java.util.function.Consumer;
 

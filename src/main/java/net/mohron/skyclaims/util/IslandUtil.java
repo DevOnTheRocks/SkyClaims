@@ -3,7 +3,6 @@ package net.mohron.skyclaims.util;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;

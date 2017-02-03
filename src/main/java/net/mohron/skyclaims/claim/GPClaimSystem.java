@@ -6,7 +6,6 @@ import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.WorldConfig;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.World;
