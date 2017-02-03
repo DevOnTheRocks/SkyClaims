@@ -1,7 +1,7 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
+import net.mohron.skyclaims.command.argument.BiomeArgument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.Island;
@@ -34,9 +34,10 @@ public class CommandSetBiome implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SET_BIOME)
 			.description(Text.of(HELP_TEXT))
-			.arguments(
-					GenericArguments.choices(BIOME, Arguments.BIOMES),
-					GenericArguments.optional(GenericArguments.enumValue(TARGET, Target.class)))
+			.arguments(GenericArguments.seq(
+					new BiomeArgument(BIOME),
+					GenericArguments.optional(GenericArguments.enumValue(TARGET, Target.class))
+			))
 			.executor(new CommandSetBiome())
 			.build();
 

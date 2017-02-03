@@ -2,7 +2,7 @@ package net.mohron.skyclaims.permissions;
 
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.Arguments;
+import net.mohron.skyclaims.command.argument.BiomeArgument;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.world.biome.BiomeType;
@@ -54,7 +54,7 @@ public class Options {
 	public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {
 		String biomeOption = getStringOption(playerUniqueId, DEFAULT_BIOME);
 		if (biomeOption == null) return Optional.empty();
-		for (BiomeType biome : Arguments.BIOMES.values()) {
+		for (BiomeType biome : BiomeArgument.BIOMES.values()) {
 			if (biome.getName().equalsIgnoreCase(biomeOption)) return Optional.of(biome);
 		}
 		return Optional.empty();
