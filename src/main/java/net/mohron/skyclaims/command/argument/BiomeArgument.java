@@ -116,7 +116,7 @@ public class BiomeArgument extends CommandElement {
 			String name = args.peek().toLowerCase();
 			return BIOMES.keySet().stream()
 					.filter(s -> s.startsWith(name))
-					.filter(s -> hasPermission(src, name))
+					.filter(s -> hasPermission(src, s))
 					.collect(Collectors.toList());
 		} catch (ArgumentParseException e) {
 			return Lists.newArrayList();

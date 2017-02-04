@@ -53,7 +53,7 @@ public class SchematicArgument extends CommandElement {
 			String name = args.peek().toLowerCase();
 			return SCHEMATICS.keySet().stream()
 					.filter(s -> s.startsWith(name))
-					.filter(s -> hasPermission(src, name))
+					.filter(s -> hasPermission(src, s))
 					.collect(Collectors.toList());
 		} catch (ArgumentParseException e) {
 			return Lists.newArrayList();

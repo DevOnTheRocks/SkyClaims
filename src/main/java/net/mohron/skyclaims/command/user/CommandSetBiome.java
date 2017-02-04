@@ -2,6 +2,7 @@ package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.BiomeArgument;
+import net.mohron.skyclaims.command.argument.TargetArgument;
 import net.mohron.skyclaims.config.type.PermissionConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.WorldUtil;
@@ -28,16 +29,12 @@ public class CommandSetBiome implements CommandExecutor {
 	private static final Text BIOME = Text.of("biome");
 	private static final Text TARGET = Text.of("target");
 
-	public enum Target {
-		BLOCK, CHUNK, ISLAND;
-	}
-
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_SET_BIOME)
 			.description(Text.of(HELP_TEXT))
 			.arguments(GenericArguments.seq(
 					new BiomeArgument(BIOME),
-					GenericArguments.optional(GenericArguments.enumValue(TARGET, Target.class))
+					GenericArguments.optional(new TargetArgument(TARGET))
 			))
 			.executor(new CommandSetBiome())
 			.build();
@@ -64,29 +61,20 @@ public class CommandSetBiome implements CommandExecutor {
 				.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
 
 		if (!player.getUniqueId().equals(island.getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
-			throw new CommandException(Text.of("You do not have permission to use setbiome on this island"));
+			throw new CommandPermissionException(Text.of("You do not have permission to use setbiome on this island"));
 
-		if (config.isSeparateTargetPerms() && !player.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biome.getName().toLowerCase()))
-			throw new CommandPermissionException(Text.of("You do not have permission to use the designated biome type."));
-
-		Target target = (Target) args.getOne(TARGET).orElse(Target.ISLAND);
+		TargetArgument.Target target = (TargetArgument.Target) args.getOne(TARGET).orElse(TargetArgument.Target.ISLAND);
 
 		switch (target) {
 			case BLOCK:
-				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_BLOCK))
-					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> block"));
 				WorldUtil.setBlockBiome(player.getLocation(), biome);
 				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome at %s,%s to %s.", player.getLocation().getBlockX(), player.getLocation().getBlockZ(), biome.getName())));
 				break;
 			case CHUNK:
-				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_CHUNK))
-					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> chunk"));
 				WorldUtil.setChunkBiome(player.getLocation(), biome);
 				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome in this chunk to %s.", biome.getName())));
 				break;
 			case ISLAND:
-				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_ISLAND))
-					throw new CommandPermissionException(Text.of("You do not have permissions to use setbiome <biome> island"));
 				WorldUtil.setIslandBiome(island, biome);
 				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome on this island to %s.", biome.getName())));
 				break;
