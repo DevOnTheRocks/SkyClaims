@@ -9,8 +9,8 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group 'net.mohron.skyclaims'
-version '1.0.0-beta13'
-description = 'SkyClaims is an Island plugin that integrates with GriefPrevention for Sponge servers'
+version '1.0.0-beta14'
+description = 'SkyClaims is an Island Management plugin that integrates with GriefPrevention.'
 
 repositories {
     mavenCentral()
