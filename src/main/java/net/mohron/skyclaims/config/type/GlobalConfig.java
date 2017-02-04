@@ -8,8 +8,8 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class GlobalConfig {
 	@Setting(value = "Config-Version")
 	private int version = ConfigManager.CONFIG_VERSION;
-	@Setting(value = "Commands")
-	private CommandConfig commandConfig = new CommandConfig();
+	@Setting(value = "Permission")
+	private PermissionConfig permissionConfig = new PermissionConfig();
 	@Setting(value = "Misc")
 	private MiscConfig miscConfig = new MiscConfig();
 	@Setting(value = "Storage")
@@ -21,8 +21,8 @@ public class GlobalConfig {
 		return version;
 	}
 
-	public CommandConfig getCommandConfig() {
-		return commandConfig;
+	public PermissionConfig getPermissionConfig() {
+		return permissionConfig;
 	}
 
 	public MiscConfig getMiscConfig() {

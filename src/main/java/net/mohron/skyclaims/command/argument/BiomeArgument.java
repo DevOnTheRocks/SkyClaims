@@ -3,7 +3,7 @@ package net.mohron.skyclaims.command.argument;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.CommandConfig;
+import net.mohron.skyclaims.config.type.PermissionConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class BiomeArgument extends CommandElement {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final CommandConfig config = PLUGIN.getConfig().getCommandConfig();
+	private static PermissionConfig config = PLUGIN.getConfig().getPermissionConfig();
 
 	public static final Map<String, BiomeType> BIOMES = Maps.newHashMap();
 

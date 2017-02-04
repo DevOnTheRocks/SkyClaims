@@ -3,7 +3,7 @@ package net.mohron.skyclaims.command.argument;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.CommandConfig;
+import net.mohron.skyclaims.config.type.PermissionConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class SchematicArgument extends CommandElement {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final CommandConfig config = PLUGIN.getConfig().getCommandConfig();
+	private static PermissionConfig config = PLUGIN.getConfig().getPermissionConfig();
 
 	public static final Map<String, String> SCHEMATICS = Maps.newHashMap();
 
@@ -37,6 +37,8 @@ public class SchematicArgument extends CommandElement {
 	@Override
 	protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
 		String schem = args.next().toLowerCase();
+		if (SCHEMATICS.isEmpty())
+			throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid schematics available!"), schem, 0);
 		if (SCHEMATICS.containsKey(schem)) {
 			if (!hasPermission(source, schem))
 				throw new ArgumentParseException(Text.of(TextColors.RED, "You do not have permission to use the supplied schematic!"), schem, 0);

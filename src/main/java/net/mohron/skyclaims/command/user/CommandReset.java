@@ -7,7 +7,6 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -16,13 +15,11 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.util.Optional;
 import java.util.Set;
 
 public class CommandReset implements CommandExecutor {
-
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
 	public static final String HELP_TEXT = "delete your island and inventory so you can start over";
@@ -33,10 +30,10 @@ public class CommandReset implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_RESET)
 			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.optional(GenericArguments.seq(
-					GenericArguments.onlyOne(GenericArguments.literal(CONFIRM, "confirm")),
-					GenericArguments.optional(GenericArguments.onlyOne(GenericArguments.string(SCHEMATIC)))
-			)))
+			.arguments(GenericArguments.seq(
+					GenericArguments.optional(GenericArguments.literal(CONFIRM, "confirm")),
+					GenericArguments.optional(new SchematicArgument(SCHEMATIC))
+			))
 			.executor(new CommandReset())
 			.build();
 
@@ -64,22 +61,7 @@ public class CommandReset implements CommandExecutor {
 			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
 			player.sendMessage(Text.of("To continue, run ", "/is reset confirm", (args.hasAny(SCHEMATIC)) ? " [schematic]" : ""));
 		} else {
-			String schematic = Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC);
-
-			if (args.getOne(SCHEMATIC).isPresent()) {
-				schematic = (String) args.getOne(SCHEMATIC).get();
-				if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + schematic.toLowerCase()))
-					throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to use the ", TextColors.YELLOW, schematic, TextColors.RED, " schematic!"));
-			}
-
-			if (!SchematicArgument.SCHEMATICS.containsKey(schematic.toLowerCase())) {
-				String schems = "";
-				for (String s : SchematicArgument.SCHEMATICS.values()) {
-					schems += s + ", ";
-				}
-				schems = schems.substring(0, schems.length() - 2);
-				throw new CommandException(Text.of("The value supplied is not a valid schematic. Choose from: ", TextColors.AQUA, schems));
-			}
+			String schematic = (String) args.getOne(SCHEMATIC).orElse(Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
 
 			player.getEnderChestInventory().clear();
 			player.getInventory().clear();

@@ -2,6 +2,7 @@ package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.BiomeArgument;
+import net.mohron.skyclaims.config.type.PermissionConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.Island;
@@ -19,8 +20,8 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.biome.BiomeType;
 
 public class CommandSetBiome implements CommandExecutor {
-
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+	private static PermissionConfig config = PLUGIN.getConfig().getPermissionConfig();
 
 	public static final String HELP_TEXT = "set the biome of a block, chunk or island";
 
@@ -65,7 +66,7 @@ public class CommandSetBiome implements CommandExecutor {
 		if (!player.getUniqueId().equals(island.getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
 			throw new CommandException(Text.of("You do not have permission to use setbiome on this island"));
 
-		if (!player.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biome.getName().toLowerCase()))
+		if (config.isSeparateTargetPerms() && !player.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biome.getName().toLowerCase()))
 			throw new CommandPermissionException(Text.of("You do not have permission to use the designated biome type."));
 
 		Target target = (Target) args.getOne(TARGET).orElse(Target.ISLAND);
