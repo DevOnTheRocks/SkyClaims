@@ -27,13 +27,13 @@ public class SqliteDatabase extends Database {
 		this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getSqliteConfig();
 		this.databaseName = config.getDatabaseName();
 
-		File db = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
+		File db = new File(String.format("%s%sdata%sskyclaims.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator));
 		if (!db.exists()) migrateFile();
 
 		// Load the SQLite JDBC driver
 		try {
 			Class.forName("org.sqlite.JDBC");
-			dbConnection = DriverManager.getConnection(String.format("jdbc:sqlite:%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
+			dbConnection = DriverManager.getConnection(String.format("jdbc:sqlite:%s%sskyclaims.db", config.getParent().getLocation(), File.separator));
 			SkyClaims.getInstance().getLogger().info("Successfully connected to SkyClaims SQLite DB.");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -100,7 +100,7 @@ public class SqliteDatabase extends Database {
 	 */
 	public void migrateFile() {
 		SkyClaims.getInstance().getLogger().info("Moving the SkyClaims SQLite DB to the new default location.");
-		File inputFile = new File(String.format(".%s%s.db", File.separator, databaseName));
+		File inputFile = new File(String.format("%s%s%s.db", config.getLocation(), File.separator, databaseName));
 		File outputFile = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
 
 		try {

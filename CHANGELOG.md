@@ -1,9 +1,10 @@
 # Change Log
 
 ## Beta 14
-### WARNING: The SQLite DB file location has been moved! If you had previously customized the location, your database WILL NOT be automatically moved!
+### WARNING: The SQLite DB file location has been moved! Ensure that you verify your database is successfully moved to the new location!
 **REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
-- Moved SQLite DB to `SPONGE_CONFIG_DIR/skyclaims/data` and removed location from config
+- Moved SQLite DB to `SPONGE_CONFIG_DIR/skyclaims/data` and deprecated SQLite configs
+- Added Storage location config to be used for all file based SkyClaims data
 - Fixed island commands returning an island outside the configured dimension
 - Added config options to enable Schematic, Biome Type and Target permission checks (disabled by default)
 - Schematic, Biome Type and Target arguments now only tab complete values that the player has permission to use
