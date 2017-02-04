@@ -5,9 +5,10 @@ import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.SqliteConfig;
 import net.mohron.skyclaims.world.Island;
+import org.apache.commons.io.FileUtils;
 
-import java.io.*;
-import java.nio.file.Path;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -102,20 +103,11 @@ public class SqliteDatabase extends Database {
 		File inputFile = new File(String.format(".%s%s.db", File.separator, databaseName));
 		File outputFile = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
 
-		byte[] buffer = new byte[1024];
-		int bytesRead;
-
-		try (InputStream is = new BufferedInputStream(new FileInputStream(inputFile))) {
-			try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-				while ((bytesRead = is.read()) > 0)
-					os.write(buffer, 0, bytesRead);
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().warn("Unable to find database file in server root!");
+		try {
+			FileUtils.moveFile(inputFile, outputFile);
 		} catch (IOException e) {
 			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Error occurred whilst copying the SkyClaims SQLite DB.");
+			SkyClaims.getInstance().getLogger().error("Error occurred while moving the SkyClaims SQLite DB.");
 		}
 	}
 
@@ -126,20 +118,11 @@ public class SqliteDatabase extends Database {
 		File inputFile = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
 		File outputFile = new File(String.format("%s%sdata%s%s_backup.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
 
-		byte[] buffer = new byte[1024];
-		int bytesRead;
-
-		try (InputStream is = new BufferedInputStream(new FileInputStream(inputFile))) {
-			try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-				while ((bytesRead = is.read()) > 0)
-					os.write(buffer, 0, bytesRead);
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Unable to find original database file, make sure it's there!");
+		try {
+			FileUtils.copyFile(inputFile, outputFile);
 		} catch (IOException e) {
 			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Error occurred whilst writing to file, check the console.");
+			SkyClaims.getInstance().getLogger().error("Error occurred while backing up legacy SQLite DB.");
 		}
 	}
 

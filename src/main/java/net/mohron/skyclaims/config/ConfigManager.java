@@ -7,6 +7,7 @@ import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -86,27 +87,14 @@ public class ConfigManager {
 				LOGGER.error(String.format("Failed to create schematics directory.\r\n %s", e.getMessage()));
 			}
 		}
-/*		Path defaultSchematic = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
-		if (!Files.exists(defaultSchematic)) {
+		Path defaultSchem = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
+		if (!Files.exists(defaultSchem)) {
 			try {
-				Files.createFile(defaultSchematic);
-
-				try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("island.schematic")) {
-					try (GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream)) {
-						try (OutputStream outputStream = new FileOutputStream(defaultSchematic.toString())) {
-							try (GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream)) {
-								byte[] buffer = new byte[1024];
-								int bytesRead;
-
-								while ((bytesRead = gzipInputStream.read()) > 0)
-									gzipOutputStream.write(buffer, 0, bytesRead);
-							}
-						}
-					}
-				}
+				//noinspection ConstantConditions - Resource will always be included
+				FileUtils.copyURLToFile(this.getClass().getClassLoader().getResource("island.schematic"), defaultSchem.toFile());
 			} catch (IOException e) {
 				LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
 			}
-		}*/
+		}
 	}
 }
