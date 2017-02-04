@@ -69,13 +69,13 @@ public class SchematicArgument extends CommandElement {
 		SchematicArgument.SCHEMATICS.clear();
 		File schemDir = new File(PLUGIN.getConfigDir() + File.separator + "schematics");
 		try {
-			PLUGIN.getLogger().info("Attempting to retrieve all schematics!");
+			PLUGIN.getLogger().debug("Attempting to retrieve all schematics!");
 			for (File file : schemDir.listFiles()) {
-				PLUGIN.getLogger().info("Found File: " + file);
+				PLUGIN.getLogger().debug("Found File: " + file);
 				String schem = file.getName();
 				if (schem.endsWith(".schematic")) {
 					SchematicArgument.SCHEMATICS.put(schem.replace(".schematic", "").toLowerCase(), schem.replace(".schematic", ""));
-					PLUGIN.getLogger().info("Added Schematic: " + schem);
+					PLUGIN.getLogger().debug("Added Schematic: " + schem);
 				}
 			}
 		} catch (NullPointerException e) {
