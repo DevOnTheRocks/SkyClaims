@@ -1,11 +1,12 @@
 # Change Log
 
 ## TBD
+### WARNING: The SQLite DB file location has been moved! If you had previously customized the location, your database WILL NOT be automatically moved!
 **REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
 - Moved SQLite DB to `SPONGE_CONFIG_DIR/skyclaims/data` and removed location from config
 - Fixed island commands returning an island outside the configured dimension
-- Added config options to enable Schematic and Biome Type and Target permission checks (disabled by default)
-- Schematic and Biome Type arguments now only tab complete values that the player has permission to use
+- Added config options to enable Schematic, Biome Type and Target permission checks (disabled by default)
+- Schematic, Biome Type and Target arguments now only tab complete values that the player has permission to use
 - Claim size is automatically expanded during startup if it is less than the owner's `initial-size`
 - Default initial-size option increase from `32` to `48`
 

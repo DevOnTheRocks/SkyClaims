@@ -7,6 +7,7 @@ import net.mohron.skyclaims.config.type.SqliteConfig;
 import net.mohron.skyclaims.world.Island;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,6 +25,9 @@ public class SqliteDatabase extends Database {
 	public SqliteDatabase() {
 		this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getSqliteConfig();
 		this.databaseName = config.getDatabaseName();
+
+		File db = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
+		if (!db.exists()) migrateFile();
 
 		// Load the SQLite JDBC driver
 		try {
@@ -88,6 +92,31 @@ public class SqliteDatabase extends Database {
 			}
 		}
 
+	}
+
+	/**
+	 * Migrates the database from the old default location to the new
+	 */
+	public void migrateFile() {
+		SkyClaims.getInstance().getLogger().info("Moving the SkyClaims SQLite DB to the new default location.");
+		File inputFile = new File(String.format(".%s%s.db", File.separator, databaseName));
+		File outputFile = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
+
+		byte[] buffer = new byte[1024];
+		int bytesRead;
+
+		try (InputStream is = new BufferedInputStream(new FileInputStream(inputFile))) {
+			try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+				while ((bytesRead = is.read()) > 0)
+					os.write(buffer, 0, bytesRead);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			SkyClaims.getInstance().getLogger().warn("Unable to find database file in server root!");
+		} catch (IOException e) {
+			e.printStackTrace();
+			SkyClaims.getInstance().getLogger().error("Error occurred whilst copying the SkyClaims SQLite DB.");
+		}
 	}
 
 	/**
