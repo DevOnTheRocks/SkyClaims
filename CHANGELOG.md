@@ -1,5 +1,8 @@
 # Change Log
 
+## Beta 15
+- Fixed islands being created on server join for players with islands and when config is set to false
+
 ## Beta 14
 ### WARNING: The SQLite DB file location has been moved! Ensure that you verify your database is successfully moved to the new location!
 **REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
