@@ -58,7 +58,7 @@ public class CommandReset implements CommandExecutor {
 			throw new CommandException(Text.of("You must have an island to run this command!"));
 
 		if (!args.hasAny(CONFIRM)) {
-			player.sendMessage(Text.of("Are you sure you want to reset your island? This cannot be undone!"));
+			player.sendMessage(Text.of("Are you sure you want to reset your island and inventory? This cannot be undone!"));
 			player.sendMessage(Text.of("To continue, run ", "/is reset confirm", (args.hasAny(SCHEMATIC)) ? " [schematic]" : ""));
 		} else {
 			String schematic = (String) args.getOne(SCHEMATIC).orElse(Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
