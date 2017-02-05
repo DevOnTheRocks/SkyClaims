@@ -12,10 +12,10 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 public class ClientJoinHandler {
 	@Listener
 	public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
-		if (SkyClaims.getInstance().getConfig().getMiscConfig().createIslandOnJoin()) return;
+		if (!SkyClaims.getInstance().getConfig().getMiscConfig().createIslandOnJoin()) return;
 
 		try {
-			new Island(player, Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
+			if (!Island.hasIsland(player.getUniqueId())) new Island(player, Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
 		} catch (CreateIslandException e) {
 			// Oh well, we tried!
 			SkyClaims.getInstance().getLogger().warn(String.format("Failed to create an island on join for %s.\n%s", player.getName(), e.getMessage()));
