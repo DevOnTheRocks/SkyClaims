@@ -92,6 +92,7 @@ public class CommandAdmin implements CommandExecutor {
 			helpContents = Text.join(helpContents, Text.of(
 					(hasPerms) ? "\n" : "",
 					TextColors.AQUA, "isa transfer",
+					TextColors.GRAY, " [owner]",
 					TextColors.GOLD, " <player>",
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));

@@ -20,13 +20,14 @@ public class CommandTransfer implements CommandExecutor {
 
 	public static final String HELP_TEXT = "used to transfer island ownership to another player.";
 
+	public static final Text OWNER = Text.of("owner");
 	public static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_TRANSFER)
 			.description(Text.of(HELP_TEXT))
 			.arguments(GenericArguments.seq(
-					//GenericArguments.optional(GenericArguments.user(OWNER)),
+					GenericArguments.optional(GenericArguments.user(OWNER)),
 					GenericArguments.user(USER)
 			))
 			.executor(new CommandTransfer())
@@ -44,16 +45,18 @@ public class CommandTransfer implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player) /*&& !args.hasAny(OWNER)*/)
-			throw new CommandException(Text.of(TextColors.RED, "You must supply a user to use this command."));
+		if (!(src instanceof Player) && !args.hasAny(OWNER))
+			throw new CommandException(Text.of(TextColors.RED, "You must supply a owner & user to use this command."));
 
-		User user = (User) args.getOne(USER).orElse(null);
+		User owner = args.<User>getOne(OWNER).orElse(null);
+		User user = args.<User>getOne(USER).orElse(null);
 		if (user == null || Island.hasIsland(user.getUniqueId()))
 			throw new CommandException(Text.of(TextColors.RED, "Unable to complete island transfer to ", user.getName(), ": player has reached the max islands owned!"));
 
 		Player player = (src instanceof Player) ? (Player) src : null;
-		Island island = (false) ? Island.getByOwner(user.getUniqueId()).orElse(null) : Island.get(player.getLocation())
-				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "This command must be run on the island you wish to transfer!")));
+		Island island = (owner != null) ?
+				Island.getByOwner(owner.getUniqueId()).orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The owner supplied must have an island!"))) :
+				Island.get(player.getLocation()).orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "This command must be run on the island you wish to transfer!")));
 
 		src.sendMessage(Text.of(TextColors.GREEN, "Completed transfer of ", TextColors.GOLD, island.getOwnerName(), TextColors.GREEN, "'s island to ", TextColors.GOLD, user.getName(), TextColors.GREEN, "."));
 		island.transfer(user);

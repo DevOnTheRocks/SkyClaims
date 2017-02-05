@@ -15,7 +15,9 @@ public class ClientJoinHandler {
 		if (!SkyClaims.getInstance().getConfig().getMiscConfig().createIslandOnJoin()) return;
 
 		try {
-			if (!Island.hasIsland(player.getUniqueId())) new Island(player, Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
+			if (!Island.hasIsland(player.getUniqueId()))
+				new Island(player, Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
+			SkyClaims.getInstance().getLogger().info(String.format("Automatically created an island for %s.", player.getName()));
 		} catch (CreateIslandException e) {
 			// Oh well, we tried!
 			SkyClaims.getInstance().getLogger().warn(String.format("Failed to create an island on join for %s.\n%s", player.getName(), e.getMessage()));

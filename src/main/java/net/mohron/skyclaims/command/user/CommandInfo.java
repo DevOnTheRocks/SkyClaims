@@ -74,15 +74,51 @@ public class CommandInfo implements CommandExecutor {
 			}
 		}
 
+		Text teleport = (src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) ? Text.of(
+				TextColors.DARK_GRAY, "[",
+				TextColors.RED, Text.builder("Teleport")
+						.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
+						.onHover(TextActions.showText(Text.of("Click to teleport to this island!"))),
+				TextColors.DARK_GRAY, "] "
+		) : Text.EMPTY;
+
+		Text transfer = (src.hasPermission(Permissions.COMMAND_TRANSFER)) ? Text.of(
+				TextColors.DARK_GRAY, "[",
+				TextColors.RED, Text.builder("Transfer")
+						.onClick(TextActions.suggestCommand("/isa transfer " + island.getOwnerName() + " ?"))
+						.onHover(TextActions.showText(Text.of("Click to transfer this island!"))),
+				TextColors.DARK_GRAY, "] "
+		) : Text.EMPTY;
+
+		Text delete = (src.hasPermission(Permissions.COMMAND_DELETE)) ? Text.of(
+				TextColors.DARK_GRAY, "[",
+				TextColors.RED, Text.builder("Delete")
+						.onClick(TextActions.executeCallback(consumer -> {
+							island.regen();
+							island.delete();
+						}))
+						.onHover(TextActions.showText(Text.of("Click to delete this island!"))),
+				TextColors.DARK_GRAY, "] "
+		) : Text.EMPTY;
+
+		Text admin = (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty()) ? Text.EMPTY : Text.of(
+				TextColors.RED, "Admin", TextColors.WHITE, " : ",
+				(!teleport.isEmpty()) ? teleport : Text.EMPTY,
+				(!transfer.isEmpty()) ? transfer : Text.EMPTY,
+				(!delete.isEmpty()) ? delete : Text.EMPTY,
+				Text.NEW_LINE
+		);
+
 		Text infoText = Text.of(
-				TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), "\n",
-				TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), "\n",
-				members, "\n",
-				TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getRadius() * 2, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getRadius() * 2, "\n",
+				(src instanceof Player) ? admin : Text.EMPTY,
+				TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), Text.NEW_LINE,
+				TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), Text.NEW_LINE,
+				members, Text.NEW_LINE,
+				TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getRadius() * 2, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getRadius() * 2, Text.NEW_LINE,
 				TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockX(), TextColors.GRAY, "x ",
-				TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockZ(), TextColors.GRAY, "z", "\n",
-				TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), "\n",
-				TextColors.YELLOW, "UUID_ARG", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), "\n",
+				TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockZ(), TextColors.GRAY, "z", Text.NEW_LINE,
+				TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), Text.NEW_LINE,
+				TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), Text.NEW_LINE,
 				(island.getClaim().isPresent()) ? Text.of(
 						TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(island.getClaimUniqueId().toString())
 								.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo", island.getClaimUniqueId().toString(), createReturnConsumer(src, island.getUniqueId().toString()))))
@@ -90,7 +126,10 @@ public class CommandInfo implements CommandExecutor {
 				) : Text.EMPTY
 		);
 
-		PaginationList.Builder paginationBuilder = PaginationList.builder().title(Text.of(TextColors.AQUA, "Island Info")).padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-")).contents(infoText);
+		PaginationList.Builder paginationBuilder = PaginationList.builder()
+				.title(Text.of(TextColors.AQUA, "Island Info"))
+				.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+				.contents(infoText);
 		paginationBuilder.sendTo(src);
 
 		return CommandResult.success();
@@ -99,7 +138,7 @@ public class CommandInfo implements CommandExecutor {
 	private static Consumer<CommandSource> createReturnConsumer(CommandSource src, String arguments) {
 		return consumer -> {
 			Text returnCommand = Text.builder().append(Text.of(
-					TextColors.WHITE, "\n[", TextColors.AQUA, "Return to Island Info", TextColors.WHITE, "]\n"))
+					TextColors.WHITE, Text.NEW_LINE, "[", TextColors.AQUA, "Return to Island Info", TextColors.WHITE, "]", Text.NEW_LINE))
 					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", arguments, null))).build();
 			src.sendMessage(returnCommand);
 		};

@@ -76,7 +76,7 @@ public class CommandIsland implements CommandExecutor {
 			helpContents = Text.join(helpContents, Text.of(
 					"\n",
 					TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
-					TextColors.GRAY, " [island id]",
+					TextColors.GRAY, " [island uuid]",
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandInfo.HELP_TEXT));
 			hasPerms = true;

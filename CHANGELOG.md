@@ -1,7 +1,9 @@
 # Change Log
 
 ## Beta 16
+- Added admin command shortcuts to `/is info`
 - Removed shorthand targets `i, c, & b` from tab completion
+- Removed `skyclaims.arguments.island` permission
 
 ## Beta 15
 - Fixed islands being created on server join for players with islands and when config is set to false
