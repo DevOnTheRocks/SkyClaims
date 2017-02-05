@@ -1,11 +1,14 @@
 # Change Log
 
 ## Beta 16
+**REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
 - Added admin command shortcuts to `/is info`
 - Removed shorthand targets `i, c, & b` from tab completion
 - Removed `skyclaims.arguments.island` permission
+- Updated `/is reset` warning message to include the inventory reset
 
-## Beta 15
+## Beta 15 - Hotfix
+**REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
 - Fixed islands being created on server join for players with islands and when config is set to false
 
 ## Beta 14
