@@ -58,6 +58,7 @@ public class TargetArgument extends CommandElement {
 		try {
 			String name = args.peek().toLowerCase();
 			return TARGETS.entrySet().stream()
+					.filter(s -> s.getKey().length() > 1)
 					.filter(s -> s.getKey().startsWith(name))
 					.filter(s -> hasPermission(src, s.getValue()))
 					.map(Map.Entry::getKey)
@@ -75,7 +76,7 @@ public class TargetArgument extends CommandElement {
 			case CHUNK:
 				return src.hasPermission(Permissions.COMMAND_ARGUMENTS_CHUNK);
 			case ISLAND:
-				return src.hasPermission(Permissions.COMMAND_ARGUMENTS_ISLAND);
+				return true;
 			default:
 				return false;
 		}

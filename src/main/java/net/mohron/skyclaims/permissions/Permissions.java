@@ -16,7 +16,6 @@ public class Permissions {
 	public static final String COMMAND_ARGUMENTS_SCHEMATICS = "skyclaims.arguments.schematics";
 	public static final String COMMAND_ARGUMENTS_BLOCK = "skyclaims.arguments.block";
 	public static final String COMMAND_ARGUMENTS_CHUNK = "skyclaims.arguments.chunk";
-	public static final String COMMAND_ARGUMENTS_ISLAND = "skyclaims.arguments.island";
 	public static final String COMMAND_ARGUMENTS_BIOMES = "skyclaims.arguments.biomes";
 
 	// Admin Permissions

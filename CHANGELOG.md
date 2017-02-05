@@ -1,5 +1,8 @@
 # Change Log
 
+## Beta 16
+- Removed shorthand targets `i, c, & b` from tab completion
+
 ## Beta 15
 - Fixed islands being created on server join for players with islands and when config is set to false
 
