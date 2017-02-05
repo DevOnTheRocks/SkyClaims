@@ -18,7 +18,7 @@ public class GlobalConfig {
 	private WorldConfig worldConfig;
 
 	public GlobalConfig() {
-		version  = ConfigManager.CONFIG_VERSION;
+		version = ConfigManager.CONFIG_VERSION;
 		permissionConfig = new PermissionConfig();
 		miscConfig = new MiscConfig();
 		storageConfig = new StorageConfig();

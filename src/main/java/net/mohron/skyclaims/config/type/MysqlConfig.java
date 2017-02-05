@@ -6,7 +6,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class MysqlConfig {
 	@Setting("Name")
-	private String databaseName ;
+	private String databaseName;
 	@Setting("Location")
 	private String location;
 	@Setting("Table-Prefix")
