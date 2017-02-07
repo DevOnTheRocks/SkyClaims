@@ -101,7 +101,7 @@ public class SqliteDatabase extends Database {
 	public void migrateFile() {
 		SkyClaims.getInstance().getLogger().info("Moving the SkyClaims SQLite DB to the new default location.");
 		File inputFile = new File(String.format("%s%s%s.db", config.getLocation(), File.separator, databaseName));
-		File outputFile = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
+		File outputFile = new File(String.format("%s%sdata%sskyclaims.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator));
 
 		try {
 			FileUtils.moveFile(inputFile, outputFile);
