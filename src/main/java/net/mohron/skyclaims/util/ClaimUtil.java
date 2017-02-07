@@ -4,7 +4,6 @@ import com.flowpowered.math.vector.Vector3i;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
-import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
@@ -28,8 +27,6 @@ public class ClaimUtil {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static Claim createIslandClaim(UUID ownerUniqueId, Region region) throws CreateIslandException {
-		final int MAX_CLAIM_ATTEMPTS = 10; // limit claim removals to prevent an infinite loop
-		int i = 0;
 		Claim claim = null;
 		ClaimResult claimResult;
 		do {
@@ -63,11 +60,7 @@ public class ClaimUtil {
 				default:
 					throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
 			}
-			i++;
-		} while (claimResult.getResultType() == ClaimResultType.OVERLAPPING_CLAIM && i < MAX_CLAIM_ATTEMPTS);
-
-		if (claim == null)
-			throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
+		} while (claim == null);
 
 		return claim;
 	}
