@@ -1,11 +1,12 @@
 # Change Log
 
 ## Beta 16
-**REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
+**REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
 - Added admin command shortcuts to `/is info`
 - Removed shorthand targets `i, c, & b` from tab completion
 - Removed `skyclaims.arguments.island` permission
 - Updated `/is reset` warning message to include the inventory reset
+- Fixed a bug where the deprecated SQlite db name was used to name the migrated file
 
 ## Beta 15 - Hotfix
 **REQUIRES: SF 2096+ & GP 251+ (latest versions are highly recommended)**
