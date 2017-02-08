@@ -50,11 +50,11 @@ public class CommandTransfer implements CommandExecutor {
 
 		User owner = args.<User>getOne(OWNER).orElse(null);
 		User user = args.<User>getOne(USER).orElse(null);
-		if (user == null || Island.hasIsland(user.getUniqueId()))
-			throw new CommandException(Text.of(TextColors.RED, "Unable to complete island transfer to ", user.getName(), ": player has reached the max islands owned!"));
+		//if (user == null || Island.hasIsland(user.getUniqueId()))
+		//	throw new CommandException(Text.of(TextColors.RED, "Unable to complete island transfer to ", user.getName(), ": player has reached the max islands owned!"));
 
 		Player player = (src instanceof Player) ? (Player) src : null;
-		Island island = (owner != null) ?
+		Island island = (player != null) ?
 				Island.getByOwner(owner.getUniqueId()).orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The owner supplied must have an island!"))) :
 				Island.get(player.getLocation()).orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "This command must be run on the island you wish to transfer!")));
 

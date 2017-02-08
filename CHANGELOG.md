@@ -2,6 +2,7 @@
 
 ## Beta 17
 - Added a confirmation message to the admin delete shortcut in `/is info`
+- Remove hard island limit from `isa transfer` (multiple islands per player is still unsupported officially)
 
 ## Beta 16
 **REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
