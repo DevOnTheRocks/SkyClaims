@@ -45,7 +45,6 @@ public class CommandInfo implements CommandExecutor {
 		}
 	}
 
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		Island island;
 		if (src instanceof Player && !args.hasAny(UUID_ARG)) {
@@ -96,6 +95,7 @@ public class CommandInfo implements CommandExecutor {
 						.onClick(TextActions.executeCallback(consumer -> {
 							island.regen();
 							island.delete();
+							src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
 						}))
 						.onHover(TextActions.showText(Text.of("Click to delete this island!"))),
 				TextColors.DARK_GRAY, "] "

@@ -1,5 +1,8 @@
 # Change Log
 
+## Beta 17
+- Added a confirmation message to the admin delete shortcut in `/is info`
+
 ## Beta 16
 **REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
 - Added admin command shortcuts to `/is info`
