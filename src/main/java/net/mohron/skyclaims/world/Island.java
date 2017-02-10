@@ -239,8 +239,8 @@ public class Island {
 		return location.getExtent().equals(getWorld()) && Region.get(location).equals(getRegion());
 	}
 
-	public int getRadius() {
-		return (getClaim().isPresent()) ? (getClaim().get().getGreaterBoundaryCorner().getBlockX() - getClaim().get().getLesserBoundaryCorner().getBlockX()) / 2 : 256;
+	public int getWidth() {
+		return getClaim().isPresent() ? 1 + getClaim().get().getGreaterBoundaryCorner().getBlockX() - getClaim().get().getLesserBoundaryCorner().getBlockX(): 512;
 	}
 
 	public Set<String> getMembers() {
