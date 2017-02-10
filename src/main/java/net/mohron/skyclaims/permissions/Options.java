@@ -31,7 +31,7 @@ import java.util.UUID;
 
 public class Options {
 	private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
-	public static final Map<String, String> DEFAULT_OPTIONS = Maps.newHashMap();
+	private static final Map<String, String> DEFAULT_OPTIONS = Maps.newHashMap();
 
 	public static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
 	public static final String DEFAULT_BIOME = "skyclaims.default-biome";
@@ -54,7 +54,7 @@ public class Options {
 		return subject.getOption(option).orElse(DEFAULT_OPTIONS.get(option));
 	}
 
-	public static int getIntOption(UUID playerUniqueId, String option, int defaultValue) {
+	private static int getIntOption(UUID playerUniqueId, String option, int defaultValue) {
 		Subject subject = PERMISSION_SERVICE.getUserSubjects().get(playerUniqueId.toString());
 		String value = subject.getOption(option).orElse(DEFAULT_OPTIONS.get(option));
 		try {
@@ -64,9 +64,9 @@ public class Options {
 		}
 	}
 
-	public static int getIntOption(UUID playerUniqueId, String option, int defaultValue, int minValue, int maxValue) {
-		int value = getIntOption(playerUniqueId, option, defaultValue);
-		return (value >= minValue && value <= maxValue) ? value : defaultValue;
+	public static int getIntOption(UUID playerUniqueId, String option, int minValue, int maxValue) {
+		int value = getIntOption(playerUniqueId, option, Integer.parseInt(DEFAULT_OPTIONS.get(option)));
+		return (value >= minValue && value <= maxValue) ? value : Integer.parseInt(DEFAULT_OPTIONS.get(option));
 	}
 
 	public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {

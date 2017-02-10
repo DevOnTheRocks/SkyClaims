@@ -84,12 +84,12 @@ public class ClaimUtil {
 	}
 
 	private static ClaimResult createIslandClaimResult(UUID ownerUniqueId, Region region) {
-		int initialSize = Options.getIntOption(ownerUniqueId, Options.INITIAL_SIZE, 32, 8, 255);
+		int initialSpacing = 256 - Options.getIntOption(ownerUniqueId, Options.INITIAL_SIZE, 8, 256);
 		return Claim.builder()
 				.world(WORLD)
 				.bounds(
-						new Vector3i(region.getCenter().getBlockX() + initialSize, 0, region.getCenter().getBlockZ() + initialSize),
-						new Vector3i(region.getCenter().getBlockX() - initialSize, 255, region.getCenter().getBlockZ() - initialSize)
+						new Vector3i(region.getLesserBoundary().getX() + initialSpacing, 0, region.getLesserBoundary().getZ() + initialSpacing),
+						new Vector3i(region.getGreaterBoundary().getX() - initialSpacing, 255, region.getGreaterBoundary().getZ() - initialSpacing)
 				)
 				.owner(ownerUniqueId)
 				.type(ClaimType.BASIC)
