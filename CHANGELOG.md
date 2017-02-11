@@ -1,7 +1,7 @@
 # Change Log
 
 ## Beta 17
-- Fixed island width calcuation being off by 2 `/is info`
+- Fixed island width calculation being off by 2 `/is info`
 - `skyclaims.initial-size` now supports being set to 256
 - Added a confirmation message to the admin delete shortcut in `/is info`
 - Remove hard island limit from `isa transfer` (multiple islands per player is still unsupported officially)
