@@ -104,7 +104,7 @@ public class CommandExpand implements CommandExecutor {
 			throw new CommandException(Text.of(TextColors.RED, "You need ", TextColors.LIGHT_PURPLE, cost, " claim blocks (", TextColors.LIGHT_PURPLE, bal, TextColors.RED, ") to expand your island by ", TextColors.LIGHT_PURPLE, blocks, TextColors.RED, "."));
 
 		// Use the player's claim blocks to expand the island
-		playerData.setAccruedClaimBlocks(playerData.getAccruedClaimBlocks() - cost);
+		playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks() - cost);
 		island.expand(blocks);
 		player.sendMessage(Text.of(TextColors.GREEN, "Your island has been expanded to ", TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.GREEN, "."));
 
