@@ -36,7 +36,6 @@ public class Options {
 	public static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
 	public static final String DEFAULT_BIOME = "skyclaims.default-biome";
 	public static final String INITIAL_SIZE = "skyclaims.initial-size";
-	public static final String GROWTH_PER_HOUR = "skyclaims.growth-per-hour";
 	public static final String MAX_SIZE = "skyclaims.max-size";
 	public static final String MAX_ISLANDS = "skyclaims.max-islands";
 
@@ -44,7 +43,6 @@ public class Options {
 		DEFAULT_OPTIONS.put(DEFAULT_SCHEMATIC, "island");
 		DEFAULT_OPTIONS.put(DEFAULT_BIOME, null);
 		DEFAULT_OPTIONS.put(INITIAL_SIZE, "48");
-		DEFAULT_OPTIONS.put(GROWTH_PER_HOUR, "6");
 		DEFAULT_OPTIONS.put(MAX_SIZE, "64");
 		DEFAULT_OPTIONS.put(MAX_ISLANDS, "1");
 	}

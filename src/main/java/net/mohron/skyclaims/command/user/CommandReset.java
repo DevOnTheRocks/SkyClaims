@@ -70,10 +70,9 @@ public class CommandReset implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to run this command!"));
 		}
 		Player player = (Player) src;
-		Optional<Island> island = Island.getByOwner(player.getUniqueId());
+		Island island = Island.getByOwner(player.getUniqueId())
+				.orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
 
-		if (!island.isPresent())
-			throw new CommandException(Text.of("You must have an island to run this command!"));
 
 		if (!args.hasAny(CONFIRM)) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island and inventory? This cannot be undone!"));
@@ -85,14 +84,14 @@ public class CommandReset implements CommandExecutor {
 			player.getInventory().clear();
 
 			// Teleport any players located in the island's region to spawn
-			Set<Player> players = island.get().getPlayers();
+			Set<Player> players = island.getPlayers();
 			if (!players.isEmpty())
 				for (Player p : players)
 					CommandUtil.createForceTeleportConsumer(p, PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation());
 
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
 
-			island.get().regen(schematic);
+			island.regen(schematic);
 		}
 
 		return CommandResult.success();

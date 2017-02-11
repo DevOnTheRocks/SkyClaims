@@ -91,7 +91,7 @@ public class CommandAdmin implements CommandExecutor {
 					(hasPerms) ? "\n" : "",
 					TextColors.AQUA, "isa delete",
 					TextColors.GOLD, " <player>",
-					TextColors.GRAY, " [regen]",
+					TextColors.GRAY, " [clear]",
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
 			hasPerms = true;

@@ -111,7 +111,7 @@ public class CommandInfo implements CommandExecutor {
 				TextColors.DARK_GRAY, "[",
 				TextColors.RED, Text.builder("Delete")
 						.onClick(TextActions.executeCallback(consumer -> {
-							island.regen();
+							island.clear();
 							island.delete();
 							src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
 						}))

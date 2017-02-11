@@ -36,13 +36,13 @@ public class CommandDelete implements CommandExecutor {
 
 	public static final String HELP_TEXT = "used to delete a player's island";
 
-	private static final Text REGEN = Text.of("regen");
+	private static final Text CLEAR = Text.of("clear");
 	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_DELETE)
 			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.user(USER), GenericArguments.optional(GenericArguments.bool(REGEN)))
+			.arguments(GenericArguments.user(USER), GenericArguments.optional(GenericArguments.bool(CLEAR)))
 			.executor(new CommandDelete())
 			.build();
 
@@ -63,8 +63,8 @@ public class CommandDelete implements CommandExecutor {
 		Island island = Island.getByOwner(user.getUniqueId())
 				.orElseThrow(() -> new CommandException(Text.of("Invalid island")));
 
-		boolean regen = (boolean) args.getOne(REGEN).orElse(true);
-		if (regen) island.regen();
+		boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
+		if (clear) island.clear();
 		island.delete();
 
 		src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));

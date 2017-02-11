@@ -241,7 +241,7 @@ public class Island {
 	}
 
 	public int getWidth() {
-		return getClaim().isPresent() ? 1 + getClaim().get().getGreaterBoundaryCorner().getBlockX() - getClaim().get().getLesserBoundaryCorner().getBlockX(): 512;
+		return getClaim().isPresent() ? 1 + getClaim().get().getGreaterBoundaryCorner().getBlockX() - getClaim().get().getLesserBoundaryCorner().getBlockX() : 512;
 	}
 
 	public Set<String> getMembers() {
@@ -285,16 +285,30 @@ public class Island {
 		save();
 	}
 
+	public void expand(int blocks) {
+		if (blocks < 1) return;
+		getClaim().ifPresent(claim -> {
+			claim.resize(
+					claim.getLesserBoundaryCorner().getBlockX() - blocks,
+					claim.getGreaterBoundaryCorner().getBlockX() + blocks,
+					claim.getLesserBoundaryCorner().getBlockY(),
+					claim.getGreaterBoundaryCorner().getBlockY(),
+					claim.getLesserBoundaryCorner().getBlockZ() - blocks,
+					claim.getGreaterBoundaryCorner().getBlockZ() + blocks,
+					Cause.source(PLUGIN).build()
+			);
+		});
+	}
+
 	private void save() {
 		SkyClaims.islands.put(id, this);
 		PLUGIN.getDatabase().saveIsland(this);
 	}
 
-	public void regen() {
+	public void clear() {
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 	}
-
 
 	public void regen(String schematic) {
 		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic);

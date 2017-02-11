@@ -66,6 +66,7 @@ public class RegenerateRegionTask implements Runnable {
 				});
 			}
 		}
+		PLUGIN.getLogger().info(String.format("Finished clearing region (%s, %s)", region.getX(), region.getZ()));
 
 		if (island != null) {
 			// Run reset commands

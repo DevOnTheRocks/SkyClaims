@@ -184,6 +184,7 @@ public class SkyClaims {
 		CommandAdmin.register();
 		CommandCreate.register();
 		CommandCreateSchematic.register();
+		CommandExpand.register();
 		CommandDelete.register();
 		CommandInfo.register();
 		CommandIsland.register();

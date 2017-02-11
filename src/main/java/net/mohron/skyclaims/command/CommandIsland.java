@@ -50,6 +50,7 @@ public class CommandIsland implements CommandExecutor {
 			.description(Text.of(HELP_TEXT))
 			.child(CommandAdmin.commandSpec, "admin")
 			.child(CommandCreate.commandSpec, "create")
+			.child(CommandExpand.commandSpec, "expand")
 			.child(CommandInfo.commandSpec, "info")
 			.child(CommandList.commandSpec, "list")
 			.child(CommandLock.commandSpec, "lock")
@@ -82,7 +83,7 @@ public class CommandIsland implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_CREATE)) {
 			helpContents = Text.join(helpContents, Text.of(
-					"\n",
+					Text.NEW_LINE,
 					TextColors.AQUA, Text.builder("is create").onClick(TextActions.runCommand("/is create")),
 					TextColors.GRAY, " [schematic]",
 					TextColors.DARK_GRAY, " - ",
@@ -90,9 +91,19 @@ public class CommandIsland implements CommandExecutor {
 			hasPerms = true;
 		}
 
+		if (src.hasPermission(Permissions.COMMAND_EXPAND)) {
+			helpContents = Text.join(helpContents, Text.of(
+					Text.NEW_LINE,
+					TextColors.AQUA, Text.builder("is expand").onClick(TextActions.suggestCommand("/is expand ")),
+					TextColors.GRAY, " [blocks]",
+					TextColors.DARK_GRAY, " - ",
+					TextColors.DARK_GREEN, CommandExpand.HELP_TEXT));
+			hasPerms = true;
+		}
+
 		if (src.hasPermission(Permissions.COMMAND_INFO)) {
 			helpContents = Text.join(helpContents, Text.of(
-					"\n",
+					Text.NEW_LINE,
 					TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
 					TextColors.GRAY, " [island uuid]",
 					TextColors.DARK_GRAY, " - ",
@@ -102,7 +113,7 @@ public class CommandIsland implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_LOCK)) {
 			helpContents = Text.join(helpContents, Text.of(
-					"\n",
+					Text.NEW_LINE,
 					TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandLock.HELP_TEXT));
@@ -111,7 +122,7 @@ public class CommandIsland implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_RESET)) {
 			helpContents = Text.join(helpContents, Text.of(
-					"\n",
+					Text.NEW_LINE,
 					TextColors.AQUA, Text.builder("is reset").onClick(TextActions.runCommand("/is reset")),
 					TextColors.GRAY, " [schematic]",
 					TextColors.DARK_GRAY, " - ",
@@ -121,8 +132,8 @@ public class CommandIsland implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_SET_BIOME)) {
 			helpContents = Text.join(helpContents, Text.of(
-					"\n",
-					TextColors.AQUA, "is setbiome",
+					Text.NEW_LINE,
+					TextColors.AQUA, Text.builder("is setbiome").onClick(TextActions.suggestCommand("/is setbiome ")),
 					TextColors.GOLD, " <biome>",
 					TextColors.GRAY, " [target]",
 					TextColors.DARK_GRAY, " - ",
@@ -132,7 +143,7 @@ public class CommandIsland implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_SET_SPAWN)) {
 			helpContents = Text.join(helpContents, Text.of(
-					"\n",
+					Text.NEW_LINE,
 					TextColors.AQUA, Text.builder("is setspawn").onClick(TextActions.runCommand("/is setspawn")),
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandSetSpawn.HELP_TEXT));
@@ -141,7 +152,7 @@ public class CommandIsland implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_SPAWN)) {
 			helpContents = Text.join(helpContents, Text.of(
-					"\n",
+					Text.NEW_LINE,
 					TextColors.AQUA, Text.builder("is spawn").onClick(TextActions.runCommand("/is spawn")),
 					TextColors.GRAY, " [player]",
 					TextColors.DARK_GRAY, " - ",
@@ -151,7 +162,7 @@ public class CommandIsland implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_LOCK)) {
 			helpContents = Text.join(helpContents, Text.of(
-					"\n",
+					Text.NEW_LINE,
 					TextColors.AQUA, Text.builder("is unlock").onClick(TextActions.runCommand("/is unlock")),
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandUnlock.HELP_TEXT));

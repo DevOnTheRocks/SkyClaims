@@ -10,7 +10,7 @@ This plugin is in Beta but I expect to have a release soon™. Live support for 
 - Allow automatic creation of Islands and their encompassing claim
 - Allow multiple starter island designs via Sponge schematics
 - Configurable island layouts (linear & spiral planned)
-- Islands that can automatically grow
+- Allow expanding islands using claim blocks or other resource (econ)
 - Isolation of islands to their own Minecraft region file
 - Allow spawn/tp on your island at a configurable location 
 - Allow use of GriefPrevention trust commands to work in teams
