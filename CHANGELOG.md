@@ -3,6 +3,7 @@
 ## Beta 17
 **REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
 - Fixed island width calculation being off by 2 `/is info`
+- Fixed `isa transfer` not working when supplied with an owner
 - Added `is expand [blocks]` to allow player to expand their islands using claim blocks _(subtracted from accrued blocks - will regen)_
 - Added `skyclaims.max-size` option to limit how large players can expand their islands
 - `skyclaims.initial-size` now supports being set to 256
