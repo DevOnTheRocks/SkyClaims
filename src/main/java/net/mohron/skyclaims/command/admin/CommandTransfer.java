@@ -19,13 +19,13 @@
 package net.mohron.skyclaims.command.admin;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
@@ -42,14 +42,11 @@ public class CommandTransfer implements CommandExecutor {
 	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_TRANSFER)
-			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.seq(
-					GenericArguments.optional(GenericArguments.user(OWNER)),
-					GenericArguments.user(USER)
-			))
-			.executor(new CommandTransfer())
-			.build();
+		.permission(Permissions.COMMAND_TRANSFER)
+		.description(Text.of(HELP_TEXT))
+		.arguments(Argument.twoUser(OWNER, USER))
+		.executor(new CommandTransfer())
+		.build();
 
 	public static void register() {
 		try {
@@ -65,23 +62,37 @@ public class CommandTransfer implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		Island island;
 		User owner = args.<User>getOne(OWNER).orElse(null);
-		User user = args.<User>getOne(USER).orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Invalid target user supplied!")));
+		User user = args.<User>getOne(USER)
+			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Invalid user!")));
 
 		if (owner != null && Island.getIslandsOwned(owner.getUniqueId()) > 1)
-			throw new CommandException(Text.of(TextColors.RED, "The owner supplied has multiple islands. Please go to the island you want to transfer."));
+			throw new CommandException(Text.of(
+				TextColors.RED,
+				"The owner supplied has multiple islands. Please go to the island you want to transfer."
+			));
 
 		if (!(src instanceof Player)) {
-			if (owner == null)
-				throw new CommandException(Text.of(TextColors.RED, "You must supply a owner & user to use this command."));
+			if (owner == null) throw new CommandException(
+				Text.of(TextColors.RED, "You must supply a owner & user to use this command."));
 			island = Island.getByOwner(owner.getUniqueId())
-					.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The owner supplied must have an island!")));
+				.orElseThrow(
+					() -> new CommandException(Text.of(TextColors.RED, "The owner supplied must have an island!")));
 		} else {
-			island = (owner != null) ?
-					Island.getByOwner(owner.getUniqueId()).orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The owner supplied must have an island!"))) :
-					Island.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "This command must be run on the island you wish to transfer!")));
+			island = (owner != null) ? Island.getByOwner(owner.getUniqueId())
+				.orElseThrow(() -> new CommandException(
+					Text.of(TextColors.RED, "The owner supplied must have an island!"))) : Island.get(
+				((Player) src).getLocation())
+				.orElseThrow(() -> new CommandException(
+					Text.of(TextColors.RED, "This command must be run on the island you wish to transfer!")));
 		}
 
-		src.sendMessage(Text.of(TextColors.GREEN, "Completed transfer of ", TextColors.GOLD, island.getOwnerName(), TextColors.GREEN, "'s island to ", TextColors.GOLD, user.getName(), TextColors.GREEN, "."));
+		return transferIsland(src, island, user);
+	}
+
+	private CommandResult transferIsland(CommandSource src, Island island, User user) {
+		src.sendMessage(Text.of(TextColors.GREEN, "Completed transfer of ", TextColors.GOLD, island.getOwnerName(),
+			TextColors.GREEN, "'s island to ", TextColors.GOLD, user.getName(), TextColors.GREEN, "."
+		));
 		island.transfer(user);
 
 		return CommandResult.success();

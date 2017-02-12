@@ -53,9 +53,13 @@ public class TwoUserArgument extends CommandElement {
 	@Override
 	public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
 		String user1 = args.next();
-		String user2 = args.next();
-		context.putArg(key, getUserFromName(user1));
-		context.putArg(key2, getUserFromName(user2));
+		String user2 = args.nextIfPresent().orElse(null);
+		if (user2 != null) {
+			context.putArg(key, getUserFromName(user1));
+			context.putArg(key2, getUserFromName(user2));
+		} else {
+			context.putArg(key2, getUserFromName(user1));
+		}
 	}
 
 	@Override

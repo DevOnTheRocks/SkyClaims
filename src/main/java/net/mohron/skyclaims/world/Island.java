@@ -22,6 +22,8 @@ import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.Sets;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
+import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
+import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
@@ -280,7 +282,15 @@ public class Island {
 	}
 
 	public void transfer(User user) {
-		getClaim().ifPresent(claim -> claim.transferOwner(user.getUniqueId()));
+		getClaim().ifPresent(claim -> {
+			ClaimResult result = claim.transferOwner(user.getUniqueId());
+			if (result.getResultType() != ClaimResultType.SUCCESS) {
+				PLUGIN.getLogger().error(
+					String.format("Failed to transfer claim (%s) when transferring %s's island to %s.\n%s",
+						claim.getUniqueId(), getOwnerName(), user.getName(), result.getResultType()
+					));
+			}
+		});
 		this.owner = user.getUniqueId();
 		save();
 	}
