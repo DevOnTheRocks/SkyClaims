@@ -68,12 +68,10 @@ public class CommandList implements CommandExecutor {
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		if (SkyClaims.islands.isEmpty())
-			src.sendMessage(Text.of("There are currently no islands!"));
+			src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
 		List<Text> listText = Lists.newArrayList();
-		Player player = null;
-		if (src instanceof Player) player = (Player) src;
-
-		User user = (User) args.getOne(USER).orElse(null);
+		Player player = (src instanceof Player) ? (Player) src : null;
+		User user = args.<User>getOne(USER).orElse(null);
 
 		for (Island island : SkyClaims.islands.values()) {
 			if (island.isLocked() && ((player == null || !island.hasPermissions(player)) || !src.hasPermission(Permissions.COMMAND_LIST_ALL)))
@@ -108,7 +106,7 @@ public class CommandList implements CommandExecutor {
 	private static Consumer<CommandSource> createReturnConsumer(CommandSource src) {
 		return consumer -> {
 			Text returnCommand = Text.builder().append(Text.of(
-					TextColors.WHITE, "\n[", TextColors.AQUA, "Return to Island List", TextColors.WHITE, "]\n"))
+					Text.NEW_LINE, TextColors.WHITE, "[", TextColors.AQUA, "Return to Island List", TextColors.WHITE, "]", Text.NEW_LINE))
 					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandlist", "", null))).build();
 			src.sendMessage(returnCommand);
 		};

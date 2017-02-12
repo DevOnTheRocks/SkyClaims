@@ -74,12 +74,13 @@ public class CommandIsland implements CommandExecutor {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		Text helpContents = Text.EMPTY;
 		boolean hasPerms = false;
 
-		helpContents = Text.join(helpContents, Text.of(
-				TextColors.WHITE, "SkyClaims utilizes GriefPrevention for world protection and management. Go to ", TextColors.YELLOW,
-				"http://bit.ly/mcgpuser", TextColors.WHITE, " to learn more."));
+		Text helpContents = Text.of(
+			TextColors.WHITE, "SkyClaims utilizes GriefPrevention for world protection and management. Go to ",
+			TextColors.YELLOW, "http://bit.ly/mcgpuser",
+			TextColors.WHITE, " to learn more."
+		);
 
 		if (src.hasPermission(Permissions.COMMAND_CREATE)) {
 			helpContents = Text.join(helpContents, Text.of(

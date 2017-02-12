@@ -58,7 +58,7 @@ public class CommandDelete implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		User user = (User) args.getOne(USER)
+		User user = args.<User>getOne(USER)
 				.orElseThrow(() -> new CommandException(Text.of("Invalid user")));
 		Island island = Island.getByOwner(user.getUniqueId())
 				.orElseThrow(() -> new CommandException(Text.of("Invalid island")));

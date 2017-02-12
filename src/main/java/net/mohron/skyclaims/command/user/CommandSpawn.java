@@ -65,7 +65,7 @@ public class CommandSpawn implements CommandExecutor {
 		}
 
 		Player player = (Player) src;
-		User user = (User) args.getOne(USER).orElse(player);
+		User user = args.<User>getOne(USER).orElse(player);
 		Island island = Island.getByOwner(user.getUniqueId())
 				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
 

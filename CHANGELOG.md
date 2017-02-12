@@ -1,5 +1,9 @@
 # Change Log
 
+## Beta 18
+**REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
+- TBD
+
 ## Beta 17
 **REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
 - Fixed island width calculation being off by 2 `/is info`
@@ -8,7 +12,7 @@
 - Added `skyclaims.max-size` option to limit how large players can expand their islands
 - `skyclaims.initial-size` now supports being set to 256
 - Added a confirmation message to the admin delete shortcut in `/is info`
-- Remove hard island limit from `isa transfer` _(multiple islands per player is still unsupported officially)_
+- Removed hard island limit from `isa transfer` _(multiple islands per player is still unsupported officially)_
 
 ## Beta 16
 **REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**

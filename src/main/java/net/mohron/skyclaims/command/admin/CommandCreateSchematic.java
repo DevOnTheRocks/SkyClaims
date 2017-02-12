@@ -47,11 +47,11 @@ import static org.spongepowered.api.command.args.GenericArguments.string;
 
 public class CommandCreateSchematic implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final File CONFIG_DIR = new File(PLUGIN.getConfigDir().toString());
+	private static final File CONFIG_DIR = PLUGIN.getConfigDir().toFile();
 
 	public static final String HELP_TEXT = "used to save the selected area as an island schematic";
 
-	public static final Text NAME = Text.of("name");
+	private static final Text NAME = Text.of("name");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE_SCHEMATIC)
@@ -86,7 +86,8 @@ public class CommandCreateSchematic implements CommandExecutor {
 		Vector3i max = data.getPos1().max(data.getPos2());
 		ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, player.getLocation().getPosition().toInt());
 
-		String name = args.getOne(NAME).get().toString();
+		String name = args.<String>getOne(NAME)
+				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must supply a name to use this command!")));
 
 		Schematic schematic = Schematic.builder()
 				.volume(volume)

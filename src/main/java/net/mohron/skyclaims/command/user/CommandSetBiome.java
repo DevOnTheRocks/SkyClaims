@@ -19,9 +19,8 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.argument.BiomeArgument;
-import net.mohron.skyclaims.command.argument.TargetArgument;
-import net.mohron.skyclaims.config.type.PermissionConfig;
+import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Targets;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.WorldUtil;
 import net.mohron.skyclaims.world.Island;
@@ -40,7 +39,6 @@ import org.spongepowered.api.world.biome.BiomeType;
 
 public class CommandSetBiome implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static PermissionConfig config = PLUGIN.getConfig().getPermissionConfig();
 
 	public static final String HELP_TEXT = "set the biome of a block, chunk or island";
 
@@ -51,8 +49,8 @@ public class CommandSetBiome implements CommandExecutor {
 			.permission(Permissions.COMMAND_SET_BIOME)
 			.description(Text.of(HELP_TEXT))
 			.arguments(GenericArguments.seq(
-					new BiomeArgument(BIOME),
-					GenericArguments.optional(new TargetArgument(TARGET))
+					Argument.biome(BIOME),
+					GenericArguments.optional(Argument.target(TARGET))
 			))
 			.executor(new CommandSetBiome())
 			.build();
@@ -73,7 +71,7 @@ public class CommandSetBiome implements CommandExecutor {
 		}
 
 		Player player = (Player) src;
-		BiomeType biome = (BiomeType) args.getOne(BIOME)
+		BiomeType biome = args.<BiomeType>getOne(BIOME)
 				.orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
 		Island island = Island.get(player.getLocation())
 				.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
@@ -81,7 +79,7 @@ public class CommandSetBiome implements CommandExecutor {
 		if (!player.getUniqueId().equals(island.getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
 			throw new CommandPermissionException(Text.of("You do not have permission to use setbiome on this island"));
 
-		TargetArgument.Target target = (TargetArgument.Target) args.getOne(TARGET).orElse(TargetArgument.Target.ISLAND);
+		Targets target = args.<Targets>getOne(TARGET).orElse(Targets.ISLAND);
 
 		switch (target) {
 			case BLOCK:

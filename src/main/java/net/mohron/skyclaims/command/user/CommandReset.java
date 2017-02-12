@@ -19,7 +19,7 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.argument.SchematicArgument;
+import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
@@ -34,7 +34,6 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-import java.util.Optional;
 import java.util.Set;
 
 public class CommandReset implements CommandExecutor {
@@ -50,7 +49,7 @@ public class CommandReset implements CommandExecutor {
 			.description(Text.of(HELP_TEXT))
 			.arguments(GenericArguments.seq(
 					GenericArguments.optional(GenericArguments.literal(CONFIRM, "confirm")),
-					GenericArguments.optional(new SchematicArgument(SCHEMATIC))
+					GenericArguments.optional(Argument.schematic(SCHEMATIC))
 			))
 			.executor(new CommandReset())
 			.build();

@@ -19,7 +19,7 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.argument.SchematicArgument;
+import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -44,7 +44,7 @@ public class CommandCreate implements CommandExecutor {
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_CREATE)
 			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.optional(new SchematicArgument(SCHEMATIC)))
+			.arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
 			.executor(new CommandCreate())
 			.build();
 

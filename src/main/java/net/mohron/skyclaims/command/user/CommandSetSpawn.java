@@ -31,8 +31,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.Optional;
-
 public class CommandSetSpawn implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -60,19 +58,17 @@ public class CommandSetSpawn implements CommandExecutor {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
 
 		Player player = (Player) src;
-		Optional<Island> island = Island.get(player.getLocation());
+		Island island = Island.get(player.getLocation())
+				.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
 
-		if (!island.isPresent())
-			throw new CommandException(Text.of("You must be on an island to use this command!"));
-
-		if (!island.get().getOwnerUniqueId().equals(player.getUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS))
+		if (!island.getOwnerUniqueId().equals(player.getUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS))
 			throw new CommandException(Text.of("Only the island owner may use this command!"));
 
-		island.get().setSpawn(player.getTransform());
+		island.setSpawn(player.getTransform());
 		player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
-				TextColors.LIGHT_PURPLE, island.get().getSpawn().getPosition().getX(), TextColors.GRAY, " ,",
-				TextColors.LIGHT_PURPLE, island.get().getSpawn().getPosition().getY(), TextColors.GRAY, " ,",
-				TextColors.LIGHT_PURPLE, island.get().getSpawn().getPosition().getZ(), TextColors.GRAY, ")"));
+				TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getX(), TextColors.GRAY, " ,",
+				TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getY(), TextColors.GRAY, " ,",
+				TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getZ(), TextColors.GRAY, ")"));
 
 		return CommandResult.success();
 	}
