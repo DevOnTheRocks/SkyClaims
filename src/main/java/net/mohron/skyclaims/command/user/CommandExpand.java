@@ -83,7 +83,7 @@ public class CommandExpand implements CommandExecutor {
 		int maxSize = Options.getIntOption(player.getUniqueId(), Options.MAX_SIZE, 0, 256) * 2;
 
 		// Check if expanding would exceed the max size
-		if (width >= maxSize || width + blocks * 2 >= maxSize)
+		if (width >= maxSize || width + blocks * 2 > maxSize)
 			throw new CommandException(Text.of(TextColors.RED, "You cannot expand your island greater than ", TextColors.LIGHT_PURPLE, maxSize, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, maxSize, TextColors.RED, "."));
 
 		// Check if a non-positive block amount was provided
