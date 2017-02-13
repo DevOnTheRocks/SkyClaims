@@ -88,7 +88,7 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_DELETE)) {
 			helpContents = Text.join(helpContents, Text.of(
-					(hasPerms) ? "\n" : "",
+					(hasPerms) ? Text.NEW_LINE : Text.EMPTY,
 					TextColors.AQUA, "isa delete",
 					TextColors.GOLD, " <player>",
 					TextColors.GRAY, " [clear]",
@@ -99,7 +99,7 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
 			helpContents = Text.join(helpContents, Text.of(
-					(hasPerms) ? "\n" : "",
+					(hasPerms) ? Text.NEW_LINE : Text.EMPTY,
 					TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
 					TextColors.DARK_GRAY, " - ",
 					TextColors.DARK_GREEN, CommandReload.HELP_TEXT));
@@ -108,7 +108,7 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_TRANSFER)) {
 			helpContents = Text.join(helpContents, Text.of(
-					(hasPerms) ? "\n" : "",
+					(hasPerms) ? Text.NEW_LINE : Text.EMPTY,
 					TextColors.AQUA, "isa transfer",
 					TextColors.GRAY, " [owner]",
 					TextColors.GOLD, " <player>",
