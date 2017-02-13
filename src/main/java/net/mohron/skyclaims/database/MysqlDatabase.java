@@ -41,10 +41,10 @@ public class MysqlDatabase extends Database {
 		username = config.getUsername();
 		password = config.getPassword();
 		port = config.getPort();
-		connectionString = String.format("jdbc:mysqlConfig://%s:%s/%s", databaseLocation, port, "islands");
+		connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, "islands");
 
 		try {
-			Class.forName("com.mysqlConfig.jdbc.Driver");
+			Class.forName("com.mysql.jdbc.Driver");
 			getConnection();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
