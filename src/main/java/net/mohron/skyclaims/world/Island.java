@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.world;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Sets;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
@@ -43,6 +44,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -77,7 +79,8 @@ public class Island {
 
 		// Run commands defined in config on creation
 		for (String command : PLUGIN.getConfig().getMiscConfig().getCreateCommands()) {
-			PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
+			PLUGIN.getGame().getCommandManager()
+				.process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
 		}
 
 		// Generate the island using the specified schematic
@@ -97,19 +100,10 @@ public class Island {
 		Claim claim = CLAIM_MANAGER.getClaimByUUID(claimId).orElse(null);
 		if (claim != null) {
 			this.claim = claimId;
-			int initialSize = Options.getIntOption(owner, Options.INITIAL_SIZE, 8, 256);
+			int initialWidth = Options.getIntOption(owner, Options.INITIAL_SIZE, 8, 256) * 2;
 			// Resize claims smaller than the player's initial-size
-			if (claim.getWidth() < initialSize * 2) {
-				int initialSpacing = 256 - initialSize;
-				claim.resize(
-						getRegion().getCenter().getBlockX() + initialSpacing,
-						0,
-						getRegion().getCenter().getBlockZ() + initialSpacing,
-						getRegion().getCenter().getBlockX() - initialSpacing,
-						255,
-						getRegion().getCenter().getBlockZ() - initialSpacing,
-						Cause.source(PLUGIN).build()
-				);
+			if (claim.getWidth() < initialWidth) {
+				setWidth(512 - initialWidth);
 			}
 			claim.getData().setResizable(false);
 			claim.getData().setClaimExpiration(false);
@@ -125,14 +119,17 @@ public class Island {
 	}
 
 	public static Optional<Island> get(UUID islandUniqueId) {
-		return (SkyClaims.islands.containsKey(islandUniqueId)) ? Optional.of(SkyClaims.islands.get(islandUniqueId)) : Optional.empty();
+		return SkyClaims.islands.entrySet().stream()
+			.filter(i -> i.getValue().getUniqueId().equals(islandUniqueId))
+			.map(Map.Entry::getValue)
+			.findFirst();
 	}
 
 	public static Optional<Island> get(Location<World> location) {
-		for (Island island : SkyClaims.islands.values()) {
-			if (island.contains(location)) return Optional.of(island);
-		}
-		return Optional.empty();
+		return SkyClaims.islands.entrySet().stream()
+			.filter(i -> i.getValue().contains(location))
+			.map(Map.Entry::getValue)
+			.findFirst();
 	}
 
 	public static Optional<Island> get(Claim claim) {
@@ -159,11 +156,9 @@ public class Island {
 	}
 
 	public static int getIslandsOwned(UUID owner) {
-		int i = 0;
-		for (Island island : SkyClaims.islands.values()) {
-			if (island.getOwnerUniqueId().equals(owner)) i++;
-		}
-		return i;
+		return (int) SkyClaims.islands.entrySet().stream()
+			.filter(i -> i.getValue().getOwnerUniqueId().equals(owner))
+			.count();
 	}
 
 	public UUID getUniqueId() {
@@ -180,7 +175,7 @@ public class Island {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	private String getName(UUID uuid) {
-		Optional<User> player = PLUGIN.getGame().getServiceManager().provide(UserStorageService.class).get().get(uuid);
+		Optional<User> player = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid);
 		if (player.isPresent()) {
 			return player.get().getName();
 		} else {
@@ -205,7 +200,9 @@ public class Island {
 	}
 
 	public Text getName() {
-		return (getClaim().isPresent()) ? (getClaim().get().getName().isPresent()) ? getClaim().get().getName().get() : Text.of(getOwnerName(), "'s Island") : Text.of(getOwnerName(), "'s Island");
+		return (getClaim().isPresent() && getClaim().get().getName().isPresent()) ?
+			getClaim().get().getName().get() :
+			Text.of(getOwnerName(), "'s Island");
 	}
 
 	public boolean isLocked() {
@@ -230,7 +227,10 @@ public class Island {
 		if (contains(transform.getLocation())) {
 			Transform<World> spawn = new Transform<>(WORLD, transform.getPosition(), transform.getRotation());
 			if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 255) {
-				spawn.setPosition(new Vector3d(spawn.getLocation().getX(), PLUGIN.getConfig().getWorldConfig().getDefaultHeight(), spawn.getLocation().getZ()));
+				spawn.setPosition(
+					new Vector3d(spawn.getLocation().getX(), PLUGIN.getConfig().getWorldConfig().getDefaultHeight(),
+						spawn.getLocation().getZ()
+					));
 			}
 			this.spawn = spawn;
 			getClaim().ifPresent(claim -> claim.getData().setSpawnPos(spawn.getPosition().toInt()));
@@ -243,7 +243,20 @@ public class Island {
 	}
 
 	public int getWidth() {
-		return getClaim().isPresent() ? 1 + getClaim().get().getGreaterBoundaryCorner().getBlockX() - getClaim().get().getLesserBoundaryCorner().getBlockX() : 512;
+		return getClaim().isPresent() ? getClaim().get().getWidth() : 512;
+	}
+
+	private boolean setWidth(int width) {
+		if (width < 0 || width > 512) return false;
+		getClaim().ifPresent(claim -> {
+			int spacing = (512 - width) / 2;
+			claim.resize(
+				new Vector3i(getRegion().getLesserBoundary().getX() + spacing, 0, getRegion().getLesserBoundary().getZ() + spacing),
+				new Vector3i(getRegion().getGreaterBoundary().getX() - spacing, 255, getRegion().getGreaterBoundary().getZ() - spacing),
+				Cause.source(PLUGIN).build()
+			);
+		});
+		return getWidth() == width;
 	}
 
 	public Set<String> getMembers() {
@@ -260,18 +273,18 @@ public class Island {
 
 	public boolean hasPermissions(User user) {
 		return user.getUniqueId().equals(owner)
-				|| getClaim().isPresent()
-				&& (getClaim().get().getTrusts(TrustType.ACCESSOR).contains(user.getUniqueId())
-				|| getClaim().get().getTrusts(TrustType.BUILDER).contains(user.getUniqueId())
-				|| getClaim().get().getTrusts(TrustType.CONTAINER).contains(user.getUniqueId())
-				|| getClaim().get().getTrusts(TrustType.MANAGER).contains(user.getUniqueId()));
+			|| getClaim().isPresent()
+			&& (getClaim().get().getTrusts(TrustType.ACCESSOR).contains(user.getUniqueId())
+			|| getClaim().get().getTrusts(TrustType.BUILDER).contains(user.getUniqueId())
+			|| getClaim().get().getTrusts(TrustType.CONTAINER).contains(user.getUniqueId())
+			|| getClaim().get().getTrusts(TrustType.MANAGER).contains(user.getUniqueId()));
 	}
 
 	public Set<Player> getPlayers() {
 		Set<Player> players = Sets.newHashSet();
 		for (Player player : PLUGIN.getGame().getServer().getOnlinePlayers()) {
 			if (player.getLocation().getChunkPosition().getX() >> 5 == getRegion().getX()
-					&& player.getLocation().getChunkPosition().getZ() >> 5 == getRegion().getZ())
+				&& player.getLocation().getChunkPosition().getZ() >> 5 == getRegion().getZ())
 				players.add(player);
 		}
 		return players;
@@ -297,17 +310,7 @@ public class Island {
 
 	public void expand(int blocks) {
 		if (blocks < 1) return;
-		getClaim().ifPresent(claim -> {
-			claim.resize(
-					claim.getLesserBoundaryCorner().getBlockX() - blocks,
-					claim.getGreaterBoundaryCorner().getBlockX() + blocks,
-					claim.getLesserBoundaryCorner().getBlockY(),
-					claim.getGreaterBoundaryCorner().getBlockY(),
-					claim.getLesserBoundaryCorner().getBlockZ() - blocks,
-					claim.getGreaterBoundaryCorner().getBlockZ() + blocks,
-					Cause.source(PLUGIN).build()
-			);
-		});
+		setWidth(getWidth() + blocks * 2);
 	}
 
 	private void save() {

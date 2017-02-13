@@ -2,13 +2,16 @@
 
 ## Beta 18
 **REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
-- TBD
+- Fixed `/isa transfer` not working when supplied with an owner
+- Fixed `/is expand` not being able to expand an island to `max-size`
+- Added expand _(no cost)_ to admin shortcuts in `/is info` _requires_ `skyclaims.admin.expand`
+- Added custom island command argument that accepts a player name or island id
+- Changed `/is info` to accept an island argument
 
 ## Beta 17
 **REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
-- Fixed island width calculation being off by 2 `/is info`
-- Fixed `isa transfer` not working when supplied with an owner
-- Added `is expand [blocks]` to allow player to expand their islands using claim blocks _(subtracted from bonus claim blocks - will regen)_
+- Fixed island width calculation being off by 2 on `/is info`
+- Added `/is expand [blocks]` to allow player to expand their islands using claim blocks _(subtracted from bonus claim blocks - will regen)_
 - Added `skyclaims.max-size` option to limit how large players can expand their islands
 - `skyclaims.initial-size` now supports being set to 256
 - Added a confirmation message to the admin delete shortcut in `/is info`

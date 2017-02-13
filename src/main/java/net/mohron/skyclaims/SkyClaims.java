@@ -137,7 +137,8 @@ public class SkyClaims {
 	@Listener(order = Order.LATE)
 	public void onAboutToStart(GameAboutToStartServerEvent event) {
 		if (!enabled) return;
-		SkyClaims.permissionService = Sponge.getServiceManager().provide(PermissionService.class).get();
+
+		permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
 		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
 			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
 			enabled = false;

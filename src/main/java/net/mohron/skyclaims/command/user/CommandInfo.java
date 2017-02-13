@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.command.user;
 
+import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -38,6 +39,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -76,10 +78,7 @@ public class CommandInfo implements CommandExecutor {
 				.orElseThrow(() -> new CommandException(
 					Text.of(TextColors.RED, "You must be on an island to use this command.")));
 		} else {
-
 			Collection<UUID> islands = args.getAll(ISLAND);
-			//.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must supply an island uuid to use this command.")));
-			if (islands.size() > 1) return listIslands();
 
 			island = Island.get(islands.stream()
 				.findFirst()
@@ -88,21 +87,47 @@ public class CommandInfo implements CommandExecutor {
 					Text.of(TextColors.RED, "The UUID supplied does not have a corresponding island.")));
 		}
 
-		Text members = Text.of(TextColors.YELLOW, "Members", TextColors.WHITE, " : ");
-		if (island.getMembers()
-			.isEmpty())
-			members = members.concat(Text.of(TextColors.GRAY, "None"));
-		else {
-			int i = 1;
-			for (String member : island.getMembers()) {
-				members = Text.join(
-					members, Text.of(TextColors.BLUE, member, TextColors.GRAY, (i == island.getMembers()
-						.size()) ? "" : ", "));
-				i++;
-			}
-		}
+		List<Text> infoText = Lists.newArrayList();
 
-		Text teleport = (src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) ? Text.of(
+		infoText.add(Text.of(
+			(src instanceof Player) ? getAdminShortcuts(src, island) : Text.EMPTY,
+			TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), Text.NEW_LINE,
+			TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), Text.NEW_LINE,
+			TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island), Text.NEW_LINE,
+			TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
+			TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
+			TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn()
+				.getLocation()
+				.getBlockX(), TextColors.GRAY, "x ",
+			TextColors.LIGHT_PURPLE, island.getSpawn()
+				.getLocation()
+				.getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn()
+				.getLocation()
+				.getBlockZ(), TextColors.GRAY, "z", Text.NEW_LINE,
+			TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), Text.NEW_LINE,
+			TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), Text.NEW_LINE,
+			(island.getClaim().isPresent()) ? Text.of(
+				TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(
+					island.getClaimUniqueId().toString())
+					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo",
+						island.getClaimUniqueId().toString(), createReturnConsumer(src, island.getUniqueId().toString())
+					)))
+					.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
+			) : Text.EMPTY
+		));
+
+		PaginationList.builder()
+			.title(Text.of(TextColors.AQUA, "Island Info"))
+			.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+			.contents(infoText)
+			.linesPerPage(1)
+			.sendTo(src);
+
+		return CommandResult.success();
+	}
+
+	private static Text getAdminShortcuts(CommandSource src, Island island) {
+		Text teleport = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS) ? Text.of(
 			TextColors.DARK_GRAY, "[",
 			TextColors.RED, Text.builder("Teleport")
 				.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn()
@@ -111,7 +136,7 @@ public class CommandInfo implements CommandExecutor {
 			TextColors.DARK_GRAY, "] "
 		) : Text.EMPTY;
 
-		Text transfer = (src.hasPermission(Permissions.COMMAND_TRANSFER)) ? Text.of(
+		Text transfer = src.hasPermission(Permissions.COMMAND_TRANSFER) ? Text.of(
 			TextColors.DARK_GRAY, "[",
 			TextColors.RED, Text.builder("Transfer")
 				.onClick(TextActions.suggestCommand("/isa transfer " + island.getOwnerName() + " ?"))
@@ -119,7 +144,7 @@ public class CommandInfo implements CommandExecutor {
 			TextColors.DARK_GRAY, "] "
 		) : Text.EMPTY;
 
-		Text delete = (src.hasPermission(Permissions.COMMAND_DELETE)) ? Text.of(
+		Text delete = src.hasPermission(Permissions.COMMAND_DELETE) ? Text.of(
 			TextColors.DARK_GRAY, "[",
 			TextColors.RED, Text.builder("Delete")
 				.onClick(TextActions.executeCallback(consumer -> {
@@ -131,58 +156,42 @@ public class CommandInfo implements CommandExecutor {
 			TextColors.DARK_GRAY, "] "
 		) : Text.EMPTY;
 
-		Text admin = (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty()) ? Text.EMPTY : Text.of(
+		Text expand = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
+			TextColors.DARK_GRAY, "[",
+			TextColors.RED, Text.builder("Expand")
+				.onClick(TextActions.executeCallback(consumer -> {
+					island.expand(1);
+					src.sendMessage(Text.of(
+						island.getOwnerName(), "'s island has been expanded to ",
+						TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x", TextColors.LIGHT_PURPLE, island.getWidth(),
+						TextColors.RESET,"!"
+					));
+				}))
+				.onHover(TextActions.showText(Text.of("Click to expand this island's width by", TextColors.LIGHT_PURPLE, 2, TextColors.RESET, "!"))),
+			TextColors.DARK_GRAY, "] "
+		) : Text.EMPTY;
+
+		return  (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty()) ? Text.EMPTY : Text.of(
 			TextColors.RED, "Admin", TextColors.WHITE, " : ",
-			(!teleport.isEmpty()) ? teleport : Text.EMPTY,
-			(!transfer.isEmpty()) ? transfer : Text.EMPTY,
-			(!delete.isEmpty()) ? delete : Text.EMPTY,
-			Text.NEW_LINE
+			teleport, transfer, delete, expand, Text.NEW_LINE
 		);
-
-		Text infoText = Text.of(
-			(src instanceof Player) ? admin : Text.EMPTY,
-			TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), Text.NEW_LINE,
-			TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), Text.NEW_LINE,
-			members, Text.NEW_LINE,
-			TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
-			TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
-			TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn()
-				.getLocation()
-				.getBlockX(), TextColors.GRAY, "x ",
-			TextColors.LIGHT_PURPLE, island.getSpawn()
-				.getLocation()
-				.getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn()
-				.getLocation()
-				.getBlockZ(), TextColors.GRAY, "z", Text.NEW_LINE,
-			TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(),
-			Text.NEW_LINE,
-			TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), Text.NEW_LINE,
-			(island.getClaim()
-				.isPresent()) ? Text.of(
-				TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(
-					island.getClaimUniqueId()
-						.toString())
-					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo",
-						island.getClaimUniqueId()
-							.toString(), createReturnConsumer(src, island.getUniqueId()
-							.toString())
-					)))
-					.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
-			) : Text.EMPTY
-		);
-
-		PaginationList.Builder paginationBuilder = PaginationList.builder()
-			.title(Text.of(TextColors.AQUA, "Island Info"))
-			.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-			.contents(infoText);
-		paginationBuilder.sendTo(src);
-
-		return CommandResult.success();
 	}
 
-	private static CommandResult listIslands() throws CommandException {
-		throw new CommandException(
-			Text.of(TextColors.RED, "Command does not support players with multiple islands yet!"));
+	private static Text getMembers(Island island) {
+		if (island.getMembers().isEmpty())
+			return Text.of(TextColors.GRAY, "None");
+		else {
+			int i = 1;
+			Text members = Text.EMPTY;
+			for (String member : island.getMembers()) {
+				members = Text.join(members, Text.of(
+					TextColors.BLUE, member, TextColors.GRAY,
+					(i == island.getMembers().size()) ? "" : ", ")
+				);
+				i++;
+			}
+			return members;
+		}
 	}
 
 	private static Consumer<CommandSource> createReturnConsumer(CommandSource src, String arguments) {
