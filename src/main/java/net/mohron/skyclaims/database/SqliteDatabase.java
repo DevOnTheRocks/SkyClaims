@@ -21,7 +21,7 @@ package net.mohron.skyclaims.database;
 import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.SqliteConfig;
+import net.mohron.skyclaims.config.type.StorageConfig;
 import net.mohron.skyclaims.world.Island;
 import org.apache.commons.io.FileUtils;
 
@@ -37,21 +37,16 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class SqliteDatabase extends Database {
-	private SqliteConfig config;
-	private String databaseName;
+	private StorageConfig config;
 	private Connection dbConnection;
 
 	public SqliteDatabase() {
-		this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getSqliteConfig();
-		this.databaseName = config.getDatabaseName();
-
-		File db = new File(String.format("%s%sdata%sskyclaims.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator));
-		if (!db.exists()) migrateFile();
+		this.config = SkyClaims.getInstance().getConfig().getStorageConfig();
 
 		// Load the SQLite JDBC driver
 		try {
 			Class.forName("org.sqlite.JDBC");
-			dbConnection = DriverManager.getConnection(String.format("jdbc:sqlite:%s%sskyclaims.db", config.getParent().getLocation(), File.separator));
+			dbConnection = DriverManager.getConnection(String.format("jdbc:sqlite:%s%sskyclaims.db", config.getLocation(), File.separator));
 			SkyClaims.getInstance().getLogger().info("Successfully connected to SkyClaims SQLite DB.");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -114,27 +109,11 @@ public class SqliteDatabase extends Database {
 	}
 
 	/**
-	 * Migrates the database from the old default location to the new
-	 */
-	public void migrateFile() {
-		SkyClaims.getInstance().getLogger().info("Moving the SkyClaims SQLite DB to the new default location.");
-		File inputFile = new File(String.format("%s%s%s.db", config.getLocation(), File.separator, databaseName));
-		File outputFile = new File(String.format("%s%sdata%sskyclaims.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator));
-
-		try {
-			FileUtils.moveFile(inputFile, outputFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			SkyClaims.getInstance().getLogger().error("Error occurred while moving the SkyClaims SQLite DB.");
-		}
-	}
-
-	/**
 	 * Creates a file backup of the existing database in the configured directory
 	 */
 	public void backup() {
-		File inputFile = new File(String.format("%s%sdata%s%s.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
-		File outputFile = new File(String.format("%s%sdata%s%s_backup.db", SkyClaims.getInstance().getConfigDir(), File.separator, File.separator, databaseName));
+		File inputFile = new File(String.format("%s%sskyclaims.db", config.getLocation(), File.separator));
+		File outputFile = new File(String.format("%s%sskyclaims_backup.db", config.getLocation(), File.separator));
 
 		try {
 			FileUtils.copyFile(inputFile, outputFile);
