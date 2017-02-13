@@ -72,38 +72,27 @@ public class CommandInfo implements CommandExecutor {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		Island island;
-		if (src instanceof Player && !args.hasAny(ISLAND)) {
-			island = Island.get(((Player) src).getLocation())
-				.orElseThrow(() -> new CommandException(
-					Text.of(TextColors.RED, "You must be on an island to use this command.")));
-		} else {
-			Collection<UUID> islands = args.getAll(ISLAND);
+		List<Text> infoText = Lists.newArrayList();
+		List<Island> islands = Lists.newArrayList();
 
-			island = Island.get(islands.stream()
-				.findFirst()
-				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Invalid UUID argument."))))
-				.orElseThrow(() -> new CommandException(
-					Text.of(TextColors.RED, "The UUID supplied does not have a corresponding island.")));
+		if (src instanceof Player && !args.hasAny(ISLAND)) {
+			islands.add(Island.get(((Player) src).getLocation())
+				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command.")))
+			);
+		} else {
+			Collection<UUID> islandIds = args.getAll(ISLAND);
+			islandIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+			if (islands.size() > 1) return listIslands();
 		}
 
-		List<Text> infoText = Lists.newArrayList();
-
-		infoText.add(Text.of(
+		islands.forEach(island -> infoText.add(Text.of(
 			(src instanceof Player) ? getAdminShortcuts(src, island) : Text.EMPTY,
 			TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), Text.NEW_LINE,
 			TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), Text.NEW_LINE,
 			TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island), Text.NEW_LINE,
 			TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
 			TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
-			TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getSpawn()
-				.getLocation()
-				.getBlockX(), TextColors.GRAY, "x ",
-			TextColors.LIGHT_PURPLE, island.getSpawn()
-				.getLocation()
-				.getBlockY(), TextColors.GRAY, "y ", TextColors.LIGHT_PURPLE, island.getSpawn()
-				.getLocation()
-				.getBlockZ(), TextColors.GRAY, "z", Text.NEW_LINE,
+			TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", getSpawn(island), Text.NEW_LINE,
 			TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), Text.NEW_LINE,
 			TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), Text.NEW_LINE,
 			(island.getClaim().isPresent()) ? Text.of(
@@ -114,16 +103,20 @@ public class CommandInfo implements CommandExecutor {
 					)))
 					.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
 			) : Text.EMPTY
-		));
+		)));
 
 		PaginationList.builder()
 			.title(Text.of(TextColors.AQUA, "Island Info"))
 			.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
 			.contents(infoText)
-			.linesPerPage(1)
 			.sendTo(src);
 
 		return CommandResult.success();
+	}
+
+	private static CommandResult listIslands() throws CommandException {
+		throw new CommandException(
+			Text.of(TextColors.RED, "Command does not support players with multiple islands yet!"));
 	}
 
 	private static Text getAdminShortcuts(CommandSource src, Island island) {
@@ -167,7 +160,7 @@ public class CommandInfo implements CommandExecutor {
 						TextColors.RESET,"!"
 					));
 				}))
-				.onHover(TextActions.showText(Text.of("Click to expand this island's width by", TextColors.LIGHT_PURPLE, 2, TextColors.RESET, "!"))),
+				.onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2, TextColors.RESET, "!"))),
 			TextColors.DARK_GRAY, "] "
 		) : Text.EMPTY;
 
@@ -192,6 +185,14 @@ public class CommandInfo implements CommandExecutor {
 			}
 			return members;
 		}
+	}
+
+	private Text getSpawn(Island island) {
+		return Text.of(
+			TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockX(), TextColors.GRAY, "x ",
+			TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockY(), TextColors.GRAY, "y ",
+			TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockZ(), TextColors.GRAY, "z"
+		);
 	}
 
 	private static Consumer<CommandSource> createReturnConsumer(CommandSource src, String arguments) {
