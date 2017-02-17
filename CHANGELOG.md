@@ -10,6 +10,8 @@
 - Added expand _(no cost)_ to admin shortcuts in `/is info` _requires_ `skyclaims.admin.expand`
 - Added custom island command argument that accepts a player name or island id
 - Changed `/is info` to accept an island argument
+- Changed default island lock to true
+- `/is spawn` can now be used to visit unlocked islands
 - Added Nucleus integration
     - `/is home` & `/is sethome` now works as a player configurable home when installed
 
