@@ -184,7 +184,7 @@ public class SqliteDatabase extends Database {
 
 				UUID id = UUID.randomUUID();
 				Vector3d spawnLocation = new Vector3d(x, y, z);
-				Island island = new Island(id, ownerId, claimId, spawnLocation, false);
+				Island island = new Island(id, ownerId, claimId, spawnLocation, true);
 
 				islands.put(id, island);
 			}

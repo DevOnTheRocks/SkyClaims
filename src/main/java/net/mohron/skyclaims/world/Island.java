@@ -72,7 +72,7 @@ public class Island {
 			throw new CreateIslandException(e.getText());
 		}
 		this.spawn = new Transform<>(region.getCenter());
-		this.locked = false;
+		this.locked = true;
 
 		// Create the island claim
 		this.claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region).getUniqueId();
