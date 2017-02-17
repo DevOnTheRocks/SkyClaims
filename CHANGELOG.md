@@ -2,7 +2,7 @@
 
 ## Beta 18
 ### * Manual SQLite file migration required if upgrading from Beta 13 or earlier! 
-**REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**
+**REQUIRED: SF 2096+ & GP 255+ OPTIONAL: Nucleus 0.24.0+**
 - Fixed `/isa transfer` not working when supplied with an owner
 - Fixed `/is expand` not being able to expand an island to `max-size`
 - Fixed system-dependent file separators causing NPE when moving config to different OS 
@@ -10,6 +10,8 @@
 - Added expand _(no cost)_ to admin shortcuts in `/is info` _requires_ `skyclaims.admin.expand`
 - Added custom island command argument that accepts a player name or island id
 - Changed `/is info` to accept an island argument
+- Added Nucleus integration
+    - `/is home` & `/is sethome` now works as a player configurable home when installed
 
 ## Beta 17
 **REQUIRES: SF 2096+ & GP 255+ (latest versions are highly recommended)**

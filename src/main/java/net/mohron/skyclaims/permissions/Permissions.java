@@ -22,12 +22,14 @@ public class Permissions {
 	// User Permissions
 	public static final String COMMAND_CREATE = "skyclaims.command.create";
 	public static final String COMMAND_EXPAND = "skyclaims.command.expand";
+	public static final String COMMAND_HOME = "skyclaims.command.home";
 	public static final String COMMAND_INFO = "skyclaims.command.info";
 	public static final String COMMAND_INVITE = "skyclaims.command.invite";
 	public static final String COMMAND_LIST = "skyclaims.command.list";
 	public static final String COMMAND_LOCK = "skyclaims.command.lock";
 	public static final String COMMAND_RESET = "skyclaims.command.reset";
 	public static final String COMMAND_SPAWN = "skyclaims.command.spawn";
+	public static final String COMMAND_SET_HOME = "skyclaims.command.sethome";
 	public static final String COMMAND_SET_SPAWN = "skyclaims.command.setspawn";
 	public static final String COMMAND_SET_BIOME = "skyclaims.command.setbiome";
 

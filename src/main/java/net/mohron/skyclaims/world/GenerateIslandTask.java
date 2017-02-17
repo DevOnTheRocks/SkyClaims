@@ -91,7 +91,7 @@ public class GenerateIslandTask implements Runnable {
 
 		Location<World> spawn = new Location<>(island.getWorld(), centerBlock.getX(), centerBlock.getY() + volume.getBlockSize().getY() - 1, centerBlock.getZ());
 		island.setSpawn(new Transform<>(spawn.getExtent(), spawn.getPosition()));
-		volume.apply(spawn, BlockChangeFlag.NONE, Cause.source(PLUGIN.getPluginContainer()).build());
+		volume.apply(spawn, BlockChangeFlag.NONE, PLUGIN.getCause());
 
 		// Set the region's BiomeType using the default biome option if set
 		Options.getDefaultBiome(owner).ifPresent(biomeType -> {

@@ -28,7 +28,6 @@ import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -52,13 +51,13 @@ public class ClaimUtil {
 			switch (claimResult.getResultType()) {
 				case SUCCESS:
 					claim = claimResult.getClaim().get();
-					CLAIM_MANAGER.addClaim(claim, Cause.source(PLUGIN).build());
+					CLAIM_MANAGER.addClaim(claim, PLUGIN.getCause());
 					PLUGIN.getLogger().debug(String.format(
-							"Creating %s's claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
-							getName(ownerUniqueId),
-							region.getX(), region.getZ(),
-							claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
-							claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
+						"Creating %s's claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
+						getName(ownerUniqueId),
+						region.getX(), region.getZ(),
+						claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
+						claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
 					));
 
 					claim.getData().setResizable(false);
@@ -67,16 +66,19 @@ public class ClaimUtil {
 					break;
 				case OVERLAPPING_CLAIM:
 					for (Claim claim1 : claimResult.getClaims()) {
-						CLAIM_MANAGER.deleteClaim(claim1, Cause.source(PLUGIN).build());
+						CLAIM_MANAGER.deleteClaim(claim1, PLUGIN.getCause());
 					}
-					PLUGIN.getLogger().info(String.format("Removing claim overlapping %s's island (Owner: %s, ID: %s).",
-							getName(ownerUniqueId),
-							claimResult.getClaim().get().getOwnerName(),
-							claimResult.getClaim().get().getUniqueId()
+					PLUGIN.getLogger().info(String.format(
+						"Removing claim overlapping %s's island (Owner: %s, ID: %s).",
+						getName(ownerUniqueId),
+						claimResult.getClaim().get().getOwnerName(),
+						claimResult.getClaim().get().getUniqueId()
 					));
 					break;
 				default:
-					throw new CreateIslandException(Text.of(TextColors.RED, String.format("Failed to create claim: %s!", claimResult.getResultType())));
+					throw new CreateIslandException(Text.of(TextColors.RED,
+						String.format("Failed to create claim: %s!", claimResult.getResultType())
+					));
 			}
 		} while (claim == null);
 
@@ -86,25 +88,33 @@ public class ClaimUtil {
 	private static ClaimResult createIslandClaimResult(UUID ownerUniqueId, Region region) {
 		int initialSpacing = 256 - Options.getIntOption(ownerUniqueId, Options.INITIAL_SIZE, 8, 256);
 		return Claim.builder()
-				.world(WORLD)
-				.bounds(
-						new Vector3i(region.getLesserBoundary().getX() + initialSpacing, 0, region.getLesserBoundary().getZ() + initialSpacing),
-						new Vector3i(region.getGreaterBoundary().getX() - initialSpacing, 255, region.getGreaterBoundary().getZ() - initialSpacing)
+			.world(WORLD)
+			.bounds(
+				new Vector3i(
+					region.getLesserBoundary().getX() + initialSpacing, 0,
+					region.getLesserBoundary().getZ() + initialSpacing
+				),
+				new Vector3i(
+					region.getGreaterBoundary().getX() - initialSpacing, 255,
+					region.getGreaterBoundary().getZ() - initialSpacing
 				)
-				.owner(ownerUniqueId)
-				.type(ClaimType.BASIC)
-				.requiresClaimBlocks(false)
-				.cause(Cause.source(PLUGIN).build())
-				.cuboid(false)
-				.build();
+			)
+			.owner(ownerUniqueId)
+			.type(ClaimType.BASIC)
+			.requiresClaimBlocks(false)
+			.cause(PLUGIN.getCause())
+			.cuboid(false)
+			.build();
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static void createSpawnClaim(List<Region> regions) {
 		ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
 		if (claimResult.successful()) {
-			PLUGIN.getLogger().debug(String.format("Reserved %s regions for spawn. Admin Claim: %s", regions.size(), claimResult.getClaim().get().getUniqueId()));
-			CLAIM_MANAGER.addClaim(claimResult.getClaim().get(), Cause.source(PLUGIN).build());
+			PLUGIN.getLogger().debug(String.format("Reserved %s regions for spawn. Admin Claim: %s", regions.size(),
+				claimResult.getClaim().get().getUniqueId()
+			));
+			CLAIM_MANAGER.addClaim(claimResult.getClaim().get(), PLUGIN.getCause());
 		}
 	}
 
@@ -119,15 +129,15 @@ public class ClaimUtil {
 		}
 
 		return Claim.builder()
-				.world(WORLD)
-				.bounds(
-						new Vector3i(lesserRegion.getLesserBoundary().getX(), 0, lesserRegion.getLesserBoundary().getZ()),
-						new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())
-				)
-				.type(ClaimType.ADMIN)
-				.cause(Cause.source(PLUGIN).build())
-				.cuboid(false)
-				.build();
+			.world(WORLD)
+			.bounds(
+				new Vector3i(lesserRegion.getLesserBoundary().getX(), 0, lesserRegion.getLesserBoundary().getZ()),
+				new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())
+			)
+			.type(ClaimType.ADMIN)
+			.cause(PLUGIN.getCause())
+			.cuboid(false)
+			.build();
 	}
 
 	public static void setEntryFlag(Claim claim, boolean entry) {

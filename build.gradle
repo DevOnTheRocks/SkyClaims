@@ -23,11 +23,16 @@ repositories {
         name = 'Forge'
         url = 'http://files.minecraftforge.net/maven'
     }
+    maven {
+        name = 'Nucleus'
+        url = 'http://repo.drnaylor.co.uk/artifactory/list/minecraft'
+    }
 }
 
 dependencies {
     compile("org.spongepowered:spongeapi:5.0.0")
     compile("me.ryanhamshire:griefprevention:1.10.2-2.3.1.255")
+    compile("io.github.nucleuspowered:nucleus-api:0.23.1-S5.1")
 }
 
 blossom {

@@ -253,7 +253,7 @@ public class Island {
 			claim.resize(
 				new Vector3i(getRegion().getLesserBoundary().getX() + spacing, 0, getRegion().getLesserBoundary().getZ() + spacing),
 				new Vector3i(getRegion().getGreaterBoundary().getX() - spacing, 255, getRegion().getGreaterBoundary().getZ() - spacing),
-				Cause.source(PLUGIN).build()
+				PLUGIN.getCause()
 			);
 		});
 		return getWidth() == width;
@@ -329,7 +329,7 @@ public class Island {
 	}
 
 	public void delete() {
-		getClaim().ifPresent(claim -> CLAIM_MANAGER.deleteClaim(claim, Cause.source(PLUGIN).build()));
+		getClaim().ifPresent(claim -> CLAIM_MANAGER.deleteClaim(claim, PLUGIN.getCause()));
 		SkyClaims.islands.remove(id);
 		PLUGIN.getDatabase().removeIsland(this);
 	}

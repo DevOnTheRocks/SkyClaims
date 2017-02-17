@@ -21,7 +21,6 @@ package net.mohron.skyclaims.world;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.World;
 
 public class RegenerateRegionTask implements Runnable {
@@ -57,7 +56,8 @@ public class RegenerateRegionTask implements Runnable {
 							for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
 								if (chunk.getBlockType(bx, by, bz) != BlockTypes.AIR) {
 //									PLUGIN.getLogger().info(String.format("Found %s at (%s, %s, %s), replacing with air.", chunk.getBlock(bx, by, bz).getType().getName(), bx, by, bz));
-									chunk.getLocation(bx, by, bz).setBlock(BlockTypes.AIR.getDefaultState(), Cause.source(PLUGIN).build());
+									chunk.getLocation(bx, by, bz)
+										.setBlock(BlockTypes.AIR.getDefaultState(), PLUGIN.getCause());
 								}
 							}
 						}
@@ -71,7 +71,8 @@ public class RegenerateRegionTask implements Runnable {
 		if (island != null) {
 			// Run reset commands
 			for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
-				PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+				PLUGIN.getGame().getCommandManager()
+					.process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
 			}
 
 			GenerateIslandTask generateIsland = new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic);

@@ -36,6 +36,7 @@ import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
 import net.mohron.skyclaims.database.MysqlDatabase;
 import net.mohron.skyclaims.database.SqliteDatabase;
+import net.mohron.skyclaims.integration.Integration;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
@@ -51,6 +52,7 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -68,17 +70,19 @@ import java.util.UUID;
 import static net.mohron.skyclaims.PluginInfo.*;
 
 @Plugin(id = ID,
-		name = NAME,
-		version = VERSION,
-		description = DESCRIPTION,
-		authors = AUTHORS,
-		dependencies = {
-				@Dependency(id = "griefprevention", version = "2.3.1")
-		})
+	name = NAME,
+	version = VERSION,
+	description = DESCRIPTION,
+	authors = AUTHORS,
+	dependencies = {
+		@Dependency(id = "griefprevention", version = "2.3.1"),
+		@Dependency(id = "nucleus", version = "0.24.0", optional = true)
+	})
 public class SkyClaims {
 	private static SkyClaims instance;
 	private static GriefPreventionApi griefPrevention;
 	private static PermissionService permissionService;
+	private static Integration integration;
 	public static Map<UUID, Island> islands = Maps.newHashMap();
 	private static Set<Island> saveQueue = Sets.newHashSet();
 
@@ -112,6 +116,7 @@ public class SkyClaims {
 		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
 
 		instance = this;
+		integration = new Integration();
 
 		try {
 			SkyClaims.griefPrevention = GriefPrevention.getApi();
@@ -121,7 +126,10 @@ public class SkyClaims {
 
 		if (SkyClaims.griefPrevention != null) {
 			if (griefPrevention.getApiVersion() < GP_API_VERSION) {
-				getLogger().error(String.format("GriefPrevention API version %s is unsupported! Please update to API version %s+.", griefPrevention.getApiVersion(), GP_API_VERSION));
+				getLogger().error(String.format(
+					"GriefPrevention API version %s is unsupported! Please update to API version %s+.",
+					griefPrevention.getApiVersion(), GP_API_VERSION
+				));
 				enabled = false;
 			} else
 				getLogger().info("GriefPrevention Integration Successful!");
@@ -139,8 +147,10 @@ public class SkyClaims {
 		if (!enabled) return;
 
 		permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
-		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
-			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
+			.equalsIgnoreCase("sponge")) {
+			getLogger()
+				.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
 			enabled = false;
 			return;
 		}
@@ -186,6 +196,7 @@ public class SkyClaims {
 		CommandCreate.register();
 		CommandCreateSchematic.register();
 		CommandExpand.register();
+		CommandHome.register();
 		CommandDelete.register();
 		CommandInfo.register();
 		CommandIsland.register();
@@ -194,6 +205,7 @@ public class SkyClaims {
 		CommandReload.register();
 		CommandReset.register();
 		CommandSetBiome.register();
+		CommandSetHome.register();
 		CommandSetSpawn.register();
 		CommandSetup.register();
 		CommandSpawn.register();
@@ -233,8 +245,12 @@ public class SkyClaims {
 		return permissionService;
 	}
 
-	public PluginContainer getPluginContainer() {
-		return pluginContainer;
+	public Integration getIntegration() {
+		return integration;
+	}
+
+	public Cause getCause() {
+		return Cause.source(pluginContainer).build();
 	}
 
 	public Logger getLogger() {
