@@ -18,7 +18,7 @@ This plugin is in Beta but I expect to have a release soon™. Live support for 
 - Add an island messaging channel so you can chat within your island _(for after release)_
 
 ### Required Plugins
-- [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-2.3.1.251+
+- [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-2.3.1.255+
 
 ### More details are available on our [Wiki](https://github.com/DevOnTheRocks/SkyClaims/wiki/).
 
