@@ -61,7 +61,7 @@ public class CommandSetHome implements CommandExecutor {
 		Nucleus nucleus = PLUGIN.getIntegration().getNucleus()
 			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Error: Home Command Requires Nucleus!")));
 
-		boolean success = nucleus.setOrCreateHome(player);
+		boolean success = nucleus.modifyOrCreateHome(player);
 		if (!success)
 			throw new CommandException(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
 

@@ -50,23 +50,16 @@ public class Nucleus {
 		return (oHome.isPresent()) ? oHome.get().getTransform() : Optional.empty();
 	}
 
-	public boolean setOrCreateHome(Player player) {
-		Optional<Home> oHome = homeService.getHome(player, HOME_NAME);
+	public boolean modifyOrCreateHome(Player player) {
 		try {
-			if (oHome.isPresent()) {
-				homeService.modifyHome(PLUGIN.getCause(), oHome.get(), player.getLocation(), player.getRotation());
-				player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
-				return true;
-			} else {
-				homeService.createHome(PLUGIN.getCause(), player, HOME_NAME, player.getLocation(), player.getRotation());
-				player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
-				return true;
-			}
+			homeService.modifyOrCreateHome(PLUGIN.getCause(), player, HOME_NAME, player.getLocation(), player.getRotation());
+			player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
+			return true;
 		} catch (NucleusException e) {
 			player.sendMessage(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
 			PLUGIN.getGame().getServer().getConsole().sendMessage(e.getText());
+			return false;
 		}
-		return false;
 	}
 
 	public boolean isAFK(Player player) {

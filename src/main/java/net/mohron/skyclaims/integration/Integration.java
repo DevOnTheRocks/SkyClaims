@@ -28,9 +28,10 @@ public class Integration {
 
 	public Integration() {
 		if (isPresent("io.github.nucleuspowered.nucleus.api.service.NucleusHomeService")) {
-			String version = Sponge.getPluginManager().getPlugin("nucleus").get().getVersion().orElse("0");
-			SkyClaims.getInstance().getLogger().info("Found Nucleus " + version.substring(0, version.indexOf("-")));
-			nucleus = new Nucleus();
+			@SuppressWarnings("OptionalGetWithoutIsPresent")
+			String version = Sponge.getPluginManager().getPlugin("nucleus").get().getVersion().orElse("0.0.0");
+			SkyClaims.getInstance().getLogger().info("Found Nucleus " + version);
+			if (isMinimumVersion(version.substring(0, version.indexOf('-')), 0,24, 0)) nucleus = new Nucleus();
 		}
 	}
 
@@ -41,6 +42,18 @@ public class Integration {
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
+	}
+
+	private static boolean isMinimumVersion(String version, int minMajor, int minMinor, int minPatch) {
+		try {
+			int major = Integer.parseInt(version.substring(0, version.indexOf('.')));
+			int minor = Integer.parseInt(version.substring(version.indexOf('.') + 1, version.lastIndexOf('.')));
+			int patch = Integer.parseInt(version.substring(version.lastIndexOf('.') + 1));
+			if (major >= minMajor && minor >= minMinor && patch >= minPatch) return true;
+		} catch (NumberFormatException e) {
+			SkyClaims.getInstance().getLogger().error("Unable to parse version number " + version);
+		}
+		return false;
 	}
 
 	public Optional<Nucleus> getNucleus() {
