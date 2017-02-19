@@ -9,8 +9,13 @@ plugins {
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-group 'net.mohron.skyclaims'
-version '1.0.0-beta17'
+def major = "0"
+def minor = "18"
+def patch = "0"
+def suffix = "-beta"
+
+group = 'net.mohron.skyclaims'
+version = major + "." + minor + "." + patch + suffix
 description = 'SkyClaims is an Island Management plugin that integrates with GriefPrevention.'
 
 repositories {
