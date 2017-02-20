@@ -39,8 +39,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class IslandArgument extends CommandElement {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public IslandArgument(@Nullable Text key) {
 		super(key);
 	}

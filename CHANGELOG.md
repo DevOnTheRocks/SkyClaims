@@ -9,6 +9,8 @@
 - Fixed `/is setspawn` not being restricted to an island's claimed area
 - Fixed system-dependent file separators causing NPE when moving config to different OS 
 - Removed deprecated SQLite config and auto file migration
+- Added `/is lock [island|all]` & `/is unlock [island|all]` arguments - requires `skyclaims.admin.lock`
+- Added island lock indicator to `is list` & `is info`
 - Added expand _(no cost)_ to admin shortcuts in `/is info` _requires_ `skyclaims.admin.expand`
 - Added custom island command argument that accepts a player name or island id
 - Changed `/is info` to accept an island argument

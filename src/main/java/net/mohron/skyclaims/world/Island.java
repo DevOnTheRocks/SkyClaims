@@ -40,6 +40,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -201,7 +202,7 @@ public class Island {
 	public Text getName() {
 		return (getClaim().isPresent() && getClaim().get().getName().isPresent()) ?
 			getClaim().get().getName().get() :
-			Text.of(getOwnerName(), "'s Island");
+			Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
 	}
 
 	public boolean isLocked() {

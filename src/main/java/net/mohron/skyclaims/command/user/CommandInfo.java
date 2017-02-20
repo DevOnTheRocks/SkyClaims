@@ -59,15 +59,11 @@ public class CommandInfo implements CommandExecutor {
 
 	public static void register() {
 		try {
-			PLUGIN.getGame()
-				.getCommandManager()
-				.register(PLUGIN, commandSpec, "islandinfo");
-			PLUGIN.getLogger()
-				.debug("Registered command: CommandInfo");
+			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandinfo");
+			PLUGIN.getLogger().debug("Registered command: CommandInfo");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			PLUGIN.getLogger()
-				.error("Failed to register command: CommandInfo");
+			PLUGIN.getLogger().error("Failed to register command: CommandInfo");
 		}
 	}
 
@@ -85,25 +81,29 @@ public class CommandInfo implements CommandExecutor {
 			if (islands.size() > 1) return listIslands();
 		}
 
-		islands.forEach(island -> infoText.add(Text.of(
-			(src instanceof Player) ? getAdminShortcuts(src, island) : Text.EMPTY,
-			TextColors.YELLOW, "Name", TextColors.WHITE, " : ", TextColors.AQUA, island.getName(), Text.NEW_LINE,
-			TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), Text.NEW_LINE,
-			TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island), Text.NEW_LINE,
-			TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
-			TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
-			TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", getSpawn(island), Text.NEW_LINE,
-			TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), Text.NEW_LINE,
-			TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), Text.NEW_LINE,
-			(island.getClaim().isPresent()) ? Text.of(
-				TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(
-					island.getClaimUniqueId().toString())
-					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo",
-						island.getClaimUniqueId().toString(), createReturnConsumer(src, island.getUniqueId().toString())
-					)))
-					.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
-			) : Text.EMPTY
-		)));
+		islands.forEach(island -> {
+			infoText.add(Text.of(
+				(src instanceof Player) ? getAdminShortcuts(src, island) : Text.EMPTY,
+				TextColors.YELLOW, "Name", TextColors.WHITE, " : ", island.getName(),
+				getLocked(island, (src instanceof Player) && island.hasPermissions((Player) src)), Text.NEW_LINE,
+				TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), Text.NEW_LINE,
+				TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island), Text.NEW_LINE,
+				TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
+				TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
+				TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", getSpawn(island), Text.NEW_LINE,
+				TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), Text.NEW_LINE,
+				TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), Text.NEW_LINE,
+				(island.getClaim().isPresent()) ? Text.of(
+					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(
+						island.getClaimUniqueId().toString())
+						.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo",
+							island.getClaimUniqueId().toString(),
+							createReturnConsumer(src, island.getUniqueId().toString())
+						)))
+						.onHover(TextActions.showText(Text.of("Click here to check claim info.")))
+				) : Text.EMPTY
+			));
+		});
 
 		PaginationList.builder()
 			.title(Text.of(TextColors.AQUA, "Island Info"))
@@ -168,6 +168,27 @@ public class CommandInfo implements CommandExecutor {
 			TextColors.RED, "Admin", TextColors.WHITE, " : ",
 			teleport, transfer, delete, expand, Text.NEW_LINE
 		);
+	}
+
+	private Text getLocked(Island island, boolean perm) {
+		if (perm) return Text.of(TextColors.WHITE, " [",(island.isLocked()) ?
+				Text.builder("L")
+					.color(TextColors.RED)
+					.onHover(TextActions.showText(Text.of(TextColors.RED, "Locked", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")))
+					.onClick(TextActions.executeCallback(src -> island.setLocked(!island.isLocked())))
+				: Text.builder("U")
+				.color(TextColors.GREEN)
+				.onHover(TextActions.showText(Text.of(TextColors.GREEN, "Unlocked", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")))
+				.onClick(TextActions.executeCallback(src -> island.setLocked(!island.isLocked()))),
+			TextColors.WHITE, "] ");
+		else return Text.of(TextColors.WHITE, " [",(island.isLocked()) ?
+				Text.builder("L")
+					.color(TextColors.RED)
+					.onHover(TextActions.showText(Text.of(TextColors.RED, "Locked")))
+				: Text.builder("U")
+				.color(TextColors.GREEN)
+				.onHover(TextActions.showText(Text.of(TextColors.GREEN, "Unlocked"))),
+			TextColors.WHITE, "] ");
 	}
 
 	private static Text getMembers(Island island) {

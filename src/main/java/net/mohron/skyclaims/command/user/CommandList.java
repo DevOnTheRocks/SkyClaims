@@ -73,31 +73,38 @@ public class CommandList implements CommandExecutor {
 		Player player = (src instanceof Player) ? (Player) src : null;
 		User user = args.<User>getOne(USER).orElse(null);
 
+		boolean listAll =  !src.hasPermission(Permissions.COMMAND_LIST_ALL);
+
 		for (Island island : SkyClaims.islands.values()) {
-			if (island.isLocked() && ((player == null || !island.hasPermissions(player)) || !src.hasPermission(Permissions.COMMAND_LIST_ALL)))
+			if (island.isLocked() && ((player == null || !island.hasPermissions(player)) || listAll))
 				continue;
 			if (user != null && !island.hasPermissions(user))
 				continue;
 
-			Text name = Text.of((island.isLocked()) ? TextColors.DARK_PURPLE : TextColors.AQUA, island.getName());
+			Text lock = Text.of(TextColors.WHITE, "[",(island.isLocked())
+				? Text.builder("L").color(TextColors.RED).onHover(TextActions.showText(Text.of(TextColors.RED, "Locked")))
+				: Text.builder("U").color(TextColors.GREEN).onHover(TextActions.showText(Text.of(TextColors.GREEN, "Unlocked"))),
+				TextColors.WHITE, "] ");
+			Text name = Text.of(island.getName());
 			Text coords = Text.of(TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ", TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ")");
 
 			listText.add(Text.of(
-					name.toBuilder()
-							.onHover(TextActions.showText(Text.of("Click here to view island info")))
-							.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))),
-					coords.toBuilder()
-							.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
-							.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
+				lock,
+				name.toBuilder()
+					.onHover(TextActions.showText(Text.of("Click here to view island info")))
+					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))),
+				coords.toBuilder()
+					.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
+					.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
 			));
 		}
 		if (listText.isEmpty())
 			listText.add(Text.of(TextColors.RED, "There are no islands to display!"));
 
 		PaginationList.Builder paginationBuilder = PaginationList.builder()
-				.title(Text.of(TextColors.AQUA, "Island List"))
-				.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-				.contents(listText);
+			.title(Text.of(TextColors.AQUA, "Island List"))
+			.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+			.contents(listText);
 		paginationBuilder.sendTo(src);
 
 		return CommandResult.success();

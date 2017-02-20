@@ -137,6 +137,7 @@ public class CommandIsland implements CommandExecutor {
 			helpContents.add(Text.of(
 				Text.NEW_LINE,
 				TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
+				TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? "[island|all]" : Text.EMPTY,
 				TextColors.DARK_GRAY, " - ",
 				TextColors.DARK_GREEN, CommandLock.HELP_TEXT
 			));
@@ -201,6 +202,7 @@ public class CommandIsland implements CommandExecutor {
 			helpContents.add(Text.of(
 				Text.NEW_LINE,
 				TextColors.AQUA, Text.builder("is unlock").onClick(TextActions.runCommand("/is unlock")),
+				TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? "[island|all]" : Text.EMPTY,
 				TextColors.DARK_GRAY, " - ",
 				TextColors.DARK_GREEN, CommandUnlock.HELP_TEXT
 			));

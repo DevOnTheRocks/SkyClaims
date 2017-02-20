@@ -265,6 +265,10 @@ public class SkyClaims {
 		return this.defaultConfig;
 	}
 
+	public void setConfig(GlobalConfig config){
+		this.defaultConfig = config;
+	}
+
 	public ConfigManager getConfigManager() {
 		return this.pluginConfigManager;
 	}

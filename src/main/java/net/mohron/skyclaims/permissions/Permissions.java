@@ -46,6 +46,7 @@ public class Permissions {
 	public static final String COMMAND_EXPAND_OTHERS = "skyclaims.admin.expand";
 	public static final String COMMAND_INFO_OTHERS = "skyclaims.admin.info";
 	public static final String COMMAND_LIST_ALL = "skyclaims.admin.list";
+	public static final String COMMAND_LOCK_OTHERS = "skyclaims.admin.lock";
 	public static final String COMMAND_RELOAD = "skyclaims.admin.reload";
 	public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";
 	public static final String COMMAND_SETUP = "skyclaims.admin.setup";
