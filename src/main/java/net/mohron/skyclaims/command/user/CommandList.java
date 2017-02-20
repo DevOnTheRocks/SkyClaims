@@ -89,8 +89,7 @@ public class CommandList implements CommandExecutor {
 
 		if (!(src instanceof Player))
 			listText.forEach(src::sendMessage);
-
-		PaginationList.builder()
+		else PaginationList.builder()
 			.title(Text.of(TextColors.AQUA, "Island List"))
 			.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
 			.contents(listText)

@@ -16,6 +16,9 @@
 - Changed `/is info` to accept an island argument
 - Changed default island lock to true
 - `/is spawn` can now be used to visit unlocked islands
+- `/is list` no longer hides locked islands - teleporting now checks lock status & permissions
+- `/is list` is now sorted alphabetically
+- `/is list` & `/is info` now displays "[L]" or "[U]" based on the island's lock setting _(click to toggle)_
 - Added Nucleus integration
     - `/is home` & `/is sethome` now works as a player configurable home when installed
 
