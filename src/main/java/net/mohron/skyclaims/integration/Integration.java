@@ -27,11 +27,10 @@ public class Integration {
 	private Nucleus nucleus = null;
 
 	public Integration() {
-		if (isPresent("io.github.nucleuspowered.nucleus.api.service.NucleusHomeService")) {
-			@SuppressWarnings("OptionalGetWithoutIsPresent")
-			String version = Sponge.getPluginManager().getPlugin("nucleus").get().getVersion().orElse("0.0.0");
+		if (Sponge.getPluginManager().getPlugin("nucleus-api").isPresent()) {
+			String version = Sponge.getPluginManager().getPlugin("nucleus-api").get().getVersion().orElse("0.0.0");
 			SkyClaims.getInstance().getLogger().info("Found Nucleus " + version);
-			if (isMinimumVersion(version.substring(0, version.indexOf('-')), 0,24, 0)) nucleus = new Nucleus();
+			if (isMinimumVersion(version.substring(0, version.indexOf('-')), 0,24, 1)) nucleus = new Nucleus();
 		}
 	}
 

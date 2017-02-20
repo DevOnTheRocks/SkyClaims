@@ -2,7 +2,7 @@
 
 ## Beta 18
 ### * Manual SQLite file migration required if upgrading from Beta 13 or earlier! 
-**REQUIRED: SF 2096+ & GP 255+ OPTIONAL: Nucleus 0.24.0+**
+**REQUIRED: SF 2096+ & GP 255+ OPTIONAL: Nucleus 0.24.1+**
 - Fixed `/isa transfer` not working when supplied with an owner
 - Fixed `/is expand` not being able to expand an island to `max-size`
 - Fixed system-dependent file separators causing NPE when moving config to different OS 
