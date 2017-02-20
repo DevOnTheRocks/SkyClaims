@@ -238,7 +238,21 @@ public class Island {
 	}
 
 	private boolean contains(Location<World> location) {
-		return location.getExtent().equals(getWorld()) && Region.get(location).equals(getRegion());
+		if (!getClaim().isPresent())
+			return location.getExtent().equals(getWorld()) && Region.get(location).equals(getRegion());
+
+		int x = location.getBlockX();
+		int y = location.getBlockY();
+		int z = location.getBlockZ();
+		Location lesserBoundaryCorner = getClaim().get().getLesserBoundaryCorner();
+		Location greaterBoundaryCorner = getClaim().get().getGreaterBoundaryCorner();
+
+		return x >= lesserBoundaryCorner.getBlockX()
+			&& x <= greaterBoundaryCorner.getBlockX()
+			&& y >= lesserBoundaryCorner.getBlockY()
+			&& y <= greaterBoundaryCorner.getBlockY()
+			&& z >= lesserBoundaryCorner.getBlockZ()
+			&& z <= greaterBoundaryCorner.getBlockZ();
 	}
 
 	public int getWidth() {
