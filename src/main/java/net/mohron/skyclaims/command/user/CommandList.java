@@ -38,23 +38,21 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class CommandList implements CommandExecutor {
-
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "display a list of the current islands";
-
 	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_LIST)
-			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.optionalWeak(GenericArguments.user(USER)))
-			.executor(new CommandList())
-			.build();
+		.permission(Permissions.COMMAND_LIST)
+		.description(Text.of(HELP_TEXT))
+		.arguments(GenericArguments.optionalWeak(GenericArguments.user(USER)))
+		.executor(new CommandList())
+		.build();
 
 	public static void register() {
 		try {
@@ -75,29 +73,20 @@ public class CommandList implements CommandExecutor {
 
 		boolean listAll =  !src.hasPermission(Permissions.COMMAND_LIST_ALL);
 
-		for (Island island : SkyClaims.islands.values()) {
-			if (island.isLocked() && ((player == null || !island.hasPermissions(player)) || listAll))
-				continue;
-			if (user != null && !island.hasPermissions(user))
-				continue;
-
-			Text lock = Text.of(TextColors.WHITE, "[",(island.isLocked())
-				? Text.builder("L").color(TextColors.RED).onHover(TextActions.showText(Text.of(TextColors.RED, "Locked")))
-				: Text.builder("U").color(TextColors.GREEN).onHover(TextActions.showText(Text.of(TextColors.GREEN, "Unlocked"))),
-				TextColors.WHITE, "] ");
-			Text name = Text.of(island.getName());
-			Text coords = Text.of(TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, island.getRegion().getX(), TextColors.GRAY, ", ", TextColors.LIGHT_PURPLE, island.getRegion().getZ(), TextColors.GRAY, ")");
-
-			listText.add(Text.of(
-				lock,
-				name.toBuilder()
+		SkyClaims.islands.values().stream()
+			.filter(i -> i.isLocked() && ((player == null || !i.hasPermissions(player)) || !listAll))
+			.filter(i -> user != null && !i.hasPermissions(user))
+			.sorted(Comparator.comparing(Island::getName))
+			.forEach(island -> listText.add(Text.of(
+				getLocked(island),
+				island.getName().toBuilder()
 					.onHover(TextActions.showText(Text.of("Click here to view island info")))
 					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))),
-				coords.toBuilder()
+				getCoords(island).toBuilder()
 					.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
 					.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
-			));
-		}
+			)));
+
 		if (listText.isEmpty())
 			listText.add(Text.of(TextColors.RED, "There are no islands to display!"));
 
@@ -117,5 +106,44 @@ public class CommandList implements CommandExecutor {
 					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandlist", "", null))).build();
 			src.sendMessage(returnCommand);
 		};
+	}
+
+	private Text getLocked(Island island) {
+		return Text.of(TextColors.WHITE, " [",(island.isLocked()) ?
+				Text.builder(island.isLocked() ? "L" : "U")
+					.color(island.isLocked() ? TextColors.RED : TextColors.GREEN)
+					.onHover(TextActions.showText(island.isLocked()
+						? Text.of(TextColors.RED, "LOCKED", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")
+						: Text.of(TextColors.GREEN, "UNLOCKED", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")
+					))
+					.onClick(TextActions.executeCallback(toggleLock(island)))
+				: Text.builder("U")
+				.color(TextColors.GREEN)
+				.onHover(TextActions.showText(Text.of(TextColors.GREEN, "Unlocked", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")))
+				.onClick(TextActions.executeCallback(toggleLock(island))),
+			TextColors.WHITE, "] ");
+	}
+
+	private Consumer<CommandSource> toggleLock(Island island) {
+		return src -> {
+			if (src instanceof Player && ((Player) src).getUniqueId().equals(island.getOwnerUniqueId()) || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
+				island.setLocked(!island.isLocked());
+				src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now ",
+					Text.builder((island.isLocked()) ? "LOCKED" : "UNLOCKED")
+						.color((island.isLocked()) ? TextColors.RED : TextColors.GREEN)
+						.onClick(TextActions.executeCallback(toggleLock(island))),
+					TextColors.GREEN, "!"
+				));
+			}
+		};
+	}
+
+	private Text getCoords(Island island) {
+		return Text.of(TextColors.GRAY, " (",
+			TextColors.LIGHT_PURPLE, island.getRegion().getX(),
+			TextColors.GRAY, ", ",
+			TextColors.LIGHT_PURPLE, island.getRegion().getZ(),
+			TextColors.GRAY, ")"
+		);
 	}
 }

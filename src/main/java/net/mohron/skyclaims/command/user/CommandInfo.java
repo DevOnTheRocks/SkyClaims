@@ -85,7 +85,7 @@ public class CommandInfo implements CommandExecutor {
 			infoText.add(Text.of(
 				(src instanceof Player) ? getAdminShortcuts(src, island) : Text.EMPTY,
 				TextColors.YELLOW, "Name", TextColors.WHITE, " : ", island.getName(),
-				getLocked(island, (src instanceof Player) && island.hasPermissions((Player) src)), Text.NEW_LINE,
+				getLocked(island), Text.NEW_LINE,
 				TextColors.YELLOW, "Owner", TextColors.WHITE, " : ", TextColors.GOLD, island.getOwnerName(), Text.NEW_LINE,
 				TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island), Text.NEW_LINE,
 				TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
@@ -121,37 +121,37 @@ public class CommandInfo implements CommandExecutor {
 
 	private static Text getAdminShortcuts(CommandSource src, Island island) {
 		Text teleport = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS) ? Text.of(
-			TextColors.DARK_GRAY, "[",
-			TextColors.RED, Text.builder("Teleport")
+			TextColors.WHITE, "[",
+			TextColors.GOLD, Text.builder("Teleport")
 				.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn()
 					.getLocation())))
 				.onHover(TextActions.showText(Text.of("Click to teleport to this island!"))),
-			TextColors.DARK_GRAY, "] "
+			TextColors.WHITE, "] "
 		) : Text.EMPTY;
 
 		Text transfer = src.hasPermission(Permissions.COMMAND_TRANSFER) ? Text.of(
-			TextColors.DARK_GRAY, "[",
-			TextColors.RED, Text.builder("Transfer")
+			TextColors.WHITE, "[",
+			TextColors.GOLD, Text.builder("Transfer")
 				.onClick(TextActions.suggestCommand("/isa transfer " + island.getOwnerName() + " ?"))
 				.onHover(TextActions.showText(Text.of("Click to transfer this island!"))),
-			TextColors.DARK_GRAY, "] "
+			TextColors.WHITE, "] "
 		) : Text.EMPTY;
 
 		Text delete = src.hasPermission(Permissions.COMMAND_DELETE) ? Text.of(
-			TextColors.DARK_GRAY, "[",
-			TextColors.RED, Text.builder("Delete")
+			TextColors.WHITE, "[",
+			TextColors.GOLD, Text.builder("Delete")
 				.onClick(TextActions.executeCallback(consumer -> {
 					island.clear();
 					island.delete();
 					src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
 				}))
 				.onHover(TextActions.showText(Text.of("Click to delete this island!"))),
-			TextColors.DARK_GRAY, "] "
+			TextColors.WHITE, "] "
 		) : Text.EMPTY;
 
 		Text expand = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
-			TextColors.DARK_GRAY, "[",
-			TextColors.RED, Text.builder("Expand")
+			TextColors.WHITE, "[",
+			TextColors.GOLD, Text.builder("Expand")
 				.onClick(TextActions.executeCallback(consumer -> {
 					island.expand(1);
 					src.sendMessage(Text.of(
@@ -161,34 +161,43 @@ public class CommandInfo implements CommandExecutor {
 					));
 				}))
 				.onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2, TextColors.RESET, "!"))),
-			TextColors.DARK_GRAY, "] "
+			TextColors.WHITE, "] "
 		) : Text.EMPTY;
 
 		return  (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty()) ? Text.EMPTY : Text.of(
-			TextColors.RED, "Admin", TextColors.WHITE, " : ",
+			TextColors.GOLD, "Admin", TextColors.WHITE, " : ",
 			teleport, transfer, delete, expand, Text.NEW_LINE
 		);
 	}
 
-	private Text getLocked(Island island, boolean perm) {
-		if (perm) return Text.of(TextColors.WHITE, " [",(island.isLocked()) ?
-				Text.builder("L")
-					.color(TextColors.RED)
-					.onHover(TextActions.showText(Text.of(TextColors.RED, "Locked", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")))
-					.onClick(TextActions.executeCallback(src -> island.setLocked(!island.isLocked())))
+	private Text getLocked(Island island) {
+		return Text.of(TextColors.WHITE, " [",(island.isLocked()) ?
+				Text.builder(island.isLocked() ? "L" : "U")
+					.color(island.isLocked() ? TextColors.RED : TextColors.GREEN)
+					.onHover(TextActions.showText(island.isLocked()
+						? Text.of(TextColors.RED, "LOCKED", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")
+						: Text.of(TextColors.GREEN, "UNLOCKED", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")
+					))
+					.onClick(TextActions.executeCallback(toggleLock(island)))
 				: Text.builder("U")
 				.color(TextColors.GREEN)
 				.onHover(TextActions.showText(Text.of(TextColors.GREEN, "Unlocked", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")))
-				.onClick(TextActions.executeCallback(src -> island.setLocked(!island.isLocked()))),
+				.onClick(TextActions.executeCallback(toggleLock(island))),
 			TextColors.WHITE, "] ");
-		else return Text.of(TextColors.WHITE, " [",(island.isLocked()) ?
-				Text.builder("L")
-					.color(TextColors.RED)
-					.onHover(TextActions.showText(Text.of(TextColors.RED, "Locked")))
-				: Text.builder("U")
-				.color(TextColors.GREEN)
-				.onHover(TextActions.showText(Text.of(TextColors.GREEN, "Unlocked"))),
-			TextColors.WHITE, "] ");
+	}
+
+	private Consumer<CommandSource> toggleLock(Island island) {
+		return src -> {
+			if (src instanceof Player && ((Player) src).getUniqueId().equals(island.getOwnerUniqueId()) || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
+				island.setLocked(!island.isLocked());
+				src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now ",
+					Text.builder((island.isLocked()) ? "LOCKED" : "UNLOCKED")
+						.color((island.isLocked()) ? TextColors.RED : TextColors.GREEN)
+						.onClick(TextActions.executeCallback(toggleLock(island))),
+					TextColors.GREEN, "!"
+				));
+			}
+		};
 	}
 
 	private static Text getMembers(Island island) {
