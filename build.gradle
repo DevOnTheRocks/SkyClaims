@@ -13,6 +13,7 @@ def major = "0"
 def minor = "18"
 def patch = "3"
 def suffix = "-beta"
+if (System.getenv('CI_BUILD')) suffix = "-dev"
 
 group = 'net.mohron.skyclaims'
 version = major + "." + minor + "." + patch + suffix
