@@ -5,6 +5,8 @@
 **REQUIRED: SF 2096+ & GP 255+ OPTIONAL: Nucleus 0.24.1+**
 - Fixed `/isa transfer` not working when supplied with an owner
 - Fixed `/is expand` not being able to expand an island to `max-size`
+- Fixed `/is setspawn`'s message formatting to only display integers
+- Fixed `/is setspawn` not being restricted to an island's claimed area
 - Fixed system-dependent file separators causing NPE when moving config to different OS 
 - Removed deprecated SQLite config and auto file migration
 - Added expand _(no cost)_ to admin shortcuts in `/is info` _requires_ `skyclaims.admin.expand`
