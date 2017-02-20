@@ -188,7 +188,7 @@ public class CommandInfo implements CommandExecutor {
 
 	private Consumer<CommandSource> toggleLock(Island island) {
 		return src -> {
-			if (src instanceof Player && ((Player) src).getUniqueId().equals(island.getOwnerUniqueId()) || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
+			if (src instanceof Player && ((Player) src).getUniqueId().equals(island.getOwnerUniqueId()) && src.hasPermission(Permissions.COMMAND_LOCK) || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
 				island.setLocked(!island.isLocked());
 				src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now ",
 					Text.builder((island.isLocked()) ? "LOCKED" : "UNLOCKED")

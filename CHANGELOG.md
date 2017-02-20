@@ -3,12 +3,12 @@
 ## Beta 18
 ### * Manual SQLite file migration required if upgrading from Beta 13 or earlier! 
 **REQUIRED: SF 2096+ & GP 255+ OPTIONAL: Nucleus 0.24.1+**
+- **Removed deprecated SQLite config and auto file migration**
 - Fixed `/isa transfer` not working when supplied with an owner
 - Fixed `/is expand` not being able to expand an island to `max-size`
-- Fixed `/is setspawn`'s message formatting to only display integers
+- Fixed `/is setspawn`'s message formatting to not display decimal numbers
 - Fixed `/is setspawn` not being restricted to an island's claimed area
-- Fixed system-dependent file separators causing NPE when moving config to different OS 
-- Removed deprecated SQLite config and auto file migration
+- Fixed system-dependent file separators causing NPE when moving config to different OS
 - Added `/is lock [island|all]` & `/is unlock [island|all]` arguments - requires `skyclaims.admin.lock`
 - Added island lock indicator to `is list` & `is info`
 - Added expand _(no cost)_ to admin shortcuts in `/is info` _requires_ `skyclaims.admin.expand`

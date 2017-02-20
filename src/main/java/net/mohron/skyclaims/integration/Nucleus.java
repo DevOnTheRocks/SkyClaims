@@ -41,8 +41,8 @@ public class Nucleus {
 
 	public Nucleus() {
 		SkyClaims.getInstance().getLogger().info("Nucleus Integration Successful!");
-		homeService = Sponge.getGame().getServiceManager().provideUnchecked(NucleusHomeService.class);
-		afkService = Sponge.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
+		homeService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusHomeService.class);
+		afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
 	}
 
 	public Optional<Transform<World>> getHome(User user) {

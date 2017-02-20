@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.command.argument;
 
+import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -64,7 +65,7 @@ public class TwoUserArgument extends CommandElement {
 
 	@Override
 	public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-		return Sponge.getGame().getServiceManager().provideUnchecked(UserStorageService.class).getAll().stream()
+		return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class).getAll().stream()
 			.map(GameProfile::getName)
 			.filter(Optional::isPresent)
 			.map(Optional::get)
@@ -72,7 +73,7 @@ public class TwoUserArgument extends CommandElement {
 	}
 
 	private User getUserFromName(String name) throws ArgumentParseException {
-		return Sponge.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(name)
+		return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(name)
 			.orElseThrow(() -> new ArgumentParseException(Text.of("Invalid User Supplied"), name, 0));
 	}
 }

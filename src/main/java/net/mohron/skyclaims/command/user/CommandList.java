@@ -71,10 +71,9 @@ public class CommandList implements CommandExecutor {
 		Player player = (src instanceof Player) ? (Player) src : null;
 		User user = args.<User>getOne(USER).orElse(null);
 
-		boolean listAll = src.hasPermission(Permissions.COMMAND_LIST_ALL);
+		boolean spawnOthers = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS);
 
 		SkyClaims.islands.values().stream()
-			.filter(i -> !i.isLocked() || ((player == null || i.hasPermissions(player)) || listAll))
 			.filter(i -> user == null || i.hasPermissions(user))
 			.sorted(Comparator.comparing(Island::getName))
 			.forEach(island -> listText.add(Text.of(
@@ -82,9 +81,7 @@ public class CommandList implements CommandExecutor {
 				island.getName().toBuilder()
 					.onHover(TextActions.showText(Text.of("Click here to view island info")))
 					.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))),
-				getCoords(island).toBuilder()
-					.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
-					.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
+				(!island.isLocked() || ((player == null || island.hasPermissions(player)) || spawnOthers)) ? getClickableCoords(src, island) : getCoords(island)
 			)));
 
 		if (listText.isEmpty())
@@ -92,7 +89,7 @@ public class CommandList implements CommandExecutor {
 
 		if (!(src instanceof Player))
 			listText.forEach(src::sendMessage);
-		
+
 		PaginationList.builder()
 			.title(Text.of(TextColors.AQUA, "Island List"))
 			.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
@@ -129,7 +126,7 @@ public class CommandList implements CommandExecutor {
 
 	private Consumer<CommandSource> toggleLock(Island island) {
 		return src -> {
-			if (src instanceof Player && ((Player) src).getUniqueId().equals(island.getOwnerUniqueId()) || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
+			if (src instanceof Player && ((Player) src).getUniqueId().equals(island.getOwnerUniqueId()) && src.hasPermission(Permissions.COMMAND_LOCK) || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
 				island.setLocked(!island.isLocked());
 				src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now ",
 					Text.builder((island.isLocked()) ? "LOCKED" : "UNLOCKED")
@@ -146,7 +143,13 @@ public class CommandList implements CommandExecutor {
 			TextColors.LIGHT_PURPLE, island.getRegion().getX(),
 			TextColors.GRAY, ", ",
 			TextColors.LIGHT_PURPLE, island.getRegion().getZ(),
-			TextColors.GRAY, ")"
-		);
+			TextColors.GRAY, ")");
+	}
+
+	private Text getClickableCoords(CommandSource src, Island island) {
+		return getCoords(island).toBuilder()
+			.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
+			.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
+			.build();
 	}
 }

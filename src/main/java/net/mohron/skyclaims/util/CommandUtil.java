@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.util;
 
+import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
@@ -37,7 +38,7 @@ public class CommandUtil {
 		return teleport -> {
 			if (!(src instanceof Player)) return;
 			Player player = (Player) src;
-			Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+			Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
 			if (safeLocation == null) {
 				player.sendMessage(
 						Text.builder().append(Text.of(TextColors.RED, "Location is not safe. "),
@@ -54,7 +55,7 @@ public class CommandUtil {
 
 	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
 		return teleport -> {
-			Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+			Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
 			if (safeLocation == null) {
 				player.sendMessage(
 						Text.builder().append(Text.of(TextColors.RED, "Location is not safe. "),

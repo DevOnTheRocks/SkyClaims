@@ -35,7 +35,7 @@ public class WorldConfig {
 	private int spawnRegions;
 
 	public WorldConfig() {
-		worldName = Sponge.getGame().getServer().getDefaultWorldName();
+		worldName = SkyClaims.getInstance().getGame().getServer().getDefaultWorldName();
 		defaultHeight = 72;
 		spawnRegions = 1;
 	}

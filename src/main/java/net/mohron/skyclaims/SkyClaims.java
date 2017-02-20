@@ -159,10 +159,10 @@ public class SkyClaims {
 		pluginConfigManager = new ConfigManager(configManager);
 		pluginConfigManager.save();
 
-		Sponge.getGame().getEventManager().registerListeners(this, new SchematicHandler());
-		Sponge.getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
-		Sponge.getGame().getEventManager().registerListeners(this, new RespawnHandler());
-		Sponge.getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
+		getGame().getEventManager().registerListeners(this, new SchematicHandler());
+		getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
+		getGame().getEventManager().registerListeners(this, new RespawnHandler());
+		getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
 
 		registerCommands();
 	}
