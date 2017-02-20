@@ -11,7 +11,7 @@ targetCompatibility = '1.8'
 
 def major = "0"
 def minor = "18"
-def patch = "0"
+def patch = "1"
 def suffix = "-beta"
 
 group = 'net.mohron.skyclaims'
