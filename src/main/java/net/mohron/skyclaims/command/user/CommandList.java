@@ -71,11 +71,11 @@ public class CommandList implements CommandExecutor {
 		Player player = (src instanceof Player) ? (Player) src : null;
 		User user = args.<User>getOne(USER).orElse(null);
 
-		boolean listAll =  !src.hasPermission(Permissions.COMMAND_LIST_ALL);
+		boolean listAll = src.hasPermission(Permissions.COMMAND_LIST_ALL);
 
 		SkyClaims.islands.values().stream()
-			.filter(i -> i.isLocked() && ((player == null || !i.hasPermissions(player)) || !listAll))
-			.filter(i -> user != null && !i.hasPermissions(user))
+			.filter(i -> !i.isLocked() || ((player == null || i.hasPermissions(player)) || listAll))
+			.filter(i -> user == null || i.hasPermissions(user))
 			.sorted(Comparator.comparing(Island::getName))
 			.forEach(island -> listText.add(Text.of(
 				getLocked(island),
@@ -90,11 +90,14 @@ public class CommandList implements CommandExecutor {
 		if (listText.isEmpty())
 			listText.add(Text.of(TextColors.RED, "There are no islands to display!"));
 
-		PaginationList.Builder paginationBuilder = PaginationList.builder()
+		if (!(src instanceof Player))
+			listText.forEach(src::sendMessage);
+		
+		PaginationList.builder()
 			.title(Text.of(TextColors.AQUA, "Island List"))
 			.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-			.contents(listText);
-		paginationBuilder.sendTo(src);
+			.contents(listText)
+			.sendTo(src);
 
 		return CommandResult.success();
 	}
