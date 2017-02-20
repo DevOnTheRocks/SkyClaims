@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.command.user;
 
+import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -33,8 +34,10 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CommandLock implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -82,7 +85,9 @@ public class CommandLock implements CommandExecutor {
 		return CommandResult.success();
 	}
 
-	private CommandResult lockIslands(CommandSource src, Collection<Island> islands) {
+	private CommandResult lockIslands(CommandSource src, Collection<UUID> islandsIds) {
+		ArrayList<Island> islands = Lists.newArrayList();
+		islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
 		islands.forEach(island -> {
 			island.setLocked(true);
 			src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been locked!"));
