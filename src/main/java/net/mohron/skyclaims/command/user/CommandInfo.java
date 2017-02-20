@@ -171,18 +171,14 @@ public class CommandInfo implements CommandExecutor {
 	}
 
 	private Text getLocked(Island island) {
-		return Text.of(TextColors.WHITE, " [",(island.isLocked()) ?
+		return Text.of(TextColors.WHITE, " [",
 				Text.builder(island.isLocked() ? "L" : "U")
 					.color(island.isLocked() ? TextColors.RED : TextColors.GREEN)
 					.onHover(TextActions.showText(island.isLocked()
-						? Text.of(TextColors.RED, "LOCKED", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")
-						: Text.of(TextColors.GREEN, "UNLOCKED", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")
+						? Text.of(TextColors.RED, "LOCKED")
+						: Text.of(TextColors.GREEN, "UNLOCKED")
 					))
-					.onClick(TextActions.executeCallback(toggleLock(island)))
-				: Text.builder("U")
-				.color(TextColors.GREEN)
-				.onHover(TextActions.showText(Text.of(TextColors.GREEN, "Unlocked", Text.NEW_LINE, TextColors.GRAY, "Click to toggle.")))
-				.onClick(TextActions.executeCallback(toggleLock(island))),
+					.onClick(TextActions.executeCallback(toggleLock(island))),
 			TextColors.WHITE, "] ");
 	}
 

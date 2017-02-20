@@ -93,9 +93,8 @@ public class CommandExpand implements CommandExecutor {
 			return CommandResult.success();
 		}
 
-		PlayerData playerData = GP.getGlobalPlayerData(island.getOwnerUniqueId())
-				.orElse(GP.getWorldPlayerData(island.getWorld().getProperties(), island.getOwnerUniqueId())
-						.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load GriefPrevention player data."))));
+		PlayerData playerData = GP.getWorldPlayerData(island.getWorld().getProperties(), island.getOwnerUniqueId())
+			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load GriefPrevention player data.")));
 		int bal = playerData.getRemainingClaimBlocks();
 		int cost = (int) (Math.pow(width + blocks, 2) - claim.getArea());
 

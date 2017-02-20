@@ -25,6 +25,7 @@ import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.world.biome.BiomeType;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +39,7 @@ public class Options {
 	public static final String INITIAL_SIZE = "skyclaims.initial-size";
 	public static final String MAX_SIZE = "skyclaims.max-size";
 	public static final String MAX_ISLANDS = "skyclaims.max-islands";
+	public static final String ISLAND_EXPIRATION = "skyclaims.expiration";
 
 	static {
 		DEFAULT_OPTIONS.put(DEFAULT_SCHEMATIC, "island");
@@ -45,6 +47,7 @@ public class Options {
 		DEFAULT_OPTIONS.put(INITIAL_SIZE, "48");
 		DEFAULT_OPTIONS.put(MAX_SIZE, "64");
 		DEFAULT_OPTIONS.put(MAX_ISLANDS, "1");
+		DEFAULT_OPTIONS.put(ISLAND_EXPIRATION, Duration.ZERO.toString());
 	}
 
 	public static String getStringOption(UUID playerUniqueId, String option) {
