@@ -231,6 +231,12 @@ public class SkyClaims {
 				return islands.size();
 			}
 		});
+		metrics.addCustomChart(new Metrics.SimplePie("allocated_ram") {
+			@Override
+			public String getValue() {
+				return String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0);
+			}
+		});
 	}
 
 	public static SkyClaims getInstance() {
