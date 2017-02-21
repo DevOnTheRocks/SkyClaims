@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.command.argument;
 
+import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
@@ -65,11 +66,18 @@ public class TwoUserArgument extends CommandElement {
 
 	@Override
 	public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-		return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class).getAll().stream()
-			.map(GameProfile::getName)
-			.filter(Optional::isPresent)
-			.map(Optional::get)
-			.collect(GuavaCollectors.toImmutableList());
+		try {
+			String name = args.peek().toLowerCase();
+			return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class)
+				.getAll().stream()
+				.map(GameProfile::getName)
+				.filter(Optional::isPresent)
+				.filter(s -> s.get().startsWith(name))
+				.map(Optional::get)
+				.collect(GuavaCollectors.toImmutableList());
+		} catch (ArgumentParseException e) {
+			return Lists.newArrayList();
+		}
 	}
 
 	private User getUserFromName(String name) throws ArgumentParseException {
