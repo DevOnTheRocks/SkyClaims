@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -286,21 +287,13 @@ public class Island {
 
 	public boolean hasPermissions(User user) {
 		return user.getUniqueId().equals(owner)
-			|| getClaim().isPresent()
-			&& (getClaim().get().getTrusts(TrustType.ACCESSOR).contains(user.getUniqueId())
-			|| getClaim().get().getTrusts(TrustType.BUILDER).contains(user.getUniqueId())
-			|| getClaim().get().getTrusts(TrustType.CONTAINER).contains(user.getUniqueId())
-			|| getClaim().get().getTrusts(TrustType.MANAGER).contains(user.getUniqueId()));
+			|| (getClaim().isPresent() && getClaim().get().getAllTrusts().contains(user.getUniqueId()));
 	}
 
 	public Set<Player> getPlayers() {
-		Set<Player> players = Sets.newHashSet();
-		for (Player player : PLUGIN.getGame().getServer().getOnlinePlayers()) {
-			if (player.getLocation().getChunkPosition().getX() >> 5 == getRegion().getX()
-				&& player.getLocation().getChunkPosition().getZ() >> 5 == getRegion().getZ())
-				players.add(player);
-		}
-		return players;
+		return PLUGIN.getGame().getServer().getOnlinePlayers().stream()
+			.filter(p -> contains(p.getLocation()))
+			.collect(Collectors.toSet());
 	}
 
 	public Region getRegion() {

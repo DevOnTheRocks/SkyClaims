@@ -33,26 +33,28 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.util.Set;
 
 public class CommandReset implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "delete your island and inventory so you can start over";
-
 	private static final Text CONFIRM = Text.of("confirm");
 	private static final Text SCHEMATIC = Text.of("schematic");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_RESET)
-			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.seq(
-					GenericArguments.optional(GenericArguments.literal(CONFIRM, "confirm")),
-					GenericArguments.optional(Argument.schematic(SCHEMATIC))
-			))
-			.executor(new CommandReset())
-			.build();
+		.permission(Permissions.COMMAND_RESET)
+		.description(Text.of(HELP_TEXT))
+		.arguments(GenericArguments.seq(
+			GenericArguments.optional(GenericArguments.literal(CONFIRM, "confirm")),
+			GenericArguments.optional(Argument.schematic(SCHEMATIC))
+		))
+		.executor(new CommandReset())
+		.build();
 
 	public static void register() {
 		try {
@@ -70,26 +72,27 @@ public class CommandReset implements CommandExecutor {
 		}
 		Player player = (Player) src;
 		Island island = Island.getByOwner(player.getUniqueId())
-				.orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
-
+			.orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
+		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
 
 		if (!args.hasAny(CONFIRM)) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island and inventory? This cannot be undone!"));
-			player.sendMessage(Text.of("To continue, run ", "/is reset confirm", (args.hasAny(SCHEMATIC)) ? " [schematic]" : ""));
+			player.sendMessage(Text.of(
+				TextColors.GOLD, "Do you want to continue?", TextColors.WHITE, "[",
+				Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.runCommand("is reset confirm " + schematic)),
+				TextColors.WHITE, "] [",
+				Text.builder("NO").color(TextColors.RED).onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
+				TextColors.WHITE, "]"
+			));
 		} else {
-			String schematic = (String) args.getOne(SCHEMATIC).orElse(Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
-
 			player.getEnderChestInventory().clear();
 			player.getInventory().clear();
 
 			// Teleport any players located in the island's region to spawn
-			Set<Player> players = island.getPlayers();
-			if (!players.isEmpty())
-				for (Player p : players)
-					CommandUtil.createForceTeleportConsumer(p, PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation());
+			Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
+			island.getPlayers().forEach(p -> p.setLocation(spawn));
 
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
-
 			island.regen(schematic);
 		}
 

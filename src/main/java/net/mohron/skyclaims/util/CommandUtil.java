@@ -71,7 +71,7 @@ public class CommandUtil {
 		};
 	}
 
-	public static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
+	private static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
 		return teleport -> player.setLocation(location);
 	}
 
