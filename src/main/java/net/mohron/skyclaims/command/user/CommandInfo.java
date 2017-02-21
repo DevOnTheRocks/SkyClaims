@@ -92,6 +92,7 @@ public class CommandInfo implements CommandExecutor {
 				TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
 				TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", getSpawn(island), Text.NEW_LINE,
 				TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), Text.NEW_LINE,
+				TextColors.YELLOW, "Last Active", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateLastActive(), Text.NEW_LINE,
 				TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), Text.NEW_LINE,
 				(island.getClaim().isPresent()) ? Text.of(
 					TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(

@@ -199,6 +199,10 @@ public class Island {
 		return (getClaim().isPresent()) ? Date.from(getClaim().get().getData().getDateCreated()) : null;
 	}
 
+	public Date getDateLastActive() {
+		return (getClaim().isPresent()) ? Date.from(getClaim().get().getData().getDateLastActive()) : null;
+	}
+
 	public Text getName() {
 		return (getClaim().isPresent() && getClaim().get().getName().isPresent()) ?
 			getClaim().get().getName().get() :
