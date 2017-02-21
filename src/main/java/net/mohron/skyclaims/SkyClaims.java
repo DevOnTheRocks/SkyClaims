@@ -47,6 +47,7 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
@@ -229,6 +230,12 @@ public class SkyClaims {
 			@Override
 			public int getValue() {
 				return islands.size();
+			}
+		});
+		metrics.addCustomChart(new Metrics.SimplePie("sponge_version") {
+			@Override
+			public String getValue() {
+				return Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null);
 			}
 		});
 		metrics.addCustomChart(new Metrics.SimplePie("allocated_ram") {
