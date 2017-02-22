@@ -196,17 +196,17 @@ public class Island {
 	}
 
 	public Date getDateCreated() {
-		return (getClaim().isPresent()) ? Date.from(getClaim().get().getData().getDateCreated()) : null;
+		return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateCreated()) : null;
 	}
 
 	public Date getDateLastActive() {
-		return (getClaim().isPresent()) ? Date.from(getClaim().get().getData().getDateLastActive()) : null;
+		return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateLastActive()) : null;
 	}
 
 	public Text getName() {
-		return (getClaim().isPresent() && getClaim().get().getName().isPresent()) ?
-			getClaim().get().getName().get() :
-			Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
+		return (getClaim().isPresent() && getClaim().get().getName().isPresent())
+			? getClaim().get().getName().get()
+			: Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
 	}
 
 	public boolean isLocked() {
@@ -230,7 +230,7 @@ public class Island {
 	public void setSpawn(Transform<World> transform) {
 		if (contains(transform.getLocation())) {
 			Transform<World> spawn = new Transform<>(WORLD, transform.getPosition(), transform.getRotation());
-			if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 255) {
+			if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 256) {
 				spawn.setPosition(
 					new Vector3d(spawn.getLocation().getX(), PLUGIN.getConfig().getWorldConfig().getDefaultHeight(),
 						spawn.getLocation().getZ()
@@ -247,15 +247,12 @@ public class Island {
 			return location.getExtent().equals(getWorld()) && Region.get(location).equals(getRegion());
 
 		int x = location.getBlockX();
-		int y = location.getBlockY();
 		int z = location.getBlockZ();
 		Location lesserBoundaryCorner = getClaim().get().getLesserBoundaryCorner();
 		Location greaterBoundaryCorner = getClaim().get().getGreaterBoundaryCorner();
 
 		return x >= lesserBoundaryCorner.getBlockX()
 			&& x <= greaterBoundaryCorner.getBlockX()
-			&& y >= lesserBoundaryCorner.getBlockY()
-			&& y <= greaterBoundaryCorner.getBlockY()
 			&& z >= lesserBoundaryCorner.getBlockZ()
 			&& z <= greaterBoundaryCorner.getBlockZ();
 	}
