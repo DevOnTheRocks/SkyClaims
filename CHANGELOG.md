@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased Features, Changes & Bugfixes 
+**[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
+**REQUIRED: SF 2096+ & GP 260+ OPTIONAL: Nucleus 0.24.1+**
+- Added sorting to `/is list` (name, created, last active, & members)
+- **GP 260+** Fixed bug causing `/isa transfer` to fail transferring the claim if the target player had too few claim blocks 
+- Fixed commands not finding current island due to
+
 ## Beta 18
 ### * Manual SQLite file migration required if upgrading from Beta 13 or earlier! 
 **REQUIRED: SF 2096+ & GP 255+ OPTIONAL: Nucleus 0.24.1+**

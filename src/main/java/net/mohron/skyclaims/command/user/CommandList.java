@@ -20,6 +20,7 @@ package net.mohron.skyclaims.command.user;
 
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
@@ -46,11 +47,15 @@ public class CommandList implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	public static final String HELP_TEXT = "display a list of the current islands";
 	private static final Text USER = Text.of("user");
+	private static final Text SORT = Text.of("sort");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 		.permission(Permissions.COMMAND_LIST)
 		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.optionalWeak(GenericArguments.user(USER)))
+		.arguments(GenericArguments.firstParsing(
+			GenericArguments.optional(GenericArguments.user(USER)),
+			GenericArguments.optional(Argument.sort(SORT))
+		))
 		.executor(new CommandList())
 		.build();
 
@@ -70,12 +75,13 @@ public class CommandList implements CommandExecutor {
 		List<Text> listText = Lists.newArrayList();
 		Player player = (src instanceof Player) ? (Player) src : null;
 		User user = args.<User>getOne(USER).orElse(null);
+		Comparator<Island> sortType = args.<Comparator<Island>>getOne(SORT).orElse(Comparator.comparing(Island::getSortableName));
 
 		boolean spawnOthers = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS);
 
 		SkyClaims.islands.values().stream()
 			.filter(i -> user == null || i.hasPermissions(user))
-			.sorted(Comparator.comparing(i -> i.getName().toPlain().toLowerCase()))
+			.sorted(sortType)
 			.forEach(island -> listText.add(Text.of(
 				getLocked(island),
 				island.getName().toBuilder()

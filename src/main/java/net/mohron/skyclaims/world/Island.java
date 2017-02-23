@@ -209,6 +209,10 @@ public class Island {
 			: Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
 	}
 
+	public String getSortableName() {
+		return getName().toPlain().toLowerCase();
+	}
+
 	public boolean isLocked() {
 		return locked;
 	}
@@ -284,6 +288,11 @@ public class Island {
 			members.add(getName(manager));
 		}
 		return members;
+	}
+
+	public int getTotalMembers() {
+		return (!getClaim().isPresent()) ? 1
+			: getClaim().get().getAllTrusts().stream().collect(Collectors.toSet()).size();
 	}
 
 	public boolean hasPermissions(User user) {

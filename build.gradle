@@ -42,7 +42,7 @@ repositories {
 
 dependencies {
     compile("org.spongepowered:spongeapi:5.0.0")
-    compile("me.ryanhamshire:griefprevention:1.10.2-2.3.1.255")
+    compile("me.ryanhamshire:griefprevention:1.10.2-2.3.1.260")
     compile("io.github.nucleuspowered:nucleus-api:0.24.1-S5.1")
 }
 
