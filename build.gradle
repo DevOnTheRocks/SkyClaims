@@ -21,7 +21,7 @@ version = semver + suffix
 description = 'SkyClaims is an Island Management plugin that integrates with GriefPrevention.'
 
 if (isJenkins) {
-    version = semver + "-dev-" + System.getenv("BUILD_NUMBER")
+    version = semver + "-" + System.getenv("BUILD_NUMBER") + suffix
 }
 
 repositories {
