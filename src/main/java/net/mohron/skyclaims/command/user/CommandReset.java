@@ -79,7 +79,7 @@ public class CommandReset implements CommandExecutor {
 			player.sendMessage(Text.of("Are you sure you want to reset your island and inventory? This cannot be undone!"));
 			player.sendMessage(Text.of(
 				TextColors.GOLD, "Do you want to continue?", TextColors.WHITE, "[",
-				Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.runCommand("is reset confirm " + schematic)),
+				Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.runCommand("/is reset confirm " + schematic)),
 				TextColors.WHITE, "] [",
 				Text.builder("NO").color(TextColors.RED).onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
 				TextColors.WHITE, "]"
