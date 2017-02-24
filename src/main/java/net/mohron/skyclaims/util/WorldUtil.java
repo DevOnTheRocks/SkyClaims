@@ -68,14 +68,14 @@ public class WorldUtil {
 							biomeType);
 				}
 			}
-		} else setRegionBiome(island.getRegion(), biomeType);
+		} else setRegionBiome(island, biomeType);
 	}
 
-	public static void setRegionBiome(Region region, BiomeType biomeType) {
-		World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+	public static void setRegionBiome(Island island, BiomeType biomeType) {
+		Region region = island.getRegion();
 		for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x++) {
 			for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z++) {
-				world.setBiome(x, 0, z, biomeType);
+				island.getWorld().setBiome(x, 0, z, biomeType);
 			}
 		}
 	}

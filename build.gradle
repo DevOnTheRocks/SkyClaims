@@ -11,7 +11,7 @@ targetCompatibility = '1.8'
 
 def major = "0"
 def minor = "18"
-def patch = "4"
+def patch = "5"
 def semver = major + "." + minor + "." + patch
 def isJenkins = System.getenv("BUILD_NUMBER") != null
 def suffix = isJenkins ? "-dev" : "-beta"

@@ -94,7 +94,7 @@ public class GenerateIslandTask implements Runnable {
 
 		// Set the region's BiomeType using the default biome option if set
 		Options.getDefaultBiome(owner).ifPresent(biomeType -> {
-			WorldUtil.setRegionBiome(island.getRegion(), biomeType);
+			WorldUtil.setRegionBiome(island, biomeType);
 		});
 
 		Sponge.getServer().getPlayer(owner).ifPresent(p1 -> {
