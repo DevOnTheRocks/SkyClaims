@@ -22,7 +22,6 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
-import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -37,8 +36,6 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-
-import java.util.Set;
 
 public class CommandReset implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -73,7 +70,7 @@ public class CommandReset implements CommandExecutor {
 		Player player = (Player) src;
 		Island island = Island.getByOwner(player.getUniqueId())
 			.orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
-		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
+		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
 
 		if (!args.hasAny(CONFIRM)) {
 			player.sendMessage(Text.of("Are you sure you want to reset your island and inventory? This cannot be undone!"));

@@ -34,7 +34,7 @@ public class CommandReload implements CommandExecutor {
 
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public static final String HELP_TEXT = "used to reload plugin config and schematics.";
+	public static final String HELP_TEXT = "used to reload SkyClaims's config, schematics, & database.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 			.permission(Permissions.COMMAND_RELOAD)
@@ -54,12 +54,7 @@ public class CommandReload implements CommandExecutor {
 
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		// Load Plugin Config
-		PLUGIN.getConfigManager().load();
-		// Load Schematics Directory
-		SchematicArgument.load();
-		// Load Database
-		PLUGIN.getDatabase().loadData();
+		PLUGIN.reload();
 		src.sendMessage(Text.of(TextColors.GREEN, "Successfully reloaded SkyClaims!"));
 		return CommandResult.success();
 	}

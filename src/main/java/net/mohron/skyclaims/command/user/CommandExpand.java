@@ -80,7 +80,7 @@ public class CommandExpand implements CommandExecutor {
 			throw new CommandException(Text.of("Only the island owner may use this command!"));
 
 		int width = claim.getWidth();
-		int maxSize = Options.getIntOption(player.getUniqueId(), Options.MAX_SIZE, 0, 256) * 2;
+		int maxSize = Options.getMaxSize(player.getUniqueId()) * 2;
 
 		// Check if expanding would exceed the max size
 		if (width >= maxSize || width + blocks * 2 > maxSize)

@@ -25,11 +25,13 @@ import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandAdmin;
 import net.mohron.skyclaims.command.CommandIsland;
+import net.mohron.skyclaims.command.admin.CommandConfig;
 import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
 import net.mohron.skyclaims.command.admin.CommandDelete;
 import net.mohron.skyclaims.command.admin.CommandReload;
 import net.mohron.skyclaims.command.admin.CommandSetup;
 import net.mohron.skyclaims.command.admin.CommandTransfer;
+import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.command.user.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -76,8 +78,8 @@ import static net.mohron.skyclaims.PluginInfo.*;
 	description = DESCRIPTION,
 	authors = AUTHORS,
 	dependencies = {
-		@Dependency(id = "griefprevention", version = "2.3.1"),
-		@Dependency(id = "nucleus", version = "0.24.0", optional = true)
+		@Dependency(id = "griefprevention", version = GP_VERSION),
+		@Dependency(id = "nucleus", version = NUCLEUS_VERSION, optional = true)
 	})
 public class SkyClaims {
 	private static SkyClaims instance;
@@ -175,13 +177,13 @@ public class SkyClaims {
 		database = initializeDatabase();
 
 		islands = database.loadData();
-		addCustomMetrics();
 		getLogger().info("Islands Loaded: " + islands.size());
-
 		if (!saveQueue.isEmpty()) {
 			getLogger().info("Saving " + saveQueue.size() + " claims that were malformed");
 			database.saveData(saveQueue);
 		}
+
+		addCustomMetrics();
 
 		getLogger().info("Initialization complete.");
 	}
@@ -192,8 +194,18 @@ public class SkyClaims {
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 	}
 
+	public void reload() {
+		// Load Plugin Config
+		pluginConfigManager.load();
+		// Load Schematics Directory
+		SchematicArgument.load();
+		// Load Database
+		islands = database.loadData();
+	}
+
 	private void registerCommands() {
 		CommandAdmin.register();
+		CommandConfig.register();
 		CommandCreate.register();
 		CommandCreateSchematic.register();
 		CommandExpand.register();

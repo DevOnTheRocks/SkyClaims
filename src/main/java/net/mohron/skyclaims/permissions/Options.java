@@ -18,64 +18,58 @@
 
 package net.mohron.skyclaims.permissions;
 
-import com.google.common.collect.Maps;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.BiomeArgument;
+import net.mohron.skyclaims.config.type.OptionsConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.service.permission.PermissionService;
-import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.world.biome.BiomeType;
 
-import java.time.Duration;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 public class Options {
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
-	private static final Map<String, String> DEFAULT_OPTIONS = Maps.newHashMap();
 
-	public static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
-	public static final String DEFAULT_BIOME = "skyclaims.default-biome";
-	public static final String INITIAL_SIZE = "skyclaims.initial-size";
-	public static final String MAX_SIZE = "skyclaims.max-size";
-	public static final String MAX_ISLANDS = "skyclaims.max-islands";
-	public static final String ISLAND_EXPIRATION = "skyclaims.expiration";
+	private static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
+	private static final String DEFAULT_BIOME = "skyclaims.default-biome";
+	private static final String MIN_SIZE = "skyclaims.min-size";
+	private static final String MAX_SIZE = "skyclaims.max-size";
+	private static final String MAX_ISLANDS = "skyclaims.max-islands";
+	private static final String ISLAND_EXPIRATION = "skyclaims.expiration";
 
-	static {
-		DEFAULT_OPTIONS.put(DEFAULT_SCHEMATIC, "island");
-		DEFAULT_OPTIONS.put(DEFAULT_BIOME, null);
-		DEFAULT_OPTIONS.put(INITIAL_SIZE, "48");
-		DEFAULT_OPTIONS.put(MAX_SIZE, "64");
-		DEFAULT_OPTIONS.put(MAX_ISLANDS, "1");
-		DEFAULT_OPTIONS.put(ISLAND_EXPIRATION, Duration.ZERO.toString());
+	public static String getDefaultSchematic(UUID playerUniqueId) {
+		return getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, PLUGIN.getConfig().getOptionsConfig().getSchematic());
 	}
 
-	public static String getStringOption(UUID playerUniqueId, String option) {
-		Subject subject = PERMISSION_SERVICE.getUserSubjects().get(playerUniqueId.toString());
-		return subject.getOption(option).orElse(DEFAULT_OPTIONS.get(option));
+	public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {
+		String biomeOption = getStringOption(playerUniqueId, DEFAULT_BIOME, PLUGIN.getConfig().getOptionsConfig().getBiome());
+		if (StringUtils.isBlank(biomeOption)) return Optional.empty();
+		for (BiomeType biome : BiomeArgument.BIOMES.values()) {
+			if (biome.getName().equalsIgnoreCase(biomeOption)) return Optional.of(biome);
+		}
+		return Optional.empty();
+	}
+
+	public static int getMinSize(UUID playerUniqueId) {
+		return getIntOption(playerUniqueId, MIN_SIZE, PLUGIN.getConfig().getOptionsConfig().getMinSize());
+	}
+
+	public static int getMaxSize(UUID playerUniqueId) {
+		return getIntOption(playerUniqueId, MAX_SIZE, PLUGIN.getConfig().getOptionsConfig().getMaxSize());
+	}
+
+	private static String getStringOption(UUID playerUniqueId, String option, String defaultValue) {
+		return PERMISSION_SERVICE.getUserSubjects().get(playerUniqueId.toString()).getOption(option).orElse(defaultValue);
 	}
 
 	private static int getIntOption(UUID playerUniqueId, String option, int defaultValue) {
-		Subject subject = PERMISSION_SERVICE.getUserSubjects().get(playerUniqueId.toString());
-		String value = subject.getOption(option).orElse(DEFAULT_OPTIONS.get(option));
+		String value = PERMISSION_SERVICE.getUserSubjects().get(playerUniqueId.toString()).getOption(option).orElse(String.valueOf(defaultValue));
 		try {
 			return Integer.parseInt(value);
 		} catch (NumberFormatException e) {
 			return defaultValue;
 		}
-	}
-
-	public static int getIntOption(UUID playerUniqueId, String option, int minValue, int maxValue) {
-		int value = getIntOption(playerUniqueId, option, Integer.parseInt(DEFAULT_OPTIONS.get(option)));
-		return (value >= minValue && value <= maxValue) ? value : Integer.parseInt(DEFAULT_OPTIONS.get(option));
-	}
-
-	public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {
-		String biomeOption = getStringOption(playerUniqueId, DEFAULT_BIOME);
-		if (biomeOption == null) return Optional.empty();
-		for (BiomeType biome : BiomeArgument.BIOMES.values()) {
-			if (biome.getName().equalsIgnoreCase(biomeOption)) return Optional.of(biome);
-		}
-		return Optional.empty();
 	}
 }

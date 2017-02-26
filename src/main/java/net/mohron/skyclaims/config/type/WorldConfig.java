@@ -22,7 +22,6 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.World;
 
 @ConfigSerializable

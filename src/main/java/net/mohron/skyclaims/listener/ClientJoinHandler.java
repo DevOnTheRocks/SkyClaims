@@ -39,7 +39,7 @@ public class ClientJoinHandler {
 		Sponge.getScheduler().createTaskBuilder()
 			.execute(src -> {
 				try {
-					new Island(player, Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
+					new Island(player, Options.getDefaultSchematic(player.getUniqueId()));
 					PLUGIN.getLogger().info(String.format("Automatically created an island for %s.", player.getName()));
 				} catch (CreateIslandException e) {
 					// Oh well, we tried!

@@ -41,6 +41,7 @@ public class Permissions {
 
 	// Admin Permissions
 	public static final String COMMAND_ADMIN = "skyclaims.admin.base";
+	public static final String COMMAND_CONFIG = "skyclaims.admin.config";
 	public static final String COMMAND_CREATE_SCHEMATIC = "skyclaims.admin.schematic.create";
 	public static final String COMMAND_DELETE = "skyclaims.admin.delete";
 	public static final String COMMAND_EXPAND_OTHERS = "skyclaims.admin.expand";

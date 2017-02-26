@@ -51,10 +51,10 @@ public class Region {
 
 	public Location<World> getCenter() {
 		return new Location<>(
-				SkyClaims.getInstance().getConfig().getWorldConfig().getWorld(),
-				(getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2.0,
-				SkyClaims.getInstance().getConfig().getWorldConfig().getDefaultHeight(),
-				(getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2.0
+			SkyClaims.getInstance().getConfig().getWorldConfig().getWorld(),
+			(getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2.0,
+			SkyClaims.getInstance().getConfig().getWorldConfig().getDefaultHeight(),
+			(getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2.0
 		);
 	}
 

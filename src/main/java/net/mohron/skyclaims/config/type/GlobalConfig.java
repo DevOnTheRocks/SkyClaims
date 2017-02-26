@@ -34,6 +34,8 @@ public class GlobalConfig {
 	private StorageConfig storageConfig;
 	@Setting(value = "World")
 	private WorldConfig worldConfig;
+	@Setting(value = "Options", comment = "The default values options use when not explicitly set.\ngithub.com/DevOnTheRocks/SkyClaims/wiki/Options")
+	private OptionsConfig optionsConfig;
 
 	public GlobalConfig() {
 		version = ConfigManager.CONFIG_VERSION;
@@ -41,6 +43,7 @@ public class GlobalConfig {
 		miscConfig = new MiscConfig();
 		storageConfig = new StorageConfig();
 		worldConfig = new WorldConfig();
+		optionsConfig = new OptionsConfig();
 	}
 
 	public int getVersion() {
@@ -61,5 +64,9 @@ public class GlobalConfig {
 
 	public WorldConfig getWorldConfig() {
 		return worldConfig;
+	}
+
+	public OptionsConfig getOptionsConfig() {
+		return optionsConfig;
 	}
 }

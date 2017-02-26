@@ -67,7 +67,7 @@ public class CommandCreate implements CommandExecutor {
 		if (Island.hasIsland(player.getUniqueId()))
 			throw new CommandException(Text.of("You already have an island!"));
 
-		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getStringOption(player.getUniqueId(), Options.DEFAULT_SCHEMATIC));
+		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
 
 		player.sendMessage(Text.of("Your island is being created. You will be teleported shortly."));
 

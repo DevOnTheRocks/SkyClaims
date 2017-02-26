@@ -23,7 +23,6 @@ import io.github.nucleuspowered.nucleus.api.nucleusdata.Home;
 import io.github.nucleuspowered.nucleus.api.service.NucleusAFKService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
 import net.mohron.skyclaims.SkyClaims;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -31,6 +30,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
+import java.time.Instant;
 import java.util.Optional;
 
 public class Nucleus {
@@ -40,7 +40,7 @@ public class Nucleus {
 	private NucleusAFKService afkService;
 
 	public Nucleus() {
-		SkyClaims.getInstance().getLogger().info("Nucleus Integration Successful!");
+		PLUGIN.getLogger().info("Nucleus Integration Successful!");
 		homeService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusHomeService.class);
 		afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
 	}
@@ -64,5 +64,9 @@ public class Nucleus {
 
 	public boolean isAFK(Player player) {
 		return afkService.isAFK(player);
+	}
+
+	public Instant lastActivity(Player player) {
+		return afkService.lastActivity(player);
 	}
 }

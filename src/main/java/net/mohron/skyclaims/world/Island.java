@@ -101,7 +101,7 @@ public class Island {
 		Claim claim = CLAIM_MANAGER.getClaimByUUID(claimId).orElse(null);
 		if (claim != null) {
 			this.claim = claimId;
-			int initialWidth = Options.getIntOption(owner, Options.INITIAL_SIZE, 8, 256) * 2;
+			int initialWidth = Options.getMinSize(owner) * 2;
 			// Resize claims smaller than the player's initial-size
 			if (claim.getWidth() < initialWidth)
 				setWidth(initialWidth);

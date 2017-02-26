@@ -20,7 +20,6 @@ package net.mohron.skyclaims.command.argument;
 
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.command.args.CommandArgs;
