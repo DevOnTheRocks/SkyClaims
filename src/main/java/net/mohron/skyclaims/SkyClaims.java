@@ -56,6 +56,7 @@ import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -192,6 +193,11 @@ public class SkyClaims {
 	public void onGameStopping(GameStoppingServerEvent event) {
 		if (!enabled) return;
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
+	}
+
+	@Listener
+	public void onReload(GameReloadEvent event) {
+		reload();
 	}
 
 	public void reload() {

@@ -8,8 +8,9 @@
 - **GP 260+** Fixed bug causing `/isa transfer` to fail transferring the claim if the target player had too few claim blocks 
 - Fixed commands not finding current island due to Y coordinate check failing
 - Fixed `/is help` showing extra line breaks
-- Added Default-Options config
+- Added Options config
 - Added `/isa config` a debug command that shows most of SkyClaims' currently loaded config
+- Added support for `/sponge plugins reload`
 
 ## Beta 18
 ### * Manual SQLite file migration required if upgrading from Beta 13 or earlier! 
