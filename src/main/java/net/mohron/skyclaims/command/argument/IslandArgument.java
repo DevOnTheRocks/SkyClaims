@@ -59,9 +59,9 @@ public class IslandArgument extends CommandElement {
 		} catch (IllegalArgumentException ignored) {
 		}
 		return SkyClaims.islands.entrySet().stream()
-				.filter(i -> i.getValue().getOwnerName().equalsIgnoreCase(arg))
-				.map(Map.Entry::getKey)
-				.collect(Collectors.toSet());
+			.filter(i -> i.getValue().getOwnerName().equalsIgnoreCase(arg))
+			.map(Map.Entry::getKey)
+			.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -70,10 +70,10 @@ public class IslandArgument extends CommandElement {
 			String arg = args.peek().toLowerCase();
 			boolean admin = src.hasPermission(Permissions.COMMAND_LIST_ALL);
 			return SkyClaims.islands.entrySet().stream()
-					.filter(i -> i.getValue().getOwnerName().toLowerCase().startsWith(arg))
-					.filter(i -> admin || !(src instanceof Player) || i.getValue().hasPermissions((Player) src))
-					.map(m -> m.getValue().getOwnerName())
-					.collect(Collectors.toList());
+				.filter(i -> i.getValue().getOwnerName().toLowerCase().startsWith(arg))
+				.filter(i -> admin || !(src instanceof Player) || i.getValue().hasPermissions((Player) src))
+				.map(m -> m.getValue().getOwnerName())
+				.collect(Collectors.toList());
 		} catch (ArgumentParseException e) {
 			return Lists.newArrayList();
 		}

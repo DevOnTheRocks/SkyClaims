@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 
 public class TargetArgument extends CommandElement {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static PermissionConfig config = PLUGIN.getConfig().getPermissionConfig();
 
 	private static final Map<String, Targets> TARGETS = Maps.newHashMap();
 
@@ -72,18 +71,18 @@ public class TargetArgument extends CommandElement {
 		try {
 			String name = args.peek().toLowerCase();
 			return TARGETS.entrySet().stream()
-					.filter(s -> s.getKey().length() > 1)
-					.filter(s -> s.getKey().startsWith(name))
-					.filter(s -> hasPermission(src, s.getValue()))
-					.map(Map.Entry::getKey)
-					.collect(Collectors.toList());
+				.filter(s -> s.getKey().length() > 1)
+				.filter(s -> s.getKey().startsWith(name))
+				.filter(s -> hasPermission(src, s.getValue()))
+				.map(Map.Entry::getKey)
+				.collect(Collectors.toList());
 		} catch (ArgumentParseException e) {
 			return Lists.newArrayList();
 		}
 	}
 
 	private boolean hasPermission(CommandSource src, Targets target) {
-		if (!config.isSeparateTargetPerms()) return true;
+		if (!PLUGIN.getConfig().getPermissionConfig().isSeparateTargetPerms()) return true;
 		switch (target) {
 			case BLOCK:
 				return src.hasPermission(Permissions.COMMAND_ARGUMENTS_BLOCK);

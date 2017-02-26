@@ -35,9 +35,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class CommandTransfer implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "used to transfer island ownership to another player.";
-
 	private static final Text OWNER = Text.of("owner");
 	private static final Text USER = Text.of("user");
 

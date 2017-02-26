@@ -35,7 +35,6 @@ import org.spongepowered.api.world.World;
 
 public class CommandHome implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "teleport to your home island.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()

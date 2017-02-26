@@ -39,8 +39,6 @@ import java.util.stream.Collectors;
 
 public class SchematicArgument extends CommandElement {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static PermissionConfig config = PLUGIN.getConfig().getPermissionConfig();
-
 	public static final Map<String, String> SCHEMATICS = Maps.newHashMap();
 
 	static {
@@ -70,16 +68,17 @@ public class SchematicArgument extends CommandElement {
 		try {
 			String name = args.peek().toLowerCase();
 			return SCHEMATICS.keySet().stream()
-					.filter(s -> s.startsWith(name))
-					.filter(s -> hasPermission(src, s))
-					.collect(Collectors.toList());
+				.filter(s -> s.startsWith(name))
+				.filter(s -> hasPermission(src, s))
+				.collect(Collectors.toList());
 		} catch (ArgumentParseException e) {
 			return Lists.newArrayList();
 		}
 	}
 
 	private boolean hasPermission(CommandSource src, String name) {
-		return !config.isSeparateSchematicPerms() || src.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + name.toLowerCase());
+		boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
+		return !checkPerms || src.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + name.toLowerCase());
 	}
 
 	@SuppressWarnings("ConstantConditions")

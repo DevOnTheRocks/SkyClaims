@@ -33,18 +33,16 @@ import org.spongepowered.api.text.Text;
 
 public class CommandDelete implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "used to delete a player's island";
-
 	private static final Text CLEAR = Text.of("clear");
 	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_DELETE)
-			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.user(USER), GenericArguments.optional(GenericArguments.bool(CLEAR)))
-			.executor(new CommandDelete())
-			.build();
+		.permission(Permissions.COMMAND_DELETE)
+		.description(Text.of(HELP_TEXT))
+		.arguments(GenericArguments.user(USER), GenericArguments.optional(GenericArguments.bool(CLEAR)))
+		.executor(new CommandDelete())
+		.build();
 
 	public static void register() {
 		try {
@@ -59,9 +57,9 @@ public class CommandDelete implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		User user = args.<User>getOne(USER)
-				.orElseThrow(() -> new CommandException(Text.of("Invalid user")));
+			.orElseThrow(() -> new CommandException(Text.of("Invalid user")));
 		Island island = Island.getByOwner(user.getUniqueId())
-				.orElseThrow(() -> new CommandException(Text.of("Invalid island")));
+			.orElseThrow(() -> new CommandException(Text.of("Invalid island")));
 
 		boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
 		if (clear) island.clear();

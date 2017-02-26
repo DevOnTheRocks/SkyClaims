@@ -30,18 +30,14 @@ import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.text.Text;
 
 public class CommandSetup implements CommandExecutor {
-
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
-	private static final PermissionService PERMS = PLUGIN.getPermissionService();
-
 	public static final String HELP_TEXT = "used to assist in setting up the plugin";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_SETUP)
-			.description(Text.of(HELP_TEXT))
-			.executor(new CommandSetup())
-			.build();
+		.permission(Permissions.COMMAND_SETUP)
+		.description(Text.of(HELP_TEXT))
+		.executor(new CommandSetup())
+		.build();
 
 	public static void register() {
 		try {
@@ -58,7 +54,6 @@ public class CommandSetup implements CommandExecutor {
 		// TODO Help the src set up required permissions and options
 
 		throw new CommandException(Text.of("Command is not yet implemented."));
-
 		//return CommandResult.empty();
 	}
 }

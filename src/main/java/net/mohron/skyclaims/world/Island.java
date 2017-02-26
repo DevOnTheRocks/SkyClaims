@@ -52,8 +52,6 @@ import java.util.stream.Collectors;
 
 public class Island {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
-	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WORLD);
 	private static final IRegionPattern PATTERN = new SpiralRegionPattern();
 
 	private UUID id;
@@ -94,11 +92,12 @@ public class Island {
 	public Island(UUID id, UUID owner, UUID claimId, Vector3d spawnLocation, boolean locked) {
 		this.id = id;
 		this.owner = owner;
-		this.spawn = new Transform<>(WORLD, spawnLocation);
+		this.spawn = new Transform<>(PLUGIN.getConfig().getWorldConfig().getWorld(), spawnLocation);
 		this.locked = locked;
 		this.claim = claimId;
 
-		Claim claim = CLAIM_MANAGER.getClaimByUUID(claimId).orElse(null);
+		ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(spawn.getExtent());
+		Claim claim = claimManager.getClaimByUUID(claimId).orElse(null);
 		if (claim != null) {
 			this.claim = claimId;
 			int initialWidth = Options.getMinSize(owner) * 2;
@@ -192,7 +191,7 @@ public class Island {
 	}
 
 	public Optional<Claim> getClaim() {
-		return CLAIM_MANAGER.getClaimByUUID(this.claim);
+		return PLUGIN.getGriefPrevention().getClaimManager(getWorld()).getClaimByUUID(this.claim);
 	}
 
 	public Date getDateCreated() {
@@ -224,7 +223,7 @@ public class Island {
 	}
 
 	public World getWorld() {
-		return WORLD;
+		return PLUGIN.getConfig().getWorldConfig().getWorld();
 	}
 
 	public Transform<World> getSpawn() {
@@ -233,7 +232,7 @@ public class Island {
 
 	public void setSpawn(Transform<World> transform) {
 		if (contains(transform.getLocation())) {
-			Transform<World> spawn = new Transform<>(WORLD, transform.getPosition(), transform.getRotation());
+			Transform<World> spawn = new Transform<>(getWorld(), transform.getPosition(), transform.getRotation());
 			if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 256) {
 				spawn.setPosition(
 					new Vector3d(spawn.getLocation().getX(), PLUGIN.getConfig().getWorldConfig().getDefaultHeight(),
@@ -345,7 +344,8 @@ public class Island {
 	}
 
 	public void delete() {
-		getClaim().ifPresent(claim -> CLAIM_MANAGER.deleteClaim(claim, PLUGIN.getCause()));
+		ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(getWorld());
+		getClaim().ifPresent(claim -> claimManager.deleteClaim(claim, PLUGIN.getCause()));
 		SkyClaims.islands.remove(id);
 		PLUGIN.getDatabase().removeIsland(this);
 	}

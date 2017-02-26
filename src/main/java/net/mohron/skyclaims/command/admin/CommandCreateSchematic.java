@@ -47,18 +47,15 @@ import static org.spongepowered.api.command.args.GenericArguments.string;
 
 public class CommandCreateSchematic implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final File CONFIG_DIR = PLUGIN.getConfigDir().toFile();
-
 	public static final String HELP_TEXT = "used to save the selected area as an island schematic";
-
 	private static final Text NAME = Text.of("name");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_CREATE_SCHEMATIC)
-			.description(Text.of(HELP_TEXT))
-			.arguments(string(NAME))
-			.executor(new CommandCreateSchematic())
-			.build();
+		.permission(Permissions.COMMAND_CREATE_SCHEMATIC)
+		.description(Text.of(HELP_TEXT))
+		.arguments(string(NAME))
+		.executor(new CommandCreateSchematic())
+		.build();
 
 	public static void register() {
 		try {
@@ -87,17 +84,17 @@ public class CommandCreateSchematic implements CommandExecutor {
 		ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, player.getLocation().getPosition().toInt());
 
 		String name = args.<String>getOne(NAME)
-				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must supply a name to use this command!")));
+			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must supply a name to use this command!")));
 
 		Schematic schematic = Schematic.builder()
-				.volume(volume)
-				.metaValue(Schematic.METADATA_AUTHOR, player.getName())
-				.metaValue(Schematic.METADATA_NAME, name)
-				.paletteType(BlockPaletteTypes.LOCAL)
-				.build();
+			.volume(volume)
+			.metaValue(Schematic.METADATA_AUTHOR, player.getName())
+			.metaValue(Schematic.METADATA_NAME, name)
+			.paletteType(BlockPaletteTypes.LOCAL)
+			.build();
 		DataContainer schematicData = DataTranslators.SCHEMATIC.translate(schematic);
 
-		File outputFile = new File(CONFIG_DIR, String.format("schematics%s%s.schematic", File.separator, name.toLowerCase()));
+		File outputFile = new File(PLUGIN.getConfigDir().toFile(), String.format("schematics%s%s.schematic", File.separator, name.toLowerCase()));
 		try {
 			DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(outputFile)), schematicData);
 			player.sendMessage(Text.of(TextColors.GREEN, "Saved schematic to " + outputFile.getAbsolutePath()));

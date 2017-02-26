@@ -40,13 +40,12 @@ public class CommandUtil {
 			Player player = (Player) src;
 			Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
 			if (safeLocation == null) {
-				player.sendMessage(
-						Text.builder().append(Text.of(TextColors.RED, "Location is not safe. "),
-								Text.builder().append(
-										Text.of(TextColors.GREEN, "Are you sure you want to teleport here?"))
-										.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-										.style(TextStyles.UNDERLINE).build()
-						).build());
+				player.sendMessage(Text.of(
+					TextColors.RED, "Location is not safe. ",
+					Text.of(TextColors.GREEN, "Are you sure you want to teleport here?").toBuilder()
+						.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+						.style(TextStyles.UNDERLINE)
+				));
 			} else {
 				player.setLocation(safeLocation);
 			}
@@ -57,14 +56,12 @@ public class CommandUtil {
 		return teleport -> {
 			Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
 			if (safeLocation == null) {
-				player.sendMessage(
-						Text.builder().append(Text.of(TextColors.RED, "Location is not safe. "),
-								Text.builder().append(
-										Text.of(TextColors.GREEN, "Are you sure you want to teleport here?"))
-										.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-										.onHover(TextActions.showText(Text.of("Click here to force teleport!")))
-										.style(TextStyles.UNDERLINE).build()
-						).build());
+				player.sendMessage(Text.of(
+					TextColors.RED, "Location is not safe. ",
+					Text.of(TextColors.GREEN, "Are you sure you want to teleport here?").toBuilder()
+						.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+						.style(TextStyles.UNDERLINE)
+				));
 			} else {
 				player.setLocation(safeLocation);
 			}

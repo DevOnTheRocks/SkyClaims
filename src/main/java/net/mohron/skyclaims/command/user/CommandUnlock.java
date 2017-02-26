@@ -41,7 +41,6 @@ import java.util.UUID;
 
 public class CommandUnlock implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "used to allow untrusted players to visit your island.";
 	private static final Text ALL = Text.of("all");
 	private static final Text ISLAND = Text.of("island");

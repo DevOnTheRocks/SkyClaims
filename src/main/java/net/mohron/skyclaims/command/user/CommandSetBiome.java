@@ -39,21 +39,19 @@ import org.spongepowered.api.world.biome.BiomeType;
 
 public class CommandSetBiome implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "set the biome of a block, chunk or island";
-
 	private static final Text BIOME = Text.of("biome");
 	private static final Text TARGET = Text.of("target");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_SET_BIOME)
-			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.seq(
-					Argument.biome(BIOME),
-					GenericArguments.optional(Argument.target(TARGET))
-			))
-			.executor(new CommandSetBiome())
-			.build();
+		.permission(Permissions.COMMAND_SET_BIOME)
+		.description(Text.of(HELP_TEXT))
+		.arguments(GenericArguments.seq(
+			Argument.biome(BIOME),
+			GenericArguments.optional(Argument.target(TARGET))
+		))
+		.executor(new CommandSetBiome())
+		.build();
 
 	public static void register() {
 		try {
@@ -72,9 +70,9 @@ public class CommandSetBiome implements CommandExecutor {
 
 		Player player = (Player) src;
 		BiomeType biome = args.<BiomeType>getOne(BIOME)
-				.orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
+			.orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
 		Island island = Island.get(player.getLocation())
-				.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
+			.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
 
 		if (!player.getUniqueId().equals(island.getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
 			throw new CommandPermissionException(Text.of("You do not have permission to use setbiome on this island"));

@@ -31,16 +31,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 public class CommandReload implements CommandExecutor {
-
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "used to reload SkyClaims's config, schematics, & database.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_RELOAD)
-			.description(Text.of(HELP_TEXT))
-			.executor(new CommandReload())
-			.build();
+		.permission(Permissions.COMMAND_RELOAD)
+		.description(Text.of(HELP_TEXT))
+		.executor(new CommandReload())
+		.build();
 
 	public static void register() {
 		try {

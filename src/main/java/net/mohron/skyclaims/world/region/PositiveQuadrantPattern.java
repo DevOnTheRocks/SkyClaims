@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class PositiveQuadrantPattern implements IRegionPattern {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final int SPAWN_REGIONS = PLUGIN.getConfig().getWorldConfig().getSpawnRegions();
+	private static int spawnRegions;
 
 	/**
 	 * A method to generate a region-scaled spiral region and return the x/y pairs of each region
@@ -35,8 +35,9 @@ public class PositiveQuadrantPattern implements IRegionPattern {
 	 * @return An ArrayList of Points containing the x,y of regions, representing a spiral shape
 	 */
 	public ArrayList<Region> generateRegionPattern() {
+		spawnRegions = PLUGIN.getConfig().getWorldConfig().getSpawnRegions();
 		int islandCount = SkyClaims.islands.size();
-		int generationSize = (int) Math.sqrt((double) islandCount + SPAWN_REGIONS) + 1;
+		int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
 		String log = "Region Pattern: [";
 
 		ArrayList<Region> coordinates = new ArrayList<>(generationSize);
@@ -62,14 +63,17 @@ public class PositiveQuadrantPattern implements IRegionPattern {
 	}
 
 	public Region nextRegion() throws InvalidRegionException {
-		ArrayList<Region> spawnRegions = new ArrayList<>(SPAWN_REGIONS);
+		spawnRegions = PLUGIN.getConfig().getWorldConfig().getSpawnRegions();
+		ArrayList<Region> spawnRegions = new ArrayList<>(PositiveQuadrantPattern.spawnRegions);
 		ArrayList<Region> regions = generateRegionPattern();
 		int iterator = 0;
 
-		PLUGIN.getLogger().debug(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(), SPAWN_REGIONS));
+		PLUGIN.getLogger().debug(String.format("Checking for next region out of %s points with %s spawn regions.", regions.size(),
+			PositiveQuadrantPattern.spawnRegions
+		));
 
 		for (Region region : regions) {
-			if (iterator < SPAWN_REGIONS) {
+			if (iterator < PositiveQuadrantPattern.spawnRegions) {
 				spawnRegions.add(region);
 				PLUGIN.getLogger().debug(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
 				iterator++;

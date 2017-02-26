@@ -19,12 +19,13 @@
 package net.mohron.skyclaims.exception;
 
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.TextMessageException;
 
-public class SkyClaimsException extends Exception {
+public class SkyClaimsException extends TextMessageException {
 	private Text message;
 
 	public SkyClaimsException(Text message) {
-		super(message.toPlain());
+		super(message);
 		this.message = message;
 	}
 

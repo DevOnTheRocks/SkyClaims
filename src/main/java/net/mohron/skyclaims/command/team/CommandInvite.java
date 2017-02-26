@@ -33,17 +33,15 @@ import org.spongepowered.api.text.Text;
 
 public class CommandInvite implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
-
 	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_INVITE)
-			.arguments(GenericArguments.optional(GenericArguments.user(USER)))
-			.description(Text.of(HELP_TEXT))
-			.executor(new CommandInvite())
-			.build();
+		.permission(Permissions.COMMAND_INVITE)
+		.arguments(GenericArguments.optional(GenericArguments.user(USER)))
+		.description(Text.of(HELP_TEXT))
+		.executor(new CommandInvite())
+		.build();
 
 	public static void register() {
 		try {

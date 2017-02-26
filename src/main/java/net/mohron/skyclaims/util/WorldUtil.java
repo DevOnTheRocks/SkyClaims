@@ -35,20 +35,21 @@ public class WorldUtil {
 
 	public static void setBlockBiome(Location<World> location, BiomeType biomeType) {
 		location.getExtent().setBiome(
-				location.getBlockX(),
-				0,
-				location.getBlockZ(),
-				biomeType);
+			location.getBlockX(),
+			0,
+			location.getBlockZ(),
+			biomeType);
 	}
 
 	public static void setChunkBiome(Location<World> location, BiomeType biomeType) {
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				location.getExtent().setBiome(
-						location.getChunkPosition().getX() * 16 + x,
-						0,
-						location.getChunkPosition().getZ() * 16 + z,
-						biomeType);
+					location.getChunkPosition().getX() * 16 + x,
+					0,
+					location.getChunkPosition().getZ() * 16 + z,
+					biomeType
+				);
 			}
 		}
 	}
@@ -62,10 +63,11 @@ public class WorldUtil {
 			for (int x = x1; x < x2; x++) {
 				for (int z = z1; z < z2; z++) {
 					island.getWorld().setBiome(
-							x,
-							0,
-							z,
-							biomeType);
+						x,
+						0,
+						z,
+						biomeType
+					);
 				}
 			}
 		} else setRegionBiome(island, biomeType);

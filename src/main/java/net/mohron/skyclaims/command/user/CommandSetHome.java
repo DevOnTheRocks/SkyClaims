@@ -33,7 +33,6 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class CommandSetHome implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "set your island home.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()

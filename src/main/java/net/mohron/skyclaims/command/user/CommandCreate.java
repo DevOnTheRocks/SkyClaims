@@ -36,17 +36,15 @@ import org.spongepowered.api.text.Text;
 
 public class CommandCreate implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "create an island.";
-
 	private static final Text SCHEMATIC = Text.of("schematic");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_CREATE)
-			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
-			.executor(new CommandCreate())
-			.build();
+		.permission(Permissions.COMMAND_CREATE)
+		.description(Text.of(HELP_TEXT))
+		.arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
+		.executor(new CommandCreate())
+		.build();
 
 	public static void register() {
 		try {

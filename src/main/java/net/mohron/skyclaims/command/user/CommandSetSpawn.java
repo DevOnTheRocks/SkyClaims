@@ -32,16 +32,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 public class CommandSetSpawn implements CommandExecutor {
-
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "set your spawn location for your island.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_SET_SPAWN)
-			.description(Text.of(HELP_TEXT))
-			.executor(new CommandSetSpawn())
-			.build();
+		.permission(Permissions.COMMAND_SET_SPAWN)
+		.description(Text.of(HELP_TEXT))
+		.executor(new CommandSetSpawn())
+		.build();
 
 	public static void register() {
 		try {
@@ -59,16 +57,16 @@ public class CommandSetSpawn implements CommandExecutor {
 
 		Player player = (Player) src;
 		Island island = Island.get(player.getLocation())
-				.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
+			.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
 
 		if (!island.getOwnerUniqueId().equals(player.getUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS))
 			throw new CommandException(Text.of("Only the island owner may use this command!"));
 
 		island.setSpawn(player.getTransform());
 		player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
-				TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), TextColors.GRAY, " ,",
-				TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), TextColors.GRAY, " ,",
-				TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), TextColors.GRAY, ")"));
+			TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), TextColors.GRAY, " ,",
+			TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), TextColors.GRAY, " ,",
+			TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), TextColors.GRAY, ")"));
 
 		return CommandResult.success();
 	}

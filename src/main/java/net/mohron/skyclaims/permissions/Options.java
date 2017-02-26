@@ -32,6 +32,7 @@ public class Options {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
 
+	// SkyClaims Options
 	private static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
 	private static final String DEFAULT_BIOME = "skyclaims.default-biome";
 	private static final String MIN_SIZE = "skyclaims.min-size";

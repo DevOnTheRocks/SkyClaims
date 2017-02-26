@@ -45,9 +45,7 @@ import java.util.function.Consumer;
 
 public class CommandInfo implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "display detailed information on your island";
-
 	private static final Text ISLAND = Text.of("island");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
@@ -173,13 +171,13 @@ public class CommandInfo implements CommandExecutor {
 
 	private Text getLocked(Island island) {
 		return Text.of(TextColors.WHITE, " [",
-				Text.builder(island.isLocked() ? "L" : "U")
-					.color(island.isLocked() ? TextColors.RED : TextColors.GREEN)
-					.onHover(TextActions.showText(island.isLocked()
-						? Text.of(TextColors.RED, "LOCKED")
-						: Text.of(TextColors.GREEN, "UNLOCKED")
-					))
-					.onClick(TextActions.executeCallback(toggleLock(island))),
+			Text.builder(island.isLocked() ? "L" : "U")
+				.color(island.isLocked() ? TextColors.RED : TextColors.GREEN)
+				.onHover(TextActions.showText(island.isLocked()
+					? Text.of(TextColors.RED, "LOCKED")
+					: Text.of(TextColors.GREEN, "UNLOCKED")
+				))
+				.onClick(TextActions.executeCallback(toggleLock(island))),
 			TextColors.WHITE, "] ");
 	}
 

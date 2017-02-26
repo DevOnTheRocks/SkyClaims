@@ -33,9 +33,11 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 public class ClaimEventHandler {
+	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
 	@Listener
 	public void onClaimCreate(CreateClaimEvent event, @Root Player player) {
-		World world = SkyClaims.getInstance().getConfig().getWorldConfig().getWorld();
+		World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 		Claim claim = event.getClaim();
 		if (!claim.getWorld().equals(world) || !claim.isBasicClaim()) return;
 
@@ -45,7 +47,7 @@ public class ClaimEventHandler {
 
 	@Listener
 	public void onClaimDelete(DeleteClaimEvent event, @Root Player player) {
-		World world = SkyClaims.getInstance().getConfig().getWorldConfig().getWorld();
+		World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 		for (Claim claim : event.getClaims()) {
 			if (claim.isBasicClaim() && claim.getWorld().equals(world)) {
 				if (event instanceof DeleteClaimEvent.Abandon)
@@ -65,7 +67,7 @@ public class ClaimEventHandler {
 
 	@Listener
 	public void onClaimResize(ResizeClaimEvent event, @Root Player player) {
-		World world = SkyClaims.getInstance().getConfig().getWorldConfig().getWorld();
+		World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 		Claim claim = event.getClaim();
 		if (!claim.getWorld().equals(world) || !claim.isBasicClaim()) return;
 

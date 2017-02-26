@@ -25,10 +25,8 @@ import org.spongepowered.api.world.World;
 
 public class RegenerateRegionTask implements Runnable {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
 
 	private Region region;
-
 	private Island island;
 	private String schematic;
 
@@ -45,10 +43,12 @@ public class RegenerateRegionTask implements Runnable {
 
 	@Override
 	public void run() {
+		World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+
 		PLUGIN.getLogger().info(String.format("Begin clearing region (%s, %s)", region.getX(), region.getZ()));
 		for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
 			for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
-				WORLD.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
+				world.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
 					chunk.loadChunk(false);
 					chunk.getEntities().clear();
 					for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {

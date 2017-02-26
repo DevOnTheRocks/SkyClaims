@@ -40,8 +40,6 @@ import java.util.stream.Collectors;
 
 public class BiomeArgument extends CommandElement {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static PermissionConfig config = PLUGIN.getConfig().getPermissionConfig();
-
 	public static final Map<String, BiomeType> BIOMES = Maps.newHashMap();
 
 	static {
@@ -146,6 +144,7 @@ public class BiomeArgument extends CommandElement {
 	}
 
 	private boolean hasPermission(CommandSource src, String biomeType) {
-		return !config.isSeparateBiomePerms() || src.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biomeType);
+		boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateBiomePerms();
+		return !checkPerms || src.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biomeType);
 	}
 }

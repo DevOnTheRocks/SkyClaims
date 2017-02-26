@@ -36,17 +36,15 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class CommandSpawn implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
 	public static final String HELP_TEXT = "teleport to an island's spawn point.";
-
 	private static final Text USER = Text.of("user");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_SPAWN)
-			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.optional(GenericArguments.user(USER)))
-			.executor(new CommandSpawn())
-			.build();
+		.permission(Permissions.COMMAND_SPAWN)
+		.description(Text.of(HELP_TEXT))
+		.arguments(GenericArguments.optional(GenericArguments.user(USER)))
+		.executor(new CommandSpawn())
+		.build();
 
 	public static void register() {
 		try {
@@ -67,7 +65,7 @@ public class CommandSpawn implements CommandExecutor {
 		Player player = (Player) src;
 		User user = args.<User>getOne(USER).orElse(player);
 		Island island = Island.getByOwner(user.getUniqueId())
-				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
+			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
 
 		if (island.isLocked() && !island.hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
 			throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));

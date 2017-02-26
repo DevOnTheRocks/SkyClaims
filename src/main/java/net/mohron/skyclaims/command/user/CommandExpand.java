@@ -40,17 +40,15 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandExpand implements CommandExecutor {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final GriefPreventionApi GP = PLUGIN.getGriefPrevention();
-
 	public static final String HELP_TEXT = "used to expand your island.";
-
 	private static final Text BLOCKS = Text.of("size");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-			.permission(Permissions.COMMAND_EXPAND)
-			.description(Text.of(HELP_TEXT))
-			.arguments(GenericArguments.optional(GenericArguments.integer(BLOCKS)))
-			.executor(new CommandExpand())
-			.build();
+		.permission(Permissions.COMMAND_EXPAND)
+		.description(Text.of(HELP_TEXT))
+		.arguments(GenericArguments.optional(GenericArguments.integer(BLOCKS)))
+		.executor(new CommandExpand())
+		.build();
 
 	public static void register() {
 		try {
@@ -71,9 +69,9 @@ public class CommandExpand implements CommandExecutor {
 		int blocks = args.<Integer>getOne(BLOCKS).orElse(0);
 
 		Island island = Island.get(player.getLocation())
-				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command.")));
+			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command.")));
 		Claim claim = island.getClaim()
-				.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The expand command can only be used on protected islands.")));
+			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The expand command can only be used on protected islands.")));
 
 		// Check if the command source owns the island
 		if (!island.getOwnerUniqueId().equals(player.getUniqueId()))

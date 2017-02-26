@@ -39,11 +39,11 @@ import java.util.UUID;
 
 public class ClaimUtil {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
-	private static final ClaimManager CLAIM_MANAGER = PLUGIN.getGriefPrevention().getClaimManager(WORLD);
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static Claim createIslandClaim(UUID ownerUniqueId, Region region) throws CreateIslandException {
+		ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(PLUGIN.getConfig().getWorldConfig().getWorld());
+
 		Claim claim = null;
 		ClaimResult claimResult;
 		do {
@@ -51,7 +51,7 @@ public class ClaimUtil {
 			switch (claimResult.getResultType()) {
 				case SUCCESS:
 					claim = claimResult.getClaim().get();
-					CLAIM_MANAGER.addClaim(claim, PLUGIN.getCause());
+					claimManager.addClaim(claim, PLUGIN.getCause());
 					PLUGIN.getLogger().debug(String.format(
 						"Creating %s's claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
 						getName(ownerUniqueId),
@@ -66,7 +66,7 @@ public class ClaimUtil {
 					break;
 				case OVERLAPPING_CLAIM:
 					for (Claim claim1 : claimResult.getClaims()) {
-						CLAIM_MANAGER.deleteClaim(claim1, PLUGIN.getCause());
+						claimManager.deleteClaim(claim1, PLUGIN.getCause());
 					}
 					PLUGIN.getLogger().info(String.format(
 						"Removing claim overlapping %s's island (Owner: %s, ID: %s).",
@@ -88,7 +88,7 @@ public class ClaimUtil {
 	private static ClaimResult createIslandClaimResult(UUID ownerUniqueId, Region region) {
 		int initialSpacing = 256 - Options.getMinSize(ownerUniqueId);
 		return Claim.builder()
-			.world(WORLD)
+			.world(PLUGIN.getConfig().getWorldConfig().getWorld())
 			.bounds(
 				new Vector3i(
 					region.getLesserBoundary().getX() + initialSpacing, 0,
@@ -109,12 +109,14 @@ public class ClaimUtil {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	public static void createSpawnClaim(List<Region> regions) {
+		ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(PLUGIN.getConfig().getWorldConfig().getWorld());
+
 		ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
 		if (claimResult.successful()) {
 			PLUGIN.getLogger().debug(String.format("Reserved %s regions for spawn. Admin Claim: %s", regions.size(),
 				claimResult.getClaim().get().getUniqueId()
 			));
-			CLAIM_MANAGER.addClaim(claimResult.getClaim().get(), PLUGIN.getCause());
+			claimManager.addClaim(claimResult.getClaim().get(), PLUGIN.getCause());
 		}
 	}
 
@@ -129,7 +131,7 @@ public class ClaimUtil {
 		}
 
 		return Claim.builder()
-			.world(WORLD)
+			.world(PLUGIN.getConfig().getWorldConfig().getWorld())
 			.bounds(
 				new Vector3i(lesserRegion.getLesserBoundary().getX(), 0, lesserRegion.getLesserBoundary().getZ()),
 				new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())

@@ -40,8 +40,6 @@ import java.util.zip.GZIPInputStream;
 
 public class GenerateIslandTask implements Runnable {
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static final World WORLD = PLUGIN.getConfig().getWorldConfig().getWorld();
-	private static final File CONFIG_DIR = new File(PLUGIN.getConfigDir().toString());
 
 	private UUID owner;
 	private Island island;
@@ -55,7 +53,8 @@ public class GenerateIslandTask implements Runnable {
 
 	@Override
 	public void run() {
-		File inputFile = new File(CONFIG_DIR, String.format("schematics%s%s.schematic", File.separator, schematic));
+		World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+		File inputFile = new File(PLUGIN.getConfigDir().toString(), String.format("schematics%s%s.schematic", File.separator, schematic));
 
 		DataContainer schematicData;
 		try {
@@ -79,7 +78,7 @@ public class GenerateIslandTask implements Runnable {
 		// Loads center chunks
 		for (int x = -1; x <= 1; x++) {
 			for (int z = -1; z <= 1; z++) {
-				WORLD.loadChunk(
+				world.loadChunk(
 						centerBlock.getChunkPosition().getX() + x,
 						centerBlock.getChunkPosition().getY(),
 						centerBlock.getChunkPosition().getZ() + z,
