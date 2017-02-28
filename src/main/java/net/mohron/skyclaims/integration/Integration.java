@@ -23,14 +23,16 @@ import org.spongepowered.api.Sponge;
 
 import java.util.Optional;
 
+import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
+
 public class Integration {
 	private Nucleus nucleus = null;
 
 	public Integration() {
-		if (Sponge.getPluginManager().getPlugin("nucleus-api").isPresent()) {
-			String version = Sponge.getPluginManager().getPlugin("nucleus").get().getVersion().orElse("0.0.0");
+		if (Sponge.getPluginManager().getPlugin("nucleus").isPresent()) {
+			Version version = new Version(Sponge.getPluginManager().getPlugin("nucleus").get().getVersion().orElse("0.0.0"));
 			SkyClaims.getInstance().getLogger().info("Found Nucleus " + version);
-			if (isMinimumVersion(version.substring(0, version.indexOf('-')), 0,24, 1)) nucleus = new Nucleus();
+			if (version.compareTo(new Version(NUCLEUS_VERSION)) >= 0) nucleus = new Nucleus();
 		}
 	}
 
@@ -41,18 +43,6 @@ public class Integration {
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
-	}
-
-	private static boolean isMinimumVersion(String version, int minMajor, int minMinor, int minPatch) {
-		try {
-			int major = Integer.parseInt(version.substring(0, version.indexOf('.')));
-			int minor = Integer.parseInt(version.substring(version.indexOf('.') + 1, version.lastIndexOf('.')));
-			int patch = Integer.parseInt(version.substring(version.lastIndexOf('.') + 1));
-			if (major >= minMajor && minor >= minMinor && patch >= minPatch) return true;
-		} catch (NumberFormatException e) {
-			SkyClaims.getInstance().getLogger().error("Unable to parse version number " + version);
-		}
-		return false;
 	}
 
 	public Optional<Nucleus> getNucleus() {
