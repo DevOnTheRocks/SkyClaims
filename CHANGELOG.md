@@ -11,6 +11,8 @@
 - Added Options config
 - Added `/isa config` a debug command that shows most of SkyClaims' currently loaded config
 - Added support for `/sponge plugins reload`
+- Added `/is list` to `/is help`
+- Nucleus Integration: `/is sethome` now requires the player to be on a trusted island
 
 ## Beta 18
 ### * Manual SQLite file migration required if upgrading from Beta 13 or earlier! 
