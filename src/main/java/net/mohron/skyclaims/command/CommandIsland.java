@@ -128,6 +128,17 @@ public class CommandIsland implements CommandExecutor {
 			hasPerms = true;
 		}
 
+		if (src.hasPermission(Permissions.COMMAND_LIST)) {
+			helpText.add(Text.of(
+				TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
+				TextColors.GRAY, " [user]",
+				TextColors.GRAY, Text.builder(" [sort]").onHover(TextActions.showText(getSortOptions())),
+				TextColors.DARK_GRAY, " - ",
+				TextColors.DARK_GREEN, CommandList.HELP_TEXT
+			));
+			hasPerms = true;
+		}
+
 		if (src.hasPermission(Permissions.COMMAND_LOCK)) {
 			helpText.add(Text.of(
 				TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
@@ -208,5 +219,15 @@ public class CommandIsland implements CommandExecutor {
 		}
 
 		return CommandResult.success();
+	}
+
+	private Text getSortOptions() {
+		return Text.of(
+			TextColors.GREEN, "ascending ", TextColors.RED, "descending", Text.NEW_LINE,
+			TextColors.GREEN, "newest ", TextColors.RED, "oldest", Text.NEW_LINE,
+			TextColors.GREEN, "active ", TextColors.RED, "inactive", Text.NEW_LINE,
+			TextColors.GREEN, "members+ ", TextColors.RED, "members-", Text.NEW_LINE,
+			TextColors.GREEN, "largest ", TextColors.RED, "smallest", Text.NEW_LINE
+		);
 	}
 }

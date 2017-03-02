@@ -81,6 +81,7 @@ public class CommandList implements CommandExecutor {
 
 		SkyClaims.islands.values().stream()
 			.filter(i -> user == null || i.hasPermissions(user))
+			.sorted(Comparator.comparing(Island::getSortableName))
 			.sorted(sortType)
 			.forEach(island -> listText.add(Text.of(
 				getLocked(island),

@@ -41,14 +41,14 @@ public class SortArgument extends CommandElement {
 	static {
 		SORT_TYPES.put("ascending", Comparator.comparing(Island::getSortableName));
 		SORT_TYPES.put("descending", Comparator.comparing(Island::getSortableName).reversed());
-		SORT_TYPES.put("newest", Comparator.comparing(Island::getDateCreated));
-		SORT_TYPES.put("oldest", Comparator.comparing(Island::getDateCreated).reversed());
-		SORT_TYPES.put("active", Comparator.comparing(Island::getDateLastActive));
-		SORT_TYPES.put("inactive", Comparator.comparing(Island::getDateLastActive).reversed());
-		SORT_TYPES.put("members+", Comparator.comparing(Island::getTotalMembers));
-		SORT_TYPES.put("members-", Comparator.comparing(Island::getTotalMembers).reversed());
-		SORT_TYPES.put("largest", Comparator.comparing(Island::getWidth));
-		SORT_TYPES.put("smallest", Comparator.comparing(Island::getWidth).reversed());
+		SORT_TYPES.put("oldest", Comparator.comparing(Island::getDateCreated));
+		SORT_TYPES.put("newest", Comparator.comparing(Island::getDateCreated).reversed());
+		SORT_TYPES.put("inactive", Comparator.comparing(Island::getDateLastActive));
+		SORT_TYPES.put("active", Comparator.comparing(Island::getDateLastActive).reversed());
+		SORT_TYPES.put("members-", Comparator.comparing(Island::getTotalMembers));
+		SORT_TYPES.put("members+", Comparator.comparing(Island::getTotalMembers).reversed());
+		SORT_TYPES.put("smallest", Comparator.comparing(Island::getWidth));
+		SORT_TYPES.put("largest", Comparator.comparing(Island::getWidth).reversed());
 	}
 
 	public SortArgument(@Nullable Text key) {
