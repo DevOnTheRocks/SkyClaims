@@ -130,7 +130,7 @@ public class CommandIsland implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_LIST)) {
 			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
+				TextColors.AQUA, Text.builder("is list").onClick(TextActions.runCommand("/is list")),
 				TextColors.GRAY, " [user]",
 				TextColors.GRAY, Text.builder(" [sort]").onHover(TextActions.showText(getSortOptions())),
 				TextColors.DARK_GRAY, " - ",

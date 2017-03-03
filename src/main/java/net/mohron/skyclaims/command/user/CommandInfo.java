@@ -140,9 +140,18 @@ public class CommandInfo implements CommandExecutor {
 			TextColors.WHITE, "[",
 			TextColors.GOLD, Text.builder("Delete")
 				.onClick(TextActions.executeCallback(consumer -> {
-					island.clear();
-					island.delete();
-					src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
+					src.sendMessage(Text.of(
+						TextColors.GREEN, "Are you sure you want to delete ", TextColors.GOLD, island.getOwnerName(), TextColors.GREEN, "'s island?", Text.NEW_LINE,
+						TextColors.WHITE, "[",
+						Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.executeCallback(s -> {
+							island.clear();
+							island.delete();
+							src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
+						})),
+						TextColors.WHITE, "] [",
+						Text.builder("NO").color(TextColors.RED).onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
+						TextColors.WHITE, "]"
+					));
 				}))
 				.onHover(TextActions.showText(Text.of("Click to delete this island!"))),
 			TextColors.WHITE, "] "
