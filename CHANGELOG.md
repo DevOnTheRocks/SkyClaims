@@ -2,14 +2,17 @@
 
 ## Unreleased Features, Changes & Bugfixes 
 **[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
+- none
+
+## Beta 19
 **REQUIRED: SF 2096+ & GP 260+ OPTIONAL: Nucleus 0.24.1+**
 - **(BREAKING)** Renamed `skyclaims.initial-size` to `skyclaims.min-size` to match its modified behavior
-- Added sorting to `/is list` (name, created, last active, members & size)
-- **GP 260+** Fixed bug causing `/isa transfer` to fail transferring the claim if the target player had too few claim blocks 
+- **GP 260+** Fixed bug causing `/isa transfer` to fail transferring the claim if the target player had too few claim blocks
 - Fixed commands not finding current island due to Y coordinate check failing
 - Fixed `/is help` showing extra line breaks
+- Added sorting to `/is list` (name, created, last active, team size & island size)
 - Added Options config
-- Added `/isa config` a debug command that shows most of SkyClaims' currently loaded config
+- Added `/isa config` a debug command that shows most of SkyClaims' currently loaded config values
 - Added support for `/sponge plugins reload`
 - Added `/is list` to `/is help`
 - Nucleus Integration: `/is sethome` now requires the player to be on a trusted island

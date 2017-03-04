@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.plugin' version '0.6'
 }
 
-def semver = "0.18.7"
+def semver = "0.19.0"
 def isJenkins = System.getenv("BUILD_NUMBER") != null
 def suffix = isJenkins ? "-dev" : "-beta"
 

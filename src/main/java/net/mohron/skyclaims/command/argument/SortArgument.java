@@ -45,8 +45,8 @@ public class SortArgument extends CommandElement {
 		SORT_TYPES.put("newest", Comparator.comparing(Island::getDateCreated).reversed());
 		SORT_TYPES.put("inactive", Comparator.comparing(Island::getDateLastActive));
 		SORT_TYPES.put("active", Comparator.comparing(Island::getDateLastActive).reversed());
-		SORT_TYPES.put("members-", Comparator.comparing(Island::getTotalMembers));
-		SORT_TYPES.put("members+", Comparator.comparing(Island::getTotalMembers).reversed());
+		SORT_TYPES.put("team-", Comparator.comparing(Island::getTotalMembers));
+		SORT_TYPES.put("team+", Comparator.comparing(Island::getTotalMembers).reversed());
 		SORT_TYPES.put("smallest", Comparator.comparing(Island::getWidth));
 		SORT_TYPES.put("largest", Comparator.comparing(Island::getWidth).reversed());
 	}

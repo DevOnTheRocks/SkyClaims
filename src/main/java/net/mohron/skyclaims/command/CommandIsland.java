@@ -226,7 +226,7 @@ public class CommandIsland implements CommandExecutor {
 			TextColors.GREEN, "ascending ", TextColors.RED, "descending", Text.NEW_LINE,
 			TextColors.GREEN, "newest ", TextColors.RED, "oldest", Text.NEW_LINE,
 			TextColors.GREEN, "active ", TextColors.RED, "inactive", Text.NEW_LINE,
-			TextColors.GREEN, "members+ ", TextColors.RED, "members-", Text.NEW_LINE,
+			TextColors.GREEN, "team+ ", TextColors.RED, "team-", Text.NEW_LINE,
 			TextColors.GREEN, "largest ", TextColors.RED, "smallest", Text.NEW_LINE
 		);
 	}
