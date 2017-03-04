@@ -54,15 +54,20 @@ public class Options {
 	}
 
 	public static int getMinSize(UUID playerUniqueId) {
-		return getIntOption(playerUniqueId, MIN_SIZE, PLUGIN.getConfig().getOptionsConfig().getMinSize());
+		return getIntOption(playerUniqueId, MIN_SIZE, PLUGIN.getConfig().getOptionsConfig().getMinSize(), 8, 256);
 	}
 
 	public static int getMaxSize(UUID playerUniqueId) {
-		return getIntOption(playerUniqueId, MAX_SIZE, PLUGIN.getConfig().getOptionsConfig().getMaxSize());
+		return getIntOption(playerUniqueId, MAX_SIZE, PLUGIN.getConfig().getOptionsConfig().getMaxSize(), 8, 256);
 	}
 
 	private static String getStringOption(UUID playerUniqueId, String option, String defaultValue) {
 		return PERMISSION_SERVICE.getUserSubjects().get(playerUniqueId.toString()).getOption(option).orElse(defaultValue);
+	}
+
+	private static int getIntOption(UUID playerUniqueId, String option, int defaultValue, int min, int max) {
+		int value = getIntOption(playerUniqueId, option, defaultValue);
+		return (value < min || value > max) ? defaultValue : value;
 	}
 
 	private static int getIntOption(UUID playerUniqueId, String option, int defaultValue) {
