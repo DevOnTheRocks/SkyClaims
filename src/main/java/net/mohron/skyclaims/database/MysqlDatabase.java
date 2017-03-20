@@ -32,6 +32,7 @@ public class MysqlDatabase extends Database {
 	private String databaseTablePrefix;
 	private String username;
 	private String password;
+	private String name;
 	private Integer port;
 
 	public MysqlDatabase() {
@@ -40,8 +41,9 @@ public class MysqlDatabase extends Database {
 		databaseTablePrefix = config.getTablePrefix();
 		username = config.getUsername();
 		password = config.getPassword();
+        name = config.getDatabaseName();
 		port = config.getPort();
-		connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, "islands");
+		connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, name);
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
