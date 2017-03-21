@@ -29,7 +29,6 @@ public class MysqlDatabase extends Database {
 	private MysqlConfig config;
 	private String connectionString;
 	private String databaseLocation;
-	private String databaseTablePrefix;
 	private String username;
 	private String password;
 	private String name;
@@ -37,13 +36,12 @@ public class MysqlDatabase extends Database {
 
 	public MysqlDatabase() {
 		this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getMysqlConfig();
-		databaseLocation = config.getLocation();
-		databaseTablePrefix = config.getTablePrefix();
-		username = config.getUsername();
-		password = config.getPassword();
-        name = config.getDatabaseName();
-		port = config.getPort();
-		connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, name);
+		this.databaseLocation = config.getLocation();
+		this.username = config.getUsername();
+		this.password = config.getPassword();
+		this.name = config.getDatabaseName();
+		this.port = config.getPort();
+		this.connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, name);
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
