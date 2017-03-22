@@ -21,6 +21,7 @@ package net.mohron.skyclaims.command.user;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.integration.Nucleus;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -32,6 +33,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 public class CommandSetHome implements CommandExecutor {
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	public static final String HELP_TEXT = "set your island home.";
 
@@ -57,12 +59,20 @@ public class CommandSetHome implements CommandExecutor {
 		}
 
 		Player player = (Player) src;
+		Island island = Island.get(player.getLocation())
+			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to set a home!")));
+
+		if (!island.hasPermissions(player)) {
+			throw new CommandException(Text.of(TextColors.RED, "You must have permission to set home on this island!"));
+		}
+
 		Nucleus nucleus = PLUGIN.getIntegration().getNucleus()
 			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Error: Home Command Requires Nucleus!")));
 
 		boolean success = nucleus.modifyOrCreateHome(player);
-		if (!success)
+		if (!success) {
 			throw new CommandException(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
+		}
 
 		return CommandResult.success();
 	}
