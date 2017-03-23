@@ -4,6 +4,10 @@
 **[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
 - none
 
+## Beta 19.1 - Hotfix
+- Fixed `/is home` checking the permissions of the island it is run on. Fixes #34
+- Fixed `/is sethome` not checking permission of the island it is run on.
+
 ## Beta 19
 **REQUIRED: SF 2096+ & GP 260+ OPTIONAL: Nucleus 0.24.1+**
 - **(BREAKING)** Renamed `skyclaims.initial-size` to `skyclaims.min-size` to match its modified behavior
