@@ -35,24 +35,32 @@ import java.util.UUID;
 
 public abstract class Database implements IDatabase {
 	abstract Connection getConnection() throws SQLException;
+	private String tablename = "island";
 
 	/***
 	 * Creates a table using SQL syntax for Sqlite or Mysql
 	 */
 	void createTable() {
+		String type = SkyClaims.getInstance().getConfig().getStorageConfig().getType();
+
+		if(type.equals("MySQL")){
+			this.tablename =  SkyClaims.getInstance().getConfig().getStorageConfig().getMysqlConfig().getTablePrefix() + "island";
+		}
+
 		try (Statement statement = getConnection().createStatement()) {
 			statement.setQueryTimeout(30);
 
 			// Create the database schema
-			String table = "CREATE TABLE IF NOT EXISTS islands (" +
-					"island			STRING PRIMARY KEY," +
-					"owner			STRING," +
-					"claim			STRING," +
-					"spawnX			INT," +
-					"spawnY			INT," +
-					"spawnZ			INT," +
-					"locked			BOOLEAN" +
-					")";
+			String table =
+				"CREATE TABLE IF NOT EXISTS `" + this.tablename + "` ( " +
+				"`island` TEXT NOT NULL, "+
+				"`owner` TEXT NOT NULL, " +
+				"`claim` TEXT NOT NULL, " +
+				"`spawnX` INT NOT NULL, " +
+				"`spawnY` INT NOT NULL, " +
+				"`spawnZ` INT NOT NULL, " +
+				"`locked` BOOLEAN NOT NULL, " +
+				"PRIMARY KEY " + (type.equals("SQLite") ? "(`island`)" : "(`island`(60))") + ");";
 
 			// Create the islands table (execute statement)
 			statement.executeUpdate(table);
@@ -71,7 +79,7 @@ public abstract class Database implements IDatabase {
 		HashMap<UUID, Island> islands = Maps.newHashMap();
 
 		try (Statement statement = getConnection().createStatement()) {
-			ResultSet results = statement.executeQuery("SELECT * FROM islands");
+			ResultSet results = statement.executeQuery("SELECT * FROM `" + this.tablename + "`" );
 
 			while (results.next()) {
 				UUID islandId = UUID.fromString(results.getString("island"));
@@ -123,7 +131,7 @@ public abstract class Database implements IDatabase {
 	 * @param island the island to save
 	 */
 	public void saveIsland(Island island) {
-		String sql = "REPLACE INTO islands(island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?, ?)";
+		String sql = "REPLACE INTO `" + this.tablename + "` (island, owner, claim, spawnX, spawnY, spawnZ, locked) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
@@ -146,7 +154,7 @@ public abstract class Database implements IDatabase {
 	 * @param island the island to remove
 	 */
 	public void removeIsland(Island island) {
-		String sql = "DELETE FROM islands WHERE island = ?";
+		String sql = "DELETE FROM `" + this.tablename + "` WHERE island = ?";
 
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			statement.setString(1, island.getUniqueId().toString());
@@ -165,7 +173,7 @@ public abstract class Database implements IDatabase {
 	public int countColumns() {
 		int total = 0;
 
-		String sql = "SELECT * FROM islands LIMIT 1";
+		String sql = "SELECT * FROM `" + this.tablename + "` LIMIT 1";
 		try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
 			return statement.executeQuery().getMetaData().getColumnCount();
 		} catch (SQLException e) {
