@@ -20,6 +20,7 @@ package net.mohron.skyclaims.integration;
 
 import io.github.nucleuspowered.nucleus.api.exceptions.NucleusException;
 import io.github.nucleuspowered.nucleus.api.nucleusdata.Home;
+import io.github.nucleuspowered.nucleus.api.nucleusdata.NamedLocation;
 import io.github.nucleuspowered.nucleus.api.service.NucleusAFKService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
 import net.mohron.skyclaims.SkyClaims;
@@ -34,6 +35,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 public class Nucleus {
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static String HOME_NAME = "Island";
 	private NucleusHomeService homeService;
@@ -47,7 +49,7 @@ public class Nucleus {
 
 	public Optional<Transform<World>> getHome(User user) {
 		Optional<Home> oHome = homeService.getHome(user, HOME_NAME);
-		return (oHome.isPresent()) ? oHome.get().getTransform() : Optional.empty();
+		return oHome.flatMap(NamedLocation::getTransform);
 	}
 
 	public boolean modifyOrCreateHome(Player player) {

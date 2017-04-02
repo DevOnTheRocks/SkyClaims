@@ -18,14 +18,17 @@
 
 package net.mohron.skyclaims.command;
 
+import static net.mohron.skyclaims.PluginInfo.NAME;
+import static net.mohron.skyclaims.PluginInfo.VERSION;
+
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.admin.CommandConfig;
 import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
 import net.mohron.skyclaims.command.admin.CommandDelete;
+import net.mohron.skyclaims.command.admin.CommandMigrate;
 import net.mohron.skyclaims.command.admin.CommandReload;
-import net.mohron.skyclaims.command.admin.CommandSetup;
 import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
@@ -44,10 +47,8 @@ import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.List;
 
-import static net.mohron.skyclaims.PluginInfo.NAME;
-import static net.mohron.skyclaims.PluginInfo.VERSION;
-
 public class CommandAdmin implements CommandExecutor {
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	public static final String HELP_TEXT = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
 	private static final Text HELP = Text.of("help");
@@ -57,8 +58,9 @@ public class CommandAdmin implements CommandExecutor {
 		.description(Text.of(HELP_TEXT))
 		.child(CommandConfig.commandSpec, "config")
 		.child(CommandDelete.commandSpec, "delete")
+		.child(CommandMigrate.commandSpec, "migrate")
 		.child(CommandReload.commandSpec, "reload")
-		.child(CommandSetup.commandSpec, "setup")
+		//.child(CommandSetup.commandSpec, "setup")
 		.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
 		.child(CommandTransfer.commandSpec, "transfer")
 		.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
@@ -89,7 +91,7 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
 			helpText.add(Text.of(
-				TextColors.AQUA, "isa cs",
+				TextColors.AQUA, Text.builder("isa cs").onClick(TextActions.suggestCommand("/isa cs ")),
 				TextColors.GOLD, " <name>",
 				TextColors.DARK_GRAY, " - ",
 				TextColors.DARK_GREEN, CommandCreateSchematic.HELP_TEXT));
@@ -98,11 +100,20 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_DELETE)) {
 			helpText.add(Text.of(
-				TextColors.AQUA, "isa delete",
+				TextColors.AQUA, Text.builder("isa delete").onClick(TextActions.suggestCommand("/isa delete ")),
 				TextColors.GOLD, " <player>",
 				TextColors.GRAY, " [clear]",
 				TextColors.DARK_GRAY, " - ",
 				TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
+			hasPerms = true;
+		}
+
+		if (src.hasPermission(Permissions.COMMAND_MIGRATE)) {
+			helpText.add(Text.of(
+				TextColors.AQUA, Text.builder("isa migrate").onClick(TextActions.suggestCommand("/isa migrate ")),
+				TextColors.GOLD, " <type>",
+				TextColors.DARK_GRAY, " - ",
+				TextColors.DARK_GREEN, CommandMigrate.HELP_TEXT));
 			hasPerms = true;
 		}
 
@@ -116,11 +127,11 @@ public class CommandAdmin implements CommandExecutor {
 
 		if (src.hasPermission(Permissions.COMMAND_TRANSFER)) {
 			helpText.add(Text.of(
-				TextColors.AQUA, "isa transfer",
+				TextColors.AQUA, Text.builder("isa transfer").onClick(TextActions.suggestCommand("/isa transfer ")),
 				TextColors.GRAY, " [owner]",
 				TextColors.GOLD, " <player>",
 				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
+				TextColors.DARK_GREEN, CommandTransfer.HELP_TEXT));
 			hasPerms = true;
 		}
 

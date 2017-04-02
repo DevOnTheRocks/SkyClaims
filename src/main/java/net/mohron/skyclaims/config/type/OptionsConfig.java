@@ -23,6 +23,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class OptionsConfig {
+
 	@Setting(value = "default-schematic", comment = "The schematic that should be used when not otherwise specified.")
 	private String schematic = "island";
 	@Setting(value = "default-biome", comment = "The biome type to use, if any, to set an island to on creation and reset.")

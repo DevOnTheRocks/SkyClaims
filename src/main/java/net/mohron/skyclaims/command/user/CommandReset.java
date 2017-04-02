@@ -37,7 +37,10 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.function.Consumer;
+
 public class CommandReset implements CommandExecutor {
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	public static final String HELP_TEXT = "delete your island and inventory so you can start over";
 	private static final Text CONFIRM = Text.of("confirm");
@@ -76,14 +79,24 @@ public class CommandReset implements CommandExecutor {
 			player.sendMessage(Text.of("Are you sure you want to reset your island and inventory? This cannot be undone!"));
 			player.sendMessage(Text.of(
 				TextColors.GOLD, "Do you want to continue?", TextColors.WHITE, "[",
-				Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.runCommand("/is reset confirm " + schematic)),
+				Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.executeCallback(resetIsland(island, player, schematic))),
 				TextColors.WHITE, "] [",
 				Text.builder("NO").color(TextColors.RED).onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
 				TextColors.WHITE, "]"
 			));
 		} else {
-			player.getEnderChestInventory().clear();
-			player.getInventory().clear();
+			resetIsland(island, player, schematic);
+		}
+
+		return CommandResult.success();
+	}
+
+	private Consumer<CommandSource> resetIsland(Island island, Player player, String schematic) {
+		return src -> {
+			if (PLUGIN.getConfig().getMiscConfig().isResetInventory() && player.getUniqueId().equals(island.getOwnerUniqueId())) {
+				player.getEnderChestInventory().clear();
+				player.getInventory().clear();
+			}
 
 			// Teleport any players located in the island's region to spawn
 			Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
@@ -91,8 +104,6 @@ public class CommandReset implements CommandExecutor {
 
 			src.sendMessage(Text.of("Please be patient while your island is reset."));
 			island.regen(schematic);
-		}
-
-		return CommandResult.success();
+		};
 	}
 }

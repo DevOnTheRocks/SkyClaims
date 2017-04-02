@@ -37,11 +37,14 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class SqliteDatabase extends Database {
+
 	private StorageConfig config;
 	private Connection dbConnection;
 
 	public SqliteDatabase() {
 		this.config = SkyClaims.getInstance().getConfig().getStorageConfig();
+		this.tableName = "island";
+		this.primaryKey = "(`island`)";
 
 		// Load the SQLite JDBC driver
 		try {

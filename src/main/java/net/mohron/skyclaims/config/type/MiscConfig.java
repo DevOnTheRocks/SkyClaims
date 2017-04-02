@@ -18,26 +18,23 @@
 
 package net.mohron.skyclaims.config.type;
 
+import com.google.common.collect.Lists;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @ConfigSerializable
 public class MiscConfig {
-	@Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.")
-	private boolean islandOnJoin;
-	@Setting(value = "Create-Commands", comment = "Commands to run on island creation and reset.")
-	private List<String> createCommands;
-	@Setting(value = "Reset-Commands", comment = "Commands to run on island resets only.")
-	private List<String> resetCommands;
 
-	public MiscConfig() {
-		islandOnJoin = false;
-		createCommands = new ArrayList<>();
-		resetCommands = new ArrayList<>();
-	}
+	@Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.")
+	private boolean islandOnJoin = false;
+	@Setting(value = "Create-Commands", comment = "Commands to run on island creation and reset.")
+	private List<String> createCommands = Lists.newArrayList();
+	@Setting(value = "Reset-Commands", comment = "Commands to run on island resets only.")
+	private List<String> resetCommands = Lists.newArrayList();
+	@Setting(value = "Reset-Inventory", comment = "Whether /is reset resets the player's inventory")
+	private boolean resetInventory = true;
 
 	public boolean createIslandOnJoin() {
 		return islandOnJoin;
@@ -49,5 +46,9 @@ public class MiscConfig {
 
 	public List<String> getResetCommands() {
 		return resetCommands;
+	}
+
+	public boolean isResetInventory() {
+		return resetInventory;
 	}
 }

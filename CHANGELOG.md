@@ -4,7 +4,14 @@
 **[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
 - none
 
+## Beta 20
+**REQUIRED: SF 2096+ & GP 260+ OPTIONAL: Nucleus 0.26.0+**
+- Official release of MySQL support
+- Added `/isa migrate <type>` to migrate storage types
+- Added `Reset-Inventory` to Misc config
+
 ## Beta 19.1 - Hotfix
+**REQUIRED: SF 2096+ & GP 260+ OPTIONAL: Nucleus 0.26.0+**
 - Fixed `/is home` checking the permissions of the island it is run on. Fixes #34
 - Fixed `/is sethome` not checking permission of the island it is run on.
 

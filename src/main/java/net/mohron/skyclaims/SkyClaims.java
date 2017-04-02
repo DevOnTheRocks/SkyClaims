@@ -28,6 +28,7 @@ import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.admin.CommandConfig;
 import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
 import net.mohron.skyclaims.command.admin.CommandDelete;
+import net.mohron.skyclaims.command.admin.CommandMigrate;
 import net.mohron.skyclaims.command.admin.CommandReload;
 import net.mohron.skyclaims.command.admin.CommandSetup;
 import net.mohron.skyclaims.command.admin.CommandTransfer;
@@ -35,6 +36,7 @@ import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.command.user.*;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
+import net.mohron.skyclaims.config.type.StorageType;
 import net.mohron.skyclaims.database.IDatabase;
 import net.mohron.skyclaims.database.MysqlDatabase;
 import net.mohron.skyclaims.database.SqliteDatabase;
@@ -83,6 +85,7 @@ import static net.mohron.skyclaims.PluginInfo.*;
 		@Dependency(id = "nucleus", version = NUCLEUS_VERSION, optional = true)
 	})
 public class SkyClaims {
+
 	private static SkyClaims instance;
 	private static GriefPreventionApi griefPrevention;
 	private static PermissionService permissionService;
@@ -135,8 +138,9 @@ public class SkyClaims {
 					griefPrevention.getApiVersion(), GP_API_VERSION
 				));
 				enabled = false;
-			} else
+			} else {
 				getLogger().info("GriefPrevention Integration Successful!");
+			}
 		} else {
 			getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
 			enabled = false;
@@ -148,7 +152,9 @@ public class SkyClaims {
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Listener(order = Order.LATE)
 	public void onAboutToStart(GameAboutToStartServerEvent event) {
-		if (!enabled) return;
+		if (!enabled) {
+			return;
+		}
 
 		permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
 		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
@@ -173,7 +179,9 @@ public class SkyClaims {
 
 	@Listener
 	public void onServerStarted(GameStartedServerEvent event) {
-		if (!enabled) return;
+		if (!enabled) {
+			return;
+		}
 
 		database = initializeDatabase();
 
@@ -191,7 +199,9 @@ public class SkyClaims {
 
 	@Listener
 	public void onGameStopping(GameStoppingServerEvent event) {
-		if (!enabled) return;
+		if (!enabled) {
+			return;
+		}
 		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
 	}
 
@@ -221,25 +231,30 @@ public class SkyClaims {
 		CommandIsland.register();
 		CommandList.register();
 		CommandLock.register();
+		CommandMigrate.register();
 		CommandReload.register();
 		CommandReset.register();
 		CommandSetBiome.register();
 		CommandSetHome.register();
 		CommandSetSpawn.register();
-		CommandSetup.register();
+		//CommandSetup.register();
 		CommandSpawn.register();
 		CommandTransfer.register();
 		CommandUnlock.register();
 	}
 
 	private IDatabase initializeDatabase() {
-		String type = defaultConfig.getStorageConfig().getType();
-		if (type.equalsIgnoreCase("SQLite")) {
-			return new SqliteDatabase();
-		} else if (type.equalsIgnoreCase("MySQL")) {
-			return new MysqlDatabase();
-		} else {
-			return new SqliteDatabase();
+		return initializeDatabase (defaultConfig.getStorageConfig().getType());
+	}
+
+	private IDatabase initializeDatabase(StorageType type) {
+		switch (type) {
+			case SQLite:
+				return new SqliteDatabase();
+			case MySQL:
+				return new MysqlDatabase();
+			default:
+				return new SqliteDatabase();
 		}
 	}
 
@@ -296,7 +311,7 @@ public class SkyClaims {
 		return this.defaultConfig;
 	}
 
-	public void setConfig(GlobalConfig config){
+	public void setConfig(GlobalConfig config) {
 		this.defaultConfig = config;
 	}
 
@@ -310,6 +325,10 @@ public class SkyClaims {
 
 	public IDatabase getDatabase() {
 		return database;
+	}
+
+	public void setDatabase(StorageType type) {
+		this.database = initializeDatabase(type);
 	}
 
 	public void queueForSaving(Island island) {

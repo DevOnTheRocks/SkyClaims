@@ -26,7 +26,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MysqlDatabase extends Database {
-	private MysqlConfig config;
+
 	private String connectionString;
 	private String databaseLocation;
 	private String username;
@@ -35,13 +35,15 @@ public class MysqlDatabase extends Database {
 	private Integer port;
 
 	public MysqlDatabase() {
-		this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getMysqlConfig();
+		MysqlConfig config = SkyClaims.getInstance().getConfig().getStorageConfig().getMysqlConfig();
 		this.databaseLocation = config.getLocation();
 		this.username = config.getUsername();
 		this.password = config.getPassword();
 		this.name = config.getDatabaseName();
 		this.port = config.getPort();
 		this.connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, name);
+		this.tableName = SkyClaims.getInstance().getConfig().getStorageConfig().getMysqlConfig().getTablePrefix() + "island";
+		this.primaryKey = "(`island`(36))";
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");

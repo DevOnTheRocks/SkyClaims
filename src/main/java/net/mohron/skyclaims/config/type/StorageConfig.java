@@ -26,18 +26,13 @@ import java.io.File;
 
 @ConfigSerializable
 public class StorageConfig {
-	@Setting(value = "Location", comment = "The location to store SkyClaims data. Default: ${CONFIG}/data")
-	private String location;
-	@Setting(value = "Type", comment = "The type of data storage to use. Supports [SQLite, MySQL]")
-	private String type;
-	@Setting(value = "MySQL")
-	private MysqlConfig mysqlConfig;
 
-	public StorageConfig() {
-		location = "${CONFIG}/data";
-		type = "SQLite";
-		mysqlConfig = new MysqlConfig();
-	}
+	@Setting(value = "Location", comment = "The location to store SkyClaims data. Default: ${CONFIG}/data")
+	private String location = "${CONFIG}/data";
+	@Setting(value = "Type", comment = "The type of data storage to use. Supports [SQLite, MySQL]")
+	private StorageType type = StorageType.SQLite;
+	@Setting(value = "MySQL")
+	private MysqlConfig mysqlConfig = new MysqlConfig();
 
 	public String getLocation() {
 		return location
@@ -47,8 +42,12 @@ public class StorageConfig {
 			.replace("\\", File.separator);
 	}
 
-	public String getType() {
+	public StorageType getType() {
 		return type;
+	}
+
+	public void setType(StorageType type) {
+		this.type = type;
 	}
 
 	public MysqlConfig getMysqlConfig() {

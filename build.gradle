@@ -6,7 +6,7 @@ plugins {
     id 'org.spongepowered.plugin' version '0.6'
 }
 
-def semver = '0.19.1'
+def semver = '0.20.0'
 def isJenkins = System.getenv('BUILD_NUMBER') != null
 def suffix = isJenkins ? '-dev' : '-beta'
 
@@ -40,9 +40,9 @@ compileJava {
 }
 
 dependencies {
-    compile('org.spongepowered:spongeapi:5.0.0')
+    compile('org.spongepowered:spongeapi:5.1.0')
     compile('me.ryanhamshire:griefprevention:1.10.2-2.3.1.260')
-    compile('io.github.nucleuspowered:nucleus-api:0.24.1-S5.1')
+    compile('io.github.nucleuspowered:nucleus-api:0.26.0-S5.1')
 }
 
 blossom {

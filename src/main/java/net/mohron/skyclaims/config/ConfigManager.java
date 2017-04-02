@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ConfigManager {
+
 	private final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private final Logger LOGGER = PLUGIN.getLogger();
 	public static final int CONFIG_VERSION = 1;
