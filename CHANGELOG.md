@@ -1,10 +1,17 @@
 # Change Log
 
-## Unreleased Features, Changes & Bugfixes 
+## Unreleased Features, Changes & Bugfixes
 **[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
-- none
+- n/a
+
+##Beta 20
+**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.26.0+**
+- Island locks now prevent players from entering another players island if they're not trusted
+- Changed `skyclaims.admin.lock` to `skyclaims.admin.lock.others` 
+- Added `skyclaims.admin.lock.bypass` to allow bypassing of island locks
 
 ## Beta 19.1 - Hotfix
+**REQUIRED: SF 2096+ & GP 260+ OPTIONAL: Nucleus 0.26.0+**
 - Fixed `/is home` checking the permissions of the island it is run on. Fixes #34
 - Fixed `/is sethome` not checking permission of the island it is run on.
 
