@@ -18,15 +18,12 @@
 
 package net.mohron.skyclaims.command;
 
+import static net.mohron.skyclaims.PluginInfo.NAME;
+import static net.mohron.skyclaims.PluginInfo.VERSION;
+
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.PluginInfo;
-import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.admin.CommandConfig;
-import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
-import net.mohron.skyclaims.command.admin.CommandDelete;
-import net.mohron.skyclaims.command.admin.CommandReload;
-import net.mohron.skyclaims.command.admin.CommandSetup;
-import net.mohron.skyclaims.command.admin.CommandTransfer;
+import net.mohron.skyclaims.command.admin.*;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -34,7 +31,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -44,11 +40,8 @@ import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.List;
 
-import static net.mohron.skyclaims.PluginInfo.NAME;
-import static net.mohron.skyclaims.PluginInfo.VERSION;
+public class CommandAdmin extends CommandBase {
 
-public class CommandAdmin implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	public static final String HELP_TEXT = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
 	private static final Text HELP = Text.of("help");
 
@@ -58,7 +51,7 @@ public class CommandAdmin implements CommandExecutor {
 		.child(CommandConfig.commandSpec, "config")
 		.child(CommandDelete.commandSpec, "delete")
 		.child(CommandReload.commandSpec, "reload")
-		.child(CommandSetup.commandSpec, "setup")
+		//.child(CommandSetup.commandSpec, "setup")
 		.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
 		.child(CommandTransfer.commandSpec, "transfer")
 		.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
@@ -125,11 +118,11 @@ public class CommandAdmin implements CommandExecutor {
 		}
 
 		if (hasPerms) {
-			PaginationList.Builder paginationBuilder = PaginationList.builder()
+			PaginationList.builder()
 				.title(Text.of(TextColors.AQUA, NAME, " Admin Help"))
 				.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-				.contents(helpText);
-			paginationBuilder.sendTo(src);
+				.contents(helpText)
+				.sendTo(src);
 		} else {
 			src.sendMessage(Text.of(NAME + " " + VERSION));
 		}

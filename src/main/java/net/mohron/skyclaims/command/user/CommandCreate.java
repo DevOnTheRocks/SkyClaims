@@ -18,7 +18,7 @@
 
 package net.mohron.skyclaims.command.user;
 
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
@@ -29,13 +29,12 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
-public class CommandCreate implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+public class CommandCreate extends CommandBase {
+
 	public static final String HELP_TEXT = "create an island.";
 	private static final Text SCHEMATIC = Text.of("schematic");
 
@@ -57,13 +56,15 @@ public class CommandCreate implements CommandExecutor {
 	}
 
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player))
+		if (!(src instanceof Player)) {
 			throw new CommandException(Text.of("You must be a player to use this command!"));
+		}
 
 		Player player = (Player) src;
 
-		if (Island.hasIsland(player.getUniqueId()))
+		if (Island.hasIsland(player.getUniqueId())) {
 			throw new CommandException(Text.of("You already have an island!"));
+		}
 
 		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
 

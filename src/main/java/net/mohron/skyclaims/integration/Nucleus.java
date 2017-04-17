@@ -20,8 +20,10 @@ package net.mohron.skyclaims.integration;
 
 import io.github.nucleuspowered.nucleus.api.exceptions.NucleusException;
 import io.github.nucleuspowered.nucleus.api.nucleusdata.Home;
+import io.github.nucleuspowered.nucleus.api.nucleusdata.NamedLocation;
 import io.github.nucleuspowered.nucleus.api.service.NucleusAFKService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
+import io.github.nucleuspowered.nucleus.api.service.NucleusKitService;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
@@ -34,20 +36,23 @@ import java.time.Instant;
 import java.util.Optional;
 
 public class Nucleus {
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static String HOME_NAME = "Island";
 	private NucleusHomeService homeService;
+	private NucleusKitService kitService;
 	private NucleusAFKService afkService;
 
 	public Nucleus() {
 		PLUGIN.getLogger().info("Nucleus Integration Successful!");
 		homeService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusHomeService.class);
+		kitService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusKitService.class);
 		afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
 	}
 
 	public Optional<Transform<World>> getHome(User user) {
 		Optional<Home> oHome = homeService.getHome(user, HOME_NAME);
-		return (oHome.isPresent()) ? oHome.get().getTransform() : Optional.empty();
+		return oHome.flatMap(NamedLocation::getTransform);
 	}
 
 	public boolean modifyOrCreateHome(Player player) {
@@ -60,6 +65,11 @@ public class Nucleus {
 			PLUGIN.getGame().getServer().getConsole().sendMessage(e.getText());
 			return false;
 		}
+	}
+
+	public void redeemFirstJoinKit(Player player) {
+		// TODO: Redeem First Join Kit for player (Requires an API update)
+		PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), "/firstjoinkit redeem " + player.getName());
 	}
 
 	public boolean isAFK(Player player) {

@@ -24,21 +24,25 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.World;
 
 public class RegenerateRegionTask implements Runnable {
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
 	private Region region;
 	private Island island;
 	private String schematic;
+	private boolean commands;
 
 	public RegenerateRegionTask(Region region) {
 		this.region = region;
 		this.island = null;
+		this.commands = false;
 	}
 
-	public RegenerateRegionTask(Island island, String schematic) {
+	public RegenerateRegionTask(Island island, String schematic, boolean commands) {
 		this.region = island.getRegion();
 		this.island = island;
 		this.schematic = schematic;
+		this.commands = commands;
 	}
 
 	@Override
@@ -55,9 +59,7 @@ public class RegenerateRegionTask implements Runnable {
 						for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
 							for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
 								if (chunk.getBlockType(bx, by, bz) != BlockTypes.AIR) {
-//									PLUGIN.getLogger().info(String.format("Found %s at (%s, %s, %s), replacing with air.", chunk.getBlock(bx, by, bz).getType().getName(), bx, by, bz));
-									chunk.getLocation(bx, by, bz)
-										.setBlock(BlockTypes.AIR.getDefaultState(), PLUGIN.getCause());
+									chunk.getLocation(bx, by, bz).setBlock(BlockTypes.AIR.getDefaultState(), PLUGIN.getCause());
 								}
 							}
 						}
@@ -69,10 +71,12 @@ public class RegenerateRegionTask implements Runnable {
 		PLUGIN.getLogger().info(String.format("Finished clearing region (%s, %s)", region.getX(), region.getZ()));
 
 		if (island != null) {
-			// Run reset commands
-			for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
-				PLUGIN.getGame().getCommandManager()
-					.process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+			if (commands) {
+				// Run reset commands
+				for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
+					PLUGIN.getGame().getCommandManager()
+						.process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+				}
 			}
 
 			GenerateIslandTask generateIsland = new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic);

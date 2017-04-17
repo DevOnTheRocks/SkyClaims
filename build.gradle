@@ -7,7 +7,7 @@ plugins {
     id 'org.spongepowered.plugin' version '0.6'
 }
 
-def semver = '0.20.0'
+def semver = '0.21.0'
 def buildNum = System.getenv('BUILD_NUMBER') ?: null
 
 group = 'net.mohron.skyclaims'

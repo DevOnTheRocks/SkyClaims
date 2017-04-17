@@ -18,9 +18,11 @@
 
 package net.mohron.skyclaims.command;
 
+import static net.mohron.skyclaims.PluginInfo.NAME;
+import static net.mohron.skyclaims.PluginInfo.VERSION;
+
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.PluginInfo;
-import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.user.*;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
@@ -29,7 +31,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -38,15 +39,9 @@ import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
 
-import static net.mohron.skyclaims.PluginInfo.NAME;
-import static net.mohron.skyclaims.PluginInfo.VERSION;
+public class CommandIsland extends CommandBase {
 
-public class CommandIsland implements CommandExecutor {
-
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
-	private static final String HELP_TEXT = String
-		.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
+	private static final String HELP_TEXT = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
 
 	private static final Text HELP = Text.of("help");
 
@@ -59,6 +54,7 @@ public class CommandIsland implements CommandExecutor {
 		.child(CommandInfo.commandSpec, "info")
 		.child(CommandList.commandSpec, "list")
 		.child(CommandLock.commandSpec, "lock")
+		.child(CommandRegen.commandSpec, "regen")
 		.child(CommandReset.commandSpec, "reset")
 		.child(CommandSetBiome.commandSpec, "setbiome")
 		.child(CommandSetHome.commandSpec, "sethome")
@@ -149,9 +145,19 @@ public class CommandIsland implements CommandExecutor {
 			hasPerms = true;
 		}
 
+		if (src.hasPermission(Permissions.COMMAND_REGEN)) {
+			helpText.add(Text.of(
+				TextColors.AQUA, Text.builder("is regen").onClick(TextActions.suggestCommand("/is regen")),
+				TextColors.GRAY, " [schematic]",
+				TextColors.DARK_GRAY, " - ",
+				TextColors.DARK_GREEN, CommandRegen.HELP_TEXT
+			));
+			hasPerms = true;
+		}
+
 		if (src.hasPermission(Permissions.COMMAND_RESET)) {
 			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is reset").onClick(TextActions.runCommand("/is reset")),
+				TextColors.AQUA, Text.builder("is reset").onClick(TextActions.suggestCommand("/is reset")),
 				TextColors.GRAY, " [schematic]",
 				TextColors.DARK_GRAY, " - ",
 				TextColors.DARK_GREEN, CommandReset.HELP_TEXT
@@ -209,11 +215,11 @@ public class CommandIsland implements CommandExecutor {
 		}
 
 		if (hasPerms) {
-			PaginationList.Builder paginationBuilder = PaginationList.builder()
+			PaginationList.builder()
 				.title(Text.of(TextColors.AQUA, NAME, " Help"))
 				.padding(Text.of(TextColors.AQUA, "-"))
-				.contents(helpText);
-			paginationBuilder.sendTo(src);
+				.contents(helpText)
+				.sendTo(src);
 		} else {
 			src.sendMessage(Text.of(NAME + " " + VERSION));
 		}

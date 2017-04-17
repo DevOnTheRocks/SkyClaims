@@ -18,7 +18,7 @@
 
 package net.mohron.skyclaims.command.user;
 
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
@@ -27,15 +27,14 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-public class CommandSpawn implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+public class CommandSpawn extends CommandBase {
+
 	public static final String HELP_TEXT = "teleport to an island's spawn point.";
 	private static final Text USER = Text.of("user");
 
@@ -67,10 +66,13 @@ public class CommandSpawn implements CommandExecutor {
 		Island island = Island.getByOwner(user.getUniqueId())
 			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
 
-		if (island.isLocked() && !island.hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS))
+		if (island.isLocked() && !island.hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
 			throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
+		}
 
-		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(CommandUtil.createTeleportConsumer((Player) src, island.getSpawn().getLocation())).submit(PLUGIN);
+		PLUGIN.getGame().getScheduler().createTaskBuilder()
+			.execute(CommandUtil.createTeleportConsumer((Player) src, island.getSpawn().getLocation()))
+			.submit(PLUGIN);
 
 		return CommandResult.success();
 	}

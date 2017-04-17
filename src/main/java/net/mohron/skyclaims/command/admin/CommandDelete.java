@@ -18,7 +18,7 @@
 
 package net.mohron.skyclaims.command.admin;
 
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
@@ -26,13 +26,13 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
-public class CommandDelete implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+public class CommandDelete extends CommandBase {
+
 	public static final String HELP_TEXT = "used to delete a player's island";
 	private static final Text CLEAR = Text.of("clear");
 	private static final Text USER = Text.of("user");
@@ -62,10 +62,12 @@ public class CommandDelete implements CommandExecutor {
 			.orElseThrow(() -> new CommandException(Text.of("Invalid island")));
 
 		boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
-		if (clear) island.clear();
+		if (clear) {
+			island.clear();
+		}
 		island.delete();
 
-		src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
+		src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
 		return CommandResult.success();
 	}
 }

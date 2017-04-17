@@ -26,6 +26,8 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class GlobalConfig {
 	@Setting(value = "Config-Version")
 	private int version;
+	@Setting(value = "Integration")
+	private IntegrationConfig integrationConfig;
 	@Setting(value = "Permission")
 	private PermissionConfig permissionConfig;
 	@Setting(value = "Misc")
@@ -40,6 +42,7 @@ public class GlobalConfig {
 	public GlobalConfig() {
 		version = ConfigManager.CONFIG_VERSION;
 		permissionConfig = new PermissionConfig();
+		integrationConfig = new IntegrationConfig();
 		miscConfig = new MiscConfig();
 		storageConfig = new StorageConfig();
 		worldConfig = new WorldConfig();
@@ -52,6 +55,10 @@ public class GlobalConfig {
 
 	public PermissionConfig getPermissionConfig() {
 		return permissionConfig;
+	}
+
+	public IntegrationConfig getIntegrationConfig() {
+		return integrationConfig;
 	}
 
 	public MiscConfig getMiscConfig() {

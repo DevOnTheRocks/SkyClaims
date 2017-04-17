@@ -18,21 +18,20 @@
 
 package net.mohron.skyclaims.command.team;
 
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 
-public class CommandInvite implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+public class CommandInvite extends CommandBase {
+
 	public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
 	private static final Text USER = Text.of("user");
 

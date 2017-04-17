@@ -18,7 +18,7 @@
 
 package net.mohron.skyclaims.command.user;
 
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.command.argument.Targets;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -30,16 +30,15 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.biome.BiomeType;
 
-public class CommandSetBiome implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	public static final String HELP_TEXT = "set the biome of a block, chunk or island";
+public class CommandSetBiome extends CommandBase {
+
+	public static final String HELP_TEXT = "set the biome of a block, chunk or island.";
 	private static final Text BIOME = Text.of("biome");
 	private static final Text TARGET = Text.of("target");
 
@@ -55,7 +54,7 @@ public class CommandSetBiome implements CommandExecutor {
 
 	public static void register() {
 		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "setbiome");
+			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
 			PLUGIN.getLogger().debug("Registered command: CommandSetBiome");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
@@ -74,23 +73,36 @@ public class CommandSetBiome implements CommandExecutor {
 		Island island = Island.get(player.getLocation())
 			.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
 
-		if (!player.getUniqueId().equals(island.getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS))
+		if (!player.getUniqueId().equals(island.getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS)) {
 			throw new CommandPermissionException(Text.of("You do not have permission to use setbiome on this island"));
+		}
 
 		Targets target = args.<Targets>getOne(TARGET).orElse(Targets.ISLAND);
 
 		switch (target) {
 			case BLOCK:
 				WorldUtil.setBlockBiome(player.getLocation(), biome);
-				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome at %s,%s to %s.", player.getLocation().getBlockX(), player.getLocation().getBlockZ(), biome.getName())));
+				src.sendMessage(Text.of(
+					TextColors.GREEN, "Successfully changed the biome at ",
+					TextColors.DARK_PURPLE, player.getLocation().getBlockX(),
+					TextColors.GREEN, ",",
+					TextColors.DARK_PURPLE, player.getLocation().getBlockZ(),
+					TextColors.GREEN, " to ", TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+				));
 				break;
 			case CHUNK:
 				WorldUtil.setChunkBiome(player.getLocation(), biome);
-				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome in this chunk to %s.", biome.getName())));
+				src.sendMessage(Text.of(
+					TextColors.GREEN, "Successfully changed the biome in this chunk to ",
+					TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+				));
 				break;
 			case ISLAND:
 				WorldUtil.setIslandBiome(island, biome);
-				src.sendMessage(Text.of(TextColors.GREEN, String.format("Successfully changed the biome on this island to %s.", biome.getName())));
+				src.sendMessage(Text.of(
+					TextColors.GREEN, "Successfully changed the biome on this island to ",
+					TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+				));
 				break;
 		}
 

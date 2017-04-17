@@ -25,12 +25,7 @@ import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandAdmin;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.admin.CommandConfig;
-import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
-import net.mohron.skyclaims.command.admin.CommandDelete;
-import net.mohron.skyclaims.command.admin.CommandReload;
-import net.mohron.skyclaims.command.admin.CommandSetup;
-import net.mohron.skyclaims.command.admin.CommandTransfer;
+import net.mohron.skyclaims.command.admin.*;
 import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.command.user.*;
 import net.mohron.skyclaims.config.ConfigManager;
@@ -142,7 +137,7 @@ public class SkyClaims {
 			enabled = false;
 		}
 
-		//TODO Setup the worldName with a sponge:void worldName gen modifier if not already created
+		//TODO: Setup the worldName with a sponge:void worldName gen modifier if not already created
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -201,6 +196,9 @@ public class SkyClaims {
 	}
 
 	public void reload() {
+		// Reload Commands
+		Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
+		registerCommands();
 		// Load Plugin Config
 		pluginConfigManager.load();
 		// Load Schematics Directory
@@ -222,11 +220,11 @@ public class SkyClaims {
 		CommandList.register();
 		CommandLock.register();
 		CommandReload.register();
+		CommandRegen.register();
 		CommandReset.register();
 		CommandSetBiome.register();
 		CommandSetHome.register();
 		CommandSetSpawn.register();
-		CommandSetup.register();
 		CommandSpawn.register();
 		CommandTransfer.register();
 		CommandUnlock.register();

@@ -18,20 +18,18 @@
 
 package net.mohron.skyclaims.command.admin;
 
-import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.command.argument.SchematicArgument;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-public class CommandReload implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+public class CommandReload extends CommandBase {
+
 	public static final String HELP_TEXT = "used to reload SkyClaims's config, schematics, & database.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()

@@ -19,7 +19,7 @@
 package net.mohron.skyclaims.command.user;
 
 import com.google.common.collect.Lists;
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
@@ -29,7 +29,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
@@ -43,9 +42,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class CommandInfo implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	public static final String HELP_TEXT = "display detailed information on your island";
+public class CommandInfo extends CommandBase {
+
+	public static final String HELP_TEXT = "display detailed information on your island.";
 	private static final Text ISLAND = Text.of("island");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
@@ -76,7 +75,9 @@ public class CommandInfo implements CommandExecutor {
 		} else {
 			Collection<UUID> islandIds = args.getAll(ISLAND);
 			islandIds.forEach(i -> Island.get(i).ifPresent(islands::add));
-			if (islands.size() > 1) return listIslands();
+			if (islands.size() > 1) {
+				return listIslands();
+			}
 		}
 
 		islands.forEach(island -> {
@@ -141,7 +142,8 @@ public class CommandInfo implements CommandExecutor {
 			TextColors.GOLD, Text.builder("Delete")
 				.onClick(TextActions.executeCallback(consumer -> {
 					src.sendMessage(Text.of(
-						TextColors.GREEN, "Are you sure you want to delete ", TextColors.GOLD, island.getOwnerName(), TextColors.GREEN, "'s island?", Text.NEW_LINE,
+						TextColors.GREEN, "Are you sure you want to delete ",
+						TextColors.GOLD, island.getOwnerName(), TextColors.GREEN, "'s island?", Text.NEW_LINE,
 						TextColors.WHITE, "[",
 						Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.executeCallback(s -> {
 							island.clear();
@@ -149,7 +151,9 @@ public class CommandInfo implements CommandExecutor {
 							src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
 						})),
 						TextColors.WHITE, "] [",
-						Text.builder("NO").color(TextColors.RED).onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
+						Text.builder("NO")
+							.color(TextColors.RED)
+							.onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
 						TextColors.WHITE, "]"
 					));
 				}))
@@ -165,14 +169,15 @@ public class CommandInfo implements CommandExecutor {
 					src.sendMessage(Text.of(
 						island.getOwnerName(), "'s island has been expanded to ",
 						TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x", TextColors.LIGHT_PURPLE, island.getWidth(),
-						TextColors.RESET,"!"
+						TextColors.RESET, "!"
 					));
 				}))
-				.onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2, TextColors.RESET, "!"))),
+				.onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2, TextColors.RESET,
+					"!"))),
 			TextColors.WHITE, "] "
 		) : Text.EMPTY;
 
-		return  (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty()) ? Text.EMPTY : Text.of(
+		return (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty()) ? Text.EMPTY : Text.of(
 			TextColors.GOLD, "Admin", TextColors.WHITE, " : ",
 			teleport, transfer, delete, expand, Text.NEW_LINE
 		);
@@ -192,7 +197,10 @@ public class CommandInfo implements CommandExecutor {
 
 	private Consumer<CommandSource> toggleLock(Island island) {
 		return src -> {
-			if (src instanceof Player && ((Player) src).getUniqueId().equals(island.getOwnerUniqueId()) && src.hasPermission(Permissions.COMMAND_LOCK) || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
+			if (src instanceof Player
+				&& ((Player) src).getUniqueId().equals(island.getOwnerUniqueId())
+				&& src.hasPermission(Permissions.COMMAND_LOCK)
+				|| src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
 				island.setLocked(!island.isLocked());
 				src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now ",
 					Text.builder((island.isLocked()) ? "LOCKED" : "UNLOCKED")
@@ -205,9 +213,9 @@ public class CommandInfo implements CommandExecutor {
 	}
 
 	private static Text getMembers(Island island) {
-		if (island.getMembers().isEmpty())
+		if (island.getMembers().isEmpty()) {
 			return Text.of(TextColors.GRAY, "None");
-		else {
+		} else {
 			int i = 1;
 			Text members = Text.EMPTY;
 			for (String member : island.getMembers()) {
@@ -236,8 +244,7 @@ public class CommandInfo implements CommandExecutor {
 					TextColors.WHITE, Text.NEW_LINE, "[", TextColors.AQUA, "Return to Island Info", TextColors.WHITE,
 					"]", Text.NEW_LINE
 				))
-				.onClick(
-					TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", arguments, null)))
+				.onClick(TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandinfo", arguments, null)))
 				.build();
 			src.sendMessage(returnCommand);
 		};
