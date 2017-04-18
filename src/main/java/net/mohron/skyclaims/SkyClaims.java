@@ -25,13 +25,7 @@ import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandAdmin;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.admin.CommandConfig;
-import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
-import net.mohron.skyclaims.command.admin.CommandDelete;
-import net.mohron.skyclaims.command.admin.CommandMigrate;
-import net.mohron.skyclaims.command.admin.CommandReload;
-import net.mohron.skyclaims.command.admin.CommandSetup;
-import net.mohron.skyclaims.command.admin.CommandTransfer;
+import net.mohron.skyclaims.command.admin.*;
 import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.command.user.*;
 import net.mohron.skyclaims.config.ConfigManager;
@@ -123,7 +117,6 @@ public class SkyClaims {
 		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
 
 		instance = this;
-		integration = new Integration();
 
 		try {
 			SkyClaims.griefPrevention = GriefPrevention.getApi();
@@ -146,10 +139,10 @@ public class SkyClaims {
 			enabled = false;
 		}
 
-		//TODO Setup the worldName with a sponge:void worldName gen modifier if not already created
+		//TODO: Setup the worldName with a sponge:void worldName gen modifier if not already created
 	}
 
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
+	@SuppressWarnings("ConstantConditions")
 	@Listener(order = Order.LATE)
 	public void onAboutToStart(GameAboutToStartServerEvent event) {
 		if (!enabled) {
@@ -157,10 +150,8 @@ public class SkyClaims {
 		}
 
 		permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
-		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
-			.equalsIgnoreCase("sponge")) {
-			getLogger()
-				.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
+			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
 			enabled = false;
 			return;
 		}
@@ -168,6 +159,8 @@ public class SkyClaims {
 		defaultConfig = new GlobalConfig();
 		pluginConfigManager = new ConfigManager(configManager);
 		pluginConfigManager.save();
+
+		integration = new Integration();
 
 		getGame().getEventManager().registerListeners(this, new SchematicHandler());
 		getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
@@ -211,6 +204,9 @@ public class SkyClaims {
 	}
 
 	public void reload() {
+		// Reload Commands
+		Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
+		registerCommands();
 		// Load Plugin Config
 		pluginConfigManager.load();
 		// Load Schematics Directory
@@ -233,11 +229,11 @@ public class SkyClaims {
 		CommandLock.register();
 		CommandMigrate.register();
 		CommandReload.register();
+		CommandRegen.register();
 		CommandReset.register();
 		CommandSetBiome.register();
 		CommandSetHome.register();
 		CommandSetSpawn.register();
-		//CommandSetup.register();
 		CommandSpawn.register();
 		CommandTransfer.register();
 		CommandUnlock.register();
@@ -249,9 +245,9 @@ public class SkyClaims {
 
 	private IDatabase initializeDatabase(StorageType type) {
 		switch (type) {
-			case SQLite:
+			case SQLITE:
 				return new SqliteDatabase();
-			case MySQL:
+			case MYSQL:
 				return new MysqlDatabase();
 			default:
 				return new SqliteDatabase();

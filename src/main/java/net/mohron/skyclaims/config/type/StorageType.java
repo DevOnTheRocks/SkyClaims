@@ -19,5 +19,5 @@
 package net.mohron.skyclaims.config.type;
 
 public enum StorageType {
-	SQLite, MySQL
+	SQLITE, MYSQL
 }

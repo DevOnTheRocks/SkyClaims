@@ -18,14 +18,13 @@
 
 package net.mohron.skyclaims.command.user;
 
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.integration.Nucleus;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
@@ -33,15 +32,18 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
-public class CommandHome implements CommandExecutor {
+public class CommandHome extends CommandBase {
 
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	public static final String HELP_TEXT = "teleport to your home island.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 		.permission(Permissions.COMMAND_HOME)
 		.description(Text.of(HELP_TEXT))
-		.executor((PLUGIN.getIntegration().getNucleus().isPresent()) ? new CommandHome() : new CommandSpawn())
+		.executor(
+			(PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled() && PLUGIN.getIntegration().getNucleus().isPresent())
+				? new CommandHome()
+				: new CommandSpawn()
+		)
 		.build();
 
 	public static void register() {

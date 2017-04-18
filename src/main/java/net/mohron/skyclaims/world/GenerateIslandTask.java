@@ -87,7 +87,12 @@ public class GenerateIslandTask implements Runnable {
 			}
 		}
 
-		Location<World> spawn = new Location<>(island.getWorld(), centerBlock.getX(), centerBlock.getY() + volume.getBlockSize().getY() - 1, centerBlock.getZ());
+		Location<World> spawn = new Location<>(
+			island.getWorld(),
+			centerBlock.getX(),
+			centerBlock.getY() + volume.getBlockSize().getY() - 1,
+			centerBlock.getZ()
+		);
 		island.setSpawn(new Transform<>(spawn.getExtent(), spawn.getPosition()));
 		volume.apply(spawn, BlockChangeFlag.NONE, PLUGIN.getCause());
 

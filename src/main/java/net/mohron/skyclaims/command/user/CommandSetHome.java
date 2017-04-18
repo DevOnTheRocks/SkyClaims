@@ -18,7 +18,7 @@
 
 package net.mohron.skyclaims.command.user;
 
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.integration.Nucleus;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
@@ -26,21 +26,23 @@ import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-public class CommandSetHome implements CommandExecutor {
+public class CommandSetHome extends CommandBase {
 
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	public static final String HELP_TEXT = "set your island home.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
 		.permission(Permissions.COMMAND_SET_HOME)
 		.description(Text.of(HELP_TEXT))
-		.executor((PLUGIN.getIntegration().getNucleus().isPresent()) ? new CommandSetHome() : new CommandSetSpawn())
+		.executor(
+			(PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled() && PLUGIN.getIntegration().getNucleus().isPresent())
+				? new CommandSetHome()
+				: new CommandSetSpawn()
+		)
 		.build();
 
 	public static void register() {

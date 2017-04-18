@@ -1,8 +1,17 @@
 # Change Log
 
-## Unreleased Features, Changes & Bugfixes 
+## Unreleased Features, Changes & Bugfixes
 **[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
-- none
+**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.26.0+**
+- Added `/is regen` (`skyclaims.command.regen`) to allow regenerating an island using a schematic.
+- Added integration config to turn off/on optional integration features
+- `/is reset` now automatically redeems the Nucleus First Join Kit, if present.
+
+## Beta 20
+**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.26.0+**
+- Island locks now prevent players from entering another players island if they're not trusted
+- Changed `skyclaims.admin.lock` to `skyclaims.admin.lock.others` 
+- Added `skyclaims.admin.lock.bypass` to allow bypassing of island locks
 
 ## Beta 20
 **REQUIRED: SF 2096+ & GP 260+ OPTIONAL: Nucleus 0.26.0+**

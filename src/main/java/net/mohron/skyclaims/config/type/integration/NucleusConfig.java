@@ -16,22 +16,24 @@
  * along with SkyClaims.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.mohron.skyclaims.claim;
+package net.mohron.skyclaims.config.type.integration;
 
-public class ClaimSystemFactory {
-	private static IClaimSystem claimSystem;
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-	public static IClaimSystem getClaimSystem() {
-		if (claimSystem != null)
-			return claimSystem;
+@ConfigSerializable
+public class NucleusConfig extends PluginIntegration {
 
-		try {
-			Class.forName("me.ryanhamshire.griefprevention.GriefPrevention");
-			claimSystem = new GPClaimSystem();
-		} catch (ClassNotFoundException e) {
-			claimSystem = new BasicClaimSystem();
-		}
+	@Setting(value = "First-Join-Kit", comment = "Set to enable/disable redeeming Nucleus' FirstJoinKit when using /is reset.")
+	private boolean firstJoinKit = true;
+	@Setting(value = "Island-Home", comment = "Set to enable/disable /is sethome & /is home as a configurable home separate from an island spawn.")
+	private boolean homesEnabled = true;
 
-		return claimSystem;
+	public boolean isFirstJoinKit() {
+		return firstJoinKit;
+	}
+
+	public boolean isHomesEnabled() {
+		return homesEnabled;
 	}
 }

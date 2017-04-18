@@ -3,20 +3,16 @@ plugins {
     id 'idea'
     id 'signing'
     id 'ninja.miserable.blossom' version '1.0.1'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
     id 'org.spongepowered.plugin' version '0.6'
 }
 
-def semver = '0.20.0'
-def isJenkins = System.getenv('BUILD_NUMBER') != null
-def suffix = isJenkins ? '-dev' : '-beta'
+def semver = '0.21.0'
+def buildNum = System.getenv('BUILD_NUMBER') ?: null
 
 group = 'net.mohron.skyclaims'
-version = semver + suffix
+version = (buildNum == null) ? semver + '-beta' : semver + '-' + buildNum + '-dev'
 description = 'SkyClaims is an Island Management plugin that integrates with GriefPrevention.'
-
-if (isJenkins) {
-    version = semver + '-' + System.getenv('BUILD_NUMBER') + suffix
-}
 
 repositories {
     jcenter()
@@ -39,17 +35,28 @@ compileJava {
     targetCompatibility = '1.8'
 }
 
+def griefPrevention = 'me.ryanhamshire:griefprevention:1.10.2-2.3.1.292:api'
+def nucleus = 'io.github.nucleuspowered:nucleus-api:0.26.0-S5.1'
+
 dependencies {
     compile('org.spongepowered:spongeapi:5.1.0')
-    compile('me.ryanhamshire:griefprevention:1.10.2-2.3.1.260')
-    compile('io.github.nucleuspowered:nucleus-api:0.26.0-S5.1')
+    compileOnly('org.spongepowered:spongeforge:1.10.2-2254-5.2.0-BETA-2255')
+    compile(griefPrevention)
+    compile(nucleus)
+}
+
+shadowJar {
+    dependencies {
+        include(dependency(griefPrevention))
+        include(dependency(nucleus))
+    }
 }
 
 blossom {
     def pluginInfo = 'src/main/java/net/mohron/skyclaims/PluginInfo.java'
 
     replaceToken '@NAME@', project.name, pluginInfo
-    replaceToken '@VERSION@', semver + suffix, pluginInfo
+    replaceToken '@VERSION@', project.version, pluginInfo
     replaceToken '@DESCRIPTION@', project.description, pluginInfo
 }
 
@@ -58,3 +65,5 @@ signing {
         sign configurations.archives
     }
 }
+
+build.dependsOn(shadowJar)

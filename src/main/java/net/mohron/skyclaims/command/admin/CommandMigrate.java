@@ -45,7 +45,7 @@ public class CommandMigrate implements CommandExecutor {
 		.permission(Permissions.COMMAND_MIGRATE)
 		.description(Text.of(HELP_TEXT))
 		.arguments(GenericArguments.enumValue(TYPE, StorageType.class))
-		.executor(new CommandReload())
+		.executor(new CommandMigrate())
 		.build();
 
 	public static void register() {
@@ -61,7 +61,7 @@ public class CommandMigrate implements CommandExecutor {
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 
-		StorageType type = args.<StorageType>getOne(TYPE).orElse(StorageType.SQLite);
+		StorageType type = args.<StorageType>getOne(TYPE).orElse(StorageType.SQLITE);
 
 		if (PLUGIN.getConfig().getStorageConfig().getType() == type) {
 			src.sendMessage(Text.of(

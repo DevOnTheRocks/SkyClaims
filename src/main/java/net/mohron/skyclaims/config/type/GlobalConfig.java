@@ -27,6 +27,8 @@ public class GlobalConfig {
 
 	@Setting(value = "Config-Version")
 	private int version = ConfigManager.CONFIG_VERSION;
+	@Setting(value = "Integration")
+	private IntegrationConfig integrationConfig = new IntegrationConfig();
 	@Setting(value = "Permission")
 	private PermissionConfig permissionConfig = new PermissionConfig();
 	@Setting(value = "Misc")
@@ -44,6 +46,10 @@ public class GlobalConfig {
 
 	public PermissionConfig getPermissionConfig() {
 		return permissionConfig;
+	}
+
+	public IntegrationConfig getIntegrationConfig() {
+		return integrationConfig;
 	}
 
 	public MiscConfig getMiscConfig() {

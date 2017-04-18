@@ -19,19 +19,25 @@
 package net.mohron.skyclaims.integration;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.config.type.IntegrationConfig;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.plugin.PluginManager;
 
 import java.util.Optional;
 
 import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
 
 public class Integration {
+
+	private final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private Nucleus nucleus = null;
 
 	public Integration() {
-		if (Sponge.getPluginManager().getPlugin("nucleus").isPresent()) {
-			Version version = new Version(Sponge.getPluginManager().getPlugin("nucleus").get().getVersion().orElse("0.0.0"));
-			SkyClaims.getInstance().getLogger().info("Found Nucleus " + version);
+		IntegrationConfig config = PLUGIN.getConfig().getIntegrationConfig();
+		PluginManager pluginManager = Sponge.getPluginManager();
+		if (config.getNucleus().isEnabled() && pluginManager.getPlugin("nucleus").isPresent()) {
+			Version version = new Version(pluginManager.getPlugin("nucleus").get().getVersion().orElse("0.0.0"));
+			PLUGIN.getLogger().info("Found Nucleus " + version);
 			if (version.compareTo(new Version(NUCLEUS_VERSION)) >= 0) nucleus = new Nucleus();
 		}
 	}

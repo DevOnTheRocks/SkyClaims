@@ -19,14 +19,13 @@
 package net.mohron.skyclaims.command.admin;
 
 import com.google.common.collect.Lists;
-import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -35,8 +34,8 @@ import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.List;
 
-public class CommandConfig implements CommandExecutor {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+public class CommandConfig extends CommandBase {
+
 	public static final String HELP_TEXT = "used to view loaded config settings.";
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
@@ -60,19 +59,71 @@ public class CommandConfig implements CommandExecutor {
 		GlobalConfig config = PLUGIN.getConfig();
 		List<Text> configText = Lists.newArrayList();
 
-		configText.add(Text.of(TextColors.BLUE, "Misc", TextColors.WHITE, " | ", TextColors.YELLOW, "Island-on-Join", TextColors.WHITE, " : ", TextColors.GRAY, config.getMiscConfig().createIslandOnJoin()));
-		configText.add(Text.of(TextColors.BLUE, "Permission", TextColors.WHITE, " | ", TextColors.YELLOW, "Separate-BiomeType-Permissions", TextColors.WHITE, " : ", TextColors.GRAY, config.getPermissionConfig().isSeparateBiomePerms()));
-		configText.add(Text.of(TextColors.BLUE, "Permission", TextColors.WHITE, " | ", TextColors.YELLOW, "Separate-Schematics-Permissions", TextColors.WHITE, " : ", TextColors.GRAY, config.getPermissionConfig().isSeparateSchematicPerms()));
-		configText.add(Text.of(TextColors.BLUE, "Permission", TextColors.WHITE, " | ", TextColors.YELLOW, "Separate-Target-Permissions", TextColors.WHITE, " : ", TextColors.GRAY, config.getPermissionConfig().isSeparateTargetPerms()));
-		configText.add(Text.of(TextColors.BLUE, "Storage", TextColors.WHITE, " | ", TextColors.YELLOW, "Location", TextColors.WHITE, " : ", TextColors.GRAY, config.getStorageConfig().getLocation()));
-		configText.add(Text.of(TextColors.BLUE, "Storage", TextColors.WHITE, " | ", TextColors.YELLOW, "Type", TextColors.WHITE, " : ", TextColors.GRAY, config.getStorageConfig().getType()));
-		configText.add(Text.of(TextColors.BLUE, "World", TextColors.WHITE, " | ", TextColors.YELLOW, "Island-Height", TextColors.WHITE, " : ", TextColors.GRAY, config.getWorldConfig().getDefaultHeight()));
-		configText.add(Text.of(TextColors.BLUE, "World", TextColors.WHITE, " | ", TextColors.YELLOW, "SkyClaims-World", TextColors.WHITE, " : ", TextColors.GRAY, config.getWorldConfig().getWorld().getName()));
-		configText.add(Text.of(TextColors.BLUE, "World", TextColors.WHITE, " | ", TextColors.YELLOW, "Spawn-Regions", TextColors.WHITE, " : ", TextColors.GRAY, config.getWorldConfig().getSpawnRegions()));
-		configText.add(Text.of(TextColors.BLUE, "Options", TextColors.WHITE, " | ", TextColors.YELLOW, "default-schematic", TextColors.WHITE, " : ", TextColors.GRAY, config.getOptionsConfig().getSchematic()));
-		configText.add(Text.of(TextColors.BLUE, "Options", TextColors.WHITE, " | ", TextColors.YELLOW, "default-biome", TextColors.WHITE, " : ", TextColors.GRAY, config.getOptionsConfig().getBiome()));
-		configText.add(Text.of(TextColors.BLUE, "Options", TextColors.WHITE, " | ", TextColors.YELLOW, "min-size", TextColors.WHITE, " : ", TextColors.GRAY, config.getOptionsConfig().getMinSize()));
-		configText.add(Text.of(TextColors.BLUE, "Options", TextColors.WHITE, " | ", TextColors.YELLOW, "max-size", TextColors.WHITE, " : ", TextColors.GRAY, config.getOptionsConfig().getMaxSize()));
+		configText.add(Text.of(
+			TextColors.BLUE, "Misc", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "Island-on-Join", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getMiscConfig().createIslandOnJoin()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Permission", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "Separate-BiomeType-Permissions", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getPermissionConfig().isSeparateBiomePerms()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Permission", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "Separate-Schematics-Permissions", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getPermissionConfig().isSeparateSchematicPerms()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Permission", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "Separate-Target-Permissions", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getPermissionConfig().isSeparateTargetPerms()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Storage", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "Location", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getStorageConfig().getLocation()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Storage", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "Type", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getStorageConfig().getType()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "World", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "Island-Height", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getWorldConfig().getDefaultHeight()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "World", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "SkyClaims-World", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getWorldConfig().getWorld().getName()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "World", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "Spawn-Regions", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getWorldConfig().getSpawnRegions()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Options", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "default-schematic", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getOptionsConfig().getSchematic()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Options", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "default-biome", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getOptionsConfig().getBiome()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Options", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "min-size", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getOptionsConfig().getMinSize()
+		));
+		configText.add(Text.of(
+			TextColors.BLUE, "Options", TextColors.WHITE, " | ",
+			TextColors.YELLOW, "max-size", TextColors.WHITE, " : ",
+			TextColors.GRAY, config.getOptionsConfig().getMaxSize()
+		));
 
 		PaginationList.builder()
 			.title(Text.of(TextColors.AQUA, "SkyClaims Config"))

@@ -36,29 +36,27 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-public class CommandReset extends CommandBase {
+import java.util.function.Consumer;
 
-	public static final String HELP_TEXT = "delete your island and inventory so you can start over.";
-	private static final Text CONFIRM = Text.of("confirm");
+public class CommandRegen extends CommandBase {
+
+	public static final String HELP_TEXT = "regenerate your island using a schematic.";
 	private static final Text SCHEMATIC = Text.of("schematic");
 
 	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_RESET)
+		.permission(Permissions.COMMAND_REGEN)
 		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.seq(
-			GenericArguments.optional(GenericArguments.literal(CONFIRM, "confirm")),
-			GenericArguments.optional(Argument.schematic(SCHEMATIC))
-		))
-		.executor(new CommandReset())
+		.arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
+		.executor(new CommandRegen())
 		.build();
 
 	public static void register() {
 		try {
 			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandReset");
+			PLUGIN.getLogger().debug("Registered command: CommandRegen");
 		} catch (UnsupportedOperationException e) {
 			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandReset");
+			PLUGIN.getLogger().error("Failed to register command: CommandRegen");
 		}
 	}
 
@@ -71,34 +69,27 @@ public class CommandReset extends CommandBase {
 			.orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
 		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
 
-		if (!args.hasAny(CONFIRM)) {
-			player.sendMessage(Text.of(
-				"Are you sure you want to reset your island and inventory? This cannot be undone!", Text.NEW_LINE,
-				TextColors.GOLD, "Do you want to continue?",
-				TextColors.WHITE, "[",
-				Text.builder("YES")
-					.color(TextColors.GREEN)
-					.onClick(TextActions.runCommand("/is reset confirm " + schematic)),
-				TextColors.WHITE, "] [",
-				Text.builder("NO")
-					.color(TextColors.RED)
-					.onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
-				TextColors.WHITE, "]"
-			));
-		} else {
-			player.getEnderChestInventory().clear();
-			player.getInventory().clear();
-			if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isFirstJoinKit()) {
-				PLUGIN.getIntegration().getNucleus().ifPresent(n -> n.redeemFirstJoinKit(player));
-			}
+		player.sendMessage(Text.of(
+			"Are you sure you want to regenerate your island? This cannot be undone!", Text.NEW_LINE,
+			TextColors.GOLD, "Do you want to continue?",
+			TextColors.WHITE, "[",
+			Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.executeCallback(regen(island, schematic))),
+			TextColors.WHITE, "] [",
+			Text.builder("NO").color(TextColors.RED).onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island regen canceled!")))),
+			TextColors.WHITE, "]"
+		));
 
+		return CommandResult.success();
+	}
+
+	private Consumer<CommandSource> regen(Island island, String schematic) {
+		return src -> {
 			// Teleport any players located in the island's region to spawn
 			Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
 			island.getPlayers().forEach(p -> p.setLocationSafely(spawn));
 
-			island.reset(schematic);
-		}
-
-		return CommandResult.success();
+			src.sendMessage(Text.of("Please be patient while your island is reset."));
+			island.regen(schematic);
+		};
 	}
 }

@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.permissions;
 
 public class Permissions {
+
 	// User Permissions
 	public static final String COMMAND_CREATE = "skyclaims.command.create";
 	public static final String COMMAND_EXPAND = "skyclaims.command.expand";
@@ -27,6 +28,7 @@ public class Permissions {
 	public static final String COMMAND_INVITE = "skyclaims.command.invite";
 	public static final String COMMAND_LIST = "skyclaims.command.list";
 	public static final String COMMAND_LOCK = "skyclaims.command.lock";
+	public static final String COMMAND_REGEN = "skyclaims.command.regen";
 	public static final String COMMAND_RESET = "skyclaims.command.reset";
 	public static final String COMMAND_SPAWN = "skyclaims.command.spawn";
 	public static final String COMMAND_SET_HOME = "skyclaims.command.sethome";
@@ -46,7 +48,8 @@ public class Permissions {
 	public static final String COMMAND_DELETE = "skyclaims.admin.delete";
 	public static final String COMMAND_EXPAND_OTHERS = "skyclaims.admin.expand";
 	public static final String COMMAND_LIST_ALL = "skyclaims.admin.list";
-	public static final String COMMAND_LOCK_OTHERS = "skyclaims.admin.lock";
+	public static final String COMMAND_LOCK_BYPASS = "skyclaims.admin.lock.bypass";
+	public static final String COMMAND_LOCK_OTHERS = "skyclaims.admin.lock.others";
 	public static final String COMMAND_MIGRATE = "skyclaims.admin.migrate";
 	public static final String COMMAND_RELOAD = "skyclaims.admin.reload";
 	public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";

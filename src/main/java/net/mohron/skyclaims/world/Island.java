@@ -44,6 +44,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -51,6 +52,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Island {
+
 	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 	private static final IRegionPattern PATTERN = new SpiralRegionPattern();
 
@@ -218,7 +220,6 @@ public class Island {
 
 	public void setLocked(boolean locked) {
 		this.locked = locked;
-		// TODO: Set protection flags if possible
 		save();
 	}
 
@@ -290,8 +291,7 @@ public class Island {
 	}
 
 	public int getTotalMembers() {
-		return (!getClaim().isPresent()) ? 1
-			: getClaim().get().getAllTrusts().stream().collect(Collectors.toSet()).size();
+		return (!getClaim().isPresent()) ? 1 : new HashSet<>(getClaim().get().getAllTrusts()).size();
 	}
 
 	public boolean hasPermissions(User user) {
@@ -338,8 +338,13 @@ public class Island {
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 	}
 
+	public void reset(String schematic) {
+		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, true);
+		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
+	}
+
 	public void regen(String schematic) {
-		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic);
+		RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, false);
 		PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
 	}
 
