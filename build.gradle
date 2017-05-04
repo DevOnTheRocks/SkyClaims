@@ -7,12 +7,17 @@ plugins {
     id 'org.spongepowered.plugin' version '0.6'
 }
 
-def semver = '0.21.0'
-def buildNum = System.getenv('BUILD_NUMBER') ?: null
+group = "net.mohron.skyclaims"
+version = "${major}.${minor}.${patch}-${suffix}"
+description = "SkyClaims is an Island Management plugin that integrates with GriefPrevention."
 
-group = 'net.mohron.skyclaims'
-version = (buildNum == null) ? semver + '-beta' : semver + '-' + buildNum + '-dev'
-description = 'SkyClaims is an Island Management plugin that integrates with GriefPrevention.'
+if (System.getenv().BUILD_NUMBER != null) {
+    version += "+${System.getenv().BUILD_NUMBER}"
+}
+
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
 
 repositories {
     jcenter()
@@ -30,25 +35,17 @@ repositories {
     }
 }
 
-compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
-}
-
-def griefPrevention = 'me.ryanhamshire:griefprevention:1.10.2-2.3.1.292:api'
-def nucleus = 'io.github.nucleuspowered:nucleus-api:0.26.0-S5.1'
-
 dependencies {
-    compile('org.spongepowered:spongeapi:5.1.0')
-    compileOnly('org.spongepowered:spongeforge:1.10.2-2254-5.2.0-BETA-2255')
-    compile(griefPrevention)
-    compile(nucleus)
+    compileOnly("org.spongepowered:spongeapi:${spongeapi}")
+    compile("org.spongepowered:spongeforge:${spongeforge}")
+    compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
+    compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
 }
 
 shadowJar {
     dependencies {
-        include(dependency(griefPrevention))
-        include(dependency(nucleus))
+        include(dependency("me.ryanhamshire:griefprevention:${griefprevention}:api"))
+        include(dependency("io.github.nucleuspowered:nucleus-api:${nucleus}"))
     }
 }
 
@@ -61,9 +58,8 @@ blossom {
 }
 
 signing {
-    if (project.hasProperty('signing.keyId') && project.hasProperty('signing.password') && project.hasProperty('signing.secretKeyRingFile')) {
-        sign configurations.archives
-    }
+    required {Project.hasProperty('signing.keyId')}
+    sign configurations.archives, configurations.shadow
 }
 
 build.dependsOn(shadowJar)

@@ -12,3 +12,4 @@
 !/settings.gradle
 !/SkyClaims.xml
 !/.travis.yml
+!/gradle.properties

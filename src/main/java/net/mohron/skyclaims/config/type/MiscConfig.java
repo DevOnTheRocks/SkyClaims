@@ -28,9 +28,9 @@ import java.util.List;
 public class MiscConfig {
 	@Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.")
 	private boolean islandOnJoin;
-	@Setting(value = "Create-Commands", comment = "Commands to run on island creation and reset.")
+	@Setting(value = "Create-Commands", comment = "Commands to run on island creation and reset. Use @p in place of the player's name.")
 	private List<String> createCommands;
-	@Setting(value = "Reset-Commands", comment = "Commands to run on island resets only.")
+	@Setting(value = "Reset-Commands", comment = "Commands to run on island resets only. Use @p in place of the player's name.")
 	private List<String> resetCommands;
 
 	public MiscConfig() {

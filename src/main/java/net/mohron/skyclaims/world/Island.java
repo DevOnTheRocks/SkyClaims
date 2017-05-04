@@ -296,7 +296,7 @@ public class Island {
 
 	public boolean hasPermissions(User user) {
 		return user.getUniqueId().equals(owner)
-			|| (getClaim().isPresent() && getClaim().get().getAllTrusts().contains(user.getUniqueId()));
+			|| (getClaim().isPresent() && getClaim().get().isTrusted(user.getUniqueId()));
 	}
 
 	public Set<Player> getPlayers() {
