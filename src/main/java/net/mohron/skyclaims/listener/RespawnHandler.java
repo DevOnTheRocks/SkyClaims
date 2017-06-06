@@ -15,22 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with SkyClaims.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.mohron.skyclaims.listener;
 
 import net.mohron.skyclaims.world.Island;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.cause.Root;
 
 public class RespawnHandler {
-	@Listener
-	public void onPlayerRespawn(RespawnPlayerEvent event, @Root Player player) {
-		if (event.isBedSpawn() || !Island.hasIsland(player.getUniqueId())) return;
 
-		Island.getByOwner(player.getUniqueId()).ifPresent(island -> {
-			event.setToTransform(island.getSpawn());
-		});
-	}
+    @Listener
+    public void onPlayerRespawn(RespawnPlayerEvent event, @Root Player player) {
+        if (event.isBedSpawn() || !Island.hasIsland(player.getUniqueId())) {
+            return;
+        }
+
+        Island.getByOwner(player.getUniqueId())
+            .ifPresent(island -> Sponge.getGame().getTeleportHelper().getSafeLocation(island.getSpawn().getLocation())
+                .ifPresent(spawn -> event.setToTransform(new Transform<>(spawn))));
+    }
 }
