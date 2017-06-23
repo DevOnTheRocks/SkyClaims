@@ -21,6 +21,8 @@ package net.mohron.skyclaims.world;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.World;
 
 public class RegenerateRegionTask implements Runnable {
@@ -54,7 +56,10 @@ public class RegenerateRegionTask implements Runnable {
 			for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
 				world.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
 					chunk.loadChunk(false);
-					chunk.getEntities().clear();
+					chunk.getEntities(e -> e instanceof Player)
+						.forEach(e -> e.setLocationSafely(world.getSpawnLocation()));
+					chunk.getEntities()
+						.forEach(Entity::remove);
 					for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
 						for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
 							for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
