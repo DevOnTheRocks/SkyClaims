@@ -115,7 +115,6 @@ public class SkyClaims {
 		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
 
 		instance = this;
-		integration = new Integration();
 
 		try {
 			SkyClaims.griefPrevention = GriefPrevention.getApi();
@@ -148,8 +147,7 @@ public class SkyClaims {
 		permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
 		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
 			.equalsIgnoreCase("sponge")) {
-			getLogger()
-				.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
 			enabled = false;
 			return;
 		}
@@ -157,6 +155,8 @@ public class SkyClaims {
 		defaultConfig = new GlobalConfig();
 		pluginConfigManager = new ConfigManager(configManager);
 		pluginConfigManager.save();
+
+		integration = new Integration();
 
 		getGame().getEventManager().registerListeners(this, new SchematicHandler());
 		getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
@@ -196,15 +196,15 @@ public class SkyClaims {
 	}
 
 	public void reload() {
-		// Reload Commands
-		Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
-		registerCommands();
 		// Load Plugin Config
 		pluginConfigManager.load();
 		// Load Schematics Directory
 		SchematicArgument.load();
 		// Load Database
 		islands = database.loadData();
+		// Reload Commands
+		Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
+		registerCommands();
 	}
 
 	private void registerCommands() {
