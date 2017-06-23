@@ -20,7 +20,6 @@ package net.mohron.skyclaims.permissions;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.BiomeArgument;
-import net.mohron.skyclaims.config.type.OptionsConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.world.biome.BiomeType;

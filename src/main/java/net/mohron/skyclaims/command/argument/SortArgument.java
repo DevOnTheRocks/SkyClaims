@@ -29,11 +29,12 @@ import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 public class SortArgument extends CommandElement {
 	public static final Map<String, Comparator<Island>> SORT_TYPES = Maps.newHashMap();

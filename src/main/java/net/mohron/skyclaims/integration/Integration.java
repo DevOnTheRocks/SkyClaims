@@ -18,14 +18,14 @@
 
 package net.mohron.skyclaims.integration;
 
+import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
+
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.IntegrationConfig;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.plugin.PluginManager;
 
 import java.util.Optional;
-
-import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
 
 public class Integration {
 
