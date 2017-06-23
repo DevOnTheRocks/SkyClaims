@@ -2,10 +2,14 @@
 
 ## Unreleased Features, Changes & Bugfixes
 **[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
-**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.26.0+**
+**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.29.0+**
+- `/is reset` now automatically redeems the Nucleus First Join Kit, if present.
+
+## Beta 21
+**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.29.0+**
 - Added `/is regen` (`skyclaims.command.regen`) to allow regenerating an island using a schematic.
 - Added integration config to turn off/on optional integration features
-- `/is reset` now automatically redeems the Nucleus First Join Kit, if present.
+- Fixed `/is reset` not clearing entities
 
 ## Beta 20
 **REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.26.0+**

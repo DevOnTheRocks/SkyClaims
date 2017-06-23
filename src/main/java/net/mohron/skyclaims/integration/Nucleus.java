@@ -69,7 +69,6 @@ public class Nucleus {
 
 	public void redeemFirstJoinKit(Player player) {
 		// TODO: Redeem First Join Kit for player (Requires an API update)
-		PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), "/firstjoinkit redeem " + player.getName());
 	}
 
 	public boolean isAFK(Player player) {

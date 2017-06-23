@@ -30,7 +30,7 @@ public class StorageConfig {
 	private String location;
 	@Setting(value = "Type", comment = "The type of data storage to use. Supports [SQLite, MySQL]")
 	private String type;
-	@Setting(value = "MySQL")
+	@Setting(value = "MySQL", comment = "MySQL Not Yet Implemented!")
 	private MysqlConfig mysqlConfig;
 
 	public StorageConfig() {

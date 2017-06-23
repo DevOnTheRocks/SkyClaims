@@ -39,7 +39,7 @@ public class CommandSetHome extends CommandBase {
 		.permission(Permissions.COMMAND_SET_HOME)
 		.description(Text.of(HELP_TEXT))
 		.executor(
-			(PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled() && PLUGIN.getIntegration().getNucleus().isPresent())
+			(PLUGIN.getIntegration().getNucleus().isPresent() && PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled())
 				? new CommandSetHome()
 				: new CommandSetSpawn()
 		)
