@@ -30,28 +30,28 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class CommandReload extends CommandBase {
 
-	public static final String HELP_TEXT = "used to reload SkyClaims's config, schematics, & database.";
+    public static final String HELP_TEXT = "used to reload SkyClaims's config, schematics, & database.";
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_RELOAD)
-		.description(Text.of(HELP_TEXT))
-		.executor(new CommandReload())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_RELOAD)
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandReload())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandReload");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandReload");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandReload");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandReload");
+        }
+    }
 
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		PLUGIN.reload();
-		src.sendMessage(Text.of(TextColors.GREEN, "Successfully reloaded SkyClaims!"));
-		return CommandResult.success();
-	}
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        PLUGIN.reload();
+        src.sendMessage(Text.of(TextColors.GREEN, "Successfully reloaded SkyClaims!"));
+        return CommandResult.success();
+    }
 }

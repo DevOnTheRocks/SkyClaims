@@ -40,43 +40,45 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 public class IslandArgument extends CommandElement {
-	public IslandArgument(@Nullable Text key) {
-		super(key);
-	}
 
-	@Nullable
-	@Override
-	protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
-		String arg = args.next().toLowerCase();
-		if (SkyClaims.islands.isEmpty())
-			throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid island!"), arg, 0);
-		try {
-			UUID uuid = UUID.fromString(arg);
-			if (SkyClaims.islands.containsKey(uuid)) {
-				Set<UUID> islands = Sets.newHashSet();
-				islands.add(uuid);
-				return islands;
-			}
-		} catch (IllegalArgumentException ignored) {
-		}
-		return SkyClaims.islands.entrySet().stream()
-			.filter(i -> i.getValue().getOwnerName().equalsIgnoreCase(arg))
-			.map(Map.Entry::getKey)
-			.collect(Collectors.toSet());
-	}
+    public IslandArgument(@Nullable Text key) {
+        super(key);
+    }
 
-	@Override
-	public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-		try {
-			String arg = args.peek().toLowerCase();
-			boolean admin = src.hasPermission(Permissions.COMMAND_LIST_ALL);
-			return SkyClaims.islands.entrySet().stream()
-				.filter(i -> i.getValue().getOwnerName().toLowerCase().startsWith(arg))
-				.filter(i -> admin || !(src instanceof Player) || i.getValue().hasPermissions((Player) src))
-				.map(m -> m.getValue().getOwnerName())
-				.collect(Collectors.toList());
-		} catch (ArgumentParseException e) {
-			return Lists.newArrayList();
-		}
-	}
+    @Nullable
+    @Override
+    protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
+        String arg = args.next().toLowerCase();
+        if (SkyClaims.islands.isEmpty()) {
+            throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid island!"), arg, 0);
+        }
+        try {
+            UUID uuid = UUID.fromString(arg);
+            if (SkyClaims.islands.containsKey(uuid)) {
+                Set<UUID> islands = Sets.newHashSet();
+                islands.add(uuid);
+                return islands;
+            }
+        } catch (IllegalArgumentException ignored) {
+        }
+        return SkyClaims.islands.entrySet().stream()
+            .filter(i -> i.getValue().getOwnerName().equalsIgnoreCase(arg))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
+    }
+
+    @Override
+    public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
+        try {
+            String arg = args.peek().toLowerCase();
+            boolean admin = src.hasPermission(Permissions.COMMAND_LIST_ALL);
+            return SkyClaims.islands.entrySet().stream()
+                .filter(i -> i.getValue().getOwnerName().toLowerCase().startsWith(arg))
+                .filter(i -> admin || !(src instanceof Player) || i.getValue().hasPermissions((Player) src))
+                .map(m -> m.getValue().getOwnerName())
+                .collect(Collectors.toList());
+        } catch (ArgumentParseException e) {
+            return Lists.newArrayList();
+        }
+    }
 }

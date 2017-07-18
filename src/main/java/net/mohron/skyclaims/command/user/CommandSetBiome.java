@@ -38,74 +38,74 @@ import org.spongepowered.api.world.biome.BiomeType;
 
 public class CommandSetBiome extends CommandBase {
 
-	public static final String HELP_TEXT = "set the biome of a block, chunk or island.";
-	private static final Text BIOME = Text.of("biome");
-	private static final Text TARGET = Text.of("target");
+    public static final String HELP_TEXT = "set the biome of a block, chunk or island.";
+    private static final Text BIOME = Text.of("biome");
+    private static final Text TARGET = Text.of("target");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_SET_BIOME)
-		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.seq(
-			Argument.biome(BIOME),
-			GenericArguments.optional(Argument.target(TARGET))
-		))
-		.executor(new CommandSetBiome())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_SET_BIOME)
+        .description(Text.of(HELP_TEXT))
+        .arguments(GenericArguments.seq(
+            Argument.biome(BIOME),
+            GenericArguments.optional(Argument.target(TARGET))
+        ))
+        .executor(new CommandSetBiome())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandSetBiome");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandSetBiome");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandSetBiome");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandSetBiome");
+        }
+    }
 
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of("You must be a player to run this command!"));
-		}
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (!(src instanceof Player)) {
+            throw new CommandException(Text.of("You must be a player to run this command!"));
+        }
 
-		Player player = (Player) src;
-		BiomeType biome = args.<BiomeType>getOne(BIOME)
-			.orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
-		Island island = Island.get(player.getLocation())
-			.orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
+        Player player = (Player) src;
+        BiomeType biome = args.<BiomeType>getOne(BIOME)
+            .orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
+        Island island = Island.get(player.getLocation())
+            .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
 
-		if (!player.getUniqueId().equals(island.getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS)) {
-			throw new CommandPermissionException(Text.of("You do not have permission to use setbiome on this island"));
-		}
+        if (!player.getUniqueId().equals(island.getOwnerUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS)) {
+            throw new CommandPermissionException(Text.of("You do not have permission to use setbiome on this island"));
+        }
 
-		Targets target = args.<Targets>getOne(TARGET).orElse(Targets.ISLAND);
+        Targets target = args.<Targets>getOne(TARGET).orElse(Targets.ISLAND);
 
-		switch (target) {
-			case BLOCK:
-				WorldUtil.setBlockBiome(player.getLocation(), biome);
-				src.sendMessage(Text.of(
-					TextColors.GREEN, "Successfully changed the biome at ",
-					TextColors.DARK_PURPLE, player.getLocation().getBlockX(),
-					TextColors.GREEN, ",",
-					TextColors.DARK_PURPLE, player.getLocation().getBlockZ(),
-					TextColors.GREEN, " to ", TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
-				));
-				break;
-			case CHUNK:
-				WorldUtil.setChunkBiome(player.getLocation(), biome);
-				src.sendMessage(Text.of(
-					TextColors.GREEN, "Successfully changed the biome in this chunk to ",
-					TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
-				));
-				break;
-			case ISLAND:
-				WorldUtil.setIslandBiome(island, biome);
-				src.sendMessage(Text.of(
-					TextColors.GREEN, "Successfully changed the biome on this island to ",
-					TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
-				));
-				break;
-		}
+        switch (target) {
+            case BLOCK:
+                WorldUtil.setBlockBiome(player.getLocation(), biome);
+                src.sendMessage(Text.of(
+                    TextColors.GREEN, "Successfully changed the biome at ",
+                    TextColors.DARK_PURPLE, player.getLocation().getBlockX(),
+                    TextColors.GREEN, ",",
+                    TextColors.DARK_PURPLE, player.getLocation().getBlockZ(),
+                    TextColors.GREEN, " to ", TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+                ));
+                break;
+            case CHUNK:
+                WorldUtil.setChunkBiome(player.getLocation(), biome);
+                src.sendMessage(Text.of(
+                    TextColors.GREEN, "Successfully changed the biome in this chunk to ",
+                    TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+                ));
+                break;
+            case ISLAND:
+                WorldUtil.setIslandBiome(island, biome);
+                src.sendMessage(Text.of(
+                    TextColors.GREEN, "Successfully changed the biome on this island to ",
+                    TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+                ));
+                break;
+        }
 
-		return CommandResult.success();
-	}
+        return CommandResult.success();
+    }
 }

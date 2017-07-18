@@ -29,29 +29,31 @@ import java.util.Optional;
 
 public class Integration {
 
-	private final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private Nucleus nucleus = null;
+    private final SkyClaims PLUGIN = SkyClaims.getInstance();
+    private Nucleus nucleus = null;
 
-	public Integration() {
-		IntegrationConfig config = PLUGIN.getConfig().getIntegrationConfig();
-		PluginManager pluginManager = Sponge.getPluginManager();
-		if (config.getNucleus().isEnabled() && pluginManager.getPlugin("nucleus").isPresent()) {
-			Version version = new Version(pluginManager.getPlugin("nucleus").get().getVersion().orElse("0.0.0"));
-			PLUGIN.getLogger().info("Found Nucleus " + version);
-			if (version.compareTo(new Version(NUCLEUS_VERSION)) >= 0) nucleus = new Nucleus();
-		}
-	}
+    public Integration() {
+        IntegrationConfig config = PLUGIN.getConfig().getIntegrationConfig();
+        PluginManager pluginManager = Sponge.getPluginManager();
+        if (config.getNucleus().isEnabled() && pluginManager.getPlugin("nucleus").isPresent()) {
+            Version version = new Version(pluginManager.getPlugin("nucleus").get().getVersion().orElse("0.0.0"));
+            PLUGIN.getLogger().info("Found Nucleus " + version);
+            if (version.compareTo(new Version(NUCLEUS_VERSION)) >= 0) {
+                nucleus = new Nucleus();
+            }
+        }
+    }
 
-	private static boolean isPresent(String className) {
-		try {
-			Class.forName(className);
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
-	}
+    private static boolean isPresent(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 
-	public Optional<Nucleus> getNucleus() {
-		return Optional.ofNullable(nucleus);
-	}
+    public Optional<Nucleus> getNucleus() {
+        return Optional.ofNullable(nucleus);
+    }
 }

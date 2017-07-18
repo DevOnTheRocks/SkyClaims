@@ -24,56 +24,57 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class GlobalConfig {
-	@Setting(value = "Config-Version")
-	private int version;
-	@Setting(value = "Integration")
-	private IntegrationConfig integrationConfig;
-	@Setting(value = "Permission")
-	private PermissionConfig permissionConfig;
-	@Setting(value = "Misc")
-	private MiscConfig miscConfig;
-	@Setting(value = "Storage")
-	private StorageConfig storageConfig;
-	@Setting(value = "World")
-	private WorldConfig worldConfig;
-	@Setting(value = "Options", comment = "The default values options use when not explicitly set.\ngithub.com/DevOnTheRocks/SkyClaims/wiki/Options")
-	private OptionsConfig optionsConfig;
 
-	public GlobalConfig() {
-		version = ConfigManager.CONFIG_VERSION;
-		permissionConfig = new PermissionConfig();
-		integrationConfig = new IntegrationConfig();
-		miscConfig = new MiscConfig();
-		storageConfig = new StorageConfig();
-		worldConfig = new WorldConfig();
-		optionsConfig = new OptionsConfig();
-	}
+    @Setting(value = "Config-Version")
+    private int version;
+    @Setting(value = "Integration")
+    private IntegrationConfig integrationConfig;
+    @Setting(value = "Permission")
+    private PermissionConfig permissionConfig;
+    @Setting(value = "Misc")
+    private MiscConfig miscConfig;
+    @Setting(value = "Storage")
+    private StorageConfig storageConfig;
+    @Setting(value = "World")
+    private WorldConfig worldConfig;
+    @Setting(value = "Options", comment = "The default values options use when not explicitly set.\ngithub.com/DevOnTheRocks/SkyClaims/wiki/Options")
+    private OptionsConfig optionsConfig;
 
-	public int getVersion() {
-		return version;
-	}
+    public GlobalConfig() {
+        version = ConfigManager.CONFIG_VERSION;
+        permissionConfig = new PermissionConfig();
+        integrationConfig = new IntegrationConfig();
+        miscConfig = new MiscConfig();
+        storageConfig = new StorageConfig();
+        worldConfig = new WorldConfig();
+        optionsConfig = new OptionsConfig();
+    }
 
-	public PermissionConfig getPermissionConfig() {
-		return permissionConfig;
-	}
+    public int getVersion() {
+        return version;
+    }
 
-	public IntegrationConfig getIntegrationConfig() {
-		return integrationConfig;
-	}
+    public PermissionConfig getPermissionConfig() {
+        return permissionConfig;
+    }
 
-	public MiscConfig getMiscConfig() {
-		return miscConfig;
-	}
+    public IntegrationConfig getIntegrationConfig() {
+        return integrationConfig;
+    }
 
-	public StorageConfig getStorageConfig() {
-		return storageConfig;
-	}
+    public MiscConfig getMiscConfig() {
+        return miscConfig;
+    }
 
-	public WorldConfig getWorldConfig() {
-		return worldConfig;
-	}
+    public StorageConfig getStorageConfig() {
+        return storageConfig;
+    }
 
-	public OptionsConfig getOptionsConfig() {
-		return optionsConfig;
-	}
+    public WorldConfig getWorldConfig() {
+        return worldConfig;
+    }
+
+    public OptionsConfig getOptionsConfig() {
+        return optionsConfig;
+    }
 }

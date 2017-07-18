@@ -29,25 +29,27 @@ import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 
 public class ClientJoinHandler {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	@Listener
-	public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
-		if (!PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() || Island.hasIsland(player.getUniqueId()))
-			return;
+    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-		Sponge.getScheduler().createTaskBuilder()
-			.execute(src -> {
-				try {
-					new Island(player, Options.getDefaultSchematic(player.getUniqueId()));
-					PLUGIN.getLogger().info(String.format("Automatically created an island for %s.", player.getName()));
-				} catch (CreateIslandException e) {
-					// Oh well, we tried!
-					PLUGIN.getLogger().warn(String.format("Failed to create an island on join for %s.\n%s", player.getName(), e.getMessage()));
-				}
-			})
-			.delayTicks(40)
-			.submit(PLUGIN);
+    @Listener
+    public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
+        if (!PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() || Island.hasIsland(player.getUniqueId())) {
+            return;
+        }
 
-	}
+        Sponge.getScheduler().createTaskBuilder()
+            .execute(src -> {
+                try {
+                    new Island(player, Options.getDefaultSchematic(player.getUniqueId()));
+                    PLUGIN.getLogger().info(String.format("Automatically created an island for %s.", player.getName()));
+                } catch (CreateIslandException e) {
+                    // Oh well, we tried!
+                    PLUGIN.getLogger().warn(String.format("Failed to create an island on join for %s.\n%s", player.getName(), e.getMessage()));
+                }
+            })
+            .delayTicks(40)
+            .submit(PLUGIN);
+
+    }
 }

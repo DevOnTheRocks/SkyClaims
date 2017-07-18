@@ -24,16 +24,16 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class NucleusConfig extends PluginIntegration {
 
-	@Setting(value = "First-Join-Kit", comment = "Set to enable/disable redeeming Nucleus' FirstJoinKit when using /is reset.")
-	private boolean firstJoinKit = true;
-	@Setting(value = "Island-Home", comment = "Set to enable/disable /is sethome & /is home as a configurable home separate from an island spawn.")
-	private boolean homesEnabled = true;
+    @Setting(value = "First-Join-Kit", comment = "Set to enable/disable redeeming Nucleus' FirstJoinKit when using /is reset.")
+    private boolean firstJoinKit = true;
+    @Setting(value = "Island-Home", comment = "Set to enable/disable /is sethome & /is home as a configurable home separate from an island spawn.")
+    private boolean homesEnabled = true;
 
-	public boolean isFirstJoinKit() {
-		return firstJoinKit;
-	}
+    public boolean isFirstJoinKit() {
+        return firstJoinKit;
+    }
 
-	public boolean isHomesEnabled() {
-		return homesEnabled;
-	}
+    public boolean isHomesEnabled() {
+        return homesEnabled;
+    }
 }

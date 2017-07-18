@@ -45,124 +45,125 @@ import java.util.function.Consumer;
 
 public class CommandList extends CommandBase {
 
-	public static final String HELP_TEXT = "display a list of the current islands.";
-	private static final Text USER = Text.of("user");
-	private static final Text SORT = Text.of("sort");
+    public static final String HELP_TEXT = "display a list of the current islands.";
+    private static final Text USER = Text.of("user");
+    private static final Text SORT = Text.of("sort");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_LIST)
-		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.firstParsing(
-			GenericArguments.optional(GenericArguments.user(USER)),
-			GenericArguments.optional(Argument.sort(SORT))
-		))
-		.executor(new CommandList())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_LIST)
+        .description(Text.of(HELP_TEXT))
+        .arguments(GenericArguments.firstParsing(
+            GenericArguments.optional(GenericArguments.user(USER)),
+            GenericArguments.optional(Argument.sort(SORT))
+        ))
+        .executor(new CommandList())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandlist");
-			PLUGIN.getLogger().debug("Registered command: CommandList");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandList");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandlist");
+            PLUGIN.getLogger().debug("Registered command: CommandList");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandList");
+        }
+    }
 
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (SkyClaims.islands.isEmpty()) {
-			src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
-		}
-		List<Text> listText = Lists.newArrayList();
-		Player player = (src instanceof Player) ? (Player) src : null;
-		User user = args.<User>getOne(USER).orElse(null);
-		Comparator<Island> sortType = args.<Comparator<Island>>getOne(SORT).orElse(Comparator.comparing(Island::getSortableName));
+    private static Consumer<CommandSource> createReturnConsumer(CommandSource src) {
+        return consumer -> {
+            Text returnCommand = Text.builder().append(Text.of(
+                Text.NEW_LINE, TextColors.WHITE, "[", TextColors.AQUA, "Return to Island List", TextColors.WHITE, "]", Text.NEW_LINE))
+                .onClick(TextActions.executeCallback(
+                    CommandUtil.createCommandConsumer(src, "islandlist", "", null))
+                ).build();
+            src.sendMessage(returnCommand);
+        };
+    }
 
-		boolean spawnOthers = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS);
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (SkyClaims.islands.isEmpty()) {
+            src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
+        }
+        List<Text> listText = Lists.newArrayList();
+        Player player = (src instanceof Player) ? (Player) src : null;
+        User user = args.<User>getOne(USER).orElse(null);
+        Comparator<Island> sortType = args.<Comparator<Island>>getOne(SORT).orElse(Comparator.comparing(Island::getSortableName));
 
-		SkyClaims.islands.values().stream()
-			.filter(i -> user == null || i.hasPermissions(user))
-			.sorted(sortType)
-			.forEach(island -> listText.add(Text.of(
-				getLocked(island),
-				island.getName().toBuilder()
-					.onHover(TextActions.showText(Text.of("Click here to view island info")))
-					.onClick(TextActions.executeCallback(
-						CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))
-					),
-				(!island.isLocked() || ((player == null || island.hasPermissions(player)) || spawnOthers))
-					? getClickableCoords(src, island) : getCoords(island)
-			)));
+        boolean spawnOthers = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS);
 
-		if (listText.isEmpty()) {
-			listText.add(Text.of(TextColors.RED, "There are no islands to display!"));
-		}
+        SkyClaims.islands.values().stream()
+            .filter(i -> user == null || i.hasPermissions(user))
+            .sorted(sortType)
+            .forEach(island -> listText.add(Text.of(
+                getLocked(island),
+                island.getName().toBuilder()
+                    .onHover(TextActions.showText(Text.of("Click here to view island info")))
+                    .onClick(TextActions.executeCallback(
+                        CommandUtil
+                            .createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))
+                    ),
+                (!island.isLocked() || ((player == null || island.hasPermissions(player)) || spawnOthers))
+                    ? getClickableCoords(src, island) : getCoords(island)
+            )));
 
-		if (!(src instanceof Player)) {
-			listText.forEach(src::sendMessage);
-		} else {
-			PaginationList.builder()
-				.title(Text.of(TextColors.AQUA, "Island List"))
-				.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-				.contents(listText)
-				.sendTo(src);
-		}
+        if (listText.isEmpty()) {
+            listText.add(Text.of(TextColors.RED, "There are no islands to display!"));
+        }
 
-		return CommandResult.success();
-	}
+        if (!(src instanceof Player)) {
+            listText.forEach(src::sendMessage);
+        } else {
+            PaginationList.builder()
+                .title(Text.of(TextColors.AQUA, "Island List"))
+                .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+                .contents(listText)
+                .sendTo(src);
+        }
 
-	private static Consumer<CommandSource> createReturnConsumer(CommandSource src) {
-		return consumer -> {
-			Text returnCommand = Text.builder().append(Text.of(
-				Text.NEW_LINE, TextColors.WHITE, "[", TextColors.AQUA, "Return to Island List", TextColors.WHITE, "]", Text.NEW_LINE))
-				.onClick(TextActions.executeCallback(
-					CommandUtil.createCommandConsumer(src, "islandlist", "", null))
-				).build();
-			src.sendMessage(returnCommand);
-		};
-	}
+        return CommandResult.success();
+    }
 
-	private Text getLocked(Island island) {
-		return Text.of(TextColors.WHITE, " [",
-			Text.builder(island.isLocked() ? "L" : "U")
-				.color(island.isLocked() ? TextColors.RED : TextColors.GREEN)
-				.onHover(TextActions.showText(island.isLocked()
-					? Text.of(TextColors.RED, "LOCKED")
-					: Text.of(TextColors.GREEN, "UNLOCKED")
-				))
-				.onClick(TextActions.executeCallback(toggleLock(island))),
-			TextColors.WHITE, "] ");
-	}
+    private Text getLocked(Island island) {
+        return Text.of(TextColors.WHITE, " [",
+            Text.builder(island.isLocked() ? "L" : "U")
+                .color(island.isLocked() ? TextColors.RED : TextColors.GREEN)
+                .onHover(TextActions.showText(island.isLocked()
+                    ? Text.of(TextColors.RED, "LOCKED")
+                    : Text.of(TextColors.GREEN, "UNLOCKED")
+                ))
+                .onClick(TextActions.executeCallback(toggleLock(island))),
+            TextColors.WHITE, "] ");
+    }
 
-	private Consumer<CommandSource> toggleLock(Island island) {
-		return src -> {
-			if (src instanceof Player
-				&& ((Player) src).getUniqueId().equals(island.getOwnerUniqueId())
-				&& src.hasPermission(Permissions.COMMAND_LOCK)
-				|| src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
-				island.setLocked(!island.isLocked());
-				src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now ",
-					Text.builder((island.isLocked()) ? "LOCKED" : "UNLOCKED")
-						.color((island.isLocked()) ? TextColors.RED : TextColors.GREEN)
-						.onClick(TextActions.executeCallback(toggleLock(island))),
-					TextColors.GREEN, "!"
-				));
-			}
-		};
-	}
+    private Consumer<CommandSource> toggleLock(Island island) {
+        return src -> {
+            if (src instanceof Player
+                && ((Player) src).getUniqueId().equals(island.getOwnerUniqueId())
+                && src.hasPermission(Permissions.COMMAND_LOCK)
+                || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
+                island.setLocked(!island.isLocked());
+                src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now ",
+                    Text.builder((island.isLocked()) ? "LOCKED" : "UNLOCKED")
+                        .color((island.isLocked()) ? TextColors.RED : TextColors.GREEN)
+                        .onClick(TextActions.executeCallback(toggleLock(island))),
+                    TextColors.GREEN, "!"
+                ));
+            }
+        };
+    }
 
-	private Text getCoords(Island island) {
-		return Text.of(TextColors.GRAY, " (",
-			TextColors.LIGHT_PURPLE, island.getRegion().getX(),
-			TextColors.GRAY, ", ",
-			TextColors.LIGHT_PURPLE, island.getRegion().getZ(),
-			TextColors.GRAY, ")");
-	}
+    private Text getCoords(Island island) {
+        return Text.of(TextColors.GRAY, " (",
+            TextColors.LIGHT_PURPLE, island.getRegion().getX(),
+            TextColors.GRAY, ", ",
+            TextColors.LIGHT_PURPLE, island.getRegion().getZ(),
+            TextColors.GRAY, ")");
+    }
 
-	private Text getClickableCoords(CommandSource src, Island island) {
-		return getCoords(island).toBuilder()
-			.onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
-			.onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
-			.build();
-	}
+    private Text getClickableCoords(CommandSource src, Island island) {
+        return getCoords(island).toBuilder()
+            .onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
+            .onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
+            .build();
+    }
 }

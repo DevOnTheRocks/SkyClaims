@@ -29,29 +29,29 @@ import org.spongepowered.api.text.Text;
 
 public class CommandSetup extends CommandBase {
 
-	public static final String HELP_TEXT = "used to assist in setting up the plugin";
+    public static final String HELP_TEXT = "used to assist in setting up the plugin";
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_SETUP)
-		.description(Text.of(HELP_TEXT))
-		.executor(new CommandSetup())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_SETUP)
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandSetup())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandSetup");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandSetup");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandSetup");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandSetup");
+        }
+    }
 
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		// TODO Help the src set up required permissions and options
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        // TODO Help the src set up required permissions and options
 
-		throw new CommandException(Text.of("Command is not yet implemented."));
-		//return CommandResult.empty();
-	}
+        throw new CommandException(Text.of("Command is not yet implemented."));
+        //return CommandResult.empty();
+    }
 }

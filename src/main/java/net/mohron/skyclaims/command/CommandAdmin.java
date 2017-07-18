@@ -23,7 +23,11 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.PluginInfo;
-import net.mohron.skyclaims.command.admin.*;
+import net.mohron.skyclaims.command.admin.CommandConfig;
+import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
+import net.mohron.skyclaims.command.admin.CommandDelete;
+import net.mohron.skyclaims.command.admin.CommandReload;
+import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -42,91 +46,91 @@ import java.util.List;
 
 public class CommandAdmin extends CommandBase {
 
-	public static final String HELP_TEXT = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
-	private static final Text HELP = Text.of("help");
+    public static final String HELP_TEXT = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
+    private static final Text HELP = Text.of("help");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_ADMIN)
-		.description(Text.of(HELP_TEXT))
-		.child(CommandConfig.commandSpec, "config")
-		.child(CommandDelete.commandSpec, "delete")
-		.child(CommandReload.commandSpec, "reload")
-		//.child(CommandSetup.commandSpec, "setup")
-		.child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
-		.child(CommandTransfer.commandSpec, "transfer")
-		.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
-		.executor(new CommandAdmin())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_ADMIN)
+        .description(Text.of(HELP_TEXT))
+        .child(CommandConfig.commandSpec, "config")
+        .child(CommandDelete.commandSpec, "delete")
+        .child(CommandReload.commandSpec, "reload")
+        //.child(CommandSetup.commandSpec, "setup")
+        .child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
+        .child(CommandTransfer.commandSpec, "transfer")
+        .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
+        .executor(new CommandAdmin())
+        .build();
 
-	public static void register() {
-		try {
-			Sponge.getCommandManager().register(PLUGIN, commandSpec, "isa");
-			PLUGIN.getLogger().debug("Registered command: CommandAdmin");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandAdmin");
-		}
-	}
+    public static void register() {
+        try {
+            Sponge.getCommandManager().register(PLUGIN, commandSpec, "isa");
+            PLUGIN.getLogger().debug("Registered command: CommandAdmin");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandAdmin");
+        }
+    }
 
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		List<Text> helpText = Lists.newArrayList();
-		boolean hasPerms = false;
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        List<Text> helpText = Lists.newArrayList();
+        boolean hasPerms = false;
 
-		if (src.hasPermission(Permissions.COMMAND_CONFIG)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("isa config").onClick(TextActions.runCommand("/isa config")),
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandConfig.HELP_TEXT));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_CONFIG)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("isa config").onClick(TextActions.runCommand("/isa config")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandConfig.HELP_TEXT));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, "isa cs",
-				TextColors.GOLD, " <name>",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandCreateSchematic.HELP_TEXT));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, "isa cs",
+                TextColors.GOLD, " <name>",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandCreateSchematic.HELP_TEXT));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_DELETE)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, "isa delete",
-				TextColors.GOLD, " <player>",
-				TextColors.GRAY, " [clear]",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_DELETE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, "isa delete",
+                TextColors.GOLD, " <player>",
+                TextColors.GRAY, " [clear]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandReload.HELP_TEXT));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandReload.HELP_TEXT));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_TRANSFER)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, "isa transfer",
-				TextColors.GRAY, " [owner]",
-				TextColors.GOLD, " <player>",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_TRANSFER)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, "isa transfer",
+                TextColors.GRAY, " [owner]",
+                TextColors.GOLD, " <player>",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
+            hasPerms = true;
+        }
 
-		if (hasPerms) {
-			PaginationList.builder()
-				.title(Text.of(TextColors.AQUA, NAME, " Admin Help"))
-				.padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-				.contents(helpText)
-				.sendTo(src);
-		} else {
-			src.sendMessage(Text.of(NAME + " " + VERSION));
-		}
+        if (hasPerms) {
+            PaginationList.builder()
+                .title(Text.of(TextColors.AQUA, NAME, " Admin Help"))
+                .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+                .contents(helpText)
+                .sendTo(src);
+        } else {
+            src.sendMessage(Text.of(NAME + " " + VERSION));
+        }
 
-		return CommandResult.success();
-	}
+        return CommandResult.success();
+    }
 }

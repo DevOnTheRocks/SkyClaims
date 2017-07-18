@@ -37,44 +37,45 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 public class SortArgument extends CommandElement {
-	public static final Map<String, Comparator<Island>> SORT_TYPES = Maps.newHashMap();
 
-	static {
-		SORT_TYPES.put("ascending", Comparator.comparing(Island::getSortableName));
-		SORT_TYPES.put("descending", Comparator.comparing(Island::getSortableName).reversed());
-		SORT_TYPES.put("oldest", Comparator.comparing(Island::getDateCreated));
-		SORT_TYPES.put("newest", Comparator.comparing(Island::getDateCreated).reversed());
-		SORT_TYPES.put("inactive", Comparator.comparing(Island::getDateLastActive));
-		SORT_TYPES.put("active", Comparator.comparing(Island::getDateLastActive).reversed());
-		SORT_TYPES.put("team-", Comparator.comparing(Island::getTotalMembers));
-		SORT_TYPES.put("team+", Comparator.comparing(Island::getTotalMembers).reversed());
-		SORT_TYPES.put("smallest", Comparator.comparing(Island::getWidth));
-		SORT_TYPES.put("largest", Comparator.comparing(Island::getWidth).reversed());
-	}
+    public static final Map<String, Comparator<Island>> SORT_TYPES = Maps.newHashMap();
 
-	public SortArgument(@Nullable Text key) {
-		super(key);
-	}
+    static {
+        SORT_TYPES.put("ascending", Comparator.comparing(Island::getSortableName));
+        SORT_TYPES.put("descending", Comparator.comparing(Island::getSortableName).reversed());
+        SORT_TYPES.put("oldest", Comparator.comparing(Island::getDateCreated));
+        SORT_TYPES.put("newest", Comparator.comparing(Island::getDateCreated).reversed());
+        SORT_TYPES.put("inactive", Comparator.comparing(Island::getDateLastActive));
+        SORT_TYPES.put("active", Comparator.comparing(Island::getDateLastActive).reversed());
+        SORT_TYPES.put("team-", Comparator.comparing(Island::getTotalMembers));
+        SORT_TYPES.put("team+", Comparator.comparing(Island::getTotalMembers).reversed());
+        SORT_TYPES.put("smallest", Comparator.comparing(Island::getWidth));
+        SORT_TYPES.put("largest", Comparator.comparing(Island::getWidth).reversed());
+    }
 
-	@Nullable
-	@Override
-	protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
-		String arg = args.next().toLowerCase();
-		if (SORT_TYPES.containsKey(arg)){
-			return SORT_TYPES.get(arg);
-		}
-		throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid sort type."), arg, 0);
-	}
+    public SortArgument(@Nullable Text key) {
+        super(key);
+    }
 
-	@Override
-	public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-		try {
-			String name = args.peek().toLowerCase();
-			return SORT_TYPES.keySet().stream()
-				.filter(s -> s.startsWith(name))
-				.collect(Collectors.toList());
-		} catch (ArgumentParseException e) {
-			return Lists.newArrayList();
-		}
-	}
+    @Nullable
+    @Override
+    protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
+        String arg = args.next().toLowerCase();
+        if (SORT_TYPES.containsKey(arg)) {
+            return SORT_TYPES.get(arg);
+        }
+        throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid sort type."), arg, 0);
+    }
+
+    @Override
+    public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
+        try {
+            String name = args.peek().toLowerCase();
+            return SORT_TYPES.keySet().stream()
+                .filter(s -> s.startsWith(name))
+                .collect(Collectors.toList());
+        } catch (ArgumentParseException e) {
+            return Lists.newArrayList();
+        }
+    }
 }

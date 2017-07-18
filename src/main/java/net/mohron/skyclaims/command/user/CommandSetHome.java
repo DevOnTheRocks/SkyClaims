@@ -33,49 +33,49 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class CommandSetHome extends CommandBase {
 
-	public static final String HELP_TEXT = "set your island home.";
+    public static final String HELP_TEXT = "set your island home.";
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_SET_HOME)
-		.description(Text.of(HELP_TEXT))
-		.executor(
-			(PLUGIN.getIntegration().getNucleus().isPresent() && PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled())
-				? new CommandSetHome()
-				: new CommandSetSpawn()
-		)
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_SET_HOME)
+        .description(Text.of(HELP_TEXT))
+        .executor(
+            (PLUGIN.getIntegration().getNucleus().isPresent() && PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled())
+                ? new CommandSetHome()
+                : new CommandSetSpawn()
+        )
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandSetHome");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandSetHome");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandSetHome");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandSetHome");
+        }
+    }
 
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of("You must be a player to use this command!"));
-		}
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (!(src instanceof Player)) {
+            throw new CommandException(Text.of("You must be a player to use this command!"));
+        }
 
-		Player player = (Player) src;
-		Island island = Island.get(player.getLocation())
-			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to set a home!")));
+        Player player = (Player) src;
+        Island island = Island.get(player.getLocation())
+            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to set a home!")));
 
-		if (!island.hasPermissions(player)) {
-			throw new CommandException(Text.of(TextColors.RED, "You must have permission to set home on this island!"));
-		}
+        if (!island.hasPermissions(player)) {
+            throw new CommandException(Text.of(TextColors.RED, "You must have permission to set home on this island!"));
+        }
 
-		Nucleus nucleus = PLUGIN.getIntegration().getNucleus()
-			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Error: Home Command Requires Nucleus!")));
+        Nucleus nucleus = PLUGIN.getIntegration().getNucleus()
+            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Error: Home Command Requires Nucleus!")));
 
-		boolean success = nucleus.modifyOrCreateHome(player);
-		if (!success) {
-			throw new CommandException(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
-		}
+        boolean success = nucleus.modifyOrCreateHome(player);
+        if (!success) {
+            throw new CommandException(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
+        }
 
-		return CommandResult.success();
-	}
+        return CommandResult.success();
+    }
 }

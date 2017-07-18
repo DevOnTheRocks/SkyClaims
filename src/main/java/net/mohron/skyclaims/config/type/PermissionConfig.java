@@ -23,28 +23,29 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class PermissionConfig {
-	@Setting(value = "Separate-BiomeType-Permissions", comment = "Enable permission checking for the Biome Type Argument.")
-	private boolean separateBiomePerms;
-	@Setting(value = "Separate-Schematic-Permissions", comment = "Enable permission checking for the Schematic Argument.")
-	private boolean separateSchematicPerms;
-	@Setting(value = "Separate-Target-Permissions", comment = "Enable permission checking for the Target Argument.")
-	private boolean separateTargetPerms;
 
-	public PermissionConfig() {
-		separateBiomePerms = false;
-		separateSchematicPerms = false;
-		separateTargetPerms = false;
-	}
+    @Setting(value = "Separate-BiomeType-Permissions", comment = "Enable permission checking for the Biome Type Argument.")
+    private boolean separateBiomePerms;
+    @Setting(value = "Separate-Schematic-Permissions", comment = "Enable permission checking for the Schematic Argument.")
+    private boolean separateSchematicPerms;
+    @Setting(value = "Separate-Target-Permissions", comment = "Enable permission checking for the Target Argument.")
+    private boolean separateTargetPerms;
 
-	public boolean isSeparateBiomePerms() {
-		return separateBiomePerms;
-	}
+    public PermissionConfig() {
+        separateBiomePerms = false;
+        separateSchematicPerms = false;
+        separateTargetPerms = false;
+    }
 
-	public boolean isSeparateSchematicPerms() {
-		return separateSchematicPerms;
-	}
+    public boolean isSeparateBiomePerms() {
+        return separateBiomePerms;
+    }
 
-	public boolean isSeparateTargetPerms() {
-		return separateTargetPerms;
-	}
+    public boolean isSeparateSchematicPerms() {
+        return separateSchematicPerms;
+    }
+
+    public boolean isSeparateTargetPerms() {
+        return separateTargetPerms;
+    }
 }

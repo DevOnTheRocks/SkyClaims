@@ -37,51 +37,52 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class TwoUserArgument extends CommandElement {
-	private final Text key;
-	private final Text key2;
 
-	public TwoUserArgument(@Nullable Text key, Text key2) {
-		super(key);
-		this.key = key;
-		this.key2 = key2;
-	}
+    private final Text key;
+    private final Text key2;
 
-	@Nullable
-	@Override
-	protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
-		return null;
-	}
+    public TwoUserArgument(@Nullable Text key, Text key2) {
+        super(key);
+        this.key = key;
+        this.key2 = key2;
+    }
 
-	@Override
-	public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
-		String user1 = args.next();
-		String user2 = args.nextIfPresent().orElse(null);
-		if (user2 != null) {
-			context.putArg(key, getUserFromName(user1));
-			context.putArg(key2, getUserFromName(user2));
-		} else {
-			context.putArg(key2, getUserFromName(user1));
-		}
-	}
+    @Nullable
+    @Override
+    protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
+        return null;
+    }
 
-	@Override
-	public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-		try {
-			String name = args.peek().toLowerCase();
-			return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class)
-				.getAll().stream()
-				.map(GameProfile::getName)
-				.filter(Optional::isPresent)
-				.filter(s -> s.get().startsWith(name))
-				.map(Optional::get)
-				.collect(GuavaCollectors.toImmutableList());
-		} catch (ArgumentParseException e) {
-			return Lists.newArrayList();
-		}
-	}
+    @Override
+    public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
+        String user1 = args.next();
+        String user2 = args.nextIfPresent().orElse(null);
+        if (user2 != null) {
+            context.putArg(key, getUserFromName(user1));
+            context.putArg(key2, getUserFromName(user2));
+        } else {
+            context.putArg(key2, getUserFromName(user1));
+        }
+    }
 
-	private User getUserFromName(String name) throws ArgumentParseException {
-		return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(name)
-			.orElseThrow(() -> new ArgumentParseException(Text.of("Invalid User Supplied"), name, 0));
-	}
+    @Override
+    public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
+        try {
+            String name = args.peek().toLowerCase();
+            return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class)
+                .getAll().stream()
+                .map(GameProfile::getName)
+                .filter(Optional::isPresent)
+                .filter(s -> s.get().startsWith(name))
+                .map(Optional::get)
+                .collect(GuavaCollectors.toImmutableList());
+        } catch (ArgumentParseException e) {
+            return Lists.newArrayList();
+        }
+    }
+
+    private User getUserFromName(String name) throws ArgumentParseException {
+        return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(name)
+            .orElseThrow(() -> new ArgumentParseException(Text.of("Invalid User Supplied"), name, 0));
+    }
 }

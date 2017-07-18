@@ -19,5 +19,5 @@
 package net.mohron.skyclaims.command.argument;
 
 public enum Targets {
-	BLOCK, CHUNK, ISLAND;
+    BLOCK, CHUNK, ISLAND;
 }

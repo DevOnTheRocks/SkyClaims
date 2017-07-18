@@ -38,65 +38,68 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 public class SchematicArgument extends CommandElement {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	public static final Map<String, String> SCHEMATICS = Maps.newHashMap();
 
-	static {
-		load();
-	}
+    public static final Map<String, String> SCHEMATICS = Maps.newHashMap();
+    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public SchematicArgument(@Nullable Text key) {
-		super(key);
-	}
+    static {
+        load();
+    }
 
-	@Nullable
-	@Override
-	protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
-		String schem = args.next().toLowerCase();
-		if (SCHEMATICS.isEmpty())
-			throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid schematics available!"), schem, 0);
-		if (SCHEMATICS.containsKey(schem)) {
-			if (!hasPermission(source, schem))
-				throw new ArgumentParseException(Text.of(TextColors.RED, "You do not have permission to use the supplied schematic!"), schem, 0);
-			return SCHEMATICS.get(schem);
-		}
-		throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid Schematic!"), schem, 0);
-	}
+    public SchematicArgument(@Nullable Text key) {
+        super(key);
+    }
 
-	@Override
-	public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-		try {
-			String name = args.peek().toLowerCase();
-			return SCHEMATICS.keySet().stream()
-				.filter(s -> s.startsWith(name))
-				.filter(s -> hasPermission(src, s))
-				.collect(Collectors.toList());
-		} catch (ArgumentParseException e) {
-			return Lists.newArrayList();
-		}
-	}
+    @SuppressWarnings("ConstantConditions")
+    public static void load() {
+        SchematicArgument.SCHEMATICS.clear();
+        File schemDir = new File(PLUGIN.getConfigDir() + File.separator + "schematics");
+        try {
+            PLUGIN.getLogger().debug("Attempting to retrieve all schematics!");
+            for (File file : schemDir.listFiles()) {
+                PLUGIN.getLogger().debug("Found File: " + file);
+                String schem = file.getName();
+                if (schem.endsWith(".schematic")) {
+                    SchematicArgument.SCHEMATICS.put(schem.replace(".schematic", "").toLowerCase(), schem.replace(".schematic", ""));
+                    PLUGIN.getLogger().debug("Added Schematic: " + schem);
+                }
+            }
+        } catch (NullPointerException e) {
+            PLUGIN.getLogger().error("Failed to read schematics directory!");
+        }
+    }
 
-	private boolean hasPermission(CommandSource src, String name) {
-		boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
-		return !checkPerms || src.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + name.toLowerCase());
-	}
+    @Nullable
+    @Override
+    protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
+        String schem = args.next().toLowerCase();
+        if (SCHEMATICS.isEmpty()) {
+            throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid schematics available!"), schem, 0);
+        }
+        if (SCHEMATICS.containsKey(schem)) {
+            if (!hasPermission(source, schem)) {
+                throw new ArgumentParseException(Text.of(TextColors.RED, "You do not have permission to use the supplied schematic!"), schem, 0);
+            }
+            return SCHEMATICS.get(schem);
+        }
+        throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid Schematic!"), schem, 0);
+    }
 
-	@SuppressWarnings("ConstantConditions")
-	public static void load() {
-		SchematicArgument.SCHEMATICS.clear();
-		File schemDir = new File(PLUGIN.getConfigDir() + File.separator + "schematics");
-		try {
-			PLUGIN.getLogger().debug("Attempting to retrieve all schematics!");
-			for (File file : schemDir.listFiles()) {
-				PLUGIN.getLogger().debug("Found File: " + file);
-				String schem = file.getName();
-				if (schem.endsWith(".schematic")) {
-					SchematicArgument.SCHEMATICS.put(schem.replace(".schematic", "").toLowerCase(), schem.replace(".schematic", ""));
-					PLUGIN.getLogger().debug("Added Schematic: " + schem);
-				}
-			}
-		} catch (NullPointerException e) {
-			PLUGIN.getLogger().error("Failed to read schematics directory!");
-		}
-	}
+    @Override
+    public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
+        try {
+            String name = args.peek().toLowerCase();
+            return SCHEMATICS.keySet().stream()
+                .filter(s -> s.startsWith(name))
+                .filter(s -> hasPermission(src, s))
+                .collect(Collectors.toList());
+        } catch (ArgumentParseException e) {
+            return Lists.newArrayList();
+        }
+    }
+
+    private boolean hasPermission(CommandSource src, String name) {
+        boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
+        return !checkPerms || src.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + name.toLowerCase());
+    }
 } 

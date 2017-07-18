@@ -21,36 +21,37 @@ package net.mohron.skyclaims.integration;
 import javax.annotation.Nonnull;
 
 public class Version implements Comparable<Version> {
-	@Nonnull
-	private final int[] numbers;
 
-	public Version(@Nonnull String version) {
-		final String split[] = version.split("\\-")[0].split("\\.");
-		numbers = new int[split.length];
-		for (int i = 0; i < split.length; i++) {
-			numbers[i] = Integer.valueOf(split[i]);
-		}
-	}
+    @Nonnull
+    private final int[] numbers;
 
-	@Override
-	public int compareTo(Version other) {
-		final int maxLength = Math.max(numbers.length, other.numbers.length);
-		for (int i = 0; i < maxLength; i++) {
-			final int left = i < numbers.length ? numbers[i] : 0;
-			final int right = i < other.numbers.length ? other.numbers[i] : 0;
-			if (left != right) {
-				return left < right ? -1 : 1;
-			}
-		}
-		return 0;
-	}
+    public Version(@Nonnull String version) {
+        final String split[] = version.split("\\-")[0].split("\\.");
+        numbers = new int[split.length];
+        for (int i = 0; i < split.length; i++) {
+            numbers[i] = Integer.valueOf(split[i]);
+        }
+    }
 
-	@Override
-	public String toString() {
-		String version = "";
-		for (int i : numbers) {
-			version += i + ".";
-		}
-		return version.substring(0, version.length() - 1);
-	}
+    @Override
+    public int compareTo(Version other) {
+        final int maxLength = Math.max(numbers.length, other.numbers.length);
+        for (int i = 0; i < maxLength; i++) {
+            final int left = i < numbers.length ? numbers[i] : 0;
+            final int right = i < other.numbers.length ? other.numbers[i] : 0;
+            if (left != right) {
+                return left < right ? -1 : 1;
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        String version = "";
+        for (int i : numbers) {
+            version += i + ".";
+        }
+        return version.substring(0, version.length() - 1);
+    }
 }

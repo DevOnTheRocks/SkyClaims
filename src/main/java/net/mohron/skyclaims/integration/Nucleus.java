@@ -37,45 +37,45 @@ import java.util.Optional;
 
 public class Nucleus {
 
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-	private static String HOME_NAME = "Island";
-	private NucleusHomeService homeService;
-	private NucleusKitService kitService;
-	private NucleusAFKService afkService;
+    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+    private static String HOME_NAME = "Island";
+    private NucleusHomeService homeService;
+    private NucleusKitService kitService;
+    private NucleusAFKService afkService;
 
-	public Nucleus() {
-		PLUGIN.getLogger().info("Nucleus Integration Successful!");
-		homeService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusHomeService.class);
-		kitService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusKitService.class);
-		afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
-	}
+    public Nucleus() {
+        PLUGIN.getLogger().info("Nucleus Integration Successful!");
+        homeService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusHomeService.class);
+        kitService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusKitService.class);
+        afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
+    }
 
-	public Optional<Transform<World>> getHome(User user) {
-		Optional<Home> oHome = homeService.getHome(user, HOME_NAME);
-		return oHome.flatMap(NamedLocation::getTransform);
-	}
+    public Optional<Transform<World>> getHome(User user) {
+        Optional<Home> oHome = homeService.getHome(user, HOME_NAME);
+        return oHome.flatMap(NamedLocation::getTransform);
+    }
 
-	public boolean modifyOrCreateHome(Player player) {
-		try {
-			homeService.modifyOrCreateHome(PLUGIN.getCause(), player, HOME_NAME, player.getLocation(), player.getRotation());
-			player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
-			return true;
-		} catch (NucleusException e) {
-			player.sendMessage(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
-			PLUGIN.getGame().getServer().getConsole().sendMessage(e.getText());
-			return false;
-		}
-	}
+    public boolean modifyOrCreateHome(Player player) {
+        try {
+            homeService.modifyOrCreateHome(PLUGIN.getCause(), player, HOME_NAME, player.getLocation(), player.getRotation());
+            player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
+            return true;
+        } catch (NucleusException e) {
+            player.sendMessage(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
+            PLUGIN.getGame().getServer().getConsole().sendMessage(e.getText());
+            return false;
+        }
+    }
 
-	public void redeemFirstJoinKit(Player player) {
-		// TODO: Redeem First Join Kit for player (Requires an API update)
-	}
+    public void redeemFirstJoinKit(Player player) {
+        // TODO: Redeem First Join Kit for player (Requires an API update)
+    }
 
-	public boolean isAFK(Player player) {
-		return afkService.isAFK(player);
-	}
+    public boolean isAFK(Player player) {
+        return afkService.isAFK(player);
+    }
 
-	public Instant lastActivity(Player player) {
-		return afkService.lastActivity(player);
-	}
+    public Instant lastActivity(Player player) {
+        return afkService.lastActivity(player);
+    }
 }

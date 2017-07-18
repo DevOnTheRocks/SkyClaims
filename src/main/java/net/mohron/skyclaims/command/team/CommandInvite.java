@@ -32,42 +32,42 @@ import org.spongepowered.api.text.Text;
 
 public class CommandInvite extends CommandBase {
 
-	public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
-	private static final Text USER = Text.of("user");
+    public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
+    private static final Text USER = Text.of("user");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_INVITE)
-		.arguments(GenericArguments.optional(GenericArguments.user(USER)))
-		.description(Text.of(HELP_TEXT))
-		.executor(new CommandInvite())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_INVITE)
+        .arguments(GenericArguments.optional(GenericArguments.user(USER)))
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandInvite())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandInvite");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandInvite");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandInvite");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandInvite");
+        }
+    }
 
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of("You must be a player to run this command!"));
-		}
-		Player player = (Player) src;
-		User user = (User) args.getOne(USER).orElse(null);
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (!(src instanceof Player)) {
+            throw new CommandException(Text.of("You must be a player to run this command!"));
+        }
+        Player player = (Player) src;
+        User user = (User) args.getOne(USER).orElse(null);
 
-		if (user == null) {
-			//TODO List invites
-		} else {
-			//TODO Send invite to online player or save for login
-		}
+        if (user == null) {
+            //TODO List invites
+        } else {
+            //TODO Send invite to online player or save for login
+        }
 
-		throw new CommandException(Text.of("Command not yet implemented"));
+        throw new CommandException(Text.of("Command not yet implemented"));
 
-		//return CommandResult.success();
-	}
+        //return CommandResult.success();
+    }
 }

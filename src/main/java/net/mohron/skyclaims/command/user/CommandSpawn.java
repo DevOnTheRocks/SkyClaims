@@ -35,45 +35,45 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class CommandSpawn extends CommandBase {
 
-	public static final String HELP_TEXT = "teleport to an island's spawn point.";
-	private static final Text USER = Text.of("user");
+    public static final String HELP_TEXT = "teleport to an island's spawn point.";
+    private static final Text USER = Text.of("user");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_SPAWN)
-		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.optional(GenericArguments.user(USER)))
-		.executor(new CommandSpawn())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_SPAWN)
+        .description(Text.of(HELP_TEXT))
+        .arguments(GenericArguments.optional(GenericArguments.user(USER)))
+        .executor(new CommandSpawn())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandSpawn");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandSpawn");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandSpawn");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandSpawn");
+        }
+    }
 
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of("You must be a player to use this command!"));
-		}
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (!(src instanceof Player)) {
+            throw new CommandException(Text.of("You must be a player to use this command!"));
+        }
 
-		Player player = (Player) src;
-		User user = args.<User>getOne(USER).orElse(player);
-		Island island = Island.getByOwner(user.getUniqueId())
-			.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
+        Player player = (Player) src;
+        User user = args.<User>getOne(USER).orElse(player);
+        Island island = Island.getByOwner(user.getUniqueId())
+            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
 
-		if (island.isLocked() && !island.hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
-			throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
-		}
+        if (island.isLocked() && !island.hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
+            throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
+        }
 
-		PLUGIN.getGame().getScheduler().createTaskBuilder()
-			.execute(CommandUtil.createTeleportConsumer((Player) src, island.getSpawn().getLocation()))
-			.submit(PLUGIN);
+        PLUGIN.getGame().getScheduler().createTaskBuilder()
+            .execute(CommandUtil.createTeleportConsumer((Player) src, island.getSpawn().getLocation()))
+            .submit(PLUGIN);
 
-		return CommandResult.success();
-	}
+        return CommandResult.success();
+    }
 }

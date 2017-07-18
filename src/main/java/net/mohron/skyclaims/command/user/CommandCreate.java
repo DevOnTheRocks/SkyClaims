@@ -35,47 +35,47 @@ import org.spongepowered.api.text.Text;
 
 public class CommandCreate extends CommandBase {
 
-	public static final String HELP_TEXT = "create an island.";
-	private static final Text SCHEMATIC = Text.of("schematic");
+    public static final String HELP_TEXT = "create an island.";
+    private static final Text SCHEMATIC = Text.of("schematic");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_CREATE)
-		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
-		.executor(new CommandCreate())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_CREATE)
+        .description(Text.of(HELP_TEXT))
+        .arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
+        .executor(new CommandCreate())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandCreate");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandCreate");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandCreate");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandCreate");
+        }
+    }
 
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of("You must be a player to use this command!"));
-		}
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (!(src instanceof Player)) {
+            throw new CommandException(Text.of("You must be a player to use this command!"));
+        }
 
-		Player player = (Player) src;
+        Player player = (Player) src;
 
-		if (Island.hasIsland(player.getUniqueId())) {
-			throw new CommandException(Text.of("You already have an island!"));
-		}
+        if (Island.hasIsland(player.getUniqueId())) {
+            throw new CommandException(Text.of("You already have an island!"));
+        }
 
-		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
+        String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
 
-		player.sendMessage(Text.of("Your island is being created. You will be teleported shortly."));
+        player.sendMessage(Text.of("Your island is being created. You will be teleported shortly."));
 
-		try {
-			new Island(player, schematic);
-		} catch (CreateIslandException e) {
-			throw new CommandException(Text.of("Unable to create island! " + e.getMessage()));
-		}
+        try {
+            new Island(player, schematic);
+        } catch (CreateIslandException e) {
+            throw new CommandException(Text.of("Unable to create island! " + e.getMessage()));
+        }
 
-		return CommandResult.success();
-	}
+        return CommandResult.success();
+    }
 }

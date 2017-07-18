@@ -23,49 +23,50 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class MysqlConfig {
-	@Setting("Name")
-	private String databaseName;
-	@Setting("Location")
-	private String location;
-	@Setting("Table-Prefix")
-	private String tablePrefix;
-	@Setting("Username")
-	private String username;
-	@Setting("Password")
-	private String password;
-	@Setting("Port")
-	private Integer port;
 
-	public MysqlConfig() {
-		databaseName = "skyclaims";
-		location = "localhost";
-		tablePrefix = "";
-		username = "skyclaims";
-		password = "skyclaims";
-		port = 3306;
-	}
+    @Setting("Name")
+    private String databaseName;
+    @Setting("Location")
+    private String location;
+    @Setting("Table-Prefix")
+    private String tablePrefix;
+    @Setting("Username")
+    private String username;
+    @Setting("Password")
+    private String password;
+    @Setting("Port")
+    private Integer port;
 
-	public String getDatabaseName() {
-		return databaseName;
-	}
+    public MysqlConfig() {
+        databaseName = "skyclaims";
+        location = "localhost";
+        tablePrefix = "";
+        username = "skyclaims";
+        password = "skyclaims";
+        port = 3306;
+    }
 
-	public String getLocation() {
-		return location;
-	}
+    public String getDatabaseName() {
+        return databaseName;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getLocation() {
+        return location;
+    }
 
-	public String getTablePrefix() {
-		return tablePrefix;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getTablePrefix() {
+        return tablePrefix;
+    }
 
-	public int getPort() {
-		return (port != null) ? port : 3306;
-	}
+    public String getUsername() {
+        return username;
+    }
+
+    public int getPort() {
+        return (port != null) ? port : 3306;
+    }
 }

@@ -18,6 +18,15 @@
 
 package net.mohron.skyclaims;
 
+import static net.mohron.skyclaims.PluginInfo.AUTHORS;
+import static net.mohron.skyclaims.PluginInfo.DESCRIPTION;
+import static net.mohron.skyclaims.PluginInfo.GP_API_VERSION;
+import static net.mohron.skyclaims.PluginInfo.GP_VERSION;
+import static net.mohron.skyclaims.PluginInfo.ID;
+import static net.mohron.skyclaims.PluginInfo.NAME;
+import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
+import static net.mohron.skyclaims.PluginInfo.VERSION;
+
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -25,9 +34,25 @@ import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandAdmin;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.admin.*;
+import net.mohron.skyclaims.command.admin.CommandConfig;
+import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
+import net.mohron.skyclaims.command.admin.CommandDelete;
+import net.mohron.skyclaims.command.admin.CommandReload;
+import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.command.argument.SchematicArgument;
-import net.mohron.skyclaims.command.user.*;
+import net.mohron.skyclaims.command.user.CommandCreate;
+import net.mohron.skyclaims.command.user.CommandExpand;
+import net.mohron.skyclaims.command.user.CommandHome;
+import net.mohron.skyclaims.command.user.CommandInfo;
+import net.mohron.skyclaims.command.user.CommandList;
+import net.mohron.skyclaims.command.user.CommandLock;
+import net.mohron.skyclaims.command.user.CommandRegen;
+import net.mohron.skyclaims.command.user.CommandReset;
+import net.mohron.skyclaims.command.user.CommandSetBiome;
+import net.mohron.skyclaims.command.user.CommandSetHome;
+import net.mohron.skyclaims.command.user.CommandSetSpawn;
+import net.mohron.skyclaims.command.user.CommandSpawn;
+import net.mohron.skyclaims.command.user.CommandUnlock;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
@@ -38,6 +63,7 @@ import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
+import net.mohron.skyclaims.listener.WorldLoadHandler;
 import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.world.Island;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -66,251 +92,258 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static net.mohron.skyclaims.PluginInfo.*;
-
 @Plugin(id = ID,
-	name = NAME,
-	version = VERSION,
-	description = DESCRIPTION,
-	authors = AUTHORS,
-	dependencies = {
-		@Dependency(id = "griefprevention", version = GP_VERSION),
-		@Dependency(id = "nucleus", version = NUCLEUS_VERSION, optional = true)
-	})
+    name = NAME,
+    version = VERSION,
+    description = DESCRIPTION,
+    authors = AUTHORS,
+    dependencies = {
+        @Dependency(id = "griefprevention", version = GP_VERSION),
+        @Dependency(id = "nucleus", version = NUCLEUS_VERSION, optional = true)
+    })
 public class SkyClaims {
-	private static SkyClaims instance;
-	private static GriefPreventionApi griefPrevention;
-	private static PermissionService permissionService;
-	private static Integration integration;
-	public static Map<UUID, Island> islands = Maps.newHashMap();
-	private static Set<Island> saveQueue = Sets.newHashSet();
 
-	@Inject
-	private PluginContainer pluginContainer;
+    public static Map<UUID, Island> islands = Maps.newHashMap();
+    private static SkyClaims instance;
+    private static GriefPreventionApi griefPrevention;
+    private static PermissionService permissionService;
+    private static Integration integration;
+    private static Set<Island> saveQueue = Sets.newHashSet();
 
-	@Inject
-	private Logger logger;
+    @Inject
+    private PluginContainer pluginContainer;
 
-	@Inject
-	private Game game;
+    @Inject
+    private Logger logger;
 
-	@Inject
-	private Metrics metrics;
+    @Inject
+    private Game game;
 
-	@Inject
-	@ConfigDir(sharedRoot = false)
-	private Path configDir;
-	@Inject
-	@DefaultConfig(sharedRoot = false)
-	private ConfigurationLoader<CommentedConfigurationNode> configManager;
-	private ConfigManager pluginConfigManager;
-	private GlobalConfig defaultConfig;
+    @Inject
+    private Metrics metrics;
 
-	private IDatabase database;
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    private Path configDir;
+    @Inject
+    @DefaultConfig(sharedRoot = false)
+    private ConfigurationLoader<CommentedConfigurationNode> configManager;
+    private ConfigManager pluginConfigManager;
+    private GlobalConfig defaultConfig;
 
-	private boolean enabled = true;
+    private IDatabase database;
 
-	@Listener
-	public void onPostInitialization(GamePostInitializationEvent event) {
-		getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
+    private boolean enabled = true;
 
-		instance = this;
+    public static SkyClaims getInstance() {
+        return instance;
+    }
 
-		try {
-			SkyClaims.griefPrevention = GriefPrevention.getApi();
-		} catch (IllegalStateException e) {
-			getLogger().error("GriefPrevention API failed to load.");
-		}
+    @Listener
+    public void onPostInitialization(GamePostInitializationEvent event) {
+        getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
 
-		if (SkyClaims.griefPrevention != null) {
-			if (griefPrevention.getApiVersion() < GP_API_VERSION) {
-				getLogger().error(String.format(
-					"GriefPrevention API version %s is unsupported! Please update to API version %s+.",
-					griefPrevention.getApiVersion(), GP_API_VERSION
-				));
-				enabled = false;
-			} else
-				getLogger().info("GriefPrevention Integration Successful!");
-		} else {
-			getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
-			enabled = false;
-		}
+        instance = this;
 
-		//TODO: Setup the worldName with a sponge:void worldName gen modifier if not already created
-	}
+        try {
+            SkyClaims.griefPrevention = GriefPrevention.getApi();
+        } catch (IllegalStateException e) {
+            getLogger().error("GriefPrevention API failed to load.");
+        }
 
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	@Listener(order = Order.LATE)
-	public void onAboutToStart(GameAboutToStartServerEvent event) {
-		if (!enabled) return;
+        if (SkyClaims.griefPrevention != null) {
+            if (griefPrevention.getApiVersion() < GP_API_VERSION) {
+                getLogger().error(String.format(
+                    "GriefPrevention API version %s is unsupported! Please update to API version %s+.",
+                    griefPrevention.getApiVersion(), GP_API_VERSION
+                ));
+                enabled = false;
+            } else {
+                getLogger().info("GriefPrevention Integration Successful!");
+            }
+        } else {
+            getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
+            enabled = false;
+        }
 
-		permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
-		if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
-			.equalsIgnoreCase("sponge")) {
-			getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
-			enabled = false;
-			return;
-		}
+        //TODO: Setup the worldName with a sponge:void worldName gen modifier if not already created
+    }
 
-		defaultConfig = new GlobalConfig();
-		pluginConfigManager = new ConfigManager(configManager);
-		pluginConfigManager.save();
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    @Listener(order = Order.LATE)
+    public void onAboutToStart(GameAboutToStartServerEvent event) {
+        if (!enabled) {
+            return;
+        }
 
-		integration = new Integration();
+        permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
+        if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
+            .equalsIgnoreCase("sponge")) {
+            getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+            enabled = false;
+            return;
+        }
 
-		getGame().getEventManager().registerListeners(this, new SchematicHandler());
-		getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
-		getGame().getEventManager().registerListeners(this, new RespawnHandler());
-		getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
+        defaultConfig = new GlobalConfig();
+        pluginConfigManager = new ConfigManager(configManager);
+        pluginConfigManager.save();
 
-		registerCommands();
-	}
+        integration = new Integration();
 
-	@Listener
-	public void onServerStarted(GameStartedServerEvent event) {
-		if (!enabled) return;
+        getGame().getEventManager().registerListeners(this, new SchematicHandler());
+        getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
+        getGame().getEventManager().registerListeners(this, new RespawnHandler());
+        getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
+        getGame().getEventManager().registerListeners(this, new WorldLoadHandler());
 
-		database = initializeDatabase();
+        registerCommands();
+    }
 
-		islands = database.loadData();
-		getLogger().info("Islands Loaded: " + islands.size());
-		if (!saveQueue.isEmpty()) {
-			getLogger().info("Saving " + saveQueue.size() + " claims that were malformed");
-			database.saveData(saveQueue);
-		}
+    @Listener
+    public void onServerStarted(GameStartedServerEvent event) {
+        if (!enabled) {
+            return;
+        }
 
-		addCustomMetrics();
+        database = initializeDatabase();
 
-		getLogger().info("Initialization complete.");
-	}
+        islands = database.loadData();
+        getLogger().info("Islands Loaded: " + islands.size());
+        if (!saveQueue.isEmpty()) {
+            getLogger().info("Saving " + saveQueue.size() + " claims that were malformed");
+            database.saveData(saveQueue);
+        }
 
-	@Listener
-	public void onGameStopping(GameStoppingServerEvent event) {
-		if (!enabled) return;
-		getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
-	}
+        addCustomMetrics();
 
-	@Listener
-	public void onReload(GameReloadEvent event) {
-		reload();
-	}
+        getLogger().info("Initialization complete.");
+    }
 
-	public void reload() {
-		// Load Plugin Config
-		pluginConfigManager.load();
-		// Load Schematics Directory
-		SchematicArgument.load();
-		// Load Database
-		islands = database.loadData();
-		// Reload Commands
-		Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
-		registerCommands();
-	}
+    @Listener
+    public void onGameStopping(GameStoppingServerEvent event) {
+        if (!enabled) {
+            return;
+        }
+        getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
+    }
 
-	private void registerCommands() {
-		CommandAdmin.register();
-		CommandConfig.register();
-		CommandCreate.register();
-		CommandCreateSchematic.register();
-		CommandExpand.register();
-		CommandHome.register();
-		CommandDelete.register();
-		CommandInfo.register();
-		CommandIsland.register();
-		CommandList.register();
-		CommandLock.register();
-		CommandReload.register();
-		CommandRegen.register();
-		CommandReset.register();
-		CommandSetBiome.register();
-		CommandSetHome.register();
-		CommandSetSpawn.register();
-		CommandSpawn.register();
-		CommandTransfer.register();
-		CommandUnlock.register();
-	}
+    @Listener
+    public void onReload(GameReloadEvent event) {
+        reload();
+    }
 
-	private IDatabase initializeDatabase() {
-		String type = defaultConfig.getStorageConfig().getType();
-		if (type.equalsIgnoreCase("SQLite")) {
-			return new SqliteDatabase();
-		} else if (type.equalsIgnoreCase("MySQL")) {
-			return new MysqlDatabase();
-		} else {
-			return new SqliteDatabase();
-		}
-	}
+    public void reload() {
+        // Load Plugin Config
+        pluginConfigManager.load();
+        // Load Schematics Directory
+        SchematicArgument.load();
+        // Load Database
+        islands = database.loadData();
+        // Reload Commands
+        Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
+        registerCommands();
+    }
 
-	private void addCustomMetrics() {
-		metrics.addCustomChart(new Metrics.SingleLineChart("islands") {
-			@Override
-			public int getValue() {
-				return islands.size();
-			}
-		});
-		metrics.addCustomChart(new Metrics.SimplePie("sponge_version") {
-			@Override
-			public String getValue() {
-				return Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null);
-			}
-		});
-		metrics.addCustomChart(new Metrics.SimplePie("allocated_ram") {
-			@Override
-			public String getValue() {
-				return String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0);
-			}
-		});
-	}
+    private void registerCommands() {
+        CommandAdmin.register();
+        CommandConfig.register();
+        CommandCreate.register();
+        CommandCreateSchematic.register();
+        CommandExpand.register();
+        CommandHome.register();
+        CommandDelete.register();
+        CommandInfo.register();
+        CommandIsland.register();
+        CommandList.register();
+        CommandLock.register();
+        CommandReload.register();
+        CommandRegen.register();
+        CommandReset.register();
+        CommandSetBiome.register();
+        CommandSetHome.register();
+        CommandSetSpawn.register();
+        CommandSpawn.register();
+        CommandTransfer.register();
+        CommandUnlock.register();
+    }
 
-	public static SkyClaims getInstance() {
-		return instance;
-	}
+    private IDatabase initializeDatabase() {
+        String type = defaultConfig.getStorageConfig().getType();
+        if (type.equalsIgnoreCase("SQLite")) {
+            return new SqliteDatabase();
+        } else if (type.equalsIgnoreCase("MySQL")) {
+            return new MysqlDatabase();
+        } else {
+            return new SqliteDatabase();
+        }
+    }
 
-	public GriefPreventionApi getGriefPrevention() {
-		return griefPrevention;
-	}
+    private void addCustomMetrics() {
+        metrics.addCustomChart(new Metrics.SingleLineChart("islands") {
+            @Override
+            public int getValue() {
+                return islands.size();
+            }
+        });
+        metrics.addCustomChart(new Metrics.SimplePie("sponge_version") {
+            @Override
+            public String getValue() {
+                return Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null);
+            }
+        });
+        metrics.addCustomChart(new Metrics.SimplePie("allocated_ram") {
+            @Override
+            public String getValue() {
+                return String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0);
+            }
+        });
+    }
 
-	public PermissionService getPermissionService() {
-		return permissionService;
-	}
+    public GriefPreventionApi getGriefPrevention() {
+        return griefPrevention;
+    }
 
-	public Integration getIntegration() {
-		return integration;
-	}
+    public PermissionService getPermissionService() {
+        return permissionService;
+    }
 
-	public Cause getCause() {
-		return Cause.source(pluginContainer).build();
-	}
+    public Integration getIntegration() {
+        return integration;
+    }
 
-	public Logger getLogger() {
-		return logger;
-	}
+    public Cause getCause() {
+        return Cause.source(pluginContainer).build();
+    }
 
-	public Game getGame() {
-		return game;
-	}
+    public Logger getLogger() {
+        return logger;
+    }
 
-	public GlobalConfig getConfig() {
-		return this.defaultConfig;
-	}
+    public Game getGame() {
+        return game;
+    }
 
-	public void setConfig(GlobalConfig config){
-		this.defaultConfig = config;
-	}
+    public GlobalConfig getConfig() {
+        return this.defaultConfig;
+    }
 
-	public ConfigManager getConfigManager() {
-		return this.pluginConfigManager;
-	}
+    public void setConfig(GlobalConfig config) {
+        this.defaultConfig = config;
+    }
 
-	public Path getConfigDir() {
-		return configDir;
-	}
+    public ConfigManager getConfigManager() {
+        return this.pluginConfigManager;
+    }
 
-	public IDatabase getDatabase() {
-		return database;
-	}
+    public Path getConfigDir() {
+        return configDir;
+    }
 
-	public void queueForSaving(Island island) {
-		saveQueue.add(island);
-	}
+    public IDatabase getDatabase() {
+        return database;
+    }
+
+    public void queueForSaving(Island island) {
+        saveQueue.add(island);
+    }
 }

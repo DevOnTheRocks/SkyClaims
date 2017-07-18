@@ -26,13 +26,14 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface IDatabase {
-	HashMap<UUID, Island> loadData();
 
-	void saveData(Collection<Island> islands);
+    HashMap<UUID, Island> loadData();
 
-	void saveData(Map<UUID, Island> islands);
+    void saveData(Collection<Island> islands);
 
-	void saveIsland(Island island);
+    void saveData(Map<UUID, Island> islands);
 
-	void removeIsland(Island island);
+    void saveIsland(Island island);
+
+    void removeIsland(Island island);
 }

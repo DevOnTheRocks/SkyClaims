@@ -26,32 +26,33 @@ import java.io.File;
 
 @ConfigSerializable
 public class StorageConfig {
-	@Setting(value = "Location", comment = "The location to store SkyClaims data. Default: ${CONFIG}/data")
-	private String location;
-	@Setting(value = "Type", comment = "The type of data storage to use. Supports [SQLite, MySQL]")
-	private String type;
-	@Setting(value = "MySQL", comment = "MySQL Not Yet Implemented!")
-	private MysqlConfig mysqlConfig;
 
-	public StorageConfig() {
-		location = "${CONFIG}/data";
-		type = "SQLite";
-		mysqlConfig = new MysqlConfig();
-	}
+    @Setting(value = "Location", comment = "The location to store SkyClaims data. Default: ${CONFIG}/data")
+    private String location;
+    @Setting(value = "Type", comment = "The type of data storage to use. Supports [SQLite, MySQL]")
+    private String type;
+    @Setting(value = "MySQL", comment = "MySQL Not Yet Implemented!")
+    private MysqlConfig mysqlConfig;
 
-	public String getLocation() {
-		return location
-			.replace("*CONFIG*", SkyClaims.getInstance().getConfigDir().toString())
-			.replace("${CONFIG}", SkyClaims.getInstance().getConfigDir().toString())
-			.replace("/", File.separator)
-			.replace("\\", File.separator);
-	}
+    public StorageConfig() {
+        location = "${CONFIG}/data";
+        type = "SQLite";
+        mysqlConfig = new MysqlConfig();
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getLocation() {
+        return location
+            .replace("*CONFIG*", SkyClaims.getInstance().getConfigDir().toString())
+            .replace("${CONFIG}", SkyClaims.getInstance().getConfigDir().toString())
+            .replace("/", File.separator)
+            .replace("\\", File.separator);
+    }
 
-	public MysqlConfig getMysqlConfig() {
-		return mysqlConfig;
-	}
+    public String getType() {
+        return type;
+    }
+
+    public MysqlConfig getMysqlConfig() {
+        return mysqlConfig;
+    }
 }

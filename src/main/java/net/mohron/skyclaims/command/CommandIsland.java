@@ -23,7 +23,19 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.PluginInfo;
-import net.mohron.skyclaims.command.user.*;
+import net.mohron.skyclaims.command.user.CommandCreate;
+import net.mohron.skyclaims.command.user.CommandExpand;
+import net.mohron.skyclaims.command.user.CommandHome;
+import net.mohron.skyclaims.command.user.CommandInfo;
+import net.mohron.skyclaims.command.user.CommandList;
+import net.mohron.skyclaims.command.user.CommandLock;
+import net.mohron.skyclaims.command.user.CommandRegen;
+import net.mohron.skyclaims.command.user.CommandReset;
+import net.mohron.skyclaims.command.user.CommandSetBiome;
+import net.mohron.skyclaims.command.user.CommandSetHome;
+import net.mohron.skyclaims.command.user.CommandSetSpawn;
+import net.mohron.skyclaims.command.user.CommandSpawn;
+import net.mohron.skyclaims.command.user.CommandUnlock;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -41,199 +53,199 @@ import java.util.List;
 
 public class CommandIsland extends CommandBase {
 
-	private static final String HELP_TEXT = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
+    private static final String HELP_TEXT = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
 
-	private static final Text HELP = Text.of("help");
+    private static final Text HELP = Text.of("help");
 
-	private static CommandSpec commandSpec = CommandSpec.builder()
-		.description(Text.of(HELP_TEXT))
-		.child(CommandAdmin.commandSpec, "admin")
-		.child(CommandCreate.commandSpec, "create")
-		.child(CommandExpand.commandSpec, "expand")
-		.child(CommandHome.commandSpec, "home")
-		.child(CommandInfo.commandSpec, "info")
-		.child(CommandList.commandSpec, "list")
-		.child(CommandLock.commandSpec, "lock")
-		.child(CommandRegen.commandSpec, "regen")
-		.child(CommandReset.commandSpec, "reset")
-		.child(CommandSetBiome.commandSpec, "setbiome")
-		.child(CommandSetHome.commandSpec, "sethome")
-		.child(CommandSetSpawn.commandSpec, "setspawn")
-		.child(CommandSpawn.commandSpec, "spawn", "tp")
-		.child(CommandUnlock.commandSpec, "unlock")
-		.arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
-		.executor(new CommandIsland())
-		.build();
+    private static CommandSpec commandSpec = CommandSpec.builder()
+        .description(Text.of(HELP_TEXT))
+        .child(CommandAdmin.commandSpec, "admin")
+        .child(CommandCreate.commandSpec, "create")
+        .child(CommandExpand.commandSpec, "expand")
+        .child(CommandHome.commandSpec, "home")
+        .child(CommandInfo.commandSpec, "info")
+        .child(CommandList.commandSpec, "list")
+        .child(CommandLock.commandSpec, "lock")
+        .child(CommandRegen.commandSpec, "regen")
+        .child(CommandReset.commandSpec, "reset")
+        .child(CommandSetBiome.commandSpec, "setbiome")
+        .child(CommandSetHome.commandSpec, "sethome")
+        .child(CommandSetSpawn.commandSpec, "setspawn")
+        .child(CommandSpawn.commandSpec, "spawn", "tp")
+        .child(CommandUnlock.commandSpec, "unlock")
+        .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
+        .executor(new CommandIsland())
+        .build();
 
-	public static void register() {
-		try {
-			Sponge.getCommandManager().register(PLUGIN, commandSpec, "skyclaims", "island", "is");
-			PLUGIN.getLogger().debug("Registered command: CommandIsland");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandIsland");
-		}
-	}
+    public static void register() {
+        try {
+            Sponge.getCommandManager().register(PLUGIN, commandSpec, "skyclaims", "island", "is");
+            PLUGIN.getLogger().debug("Registered command: CommandIsland");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandIsland");
+        }
+    }
 
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		List<Text> helpText = Lists.newArrayList();
-		boolean hasPerms = false;
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        List<Text> helpText = Lists.newArrayList();
+        boolean hasPerms = false;
 
-		helpText.add(Text.of(
-			TextColors.WHITE, "SkyClaims utilizes GriefPrevention for world protection and management. Go to ",
-			TextColors.YELLOW, "http://bit.ly/mcgpuser",
-			TextColors.WHITE, " to learn more."
-		));
+        helpText.add(Text.of(
+            TextColors.WHITE, "SkyClaims utilizes GriefPrevention for world protection and management. Go to ",
+            TextColors.YELLOW, "http://bit.ly/mcgpuser",
+            TextColors.WHITE, " to learn more."
+        ));
 
-		if (src.hasPermission(Permissions.COMMAND_CREATE)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is create").onClick(TextActions.runCommand("/is create")),
-				TextColors.GRAY, " [schematic]",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandCreate.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_CREATE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is create").onClick(TextActions.runCommand("/is create")),
+                TextColors.GRAY, " [schematic]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandCreate.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_HOME)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is home").onClick(TextActions.runCommand("/is home")),
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandHome.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_HOME)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is home").onClick(TextActions.runCommand("/is home")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandHome.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_EXPAND)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is expand").onClick(TextActions.suggestCommand("/is expand ")),
-				TextColors.GRAY, " [blocks]",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandExpand.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_EXPAND)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is expand").onClick(TextActions.suggestCommand("/is expand ")),
+                TextColors.GRAY, " [blocks]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandExpand.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_INFO)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
-				TextColors.GRAY, " [island]",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandInfo.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_INFO)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
+                TextColors.GRAY, " [island]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandInfo.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_LIST)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is list").onClick(TextActions.runCommand("/is list")),
-				TextColors.GRAY, " [user]",
-				TextColors.GRAY, Text.builder(" [sort]").onHover(TextActions.showText(getSortOptions())),
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandList.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_LIST)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is list").onClick(TextActions.runCommand("/is list")),
+                TextColors.GRAY, " [user]",
+                TextColors.GRAY, Text.builder(" [sort]").onHover(TextActions.showText(getSortOptions())),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandList.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_LOCK)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
-				TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? " [island|all]" : Text.EMPTY,
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandLock.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_LOCK)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
+                TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? " [island|all]" : Text.EMPTY,
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandLock.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_REGEN)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is regen").onClick(TextActions.suggestCommand("/is regen")),
-				TextColors.GRAY, " [schematic]",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandRegen.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_REGEN)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is regen").onClick(TextActions.suggestCommand("/is regen")),
+                TextColors.GRAY, " [schematic]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandRegen.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_RESET)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is reset").onClick(TextActions.suggestCommand("/is reset")),
-				TextColors.GRAY, " [schematic]",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandReset.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_RESET)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is reset").onClick(TextActions.suggestCommand("/is reset")),
+                TextColors.GRAY, " [schematic]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandReset.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_SET_BIOME)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is setbiome").onClick(TextActions.suggestCommand("/is setbiome ")),
-				TextColors.GOLD, " <biome>",
-				TextColors.GRAY, " [target]",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandSetBiome.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_SET_BIOME)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is setbiome").onClick(TextActions.suggestCommand("/is setbiome ")),
+                TextColors.GOLD, " <biome>",
+                TextColors.GRAY, " [target]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandSetBiome.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_SET_HOME)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is sethome").onClick(TextActions.runCommand("/is sethome")),
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandSetHome.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_SET_HOME)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is sethome").onClick(TextActions.runCommand("/is sethome")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandSetHome.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_SET_SPAWN)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is setspawn").onClick(TextActions.runCommand("/is setspawn")),
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandSetSpawn.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_SET_SPAWN)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is setspawn").onClick(TextActions.runCommand("/is setspawn")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandSetSpawn.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_SPAWN)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is spawn").onClick(TextActions.runCommand("/is spawn")),
-				TextColors.GRAY, " [player]",
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandSpawn.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_SPAWN)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is spawn").onClick(TextActions.runCommand("/is spawn")),
+                TextColors.GRAY, " [player]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandSpawn.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (src.hasPermission(Permissions.COMMAND_LOCK)) {
-			helpText.add(Text.of(
-				TextColors.AQUA, Text.builder("is unlock").onClick(TextActions.runCommand("/is unlock")),
-				TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? " [island|all]" : Text.EMPTY,
-				TextColors.DARK_GRAY, " - ",
-				TextColors.DARK_GREEN, CommandUnlock.HELP_TEXT
-			));
-			hasPerms = true;
-		}
+        if (src.hasPermission(Permissions.COMMAND_LOCK)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is unlock").onClick(TextActions.runCommand("/is unlock")),
+                TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? " [island|all]" : Text.EMPTY,
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandUnlock.HELP_TEXT
+            ));
+            hasPerms = true;
+        }
 
-		if (hasPerms) {
-			PaginationList.builder()
-				.title(Text.of(TextColors.AQUA, NAME, " Help"))
-				.padding(Text.of(TextColors.AQUA, "-"))
-				.contents(helpText)
-				.sendTo(src);
-		} else {
-			src.sendMessage(Text.of(NAME + " " + VERSION));
-		}
+        if (hasPerms) {
+            PaginationList.builder()
+                .title(Text.of(TextColors.AQUA, NAME, " Help"))
+                .padding(Text.of(TextColors.AQUA, "-"))
+                .contents(helpText)
+                .sendTo(src);
+        } else {
+            src.sendMessage(Text.of(NAME + " " + VERSION));
+        }
 
-		return CommandResult.success();
-	}
+        return CommandResult.success();
+    }
 
-	private Text getSortOptions() {
-		return Text.of(
-			TextColors.GREEN, "ascending ", TextColors.RED, "descending", Text.NEW_LINE,
-			TextColors.GREEN, "newest ", TextColors.RED, "oldest", Text.NEW_LINE,
-			TextColors.GREEN, "active ", TextColors.RED, "inactive", Text.NEW_LINE,
-			TextColors.GREEN, "team+ ", TextColors.RED, "team-", Text.NEW_LINE,
-			TextColors.GREEN, "largest ", TextColors.RED, "smallest", Text.NEW_LINE
-		);
-	}
+    private Text getSortOptions() {
+        return Text.of(
+            TextColors.GREEN, "ascending ", TextColors.RED, "descending", Text.NEW_LINE,
+            TextColors.GREEN, "newest ", TextColors.RED, "oldest", Text.NEW_LINE,
+            TextColors.GREEN, "active ", TextColors.RED, "inactive", Text.NEW_LINE,
+            TextColors.GREEN, "team+ ", TextColors.RED, "team-", Text.NEW_LINE,
+            TextColors.GREEN, "largest ", TextColors.RED, "smallest", Text.NEW_LINE
+        );
+    }
 }

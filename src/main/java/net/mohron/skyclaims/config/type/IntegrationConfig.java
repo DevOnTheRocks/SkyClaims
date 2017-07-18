@@ -25,10 +25,10 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class IntegrationConfig {
 
-	@Setting(value = "Nucleus")
-	private NucleusConfig nucleus = new NucleusConfig();
+    @Setting(value = "Nucleus")
+    private NucleusConfig nucleus = new NucleusConfig();
 
-	public NucleusConfig getNucleus() {
-		return nucleus;
-	}
+    public NucleusConfig getNucleus() {
+        return nucleus;
+    }
 }

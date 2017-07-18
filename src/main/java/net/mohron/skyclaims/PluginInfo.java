@@ -19,12 +19,13 @@
 package net.mohron.skyclaims;
 
 public class PluginInfo {
-	public static final String ID = "skyclaims";
-	public static final String NAME = "@NAME@";
-	public static final String VERSION = "@VERSION@";
-	public static final String DESCRIPTION = "@DESCRIPTION@";
-	public static final String AUTHORS = "Mohron, Cossacksman";
-	public static final String GP_VERSION = "2.3.1";
-	public static final double GP_API_VERSION = 0.3;
-	public static final String NUCLEUS_VERSION = "0.29.0";
+
+    public static final String ID = "skyclaims";
+    public static final String NAME = "@NAME@";
+    public static final String VERSION = "@VERSION@";
+    public static final String DESCRIPTION = "@DESCRIPTION@";
+    public static final String AUTHORS = "Mohron, Cossacksman";
+    public static final String GP_VERSION = "2.3.1";
+    public static final double GP_API_VERSION = 0.3;
+    public static final String NUCLEUS_VERSION = "0.29.0";
 }

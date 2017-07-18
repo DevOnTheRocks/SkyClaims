@@ -33,41 +33,41 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class CommandDelete extends CommandBase {
 
-	public static final String HELP_TEXT = "used to delete a player's island";
-	private static final Text CLEAR = Text.of("clear");
-	private static final Text USER = Text.of("user");
+    public static final String HELP_TEXT = "used to delete a player's island";
+    private static final Text CLEAR = Text.of("clear");
+    private static final Text USER = Text.of("user");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_DELETE)
-		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.user(USER), GenericArguments.optional(GenericArguments.bool(CLEAR)))
-		.executor(new CommandDelete())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_DELETE)
+        .description(Text.of(HELP_TEXT))
+        .arguments(GenericArguments.user(USER), GenericArguments.optional(GenericArguments.bool(CLEAR)))
+        .executor(new CommandDelete())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandDelete");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandDelete");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandDelete");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandDelete");
+        }
+    }
 
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		User user = args.<User>getOne(USER)
-			.orElseThrow(() -> new CommandException(Text.of("Invalid user")));
-		Island island = Island.getByOwner(user.getUniqueId())
-			.orElseThrow(() -> new CommandException(Text.of("Invalid island")));
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        User user = args.<User>getOne(USER)
+            .orElseThrow(() -> new CommandException(Text.of("Invalid user")));
+        Island island = Island.getByOwner(user.getUniqueId())
+            .orElseThrow(() -> new CommandException(Text.of("Invalid island")));
 
-		boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
-		if (clear) {
-			island.clear();
-		}
-		island.delete();
+        boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
+        if (clear) {
+            island.clear();
+        }
+        island.delete();
 
-		src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
-		return CommandResult.success();
-	}
+        src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
+        return CommandResult.success();
+    }
 }

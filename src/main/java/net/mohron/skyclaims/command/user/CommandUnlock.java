@@ -41,67 +41,68 @@ import java.util.UUID;
 
 public class CommandUnlock extends CommandBase {
 
-	public static final String HELP_TEXT = "used to allow untrusted players to visit your island.";
-	private static final Text ALL = Text.of("all");
-	private static final Text ISLAND = Text.of("island");
+    public static final String HELP_TEXT = "used to allow untrusted players to visit your island.";
+    private static final Text ALL = Text.of("all");
+    private static final Text ISLAND = Text.of("island");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_LOCK)
-		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.firstParsing(
-			GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
-			GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
-		))
-		.executor(new CommandUnlock())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_LOCK)
+        .description(Text.of(HELP_TEXT))
+        .arguments(GenericArguments.firstParsing(
+            GenericArguments
+                .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
+            GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
+        ))
+        .executor(new CommandUnlock())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandUnlock");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandUnlock");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandUnlock");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandUnlock");
+        }
+    }
 
-	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (args.hasAny(ISLAND)) {
-			return unlockIslands(src, args.getAll(ISLAND));
-		}
-		if (args.hasAny(ALL)) {
-			unlockAll(src);
-		}
-		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of("You must be a player to run this command!"));
-		}
-		Player player = (Player) src;
-		Optional<Island> island = Island.getByOwner(player.getUniqueId());
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (args.hasAny(ISLAND)) {
+            return unlockIslands(src, args.getAll(ISLAND));
+        }
+        if (args.hasAny(ALL)) {
+            unlockAll(src);
+        }
+        if (!(src instanceof Player)) {
+            throw new CommandException(Text.of("You must be a player to run this command!"));
+        }
+        Player player = (Player) src;
+        Optional<Island> island = Island.getByOwner(player.getUniqueId());
 
-		if (!island.isPresent()) {
-			throw new CommandException(Text.of("You must have an Island to run this command!"));
-		}
+        if (!island.isPresent()) {
+            throw new CommandException(Text.of("You must have an Island to run this command!"));
+        }
 
-		island.get().setLocked(false);
+        island.get().setLocked(false);
 
-		src.sendMessage(Text.of(TextColors.GREEN, "Your island is now unlocked!"));
-		return CommandResult.success();
-	}
+        src.sendMessage(Text.of(TextColors.GREEN, "Your island is now unlocked!"));
+        return CommandResult.success();
+    }
 
-	private CommandResult unlockIslands(CommandSource src, Collection<UUID> islandsIds) {
-		ArrayList<Island> islands = Lists.newArrayList();
-		islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
-		islands.forEach(island -> {
-			island.setLocked(false);
-			src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been unlocked!"));
-		});
-		return CommandResult.success();
-	}
+    private CommandResult unlockIslands(CommandSource src, Collection<UUID> islandsIds) {
+        ArrayList<Island> islands = Lists.newArrayList();
+        islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+        islands.forEach(island -> {
+            island.setLocked(false);
+            src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been unlocked!"));
+        });
+        return CommandResult.success();
+    }
 
-	private CommandResult unlockAll(CommandSource src) {
-		SkyClaims.islands.values().forEach(island -> island.setLocked(false));
-		src.sendMessage(Text.of(TextColors.GREEN, "All islands have been unlocked!"));
-		return CommandResult.success();
-	}
+    private CommandResult unlockAll(CommandSource src) {
+        SkyClaims.islands.values().forEach(island -> island.setLocked(false));
+        src.sendMessage(Text.of(TextColors.GREEN, "All islands have been unlocked!"));
+        return CommandResult.success();
+    }
 }

@@ -34,54 +34,58 @@ import org.spongepowered.api.world.World;
 import java.util.function.Consumer;
 
 public class CommandUtil {
-	public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location) {
-		return teleport -> {
-			if (!(src instanceof Player)) return;
-			Player player = (Player) src;
-			Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
-			if (safeLocation == null) {
-				player.sendMessage(Text.of(
-					TextColors.RED, "Location is not safe. ",
-					Text.of(TextColors.GREEN, "Are you sure you want to teleport here?").toBuilder()
-						.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-						.style(TextStyles.UNDERLINE)
-				));
-			} else {
-				player.setLocation(safeLocation);
-			}
-		};
-	}
 
-	public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
-		return teleport -> {
-			Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
-			if (safeLocation == null) {
-				player.sendMessage(Text.of(
-					TextColors.RED, "Location is not safe. ",
-					Text.of(TextColors.GREEN, "Are you sure you want to teleport here?").toBuilder()
-						.onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-						.style(TextStyles.UNDERLINE)
-				));
-			} else {
-				player.setLocation(safeLocation);
-			}
-		};
-	}
+    public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location) {
+        return teleport -> {
+            if (!(src instanceof Player)) {
+                return;
+            }
+            Player player = (Player) src;
+            Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+            if (safeLocation == null) {
+                player.sendMessage(Text.of(
+                    TextColors.RED, "Location is not safe. ",
+                    Text.of(TextColors.GREEN, "Are you sure you want to teleport here?").toBuilder()
+                        .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+                        .style(TextStyles.UNDERLINE)
+                ));
+            } else {
+                player.setLocation(safeLocation);
+            }
+        };
+    }
 
-	private static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
-		return teleport -> player.setLocation(location);
-	}
+    public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
+        return teleport -> {
+            Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+            if (safeLocation == null) {
+                player.sendMessage(Text.of(
+                    TextColors.RED, "Location is not safe. ",
+                    Text.of(TextColors.GREEN, "Are you sure you want to teleport here?").toBuilder()
+                        .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+                        .style(TextStyles.UNDERLINE)
+                ));
+            } else {
+                player.setLocation(safeLocation);
+            }
+        };
+    }
 
-	public static Consumer<CommandSource> createCommandConsumer(CommandSource src, String command, String arguments, Consumer<CommandSource> postConsumerTask) {
-		return consumer -> {
-			try {
-				Sponge.getCommandManager().get(command).get().getCallable().process(src, arguments);
-			} catch (CommandException e) {
-				src.sendMessage(e.getText());
-			}
-			if (postConsumerTask != null) {
-				postConsumerTask.accept(src);
-			}
-		};
-	}
+    private static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
+        return teleport -> player.setLocation(location);
+    }
+
+    public static Consumer<CommandSource> createCommandConsumer(CommandSource src, String command, String arguments,
+        Consumer<CommandSource> postConsumerTask) {
+        return consumer -> {
+            try {
+                Sponge.getCommandManager().get(command).get().getCallable().process(src, arguments);
+            } catch (CommandException e) {
+                src.sendMessage(e.getText());
+            }
+            if (postConsumerTask != null) {
+                postConsumerTask.accept(src);
+            }
+        };
+    }
 }

@@ -23,7 +23,8 @@ import net.mohron.skyclaims.exception.InvalidRegionException;
 import java.util.ArrayList;
 
 public interface IRegionPattern {
-	ArrayList<Region> generateRegionPattern();
 
-	public Region nextRegion() throws InvalidRegionException;
+    ArrayList<Region> generateRegionPattern();
+
+    public Region nextRegion() throws InvalidRegionException;
 }

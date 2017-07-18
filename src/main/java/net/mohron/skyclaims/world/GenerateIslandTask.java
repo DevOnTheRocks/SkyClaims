@@ -39,72 +39,73 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 public class GenerateIslandTask implements Runnable {
-	private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	private UUID owner;
-	private Island island;
-	private String schematic;
+    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-	public GenerateIslandTask(UUID owner, Island island, String schematic) {
-		this.owner = owner;
-		this.island = island;
-		this.schematic = schematic;
-	}
+    private UUID owner;
+    private Island island;
+    private String schematic;
 
-	@Override
-	public void run() {
-		World world = PLUGIN.getConfig().getWorldConfig().getWorld();
-		File inputFile = new File(PLUGIN.getConfigDir().toString(), String.format("schematics%s%s.schematic", File.separator, schematic));
+    public GenerateIslandTask(UUID owner, Island island, String schematic) {
+        this.owner = owner;
+        this.island = island;
+        this.schematic = schematic;
+    }
 
-		DataContainer schematicData;
-		try {
-			schematicData = DataFormats.NBT.readFrom(new GZIPInputStream(new FileInputStream(inputFile)));
-		} catch (Exception e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Error loading schematic: " + e.getMessage());
-			return;
-		}
+    @Override
+    public void run() {
+        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+        File inputFile = new File(PLUGIN.getConfigDir().toString(), String.format("schematics%s%s.schematic", File.separator, schematic));
 
-		ArchetypeVolume volume;
-		try {
-			volume = DataTranslators.SCHEMATIC.translate(schematicData);
-		} catch (InvalidDataException e) {
-			volume = DataTranslators.LEGACY_SCHEMATIC.translate(schematicData);
-			PLUGIN.getLogger().warn("Loaded legacy schematic: " + e.getMessage());
-			return;
-		}
+        DataContainer schematicData;
+        try {
+            schematicData = DataFormats.NBT.readFrom(new GZIPInputStream(new FileInputStream(inputFile)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Error loading schematic: " + e.getMessage());
+            return;
+        }
 
-		Location<World> centerBlock = island.getRegion().getCenter();
-		// Loads center chunks
-		for (int x = -1; x <= 1; x++) {
-			for (int z = -1; z <= 1; z++) {
-				world.loadChunk(
-						centerBlock.getChunkPosition().getX() + x,
-						centerBlock.getChunkPosition().getY(),
-						centerBlock.getChunkPosition().getZ() + z,
-						true
-				);
-			}
-		}
+        ArchetypeVolume volume;
+        try {
+            volume = DataTranslators.SCHEMATIC.translate(schematicData);
+        } catch (InvalidDataException e) {
+            volume = DataTranslators.LEGACY_SCHEMATIC.translate(schematicData);
+            PLUGIN.getLogger().warn("Loaded legacy schematic: " + e.getMessage());
+            return;
+        }
 
-		Location<World> spawn = new Location<>(
-			island.getWorld(),
-			centerBlock.getX(),
-			centerBlock.getY() + volume.getBlockSize().getY() - 1,
-			centerBlock.getZ()
-		);
-		island.setSpawn(new Transform<>(spawn.getExtent(), spawn.getPosition()));
-		volume.apply(spawn, BlockChangeFlag.NONE, PLUGIN.getCause());
+        Location<World> centerBlock = island.getRegion().getCenter();
+        // Loads center chunks
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                world.loadChunk(
+                    centerBlock.getChunkPosition().getX() + x,
+                    centerBlock.getChunkPosition().getY(),
+                    centerBlock.getChunkPosition().getZ() + z,
+                    true
+                );
+            }
+        }
 
-		// Set the region's BiomeType using the default biome option if set
-		Options.getDefaultBiome(owner).ifPresent(biomeType -> {
-			WorldUtil.setRegionBiome(island, biomeType);
-		});
+        Location<World> spawn = new Location<>(
+            island.getWorld(),
+            centerBlock.getX(),
+            centerBlock.getY() + volume.getBlockSize().getY() - 1,
+            centerBlock.getZ()
+        );
+        island.setSpawn(new Transform<>(spawn.getExtent(), spawn.getPosition()));
+        volume.apply(spawn, BlockChangeFlag.NONE, PLUGIN.getCause());
 
-		Sponge.getServer().getPlayer(owner).ifPresent(p1 -> {
-			PLUGIN.getGame().getScheduler().createTaskBuilder().execute(
-					CommandUtil.createTeleportConsumer(p1, spawn)
-			).submit(PLUGIN);
-		});
-	}
+        // Set the region's BiomeType using the default biome option if set
+        Options.getDefaultBiome(owner).ifPresent(biomeType -> {
+            WorldUtil.setRegionBiome(island, biomeType);
+        });
+
+        Sponge.getServer().getPlayer(owner).ifPresent(p1 -> {
+            PLUGIN.getGame().getScheduler().createTaskBuilder().execute(
+                CommandUtil.createTeleportConsumer(p1, spawn)
+            ).submit(PLUGIN);
+        });
+    }
 }

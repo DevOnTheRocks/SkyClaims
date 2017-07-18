@@ -1,4 +1,4 @@
-# SkyClaims [![Build Status](http://ci.devonthe.rocks/buildStatus/icon?job=SkyClaims)](http://ci.devonthe.rocks/job/SkyClaims/)
+# SkyClaims
 
 SkyClaims is a plugin/addon for SkyBlock servers that run [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) for protection.
 Instead of reinventing the wheel and adding custom protection for islands, SkyClaims will implement claims from one of Sponge's most powerful plugins,  GriefPrevention!
@@ -6,19 +6,19 @@ With this design, nearly every GriefPrevention feature will be available to play
 
 This plugin is in Beta but I expect to have a release soon™. Live support for current builds is available through [Discord](https://discord.gg/EkVQycV)! Here's some of what is under development or planned for SkyClaims:
 
-- Allow complete control of command usage with granular permissions (ie specific biomes for setbiome)
-- Allow automatic creation of Islands and their encompassing claim
-- Allow multiple starter island designs via Sponge schematics
-- Configurable island layouts (linear & spiral planned)
-- Allow expanding islands using claim blocks or other resource (econ)
-- Isolation of islands to their own Minecraft region file
-- Allow spawn/tp on your island at a configurable location 
-- Allow use of GriefPrevention trust commands to work in teams
-- Allow changing the biome of a block, chunk or entire island
-- Add an island messaging channel so you can chat within your island _(for after release)_
+- [X] Allow complete control of command usage with granular permissions (ie specific biomes for setbiome)
+- [X] Allow automatic creation of Islands and their encompassing claim
+- [X] Allow multiple starter island designs via Sponge schematics
+- [ ] Configurable island layouts (linear & spiral planned)
+- [X] Allow expanding islands using claim blocks or other resource (econ)
+- [X] Isolation of islands to their own Minecraft region file
+- [X] Allow spawn/tp on your island at a configurable location 
+- [X] Allow use of GriefPrevention trust commands to work in teams
+- [X] Allow changing the biome of a block, chunk or entire island
+- [ ] Add an island messaging channel so you can chat within your island _(for after release)_
 
 ### Required Plugins
-- [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-2.3.1.255+
+- [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-2.3.1.292+
 
 ### More details are available on our [Wiki](https://github.com/DevOnTheRocks/SkyClaims/wiki/).
 

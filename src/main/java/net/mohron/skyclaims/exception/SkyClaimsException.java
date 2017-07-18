@@ -22,14 +22,15 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.TextMessageException;
 
 public class SkyClaimsException extends TextMessageException {
-	private Text message;
 
-	public SkyClaimsException(Text message) {
-		super(message);
-		this.message = message;
-	}
+    private Text message;
 
-	public Text getText() {
-		return message;
-	}
+    public SkyClaimsException(Text message) {
+        super(message);
+        this.message = message;
+    }
+
+    public Text getText() {
+        return message;
+    }
 }

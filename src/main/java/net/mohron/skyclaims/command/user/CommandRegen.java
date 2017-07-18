@@ -40,56 +40,56 @@ import java.util.function.Consumer;
 
 public class CommandRegen extends CommandBase {
 
-	public static final String HELP_TEXT = "regenerate your island using a schematic.";
-	private static final Text SCHEMATIC = Text.of("schematic");
+    public static final String HELP_TEXT = "regenerate your island using a schematic.";
+    private static final Text SCHEMATIC = Text.of("schematic");
 
-	public static CommandSpec commandSpec = CommandSpec.builder()
-		.permission(Permissions.COMMAND_REGEN)
-		.description(Text.of(HELP_TEXT))
-		.arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
-		.executor(new CommandRegen())
-		.build();
+    public static CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_REGEN)
+        .description(Text.of(HELP_TEXT))
+        .arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
+        .executor(new CommandRegen())
+        .build();
 
-	public static void register() {
-		try {
-			PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-			PLUGIN.getLogger().debug("Registered command: CommandRegen");
-		} catch (UnsupportedOperationException e) {
-			e.printStackTrace();
-			PLUGIN.getLogger().error("Failed to register command: CommandRegen");
-		}
-	}
+    public static void register() {
+        try {
+            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+            PLUGIN.getLogger().debug("Registered command: CommandRegen");
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+            PLUGIN.getLogger().error("Failed to register command: CommandRegen");
+        }
+    }
 
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		if (!(src instanceof Player)) {
-			throw new CommandException(Text.of("You must be a player to run this command!"));
-		}
-		Player player = (Player) src;
-		Island island = Island.getByOwner(player.getUniqueId())
-			.orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
-		String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if (!(src instanceof Player)) {
+            throw new CommandException(Text.of("You must be a player to run this command!"));
+        }
+        Player player = (Player) src;
+        Island island = Island.getByOwner(player.getUniqueId())
+            .orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
+        String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
 
-		player.sendMessage(Text.of(
-			"Are you sure you want to regenerate your island? This cannot be undone!", Text.NEW_LINE,
-			TextColors.GOLD, "Do you want to continue?",
-			TextColors.WHITE, "[",
-			Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.executeCallback(regen(island, schematic))),
-			TextColors.WHITE, "] [",
-			Text.builder("NO").color(TextColors.RED).onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island regen canceled!")))),
-			TextColors.WHITE, "]"
-		));
+        player.sendMessage(Text.of(
+            "Are you sure you want to regenerate your island? This cannot be undone!", Text.NEW_LINE,
+            TextColors.GOLD, "Do you want to continue?",
+            TextColors.WHITE, "[",
+            Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.executeCallback(regen(island, schematic))),
+            TextColors.WHITE, "] [",
+            Text.builder("NO").color(TextColors.RED).onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island regen canceled!")))),
+            TextColors.WHITE, "]"
+        ));
 
-		return CommandResult.success();
-	}
+        return CommandResult.success();
+    }
 
-	private Consumer<CommandSource> regen(Island island, String schematic) {
-		return src -> {
-			// Teleport any players located in the island's region to spawn
-			Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
-			island.getPlayers().forEach(p -> p.setLocationSafely(spawn));
+    private Consumer<CommandSource> regen(Island island, String schematic) {
+        return src -> {
+            // Teleport any players located in the island's region to spawn
+            Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
+            island.getPlayers().forEach(p -> p.setLocationSafely(spawn));
 
-			src.sendMessage(Text.of("Please be patient while your island is reset."));
-			island.regen(schematic);
-		};
-	}
+            src.sendMessage(Text.of("Please be patient while your island is reset."));
+            island.regen(schematic);
+        };
+    }
 }

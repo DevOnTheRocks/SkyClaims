@@ -21,27 +21,28 @@ package net.mohron.skyclaims.command.argument;
 import org.spongepowered.api.text.Text;
 
 public class Argument {
-	public static BiomeArgument biome(Text key) {
-		return new BiomeArgument(key);
-	}
 
-	public static IslandArgument island(Text key) {
-		return new IslandArgument(key);
-	}
+    public static BiomeArgument biome(Text key) {
+        return new BiomeArgument(key);
+    }
 
-	public static SchematicArgument schematic(Text key) {
-		return new SchematicArgument(key);
-	}
+    public static IslandArgument island(Text key) {
+        return new IslandArgument(key);
+    }
 
-	public static SortArgument sort(Text key) {
-		return new SortArgument(key);
-	}
+    public static SchematicArgument schematic(Text key) {
+        return new SchematicArgument(key);
+    }
 
-	public static TargetArgument target(Text key) {
-		return new TargetArgument(key);
-	}
+    public static SortArgument sort(Text key) {
+        return new SortArgument(key);
+    }
 
-	public static TwoUserArgument twoUser(Text key, Text key2) {
-		return new TwoUserArgument(key, key2);
-	}
+    public static TargetArgument target(Text key) {
+        return new TargetArgument(key);
+    }
+
+    public static TwoUserArgument twoUser(Text key, Text key2) {
+        return new TwoUserArgument(key, key2);
+    }
 }

@@ -23,6 +23,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 
 public abstract class CommandBase implements CommandExecutor {
 
-	protected static final SkyClaims PLUGIN = SkyClaims.getInstance();
+    protected static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
 }
