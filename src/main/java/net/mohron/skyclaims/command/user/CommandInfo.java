@@ -21,6 +21,7 @@ package net.mohron.skyclaims.command.user;
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
@@ -188,6 +189,7 @@ public class CommandInfo extends CommandBase {
                 TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island), Text.NEW_LINE,
                 TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
                 TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
+                TextColors.YELLOW, "Entities", TextColors.WHITE, " : ", getEntities(island), Text.NEW_LINE,
                 TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", getSpawn(island), Text.NEW_LINE,
                 TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), Text.NEW_LINE,
                 TextColors.YELLOW, "Last Active", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateLastActive(), Text.NEW_LINE,
@@ -248,5 +250,34 @@ public class CommandInfo extends CommandBase {
             TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockY(), TextColors.GRAY, "y ",
             TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockZ(), TextColors.GRAY, "z"
         );
+    }
+
+    private Text getEntities(Island island) {
+        boolean showLimits = PLUGIN.getConfig().getEntityConfig().isLimitSpawning();
+        int max = Options.getMaxSpawns(island.getOwnerUniqueId());
+        int maxHostile = Options.getMaxHostileSpawns(island.getOwnerUniqueId());
+        int hostile = island.getHostileEntities().size();
+        int maxPassive = Options.getMaxPassiveSpawns(island.getOwnerUniqueId());
+        int passive = island.getPassiveEntities().size();
+
+        return Text.of(
+            Text.of(TextActions.showText(Text.of(
+                TextColors.GRAY, "Hostile", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, hostile,
+                (showLimits && maxHostile > 0)
+                    ? Text.of(TextColors.GRAY, " (", TextColors.RED, maxHostile, TextColors.GRAY, ")")
+                    : Text.EMPTY,
+                Text.NEW_LINE,
+                TextColors.GRAY, "Passive", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, passive,
+                (showLimits && maxPassive > 0)
+                    ? Text.of(TextColors.GRAY, " (", TextColors.RED, maxPassive, TextColors.GRAY, ")")
+                    : Text.EMPTY
+                )),
+                TextColors.GRAY, "Living", TextColors.WHITE, ": ", TextColors.LIGHT_PURPLE, hostile + passive, TextColors.WHITE,
+                (showLimits && max > 0)
+                    ? Text.of(TextColors.GRAY, " (", TextColors.RED, max, TextColors.GRAY, ")")
+                    : Text.EMPTY, ", "
+            ),
+            TextColors.GRAY, "Item", TextColors.WHITE, ": ", TextColors.LIGHT_PURPLE, island.getItemEntities().size(), TextColors.WHITE, ", ",
+            TextColors.GRAY, "Tile", TextColors.WHITE, ": ", TextColors.LIGHT_PURPLE, island.getTileEntities().size());
     }
 }

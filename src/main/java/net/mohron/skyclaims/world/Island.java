@@ -34,7 +34,14 @@ import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.Transform;
+import org.spongepowered.api.entity.living.Ambient;
+import org.spongepowered.api.entity.living.Aquatic;
+import org.spongepowered.api.entity.living.animal.Animal;
+import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -43,6 +50,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -255,7 +263,7 @@ public class Island {
         }
     }
 
-    private boolean contains(Location<World> location) {
+    public boolean contains(Location<World> location) {
         if (!getClaim().isPresent()) {
             return location.getExtent().equals(getWorld()) && Region.get(location).equals(getRegion());
         }
@@ -308,15 +316,43 @@ public class Island {
         return (!getClaim().isPresent()) ? 1 : new HashSet<>(getClaim().get().getAllTrusts()).size();
     }
 
-    public boolean hasPermissions(User user) {
-        return user.getUniqueId().equals(owner)
-            || (getClaim().isPresent() && getClaim().get().isUserTrusted(user));
+    public int getTotalEntities() {
+        return getEntities().size();
     }
 
-    public Set<Player> getPlayers() {
-        return PLUGIN.getGame().getServer().getOnlinePlayers().stream()
+    public int getTotalTileEntities() {
+        return getTileEntities().size();
+    }
+
+    public boolean hasPermissions(User user) {
+        return user.getUniqueId().equals(owner)
+            || (getClaim().isPresent() && getClaim().get().isTrusted(user.getUniqueId()));
+    }
+
+    public Collection<Player> getPlayers() {
+        return getWorld().getPlayers().stream()
             .filter(p -> contains(p.getLocation()))
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
+    }
+
+    public Collection<Entity> getEntities() {
+        return getWorld().getEntities(e -> contains(e.getLocation()));
+    }
+
+    public Collection<Entity> getHostileEntities() {
+        return getWorld().getEntities(e -> contains(e.getLocation()) && e instanceof Monster);
+    }
+
+    public Collection<Entity> getPassiveEntities() {
+        return getWorld().getEntities(e -> contains(e.getLocation()) && e instanceof Animal || e instanceof Aquatic || e instanceof Ambient);
+    }
+
+    public Collection<Entity> getItemEntities() {
+        return getWorld().getEntities(e -> contains(e.getLocation()) && e instanceof Item);
+    }
+
+    public Collection<TileEntity> getTileEntities() {
+        return getWorld().getTileEntities(e -> contains(e.getLocation()));
     }
 
     public Region getRegion() {

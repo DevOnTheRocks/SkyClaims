@@ -22,7 +22,6 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.event.BorderClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.CreateClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.DeleteClaimEvent;
-import me.ryanhamshire.griefprevention.api.event.FlagClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.ResizeClaimEvent;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -35,8 +34,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
-
-import java.util.UUID;
 
 public class ClaimEventHandler {
 

@@ -51,6 +51,10 @@ public class SortArgument extends CommandElement {
         SORT_TYPES.put("team+", Comparator.comparing(Island::getTotalMembers).reversed());
         SORT_TYPES.put("smallest", Comparator.comparing(Island::getWidth));
         SORT_TYPES.put("largest", Comparator.comparing(Island::getWidth).reversed());
+        SORT_TYPES.put("entities-", Comparator.comparing(Island::getTotalEntities));
+        SORT_TYPES.put("entities+", Comparator.comparing(Island::getTotalEntities).reversed());
+        SORT_TYPES.put("tile-", Comparator.comparing(Island::getTotalTileEntities));
+        SORT_TYPES.put("tile+", Comparator.comparing(Island::getTotalTileEntities).reversed());
     }
 
     public SortArgument(@Nullable Text key) {

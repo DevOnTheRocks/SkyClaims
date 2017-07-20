@@ -61,9 +61,9 @@ import net.mohron.skyclaims.database.SqliteDatabase;
 import net.mohron.skyclaims.integration.Integration;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
+import net.mohron.skyclaims.listener.EntitySpawnHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
-import net.mohron.skyclaims.listener.WorldLoadHandler;
 import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.world.Island;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -190,12 +190,7 @@ public class SkyClaims {
 
         integration = new Integration();
 
-        getGame().getEventManager().registerListeners(this, new SchematicHandler());
-        getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
-        getGame().getEventManager().registerListeners(this, new RespawnHandler());
-        getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
-        getGame().getEventManager().registerListeners(this, new WorldLoadHandler());
-
+        registerListeners();
         registerCommands();
     }
 
@@ -239,9 +234,24 @@ public class SkyClaims {
         SchematicArgument.load();
         // Load Database
         islands = database.loadData();
+        // Reload Listeners
+        Sponge.getEventManager().unregisterPluginListeners(this);
+        registerListeners();
         // Reload Commands
         Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
         registerCommands();
+    }
+
+    private void registerListeners() {
+        getGame().getEventManager().registerListeners(this, new SchematicHandler());
+        getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
+        getGame().getEventManager().registerListeners(this, new RespawnHandler());
+        getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
+
+        if (getConfig().getEntityConfig().isLimitSpawning()) {
+            getGame().getEventManager().registerListeners(this, new EntitySpawnHandler());
+        }
+
     }
 
     private void registerCommands() {

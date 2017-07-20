@@ -37,6 +37,9 @@ public class Options {
     private static final String DEFAULT_BIOME = "skyclaims.default-biome";
     private static final String MIN_SIZE = "skyclaims.min-size";
     private static final String MAX_SIZE = "skyclaims.max-size";
+    private static final String MAX_SPAWNS = "skyclaims.max-spawns";
+    private static final String MAX_HOSTILE = "skyclaims.max-spawns.hostile";
+    private static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
     private static final String MAX_ISLANDS = "skyclaims.max-islands";
     private static final String ISLAND_EXPIRATION = "skyclaims.expiration";
 
@@ -63,6 +66,18 @@ public class Options {
 
     public static int getMaxSize(UUID playerUniqueId) {
         return getIntOption(playerUniqueId, MAX_SIZE, PLUGIN.getConfig().getOptionsConfig().getMaxSize(), 8, 256);
+    }
+
+    public static int getMaxSpawns(UUID playerUniqueId) {
+        return getIntOption(playerUniqueId, MAX_SPAWNS, PLUGIN.getConfig().getEntityConfig().getMaxSpawns());
+    }
+
+    public static int getMaxHostileSpawns(UUID playerUniqueId) {
+        return getIntOption(playerUniqueId, MAX_HOSTILE, PLUGIN.getConfig().getEntityConfig().getMaxHostile());
+    }
+
+    public static int getMaxPassiveSpawns(UUID playerUniqueId) {
+        return getIntOption(playerUniqueId, MAX_PASSIVE, PLUGIN.getConfig().getEntityConfig().getMaxPassive());
     }
 
     private static String getStringOption(UUID playerUniqueId, String option, String defaultValue) {

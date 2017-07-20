@@ -2,8 +2,16 @@
 
 ## Unreleased Features, Changes & Bugfixes
 **[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
-**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.29.0+**
+**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 1.0.1+**
 - `/is reset` now automatically redeems the Nucleus First Join Kit, if present.
+
+## Beta 22 - SNAPSHOT
+**REQUIRED: SF 2096+ & GP 295+ OPTIONAL: Nucleus 1.0.1+**
+- Added entity spawn limit capability to islands (disabled by default)
+- New options: `skyclaims.max-spawns`, `skyclaims.max-spawns.hostile`, `skyclaims.max-spawns.passive`
+- New configs: Limit-Spawning, Max-Hostile, Max-Passives, Max-Spawns
+- Added island entity counts (living, item, & tile) to `/is info` 
+- Added new sort types to `/is list`: entities-, entities+, tile-, tile+
 
 ## Beta 21
 **REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.29.0+**

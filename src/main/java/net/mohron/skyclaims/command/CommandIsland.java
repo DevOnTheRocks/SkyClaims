@@ -245,7 +245,9 @@ public class CommandIsland extends CommandBase {
             TextColors.GREEN, "newest ", TextColors.RED, "oldest", Text.NEW_LINE,
             TextColors.GREEN, "active ", TextColors.RED, "inactive", Text.NEW_LINE,
             TextColors.GREEN, "team+ ", TextColors.RED, "team-", Text.NEW_LINE,
-            TextColors.GREEN, "largest ", TextColors.RED, "smallest", Text.NEW_LINE
+            TextColors.GREEN, "largest ", TextColors.RED, "smallest", Text.NEW_LINE,
+            TextColors.GREEN, "entities+ ", TextColors.RED, "entities-", Text.NEW_LINE,
+            TextColors.GREEN, "tile+ ", TextColors.RED, "tile-", Text.NEW_LINE
         );
     }
 }
