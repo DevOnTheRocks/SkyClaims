@@ -5,11 +5,12 @@
 **REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 1.0.1+**
 - `/is reset` now automatically redeems the Nucleus First Join Kit, if present.
 
-## Beta 22 - SNAPSHOT
+## Beta 22
 **REQUIRED: SF 2096+ & GP 295+ OPTIONAL: Nucleus 1.0.1+**
 - Added entity spawn limit capability to islands (disabled by default)
-- New options: `skyclaims.max-spawns`, `skyclaims.max-spawns.hostile`, `skyclaims.max-spawns.passive`
-- New configs: Limit-Spawning, Max-Hostile, Max-Passives, Max-Spawns
+- Added island expiration and cleanup capability (disabled by default)
+- New options: `skyclaims.max-spawns`, `skyclaims.max-spawns.hostile`, `skyclaims.max-spawns.passive` ,`skyclaims.expiration`
+- New configs: Entity [Limit-Spawning, Max-Hostile, Max-Passives, Max-Spawns], Island-Expiration [Enabled, Interval, Threshold]
 - Added island entity counts (living, item, & tile) to `/is info` 
 - Added new sort types to `/is list`: entities-, entities+, tile-, tile+
 

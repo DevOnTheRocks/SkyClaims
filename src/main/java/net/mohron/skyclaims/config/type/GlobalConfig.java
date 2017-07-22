@@ -33,6 +33,8 @@ public class GlobalConfig {
     private IntegrationConfig integrationConfig;
     @Setting(value = "Permission")
     private PermissionConfig permissionConfig;
+    @Setting(value = "Island-Expiration")
+    private ExpirationConfig expirationConfig;
     @Setting(value = "Misc")
     private MiscConfig miscConfig;
     @Setting(value = "Storage")
@@ -46,6 +48,7 @@ public class GlobalConfig {
         version = ConfigManager.CONFIG_VERSION;
         entityConfig = new EntityConfig();
         permissionConfig = new PermissionConfig();
+        expirationConfig = new ExpirationConfig();
         integrationConfig = new IntegrationConfig();
         miscConfig = new MiscConfig();
         storageConfig = new StorageConfig();
@@ -63,6 +66,10 @@ public class GlobalConfig {
 
     public PermissionConfig getPermissionConfig() {
         return permissionConfig;
+    }
+
+    public ExpirationConfig getExpirationConfig() {
+        return expirationConfig;
     }
 
     public IntegrationConfig getIntegrationConfig() {

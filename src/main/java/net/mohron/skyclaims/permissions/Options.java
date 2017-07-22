@@ -40,8 +40,8 @@ public class Options {
     private static final String MAX_SPAWNS = "skyclaims.max-spawns";
     private static final String MAX_HOSTILE = "skyclaims.max-spawns.hostile";
     private static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
+    private static final String EXPIRATION = "skyclaims.expiration";
     private static final String MAX_ISLANDS = "skyclaims.max-islands";
-    private static final String ISLAND_EXPIRATION = "skyclaims.expiration";
 
     public static String getDefaultSchematic(UUID playerUniqueId) {
         return getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, PLUGIN.getConfig().getOptionsConfig().getSchematic());
@@ -78,6 +78,10 @@ public class Options {
 
     public static int getMaxPassiveSpawns(UUID playerUniqueId) {
         return getIntOption(playerUniqueId, MAX_PASSIVE, PLUGIN.getConfig().getEntityConfig().getMaxPassive());
+    }
+
+    public static int getExpiration(UUID playerUniqueId) {
+        return getIntOption(playerUniqueId, EXPIRATION, PLUGIN.getConfig().getExpirationConfig().getThreshold());
     }
 
     private static String getStringOption(UUID playerUniqueId, String option, String defaultValue) {

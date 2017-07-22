@@ -66,6 +66,7 @@ import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandCleanupTask;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -85,12 +86,14 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
 
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(id = ID,
     name = NAME,
@@ -134,6 +137,8 @@ public class SkyClaims {
     private IDatabase database;
 
     private boolean enabled = true;
+
+    private static final String cleanup = "skyclaims.island.cleanup";
 
     public static SkyClaims getInstance() {
         return instance;
@@ -191,6 +196,7 @@ public class SkyClaims {
         integration = new Integration();
 
         registerListeners();
+        registerTasks();
         registerCommands();
     }
 
@@ -237,6 +243,9 @@ public class SkyClaims {
         // Reload Listeners
         Sponge.getEventManager().unregisterPluginListeners(this);
         registerListeners();
+        // Reload Tasks
+        Sponge.getScheduler().getTasksByName(cleanup).forEach(Task::cancel);
+        registerTasks();
         // Reload Commands
         Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
         registerCommands();
@@ -251,7 +260,17 @@ public class SkyClaims {
         if (getConfig().getEntityConfig().isLimitSpawning()) {
             getGame().getEventManager().registerListeners(this, new EntitySpawnHandler());
         }
+    }
 
+    private void registerTasks() {
+        if (getConfig().getExpirationConfig().isEnabled()) {
+            Sponge.getScheduler().createTaskBuilder()
+                .name(cleanup)
+                .execute(new IslandCleanupTask())
+                .interval(getConfig().getExpirationConfig().getInterval(), TimeUnit.MINUTES)
+                .async()
+                .submit(this);
+        }
     }
 
     private void registerCommands() {
