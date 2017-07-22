@@ -7,6 +7,7 @@
 
 ## Beta 22
 **REQUIRED: SF 2096+ & GP 295+ OPTIONAL: Nucleus 1.0.1+**
+- Fixes some entities still not being cleared during island reset/regen
 - Added entity spawn limit capability to islands (disabled by default)
 - Added island expiration and cleanup capability (disabled by default)
 - New options: `skyclaims.max-spawns`, `skyclaims.max-spawns.hostile`, `skyclaims.max-spawns.passive` ,`skyclaims.expiration`
