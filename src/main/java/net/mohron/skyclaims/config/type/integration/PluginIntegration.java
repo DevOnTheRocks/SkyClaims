@@ -24,7 +24,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public abstract class PluginIntegration {
 
-    @Setting(value = "enabled", comment = "Set to enable/disable integration.")
+    @Setting(value = "Enabled", comment = "Set to enable/disable integration.")
     private boolean enabled = true;
 
     public boolean isEnabled() {

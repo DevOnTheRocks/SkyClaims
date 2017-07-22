@@ -18,7 +18,7 @@
 
 package net.mohron.skyclaims;
 
-public class PluginInfo {
+public final class PluginInfo {
 
     public static final String ID = "skyclaims";
     public static final String NAME = "@NAME@";
