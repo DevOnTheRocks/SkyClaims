@@ -18,12 +18,16 @@
 
 package net.mohron.skyclaims.world;
 
+import com.google.common.base.Stopwatch;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.World;
+
+import java.util.concurrent.TimeUnit;
 
 public class RegenerateRegionTask implements Runnable {
 
@@ -52,14 +56,19 @@ public class RegenerateRegionTask implements Runnable {
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
         PLUGIN.getLogger().info(String.format("Begin clearing region (%s, %s)", region.getX(), region.getZ()));
+
+        Stopwatch sw = Stopwatch.createStarted();
+
         for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
             for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
                 world.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
                     chunk.loadChunk(false);
+                    // Teleport any players to world spawn
                     chunk.getEntities(e -> e instanceof Player)
                         .forEach(e -> e.setLocationSafely(world.getSpawnLocation()));
-                    chunk.getEntities()
-                        .forEach(Entity::remove);
+                    // Clear the contents of an tile entity with an inventory
+                    chunk.getTileEntities(e -> e instanceof TileEntityCarrier)
+                        .forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
                     for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
                         for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
                             for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
@@ -69,11 +78,17 @@ public class RegenerateRegionTask implements Runnable {
                             }
                         }
                     }
+                    // Remove any remaining entities.
+                    chunk.getEntities()
+                        .forEach(Entity::remove);
                     chunk.unloadChunk();
                 });
             }
         }
-        PLUGIN.getLogger().info(String.format("Finished clearing region (%s, %s)", region.getX(), region.getZ()));
+
+        sw.stop();
+
+        PLUGIN.getLogger().info(String.format("Finished clearing region (%s, %s) in %dms.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.MILLISECONDS)));
 
         if (island != null) {
             if (commands) {
@@ -84,8 +99,10 @@ public class RegenerateRegionTask implements Runnable {
                 }
             }
 
-            GenerateIslandTask generateIsland = new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic);
-            PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
+            PLUGIN.getGame().getScheduler().createTaskBuilder()
+                .delayTicks(1)
+                .execute(new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic))
+                .submit(PLUGIN);
         }
     }
 }

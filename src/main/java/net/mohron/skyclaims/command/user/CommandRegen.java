@@ -71,7 +71,7 @@ public class CommandRegen extends CommandBase {
 
         player.sendMessage(Text.of(
             "Are you sure you want to regenerate your island? This cannot be undone!", Text.NEW_LINE,
-            TextColors.GOLD, "Do you want to continue?",
+            TextColors.GOLD, "Do you want to continue?", Text.NEW_LINE,
             TextColors.WHITE, "[",
             Text.builder("YES").color(TextColors.GREEN).onClick(TextActions.executeCallback(regen(island, schematic))),
             TextColors.WHITE, "] [",

@@ -74,7 +74,7 @@ public class CommandReset extends CommandBase {
         if (!args.hasAny(CONFIRM)) {
             player.sendMessage(Text.of(
                 "Are you sure you want to reset your island and inventory? This cannot be undone!", Text.NEW_LINE,
-                TextColors.GOLD, "Do you want to continue?",
+                TextColors.GOLD, "Do you want to continue?", Text.NEW_LINE,
                 TextColors.WHITE, "[",
                 Text.builder("YES")
                     .color(TextColors.GREEN)

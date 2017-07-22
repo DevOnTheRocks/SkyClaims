@@ -103,9 +103,10 @@ public class GenerateIslandTask implements Runnable {
         });
 
         Sponge.getServer().getPlayer(owner).ifPresent(p1 -> {
-            PLUGIN.getGame().getScheduler().createTaskBuilder().execute(
-                CommandUtil.createTeleportConsumer(p1, spawn)
-            ).submit(PLUGIN);
+            PLUGIN.getGame().getScheduler().createTaskBuilder()
+                .delayTicks(1)
+                .execute(CommandUtil.createTeleportConsumer(p1, spawn))
+                .submit(PLUGIN);
         });
     }
 }
