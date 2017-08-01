@@ -26,7 +26,7 @@ public class Version implements Comparable<Version> {
     private final int[] numbers;
 
     public Version(@Nonnull String version) {
-        final String split[] = version.split("\\-")[0].split("\\.");
+        final String split[] = version.split("-")[0].split(".");
         numbers = new int[split.length];
         for (int i = 0; i < split.length; i++) {
             numbers[i] = Integer.valueOf(split[i]);

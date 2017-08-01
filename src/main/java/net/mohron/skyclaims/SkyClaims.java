@@ -64,6 +64,7 @@ import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.EntitySpawnHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
+import net.mohron.skyclaims.listener.WorldLoadHandler;
 import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandCleanupTask;
@@ -256,6 +257,7 @@ public class SkyClaims {
         getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
         getGame().getEventManager().registerListeners(this, new RespawnHandler());
         getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
+        getGame().getEventManager().registerListeners(this, new WorldLoadHandler());
 
         if (getConfig().getEntityConfig().isLimitSpawning()) {
             getGame().getEventManager().registerListeners(this, new EntitySpawnHandler());

@@ -1,9 +1,14 @@
 # Change Log
 
 ## Unreleased Features, Changes & Bugfixes
-**[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_</br>**
-**REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 1.0.1+**
+**[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_**
+**REQUIRED: SF build 2315+ & GP build 304+ OPTIONAL: Nucleus version 1.0.1+**
 - `/is reset` now automatically redeems the Nucleus First Join Kit, if present.
+
+##
+**REQUIRED: SF build 2315+ & GP build 304+ OPTIONAL: Nucleus version 1.0.1+**
+- Updated GriefPrevention API. GP 4.0.0.304 is now the minimum required version.
+- Block-break/block-place flags in the wilderness of the SkyClaim's world are set to false automatically. 
 
 ## Beta 22
 **REQUIRED: SF 2096+ & GP 295+ OPTIONAL: Nucleus 1.0.1+**

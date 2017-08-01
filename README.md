@@ -36,7 +36,6 @@ This plugin is in Beta. Live support is available for the latest builds through 
 
 **Bug reports and feature requests can be made on [GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues).**
 
-
 [![Discord](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Discord.png)](https://discord.gg/EkVQycV)
 | [![Patreon](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Patreon.png)](https://www.patreon.com/mohron)
 | [![PayPal](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CWCCQB9HG2P7A)
