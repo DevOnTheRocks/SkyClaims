@@ -1,15 +1,26 @@
-### Search through currently existing issues before creating a new issue. If a new issue is required, fill out the provided sections below and remove this line.
+<!--
+Search through currently existing issues before creating a new issue.
+If a new issue is required, fill out the provided template below.
+Not completing the required info could delay/prevent your ticket from being worked.
+-->
 
-### Version `Do not put LATEST!`
-- **SkyClaims:** [_SkyClaims Version_]
-- **GriefPrevention:** [_GriefPrevention Version_]
-- **SpongeForge:** [_SpongeForge Version_]
+### Version:
 
-### Expected Behavior
-[_Describe the behavior you expect to encounter._]
+<!-- USE EXACT VERSION & BUILD # DO NOT PUT "LATEST"! -->
+- **Sponge:** <!-- Sponge Forge/Vanilla Version -->
+- **SkyClaims:** <!-- SkyClaims Version -->
+- **GriefPrevention:** <!-- GriefPrevention Version -->
+- **Permissions:** <!-- Permissions Plugin Name & Version -->
 
-### Actual Behavior
-[_Describe the behavior you are actually encountering._]
+### Expected Behavior:
 
-### Steps To Reproduce
-[_List detailed steps to reproduce the issue._]
+<!-- Describe the behavior you expect to encounter. -->
+
+### Actual Behavior:
+
+<!-- Describe the behavior you are actually encountering.
+Provide a link to your server log file via pastebin/gist. -->
+
+### Steps To Reproduce:
+
+<!-- List detailed steps to reproduce the issue. -->
