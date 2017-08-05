@@ -92,7 +92,7 @@ public class CommandExpand extends CommandBase {
         // Check if a non-positive block amount was provided
         if (blocks < 1) {
             player.sendMessage(Text.of(
-                TextColors.GRAY, "It will cost ", TextColors.LIGHT_PURPLE, (Math.pow(width + 1, 2) - claim.getArea()),
+                TextColors.GRAY, "It will cost ", TextColors.LIGHT_PURPLE, (Math.pow(width + 1, 2) - claim.getArea()) * 256,
                 TextColors.GRAY, " claim blocks to expand your island by ", TextColors.LIGHT_PURPLE, "1", TextColors.GRAY, "."
             ));
             player.sendMessage(Text
@@ -106,7 +106,7 @@ public class CommandExpand extends CommandBase {
         PlayerData playerData = GP.getWorldPlayerData(island.getWorld().getProperties(), island.getOwnerUniqueId())
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load GriefPrevention player data.")));
         int bal = playerData.getRemainingClaimBlocks();
-        int cost = (int) (Math.pow(width + blocks, 2) - claim.getArea());
+        int cost = (int) (Math.pow(width + blocks, 2) - claim.getArea()) * 256;
 
         // Check if the player has enough claim blocks to expand
         if (bal < cost) {
