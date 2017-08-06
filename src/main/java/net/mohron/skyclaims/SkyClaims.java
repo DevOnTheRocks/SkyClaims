@@ -178,8 +178,12 @@ public class SkyClaims {
                 ));
                 enabled = false;
             } else {
-                String version = getGame().getPluginManager().getPlugin("GriefPrevention").get().getVersion().get();
-                getLogger().info(String.format("Successfully integrated with GriefPrevention %s!", version));
+                try {
+                    getLogger().info(String.format("Successfully integrated with GriefPrevention %s!", griefPrevention.getImplementationVersion()));
+                } catch (AbstractMethodError error) {
+                    getLogger().error("GriefPrevention version unsupported. SkyClaims Requires GP 4.0.0.319+");
+                    enabled = false;
+                }
             }
         } else {
             getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");

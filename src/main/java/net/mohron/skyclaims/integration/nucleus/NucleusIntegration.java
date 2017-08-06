@@ -47,7 +47,7 @@ public class NucleusIntegration {
     public void onPostInitialization(GamePostInitializationEvent event) {
         metaService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAPIMetaService.class);
         if (Version.of(metaService.semanticVersion()).compareTo(Version.of(PluginInfo.NUCLEUS_VERSION)) >= 0) {
-            PLUGIN.getLogger().info(String.format("Successfully integrated with Nucleus %s!", metaService.semanticVersion()));
+            PLUGIN.getLogger().info(String.format("Successfully integrated with Nucleus %s!", metaService.version()));
         } else {
             PLUGIN.getLogger().info(String.format("Found Nucleus %s. SkyClaims requires Nucleus %s+... disabling integration",
                 metaService.semanticVersion(), PluginInfo.NUCLEUS_VERSION));
