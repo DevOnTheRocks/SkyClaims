@@ -10,6 +10,8 @@
 - Updated GriefPrevention API. GP 4.0.0.319 is now the minimum required version.
 - Block-break/block-place flags in the wilderness of the SkyClaim's world are set to false automatically.
 - `/is expand` now cost 256 times more blocks due to GP's change to include y in claim block costs
+- `/is home` & `/is sethome` are now exclusive to Nucleus integration 
+- Cleaned up Nucleus Integration (mostly behind the scenes)
 
 ## Beta 22
 **REQUIRED: SF 2096+ & GP 295+ OPTIONAL: Nucleus 1.0.1+**
