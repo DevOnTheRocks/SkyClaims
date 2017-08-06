@@ -22,6 +22,7 @@ import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.data.PlayerData;
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
@@ -51,6 +52,7 @@ public class CommandExpand extends CommandBase {
 
     public static void register() {
         try {
+            CommandIsland.addSubCommand(commandSpec, "expand");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandExpand");
         } catch (UnsupportedOperationException e) {
@@ -92,7 +94,7 @@ public class CommandExpand extends CommandBase {
         // Check if a non-positive block amount was provided
         if (blocks < 1) {
             player.sendMessage(Text.of(
-                TextColors.GRAY, "It will cost ", TextColors.LIGHT_PURPLE, (Math.pow(width + 1, 2) - claim.getArea()),
+                TextColors.GRAY, "It will cost ", TextColors.LIGHT_PURPLE, (Math.pow(width + 1, 2) - claim.getArea()) * 256,
                 TextColors.GRAY, " claim blocks to expand your island by ", TextColors.LIGHT_PURPLE, "1", TextColors.GRAY, "."
             ));
             player.sendMessage(Text
@@ -106,7 +108,7 @@ public class CommandExpand extends CommandBase {
         PlayerData playerData = GP.getWorldPlayerData(island.getWorld().getProperties(), island.getOwnerUniqueId())
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load GriefPrevention player data.")));
         int bal = playerData.getRemainingClaimBlocks();
-        int cost = (int) (Math.pow(width + blocks, 2) - claim.getArea());
+        int cost = (int) (Math.pow(width + blocks, 2) - claim.getArea()) * 256;
 
         // Check if the player has enough claim blocks to expand
         if (bal < cost) {

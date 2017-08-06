@@ -51,7 +51,6 @@ public class ClaimUtil {
             switch (claimResult.getResultType()) {
                 case SUCCESS:
                     claim = claimResult.getClaim().get();
-                    claimManager.addClaim(claim, PLUGIN.getCause());
                     PLUGIN.getLogger().debug(String.format(
                         "Creating %s's claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
                         getName(ownerUniqueId),
@@ -59,10 +58,6 @@ public class ClaimUtil {
                         claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
                         claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
                     ));
-
-                    claim.getData().setResizable(false);
-                    claim.getData().setClaimExpiration(false);
-                    claim.getData().setRequiresClaimBlocks(false);
                     break;
                 case OVERLAPPING_CLAIM:
                     for (Claim claim1 : claimResult.getClaims()) {
@@ -76,9 +71,7 @@ public class ClaimUtil {
                     ));
                     break;
                 default:
-                    throw new CreateIslandException(Text.of(TextColors.RED,
-                        String.format("Failed to create claim: %s!", claimResult.getResultType())
-                    ));
+                    throw new CreateIslandException(Text.of(TextColors.RED, "Failed to create claim: ", claimResult.getResultType()));
             }
         } while (claim == null);
 
@@ -101,22 +94,20 @@ public class ClaimUtil {
             )
             .owner(ownerUniqueId)
             .type(ClaimType.BASIC)
-            .requiresClaimBlocks(false)
+            .expire(false)
+            .resizable(false)
+            .requireClaimBlocks(false)
             .cause(PLUGIN.getCause())
-            .cuboid(false)
             .build();
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static void createSpawnClaim(List<Region> regions) {
-        ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(PLUGIN.getConfig().getWorldConfig().getWorld());
-
         ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
         if (claimResult.successful()) {
             PLUGIN.getLogger().debug(String.format("Reserved %s regions for spawn. Admin Claim: %s", regions.size(),
                 claimResult.getClaim().get().getUniqueId()
             ));
-            claimManager.addClaim(claimResult.getClaim().get(), PLUGIN.getCause());
         }
     }
 
@@ -128,7 +119,7 @@ public class ClaimUtil {
                 if (region.getX() < lesserRegion.getX()) {
                     lesserRegion = region;
                 }
-                if (region.getX() < greaterRegion.getX()) {
+                if (region.getX() > greaterRegion.getX()) {
                     greaterRegion = region;
                 }
             }
@@ -142,12 +133,7 @@ public class ClaimUtil {
             )
             .type(ClaimType.ADMIN)
             .cause(PLUGIN.getCause())
-            .cuboid(false)
             .build();
-    }
-
-    public static void setEntryFlag(Claim claim, boolean entry) {
-        // Set ENTER_CLAIM flag in the claim supplied to the defined value
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")

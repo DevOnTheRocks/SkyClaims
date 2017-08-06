@@ -3,7 +3,7 @@ plugins {
     id 'idea'
     id 'signing'
     id 'ninja.miserable.blossom' version '1.0.1'
-    id 'com.github.johnrengelman.shadow' version '1.2.3'
+    id 'com.github.johnrengelman.shadow' version '2.0.1'
     id 'org.spongepowered.plugin' version '0.6'
     id "com.qixalite.spongestart" version "1.6.0"
 }
@@ -41,6 +41,7 @@ dependencies {
     compile("org.spongepowered:spongeforge:${spongeforge}")
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
+    //compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 shadowJar {

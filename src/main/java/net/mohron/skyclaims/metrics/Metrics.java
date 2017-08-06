@@ -856,7 +856,7 @@ public class Metrics {
         protected JsonObject getChartData() {
             JsonObject data = new JsonObject();
             JsonObject values = new JsonObject();
-            HashMap<String, Integer> map = getValues(new HashMap<String, Integer>());
+            HashMap<String, Integer> map = getValues(new HashMap<>());
             if (map == null || map.isEmpty()) {
                 // Null = skip the chart
                 return null;
@@ -940,7 +940,7 @@ public class Metrics {
         protected JsonObject getChartData() {
             JsonObject data = new JsonObject();
             JsonObject values = new JsonObject();
-            HashMap<String, Integer> map = getValues(new HashMap<String, Integer>());
+            HashMap<String, Integer> map = getValues(new HashMap<>());
             if (map == null || map.isEmpty()) {
                 // Null = skip the chart
                 return null;
@@ -1026,7 +1026,7 @@ public class Metrics {
         protected JsonObject getChartData() {
             JsonObject data = new JsonObject();
             JsonObject values = new JsonObject();
-            HashMap<Country, Integer> map = getValues(new HashMap<Country, Integer>());
+            HashMap<Country, Integer> map = getValues(new HashMap<>());
             if (map == null || map.isEmpty()) {
                 // Null = skip the chart
                 return null;

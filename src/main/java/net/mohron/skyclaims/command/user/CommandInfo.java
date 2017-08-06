@@ -20,6 +20,7 @@ package net.mohron.skyclaims.command.user;
 
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -57,6 +58,7 @@ public class CommandInfo extends CommandBase {
 
     public static void register() {
         try {
+            CommandIsland.addSubCommand(commandSpec, "info");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandinfo");
             PLUGIN.getLogger().debug("Registered command: CommandInfo");
         } catch (UnsupportedOperationException e) {

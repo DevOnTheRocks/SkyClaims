@@ -18,6 +18,8 @@
 
 package net.mohron.skyclaims.integration;
 
+import org.apache.commons.lang3.text.StrBuilder;
+
 import javax.annotation.Nonnull;
 
 public class Version implements Comparable<Version> {
@@ -25,16 +27,20 @@ public class Version implements Comparable<Version> {
     @Nonnull
     private final int[] numbers;
 
-    public Version(@Nonnull String version) {
-        final String split[] = version.split("\\-")[0].split("\\.");
+    private Version(@Nonnull String version) {
+        final String split[] = version.split("-")[0].split(".");
         numbers = new int[split.length];
         for (int i = 0; i < split.length; i++) {
             numbers[i] = Integer.valueOf(split[i]);
         }
     }
 
+    public static Version of(String string) {
+        return new Version(string);
+    }
+
     @Override
-    public int compareTo(Version other) {
+    public int compareTo(@Nonnull Version other) {
         final int maxLength = Math.max(numbers.length, other.numbers.length);
         for (int i = 0; i < maxLength; i++) {
             final int left = i < numbers.length ? numbers[i] : 0;
@@ -48,10 +54,15 @@ public class Version implements Comparable<Version> {
 
     @Override
     public String toString() {
-        String version = "";
-        for (int i : numbers) {
-            version += i + ".";
+        if (numbers.length == 0) {
+            return "";
         }
-        return version.substring(0, version.length() - 1);
+        StrBuilder version = new StrBuilder();
+        version.append(numbers[0]);
+        for (int i = 1; i < numbers.length; i++) {
+            version.append(".");
+            version.append(numbers[i]);
+        }
+        return version.build();
     }
 }

@@ -34,36 +34,19 @@ import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandAdmin;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.admin.CommandConfig;
-import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
-import net.mohron.skyclaims.command.admin.CommandDelete;
-import net.mohron.skyclaims.command.admin.CommandReload;
-import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.command.argument.SchematicArgument;
-import net.mohron.skyclaims.command.user.CommandCreate;
-import net.mohron.skyclaims.command.user.CommandExpand;
-import net.mohron.skyclaims.command.user.CommandHome;
-import net.mohron.skyclaims.command.user.CommandInfo;
-import net.mohron.skyclaims.command.user.CommandList;
-import net.mohron.skyclaims.command.user.CommandLock;
-import net.mohron.skyclaims.command.user.CommandRegen;
-import net.mohron.skyclaims.command.user.CommandReset;
-import net.mohron.skyclaims.command.user.CommandSetBiome;
-import net.mohron.skyclaims.command.user.CommandSetHome;
-import net.mohron.skyclaims.command.user.CommandSetSpawn;
-import net.mohron.skyclaims.command.user.CommandSpawn;
-import net.mohron.skyclaims.command.user.CommandUnlock;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
 import net.mohron.skyclaims.database.MysqlDatabase;
 import net.mohron.skyclaims.database.SqliteDatabase;
-import net.mohron.skyclaims.integration.Integration;
+import net.mohron.skyclaims.integration.nucleus.NucleusIntegration;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.EntitySpawnHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
+import net.mohron.skyclaims.listener.WorldLoadHandler;
 import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandCleanupTask;
@@ -80,7 +63,9 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
+import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -107,11 +92,10 @@ import java.util.concurrent.TimeUnit;
 public class SkyClaims {
 
     public static Map<UUID, Island> islands = Maps.newHashMap();
-    private static SkyClaims instance;
-    private static GriefPreventionApi griefPrevention;
-    private static PermissionService permissionService;
-    private static Integration integration;
     private static Set<Island> saveQueue = Sets.newHashSet();
+    private static SkyClaims instance;
+    private GriefPreventionApi griefPrevention;
+    private PermissionService permissionService;
 
     @Inject
     private PluginContainer pluginContainer;
@@ -145,18 +129,32 @@ public class SkyClaims {
     }
 
     @Listener
-    public void onPostInitialization(GamePostInitializationEvent event) {
+    public void onGameConstruction(GameConstructionEvent event) {
+        instance = this;
+    }
+
+    @Listener
+    public void onPreInitialization(GamePreInitializationEvent event) {
         getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
 
-        instance = this;
+        defaultConfig = new GlobalConfig();
+        pluginConfigManager = new ConfigManager(configManager);
+        pluginConfigManager.save();
 
+        if (Sponge.getPluginManager().isLoaded("nucleus")) {
+            getGame().getEventManager().registerListeners(this, new NucleusIntegration());
+        }
+    }
+
+    @Listener
+    public void onPostInitialization(GamePostInitializationEvent event) {
         try {
-            SkyClaims.griefPrevention = GriefPrevention.getApi();
+            griefPrevention = GriefPrevention.getApi();
         } catch (IllegalStateException e) {
             getLogger().error("GriefPrevention API failed to load.");
         }
 
-        if (SkyClaims.griefPrevention != null) {
+        if (griefPrevention != null) {
             if (griefPrevention.getApiVersion() < GP_API_VERSION) {
                 getLogger().error(String.format(
                     "GriefPrevention API version %s is unsupported! Please update to API version %s+.",
@@ -164,14 +162,17 @@ public class SkyClaims {
                 ));
                 enabled = false;
             } else {
-                getLogger().info("GriefPrevention Integration Successful!");
+                try {
+                    getLogger().info(String.format("Successfully integrated with GriefPrevention %s!", griefPrevention.getImplementationVersion()));
+                } catch (AbstractMethodError error) {
+                    getLogger().error("GriefPrevention version unsupported. SkyClaims Requires GP 4.0.0.319+");
+                    enabled = false;
+                }
             }
         } else {
             getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
             enabled = false;
         }
-
-        //TODO: Setup the worldName with a sponge:void worldName gen modifier if not already created
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -188,12 +189,6 @@ public class SkyClaims {
             enabled = false;
             return;
         }
-
-        defaultConfig = new GlobalConfig();
-        pluginConfigManager = new ConfigManager(configManager);
-        pluginConfigManager.save();
-
-        integration = new Integration();
 
         registerListeners();
         registerTasks();
@@ -248,6 +243,7 @@ public class SkyClaims {
         registerTasks();
         // Reload Commands
         Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
+        CommandIsland.clearSubCommands();
         registerCommands();
     }
 
@@ -256,6 +252,7 @@ public class SkyClaims {
         getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
         getGame().getEventManager().registerListeners(this, new RespawnHandler());
         getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
+        getGame().getEventManager().registerListeners(this, new WorldLoadHandler());
 
         if (getConfig().getEntityConfig().isLimitSpawning()) {
             getGame().getEventManager().registerListeners(this, new EntitySpawnHandler());
@@ -274,26 +271,8 @@ public class SkyClaims {
     }
 
     private void registerCommands() {
-        CommandAdmin.register();
-        CommandConfig.register();
-        CommandCreate.register();
-        CommandCreateSchematic.register();
-        CommandExpand.register();
-        CommandHome.register();
-        CommandDelete.register();
-        CommandInfo.register();
         CommandIsland.register();
-        CommandList.register();
-        CommandLock.register();
-        CommandReload.register();
-        CommandRegen.register();
-        CommandReset.register();
-        CommandSetBiome.register();
-        CommandSetHome.register();
-        CommandSetSpawn.register();
-        CommandSpawn.register();
-        CommandTransfer.register();
-        CommandUnlock.register();
+        CommandAdmin.register();
     }
 
     private IDatabase initializeDatabase() {
@@ -334,10 +313,6 @@ public class SkyClaims {
 
     public PermissionService getPermissionService() {
         return permissionService;
-    }
-
-    public Integration getIntegration() {
-        return integration;
     }
 
     public Cause getCause() {

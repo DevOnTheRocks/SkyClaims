@@ -115,9 +115,6 @@ public class Island {
             if (claim.getWidth() < initialWidth) {
                 setWidth(initialWidth);
             }
-            claim.getData().setResizable(false);
-            claim.getData().setClaimExpiration(false);
-            claim.getData().setRequiresClaimBlocks(false);
         } else {
             try {
                 this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
@@ -303,17 +300,17 @@ public class Island {
         if (!getClaim().isPresent()) {
             return members;
         }
-        for (UUID builder : getClaim().get().getTrusts(TrustType.BUILDER)) {
+        for (UUID builder : getClaim().get().getUserTrusts(TrustType.BUILDER)) {
             members.add(getName(builder));
         }
-        for (UUID manager : getClaim().get().getTrusts(TrustType.MANAGER)) {
+        for (UUID manager : getClaim().get().getUserTrusts(TrustType.MANAGER)) {
             members.add(getName(manager));
         }
         return members;
     }
 
     public int getTotalMembers() {
-        return (!getClaim().isPresent()) ? 1 : new HashSet<>(getClaim().get().getAllTrusts()).size();
+        return (!getClaim().isPresent()) ? 1 : new HashSet<>(getClaim().get().getUserTrusts()).size();
     }
 
     public int getTotalEntities() {
