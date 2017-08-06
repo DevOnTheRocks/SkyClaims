@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
@@ -47,6 +48,7 @@ public class CommandSpawn extends CommandBase {
 
     public static void register() {
         try {
+            CommandIsland.addSubCommand(commandSpec, "spawn", "tp");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandSpawn");
         } catch (UnsupportedOperationException e) {

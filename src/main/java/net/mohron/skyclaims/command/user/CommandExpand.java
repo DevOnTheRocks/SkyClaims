@@ -22,6 +22,7 @@ import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.data.PlayerData;
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
@@ -51,6 +52,7 @@ public class CommandExpand extends CommandBase {
 
     public static void register() {
         try {
+            CommandIsland.addSubCommand(commandSpec, "expand");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandExpand");
         } catch (UnsupportedOperationException e) {

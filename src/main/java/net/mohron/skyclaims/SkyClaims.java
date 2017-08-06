@@ -34,23 +34,7 @@ import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandAdmin;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.admin.CommandConfig;
-import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
-import net.mohron.skyclaims.command.admin.CommandDelete;
-import net.mohron.skyclaims.command.admin.CommandReload;
-import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.command.argument.SchematicArgument;
-import net.mohron.skyclaims.command.user.CommandCreate;
-import net.mohron.skyclaims.command.user.CommandExpand;
-import net.mohron.skyclaims.command.user.CommandInfo;
-import net.mohron.skyclaims.command.user.CommandList;
-import net.mohron.skyclaims.command.user.CommandLock;
-import net.mohron.skyclaims.command.user.CommandRegen;
-import net.mohron.skyclaims.command.user.CommandReset;
-import net.mohron.skyclaims.command.user.CommandSetBiome;
-import net.mohron.skyclaims.command.user.CommandSetSpawn;
-import net.mohron.skyclaims.command.user.CommandSpawn;
-import net.mohron.skyclaims.command.user.CommandUnlock;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
@@ -259,6 +243,7 @@ public class SkyClaims {
         registerTasks();
         // Reload Commands
         Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
+        CommandIsland.clearSubCommands();
         registerCommands();
     }
 
@@ -286,24 +271,8 @@ public class SkyClaims {
     }
 
     private void registerCommands() {
-        CommandAdmin.register();
-        CommandConfig.register();
-        CommandCreate.register();
-        CommandCreateSchematic.register();
-        CommandExpand.register();
-        CommandDelete.register();
-        CommandInfo.register();
         CommandIsland.register();
-        CommandList.register();
-        CommandLock.register();
-        CommandReload.register();
-        CommandRegen.register();
-        CommandReset.register();
-        CommandSetBiome.register();
-        CommandSetSpawn.register();
-        CommandSpawn.register();
-        CommandTransfer.register();
-        CommandUnlock.register();
+        CommandAdmin.register();
     }
 
     private IDatabase initializeDatabase() {

@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -52,6 +53,7 @@ public class CommandRegen extends CommandBase {
 
     public static void register() {
         try {
+            CommandIsland.addSubCommand(commandSpec, "regen");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandRegen");
         } catch (UnsupportedOperationException e) {

@@ -21,6 +21,7 @@ package net.mohron.skyclaims.command.user;
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
@@ -58,6 +59,7 @@ public class CommandUnlock extends CommandBase {
 
     public static void register() {
         try {
+            CommandIsland.addSubCommand(commandSpec, "unlock");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandUnlock");
         } catch (UnsupportedOperationException e) {

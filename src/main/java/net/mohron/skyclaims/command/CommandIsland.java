@@ -21,22 +21,23 @@ package net.mohron.skyclaims.command;
 import static net.mohron.skyclaims.PluginInfo.NAME;
 import static net.mohron.skyclaims.PluginInfo.VERSION;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.command.user.CommandCreate;
 import net.mohron.skyclaims.command.user.CommandExpand;
-import net.mohron.skyclaims.integration.nucleus.CommandHome;
 import net.mohron.skyclaims.command.user.CommandInfo;
 import net.mohron.skyclaims.command.user.CommandList;
 import net.mohron.skyclaims.command.user.CommandLock;
 import net.mohron.skyclaims.command.user.CommandRegen;
 import net.mohron.skyclaims.command.user.CommandReset;
 import net.mohron.skyclaims.command.user.CommandSetBiome;
-import net.mohron.skyclaims.integration.nucleus.CommandSetHome;
 import net.mohron.skyclaims.command.user.CommandSetSpawn;
 import net.mohron.skyclaims.command.user.CommandSpawn;
 import net.mohron.skyclaims.command.user.CommandUnlock;
+import net.mohron.skyclaims.integration.nucleus.CommandHome;
+import net.mohron.skyclaims.integration.nucleus.CommandSetHome;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
@@ -61,30 +62,16 @@ public class CommandIsland extends CommandBase {
     private static final Text HELP = Text.of("help");
     private static final Map<List<String>, CommandCallable> children = Maps.newHashMap();
 
-    private static CommandSpec commandSpec = CommandSpec.builder()
-        .description(Text.of(HELP_TEXT))
-        .child(CommandAdmin.commandSpec, "admin")
-        .child(CommandCreate.commandSpec, "create")
-        .child(CommandExpand.commandSpec, "expand")
-        .child(CommandInfo.commandSpec, "info")
-        .child(CommandList.commandSpec, "list")
-        .child(CommandLock.commandSpec, "lock")
-        .child(CommandRegen.commandSpec, "regen")
-        .child(CommandReset.commandSpec, "reset")
-        .child(CommandSetBiome.commandSpec, "setbiome")
-        .child(CommandSetSpawn.commandSpec, "setspawn")
-        .child(CommandSpawn.commandSpec, "spawn", "tp")
-        .child(CommandUnlock.commandSpec, "unlock")
-        .children(children)
-        .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
-        .executor(new CommandIsland())
-        .build();
-
-    public static void addSubCommand(CommandCallable command, String... aliases) {
-        children.put(Lists.newArrayList(aliases), command);
-    }
-
     public static void register() {
+        registerSubCommands();
+
+        CommandSpec commandSpec = CommandSpec.builder()
+            .description(Text.of(HELP_TEXT))
+            .children(children)
+            .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
+            .executor(new CommandIsland())
+            .build();
+
         try {
             Sponge.getCommandManager().register(PLUGIN, commandSpec, "island", "is");
             PLUGIN.getLogger().debug("Registered command: CommandIsland");
@@ -92,6 +79,28 @@ public class CommandIsland extends CommandBase {
             e.printStackTrace();
             PLUGIN.getLogger().error("Failed to register command: CommandIsland");
         }
+    }
+
+    public static void addSubCommand(CommandCallable child, String... aliases) {
+        children.put(ImmutableList.copyOf(aliases), child);
+    }
+
+    public static void clearSubCommands() {
+        children.clear();
+    }
+
+    private static void registerSubCommands() {
+        CommandCreate.register();
+        CommandExpand.register();
+        CommandInfo.register();
+        CommandList.register();
+        CommandLock.register();
+        CommandRegen.register();
+        CommandReset.register();
+        CommandSetBiome.register();
+        CommandSetSpawn.register();
+        CommandSpawn.register();
+        CommandUnlock.register();
     }
 
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

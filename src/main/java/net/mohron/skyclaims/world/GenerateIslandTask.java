@@ -72,7 +72,6 @@ public class GenerateIslandTask implements Runnable {
         } catch (InvalidDataException e) {
             volume = DataTranslators.LEGACY_SCHEMATIC.translate(schematicData);
             PLUGIN.getLogger().warn("Loaded legacy schematic: " + e.getMessage());
-            return;
         }
 
         Location<World> centerBlock = island.getRegion().getCenter();
@@ -104,7 +103,7 @@ public class GenerateIslandTask implements Runnable {
 
         Sponge.getServer().getPlayer(owner).ifPresent(p1 -> {
             PLUGIN.getGame().getScheduler().createTaskBuilder()
-                .delayTicks(1)
+                .delayTicks(20)
                 .execute(CommandUtil.createTeleportConsumer(p1, spawn))
                 .submit(PLUGIN);
         });

@@ -64,12 +64,22 @@ public class CommandAdmin extends CommandBase {
 
     public static void register() {
         try {
+            registerSubCommands();
+            CommandIsland.addSubCommand(commandSpec, "admin");
             Sponge.getCommandManager().register(PLUGIN, commandSpec, "isa");
             PLUGIN.getLogger().debug("Registered command: CommandAdmin");
         } catch (UnsupportedOperationException e) {
             e.printStackTrace();
             PLUGIN.getLogger().error("Failed to register command: CommandAdmin");
         }
+    }
+
+    private static void registerSubCommands() {
+        CommandConfig.register();
+        CommandCreateSchematic.register();
+        CommandDelete.register();
+        CommandReload.register();
+        CommandTransfer.register();
     }
 
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {

@@ -21,6 +21,7 @@ package net.mohron.skyclaims.command.user;
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
@@ -61,6 +62,7 @@ public class CommandList extends CommandBase {
 
     public static void register() {
         try {
+            CommandIsland.addSubCommand(commandSpec, "list");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandlist");
             PLUGIN.getLogger().debug("Registered command: CommandList");
         } catch (UnsupportedOperationException e) {

@@ -49,8 +49,8 @@ public class CommandHome extends CommandBase {
 
     public static void register() {
         try {
+            CommandIsland.addSubCommand(commandSpec, "home");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            CommandIsland.addSubCommand(CommandHome.commandSpec, "home");
             PLUGIN.getLogger().debug("Registered command: CommandHome");
         } catch (UnsupportedOperationException e) {
             e.printStackTrace();

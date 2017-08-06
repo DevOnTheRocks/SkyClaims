@@ -54,7 +54,9 @@ public class Version implements Comparable<Version> {
 
     @Override
     public String toString() {
-        if (numbers.length == 0) return "";
+        if (numbers.length == 0) {
+            return "";
+        }
         StrBuilder version = new StrBuilder();
         version.append(numbers[0]);
         for (int i = 1; i < numbers.length; i++) {
