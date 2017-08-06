@@ -41,6 +41,7 @@ dependencies {
     compile("org.spongepowered:spongeforge:${spongeforge}")
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
+    //compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 shadowJar {

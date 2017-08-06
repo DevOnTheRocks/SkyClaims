@@ -46,7 +46,6 @@ public class WorldLoadHandler {
             Subject subject = Sponge.getServiceManager().provideUnchecked(PermissionService.class).getDefaults();
             String target = "any:any";
 
-            PLUGIN.getLogger().info(wilderness.getPermissionValue(subject, ClaimFlag.BLOCK_BREAK, target).toString());
             if (wilderness.getPermissionValue(subject, ClaimFlag.BLOCK_BREAK, target) != Tristate.FALSE) {
                 wilderness.setPermission(subject, ClaimFlag.BLOCK_BREAK, target, Tristate.FALSE, PLUGIN.getCause())
                     .whenComplete((result, throwable) -> {
@@ -59,7 +58,6 @@ public class WorldLoadHandler {
                     });
             }
 
-            PLUGIN.getLogger().info(wilderness.getPermissionValue(subject, ClaimFlag.BLOCK_PLACE, target).toString());
             if (wilderness.getPermissionValue(subject, ClaimFlag.BLOCK_PLACE, target) != Tristate.FALSE) {
                 wilderness.setPermission(subject, ClaimFlag.BLOCK_PLACE, target, Tristate.FALSE, PLUGIN.getCause())
                     .whenComplete((result, throwable) -> {

@@ -26,6 +26,6 @@ public final class PluginInfo {
     public static final String DESCRIPTION = "@DESCRIPTION@";
     public static final String AUTHORS = "Mohron, Cossacksman";
     public static final String GP_VERSION = "4.0.0";
-    public static final double GP_API_VERSION = 0.4;
+    public static final double GP_API_VERSION = 0.5;
     public static final String NUCLEUS_VERSION = "1.0.1";
 }

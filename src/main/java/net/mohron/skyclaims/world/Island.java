@@ -115,9 +115,6 @@ public class Island {
             if (claim.getWidth() < initialWidth) {
                 setWidth(initialWidth);
             }
-            claim.getData().setResizable(false);
-            claim.getData().setClaimExpiration(false);
-            claim.getData().setRequiresClaimBlocks(false);
         } else {
             try {
                 this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();

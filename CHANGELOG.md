@@ -5,10 +5,11 @@
 **REQUIRED: SF build 2315+ & GP build 304+ OPTIONAL: Nucleus version 1.0.1+**
 - `/is reset` now automatically redeems the Nucleus First Join Kit, if present.
 
-##
-**REQUIRED: SF build 2315+ & GP build 304+ OPTIONAL: Nucleus version 1.0.1+**
+## Beta 23
+**REQUIRED: SF build 2315+ & GP build 316+ OPTIONAL: Nucleus version 1.0.1+**
 - Updated GriefPrevention API. GP 4.0.0.304 is now the minimum required version.
-- Block-break/block-place flags in the wilderness of the SkyClaim's world are set to false automatically. 
+- Block-break/block-place flags in the wilderness of the SkyClaim's world are set to false automatically.
+- `/is expand` now cost 256 times more blocks due to GP's change to include y in claim block costs
 
 ## Beta 22
 **REQUIRED: SF 2096+ & GP 295+ OPTIONAL: Nucleus 1.0.1+**

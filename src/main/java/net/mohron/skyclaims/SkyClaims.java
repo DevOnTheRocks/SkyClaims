@@ -108,11 +108,11 @@ import java.util.concurrent.TimeUnit;
 public class SkyClaims {
 
     public static Map<UUID, Island> islands = Maps.newHashMap();
-    private static SkyClaims instance;
-    private static GriefPreventionApi griefPrevention;
-    private static PermissionService permissionService;
     private static Integration integration;
     private static Set<Island> saveQueue = Sets.newHashSet();
+    private static SkyClaims instance;
+    private GriefPreventionApi griefPrevention;
+    private PermissionService permissionService;
 
     @Inject
     private PluginContainer pluginContainer;
@@ -152,12 +152,12 @@ public class SkyClaims {
         instance = this;
 
         try {
-            SkyClaims.griefPrevention = GriefPrevention.getApi();
+            griefPrevention = GriefPrevention.getApi();
         } catch (IllegalStateException e) {
             getLogger().error("GriefPrevention API failed to load.");
         }
 
-        if (SkyClaims.griefPrevention != null) {
+        if (griefPrevention != null) {
             if (griefPrevention.getApiVersion() < GP_API_VERSION) {
                 getLogger().error(String.format(
                     "GriefPrevention API version %s is unsupported! Please update to API version %s+.",
@@ -165,7 +165,8 @@ public class SkyClaims {
                 ));
                 enabled = false;
             } else {
-                getLogger().info("GriefPrevention Integration Successful!");
+                String version = getGame().getPluginManager().getPlugin("GriefPrevention").get().getVersion().get();
+                getLogger().info(String.format("Successfully integrated with GriefPrevention %s!", version));
             }
         } else {
             getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
