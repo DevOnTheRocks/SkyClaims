@@ -27,12 +27,16 @@ public class Version implements Comparable<Version> {
     @Nonnull
     private final int[] numbers;
 
-    public Version(@Nonnull String version) {
+    private Version(@Nonnull String version) {
         final String split[] = version.split("-")[0].split(".");
         numbers = new int[split.length];
         for (int i = 0; i < split.length; i++) {
             numbers[i] = Integer.valueOf(split[i]);
         }
+    }
+
+    public static Version of(String string) {
+        return new Version(string);
     }
 
     @Override
@@ -50,6 +54,7 @@ public class Version implements Comparable<Version> {
 
     @Override
     public String toString() {
+        if (numbers.length == 0) return "";
         StrBuilder version = new StrBuilder();
         version.append(numbers[0]);
         for (int i = 1; i < numbers.length; i++) {

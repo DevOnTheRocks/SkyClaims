@@ -35,7 +35,7 @@ public class WorldConfig {
     private int spawnRegions;
 
     public WorldConfig() {
-        worldName = SkyClaims.getInstance().getGame().getServer().getDefaultWorldName();
+        worldName = "world";
         defaultHeight = 72;
         spawnRegions = 1;
     }

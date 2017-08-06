@@ -22,22 +22,24 @@ import static net.mohron.skyclaims.PluginInfo.NAME;
 import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.command.user.CommandCreate;
 import net.mohron.skyclaims.command.user.CommandExpand;
-import net.mohron.skyclaims.command.user.CommandHome;
+import net.mohron.skyclaims.integration.nucleus.CommandHome;
 import net.mohron.skyclaims.command.user.CommandInfo;
 import net.mohron.skyclaims.command.user.CommandList;
 import net.mohron.skyclaims.command.user.CommandLock;
 import net.mohron.skyclaims.command.user.CommandRegen;
 import net.mohron.skyclaims.command.user.CommandReset;
 import net.mohron.skyclaims.command.user.CommandSetBiome;
-import net.mohron.skyclaims.command.user.CommandSetHome;
+import net.mohron.skyclaims.integration.nucleus.CommandSetHome;
 import net.mohron.skyclaims.command.user.CommandSetSpawn;
 import net.mohron.skyclaims.command.user.CommandSpawn;
 import net.mohron.skyclaims.command.user.CommandUnlock;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -50,36 +52,41 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.List;
+import java.util.Map;
 
 public class CommandIsland extends CommandBase {
 
     private static final String HELP_TEXT = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
 
     private static final Text HELP = Text.of("help");
+    private static final Map<List<String>, CommandCallable> children = Maps.newHashMap();
 
     private static CommandSpec commandSpec = CommandSpec.builder()
         .description(Text.of(HELP_TEXT))
         .child(CommandAdmin.commandSpec, "admin")
         .child(CommandCreate.commandSpec, "create")
         .child(CommandExpand.commandSpec, "expand")
-        .child(CommandHome.commandSpec, "home")
         .child(CommandInfo.commandSpec, "info")
         .child(CommandList.commandSpec, "list")
         .child(CommandLock.commandSpec, "lock")
         .child(CommandRegen.commandSpec, "regen")
         .child(CommandReset.commandSpec, "reset")
         .child(CommandSetBiome.commandSpec, "setbiome")
-        .child(CommandSetHome.commandSpec, "sethome")
         .child(CommandSetSpawn.commandSpec, "setspawn")
         .child(CommandSpawn.commandSpec, "spawn", "tp")
         .child(CommandUnlock.commandSpec, "unlock")
+        .children(children)
         .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
         .executor(new CommandIsland())
         .build();
 
+    public static void addSubCommand(CommandCallable command, String... aliases) {
+        children.put(Lists.newArrayList(aliases), command);
+    }
+
     public static void register() {
         try {
-            Sponge.getCommandManager().register(PLUGIN, commandSpec, "skyclaims", "island", "is");
+            Sponge.getCommandManager().register(PLUGIN, commandSpec, "island", "is");
             PLUGIN.getLogger().debug("Registered command: CommandIsland");
         } catch (UnsupportedOperationException e) {
             e.printStackTrace();

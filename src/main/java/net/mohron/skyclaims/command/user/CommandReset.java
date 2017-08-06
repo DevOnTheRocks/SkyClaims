@@ -88,9 +88,6 @@ public class CommandReset extends CommandBase {
         } else {
             player.getEnderChestInventory().clear();
             player.getInventory().clear();
-            if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isFirstJoinKit()) {
-                PLUGIN.getIntegration().getNucleus().ifPresent(n -> n.redeemFirstJoinKit(player));
-            }
 
             // Teleport any players located in the island's region to spawn
             Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
