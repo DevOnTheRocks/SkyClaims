@@ -35,9 +35,11 @@ public class EntitySpawnHandler {
 
     @Listener
     public void onEntitySpawn(SpawnEntityEvent event) {
-        if (event instanceof DropItemEvent || !event.getTargetWorld().equals(PLUGIN.getConfig().getWorldConfig().getWorld())) {
+        if (event instanceof DropItemEvent) {
             return;
         }
+
+        event.filterEntityLocations(l -> l.getExtent().equals(PLUGIN.getConfig().getWorldConfig().getWorld()));
 
         event.filterEntities(entity -> {
             Island island = SkyClaims.islands.values().stream()

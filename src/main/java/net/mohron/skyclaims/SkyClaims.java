@@ -165,7 +165,7 @@ public class SkyClaims {
                 try {
                     getLogger().info(String.format("Successfully integrated with GriefPrevention %s!", griefPrevention.getImplementationVersion()));
                 } catch (AbstractMethodError error) {
-                    getLogger().error("GriefPrevention version unsupported. SkyClaims Requires GP 4.0.0.319+");
+                    getLogger().error("GriefPrevention version unsupported. SkyClaims Requires GP 4.2.0.321+");
                     enabled = false;
                 }
             }

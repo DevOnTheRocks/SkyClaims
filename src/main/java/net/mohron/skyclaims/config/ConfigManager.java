@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.config;
 
+import com.google.common.io.Resources;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -25,7 +26,6 @@ import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -109,7 +109,7 @@ public class ConfigManager {
         if (!Files.exists(defaultSchem)) {
             try {
                 //noinspection ConstantConditions - Resource will always be included
-                FileUtils.copyURLToFile(this.getClass().getClassLoader().getResource("island.schematic"), defaultSchem.toFile());
+                Resources.asByteSource(this.getClass().getClassLoader().getResource("island.schematic")).copyTo(com.google.common.io.Files.asByteSink(defaultSchem.toFile()));
             } catch (IOException e) {
                 LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
             }

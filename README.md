@@ -24,7 +24,7 @@ This plugin is in Beta. Live support is available for the latest builds through 
 ## Plugin Integration
 
 - **Required:**
-   - [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-2.3.1.295+
+   - [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.2.0.321+
 - **Optional:**
    - [Nucleus](https://nucleuspowered.org) - 1.0.1-LTS+
 
