@@ -84,7 +84,10 @@ public class Island {
         this.locked = true;
 
         // Create the island claim
-        this.claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region).getUniqueId();
+        Claim claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region);
+        claim.getData().setSpawnPos(spawn.getLocation());
+        claim.getData().save();
+        this.claim = claim.getUniqueId();
 
         // Run commands defined in config on creation
         for (String command : PLUGIN.getConfig().getMiscConfig().getCreateCommands()) {
