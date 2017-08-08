@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "net.mohron.skyclaims"
-version = "${major}.${minor}.${patch}-${suffix}"
+version = "${major}.${minor}.${patch}-S5.1-${suffix}"
 description = "SkyClaims is an Island Management plugin that integrates with GriefPrevention."
 
 if (System.getenv().BUILD_NUMBER != null) {
@@ -64,7 +64,7 @@ spongestart{
     minecraft '1.10.2'
     type 'stable'
     spongeForgeVersion properties.spongeforge
-    forgeServerFolder 'run/'
+    forgeServerFolder 'run/API5/'
 }
 
 signing {
