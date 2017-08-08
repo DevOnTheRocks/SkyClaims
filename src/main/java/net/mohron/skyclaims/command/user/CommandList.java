@@ -85,6 +85,7 @@ public class CommandList extends CommandBase {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (SkyClaims.islands.isEmpty()) {
             src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
+            return CommandResult.empty();
         }
         List<Text> listText = Lists.newArrayList();
         Player player = (src instanceof Player) ? (Player) src : null;
