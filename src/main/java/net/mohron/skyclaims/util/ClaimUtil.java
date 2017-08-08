@@ -108,6 +108,7 @@ public class ClaimUtil {
             .expire(false)
             .resizable(false)
             .requireClaimBlocks(false)
+            .sizeRestrictions(false)
             .build();
     }
 
