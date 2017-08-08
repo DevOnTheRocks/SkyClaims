@@ -18,7 +18,10 @@
 
 package net.mohron.skyclaims.util;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Preconditions;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
@@ -31,17 +34,20 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.World;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.annotation.Nonnull;
 
 public class ClaimUtil {
 
     private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public static Claim createIslandClaim(UUID ownerUniqueId, Region region) throws CreateIslandException {
+    public static Claim createIslandClaim(@Nonnull UUID ownerUniqueId, @Nonnull Region region) throws CreateIslandException {
         ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(PLUGIN.getConfig().getWorldConfig().getWorld());
 
         Claim claim = null;
@@ -78,10 +84,15 @@ public class ClaimUtil {
         return claim;
     }
 
-    private static ClaimResult createIslandClaimResult(UUID ownerUniqueId, Region region) {
+    private static ClaimResult createIslandClaimResult(@Nonnull UUID ownerUniqueId, @Nonnull Region region) {
         int initialSpacing = 256 - Options.getMinSize(ownerUniqueId);
+        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+        checkNotNull(world, "Error Creating Claim: World is null");
+        checkNotNull(ownerUniqueId, "Error Creating Claim: Owner is null");
+        checkNotNull(region, "Error Creating Claim: Region is null");
         return Claim.builder()
-            .world(PLUGIN.getConfig().getWorldConfig().getWorld())
+            .type(ClaimType.BASIC)
+            .world(world)
             .bounds(
                 new Vector3i(
                     region.getLesserBoundary().getX() + initialSpacing, 0,
@@ -92,12 +103,11 @@ public class ClaimUtil {
                     region.getGreaterBoundary().getZ() - initialSpacing
                 )
             )
+            .cause(PLUGIN.getCause())
             .owner(ownerUniqueId)
-            .type(ClaimType.BASIC)
             .expire(false)
             .resizable(false)
             .requireClaimBlocks(false)
-            .cause(PLUGIN.getCause())
             .build();
     }
 
@@ -112,6 +122,8 @@ public class ClaimUtil {
     }
 
     private static ClaimResult createSpawnClaimResult(List<Region> regions) {
+        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+        checkNotNull(world, "Error Creating Claim: World is null");
         Region lesserRegion = new Region(0, 0);
         Region greaterRegion = new Region(0, 0);
         for (Region region : regions) {
@@ -126,12 +138,12 @@ public class ClaimUtil {
         }
 
         return Claim.builder()
-            .world(PLUGIN.getConfig().getWorldConfig().getWorld())
+            .type(ClaimType.ADMIN)
+            .world(world)
             .bounds(
                 new Vector3i(lesserRegion.getLesserBoundary().getX(), 0, lesserRegion.getLesserBoundary().getZ()),
                 new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())
             )
-            .type(ClaimType.ADMIN)
             .cause(PLUGIN.getCause())
             .build();
     }
