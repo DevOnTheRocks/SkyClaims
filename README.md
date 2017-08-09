@@ -21,10 +21,12 @@ This plugin is in Beta. Live support is available for the latest builds through 
 - [ ] Configurable island layouts (linear & spiral planned)
 - [ ] Add an island messaging channel so you can chat within your island
 
-## Plugin Integration
+## Dependencies
 
 - **Required:**
-   - [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.2.0.321+
+   - [Sponge](https://www.spongepowered.org/downloads) - 1.12.1-2444-7.0.0-BETA-2524+
+   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.12.2-4.2.0.334+
+   - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended
 - **Optional:**
    - [Nucleus](https://nucleuspowered.org) - 1.0.1-LTS+
 
@@ -38,4 +40,4 @@ This plugin is in Beta. Live support is available for the latest builds through 
 
 [![Discord](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Discord.png)](https://discord.gg/EkVQycV)
 | [![Patreon](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Patreon.png)](https://www.patreon.com/mohron)
-| [![PayPal](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CWCCQB9HG2P7A)
+| [![PayPal](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Paypal.png)](https://www.paypal.me/mohron)

@@ -52,6 +52,10 @@ public class Version implements Comparable<Version> {
         return 0;
     }
 
+    public int compareTo(@Nonnull String other) {
+        return compareTo(new Version(other));
+    }
+
     @Override
     public String toString() {
         if (numbers.length == 0) {
