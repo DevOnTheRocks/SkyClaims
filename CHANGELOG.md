@@ -1,9 +1,14 @@
 # Change Log
 
 ## Unreleased Features, Changes & Bugfixes
-**[Dev Builds](http://ci.devonthe.rocks/job/SkyClaims) - _Use at your own risk unless directed otherwise!_**
-**REQUIRED: SF build 2315+ & GP build 304+ OPTIONAL: Nucleus version 1.0.1+**
-- `/is reset` now automatically redeems the Nucleus First Join Kit, if present.
+**REQUIRED: SF build 2519+ & GP build 4.0.0.331+ OPTIONAL: Nucleus version 1.0.1+**
+- None
+
+# Beta 23.1
+**REQUIRED: SF build 2519+ & GP build 4.0.0.331+ OPTIONAL: Nucleus version 1.0.1+**
+- Minimum Sponge Forge build now 2519 & minimum GriefPrevention build 331.
+- Island claims now bypass size restrictions
+- Fixed a bug where is list showed duplicate messages when there were no islands
 
 ## Beta 23
 **REQUIRED: SF build 2497+ & GP build 4.0.0.319+ OPTIONAL: Nucleus version 1.0.1+**

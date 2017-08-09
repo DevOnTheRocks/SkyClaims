@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "net.mohron.skyclaims"
-version = "${major}.${minor}.${patch}-S5.1-${suffix}"
+version = "${major}.${minor}.${patch}-${api}-${suffix}"
 description = "SkyClaims is an Island Management plugin that integrates with GriefPrevention."
 
 if (System.getenv().BUILD_NUMBER != null) {
@@ -34,6 +34,14 @@ repositories {
         name = 'Nucleus'
         url = 'http://repo.drnaylor.co.uk/artifactory/list/minecraft'
     }
+    maven {
+        name = 'QuickStart'
+        url = 'http://repo.drnaylor.co.uk/artifactory/list/quickstart'
+    }
+    maven {
+        name "LuckPerms"
+        url "https://repo.lucko.me/"
+    }
 }
 
 dependencies {
@@ -41,6 +49,8 @@ dependencies {
     compile("org.spongepowered:spongeforge:${spongeforge}")
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
+    runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
+    runtimeOnly("io.github.nucleuspowered:Nucleus:${nucleus}")
     //compile fileTree(dir: 'libs', include: '*.jar')
 }
 
