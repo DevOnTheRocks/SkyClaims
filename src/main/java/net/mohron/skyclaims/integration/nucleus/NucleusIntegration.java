@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.integration.nucleus;
 
+import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import io.github.nucleuspowered.nucleus.api.service.NucleusAFKService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusAPIMetaService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
@@ -45,8 +46,9 @@ public class NucleusIntegration {
 
     @Listener
     public void onPostInitialization(GamePostInitializationEvent event) {
-        metaService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAPIMetaService.class);
-        if (Version.of(metaService.semanticVersion()).compareTo(Version.of(PluginInfo.NUCLEUS_VERSION)) >= 0) {
+
+        metaService = NucleusAPI.getMetaService();
+        if (Version.of(metaService.semanticVersion()).compareTo(PluginInfo.NUCLEUS_VERSION) >= 0) {
             PLUGIN.getLogger().info(String.format("Successfully integrated with Nucleus %s!", metaService.version()));
         } else {
             PLUGIN.getLogger().info(String.format("Found Nucleus %s. SkyClaims requires Nucleus %s+... disabling integration",
@@ -74,9 +76,11 @@ public class NucleusIntegration {
     }
 
     private void initHomeSupport() {
-        homeService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusHomeService.class);
-        CommandHome.register();
-        CommandSetHome.register();
+        if (NucleusAPI.getHomeService().isPresent()) {
+            homeService = NucleusAPI.getHomeService().get();
+            CommandHome.register();
+            CommandSetHome.register();
+        }
     }
 
     public static NucleusHomeService getHomeService() {

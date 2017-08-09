@@ -40,6 +40,7 @@ import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
 import net.mohron.skyclaims.database.MysqlDatabase;
 import net.mohron.skyclaims.database.SqliteDatabase;
+import net.mohron.skyclaims.integration.Version;
 import net.mohron.skyclaims.integration.nucleus.NucleusIntegration;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
@@ -135,14 +136,14 @@ public class SkyClaims {
 
     @Listener
     public void onPreInitialization(GamePreInitializationEvent event) {
-        getLogger().info(String.format("%s %s is initializing...", NAME, VERSION));
+        logger.info(String.format("%s %s is initializing...", NAME, VERSION));
 
         defaultConfig = new GlobalConfig();
         pluginConfigManager = new ConfigManager(configManager);
         pluginConfigManager.save();
 
         if (Sponge.getPluginManager().isLoaded("nucleus")) {
-            getGame().getEventManager().registerListeners(this, new NucleusIntegration());
+            Sponge.getEventManager().registerListeners(this, new NucleusIntegration());
         }
     }
 
@@ -151,26 +152,27 @@ public class SkyClaims {
         try {
             griefPrevention = GriefPrevention.getApi();
         } catch (IllegalStateException e) {
-            getLogger().error("GriefPrevention API failed to load.");
+            logger.error("GriefPrevention API failed to load.");
         }
 
         if (griefPrevention != null) {
             if (griefPrevention.getApiVersion() < GP_API_VERSION) {
-                getLogger().error(String.format(
+                logger.error(String.format(
                     "GriefPrevention API version %s is unsupported! Please update to API version %s+.",
                     griefPrevention.getApiVersion(), GP_API_VERSION
                 ));
                 enabled = false;
+            } else if (Version.of(griefPrevention.getImplementationVersion()).compareTo(GP_VERSION) < 0) {
+                logger.error(String.format(
+                    "GriefPrevention version %s is unsupported! Please update to version %s+.",
+                    griefPrevention.getImplementationVersion(), GP_VERSION
+                ));
+                enabled = false;
             } else {
-                try {
-                    getLogger().info(String.format("Successfully integrated with GriefPrevention %s!", griefPrevention.getImplementationVersion()));
-                } catch (AbstractMethodError error) {
-                    getLogger().error("GriefPrevention version unsupported. SkyClaims Requires GP 4.0.0.319+");
-                    enabled = false;
-                }
+                logger.info(String.format("Successfully integrated with GriefPrevention %s!", griefPrevention.getImplementationVersion()));
             }
         } else {
-            getLogger().error("GriefPrevention Integration Failed! Disabling SkyClaims.");
+            logger.error("GriefPrevention Integration Failed! Disabling SkyClaims.");
             enabled = false;
         }
     }
@@ -185,7 +187,7 @@ public class SkyClaims {
         permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
         if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
             .equalsIgnoreCase("sponge")) {
-            getLogger().error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+            logger.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
             enabled = false;
             return;
         }
@@ -204,15 +206,15 @@ public class SkyClaims {
         database = initializeDatabase();
 
         islands = database.loadData();
-        getLogger().info("Islands Loaded: " + islands.size());
+        logger.info("Islands Loaded: " + islands.size());
         if (!saveQueue.isEmpty()) {
-            getLogger().info("Saving " + saveQueue.size() + " claims that were malformed");
+            logger.info("Saving " + saveQueue.size() + " claims that were malformed");
             database.saveData(saveQueue);
         }
 
         addCustomMetrics();
 
-        getLogger().info("Initialization complete.");
+        logger.info("Initialization complete.");
     }
 
     @Listener
@@ -220,7 +222,7 @@ public class SkyClaims {
         if (!enabled) {
             return;
         }
-        getLogger().info(String.format("%S %S is stopping...", NAME, VERSION));
+        logger.info(String.format("%S %S is stopping...", NAME, VERSION));
     }
 
     @Listener
