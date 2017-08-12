@@ -26,14 +26,14 @@ public class EntityConfig {
 
     @Setting(value = "Limit-Spawning", comment = "Whether SkyClaims should limit island entity spawns.")
     private boolean limitSpawning = false;
-    @Setting(value = "Max-Hostile", comment = "The max number of hostile mob spawns allowed per island. 0 to disable" +
-        "Can be overridden with the 'skyclaims.max-spawns.hostile' option")
+    @Setting(value = "Max-Hostile", comment = "The max number of hostile mob spawns allowed per island. 0 to disable.\n" +
+        "Can be overridden with the 'skyclaims.max-spawns.hostile' option.")
     private int maxHostile = 50;
-    @Setting(value = "Max-Passive", comment = "The max number of passive mob spawns allowed per island. 0 to disable" +
-        "Can be overridden with the 'skyclaims.max-spawns.passive' option")
+    @Setting(value = "Max-Passive", comment = "The max number of passive mob spawns allowed per island. 0 to disable.\n" +
+        "Can be overridden with the 'skyclaims.max-spawns.passive' option.")
     private int maxPassive = 30;
-    @Setting(value = "Max-Spawns", comment = "The overall max number of mob spawns allowed per island. 0 to disable" +
-        "Can be overridden with the 'skyclaims.max-spawns' option")
+    @Setting(value = "Max-Spawns", comment = "The overall max number of mob spawns allowed per island. 0 to disable.\n" +
+        "Can be overridden with the 'skyclaims.max-spawns' option.")
     private int maxSpawns = 70;
 
     public boolean isLimitSpawning() {
