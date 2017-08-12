@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.listener;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.Island;
@@ -34,7 +35,9 @@ public class ClientJoinHandler {
 
     @Listener
     public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
+        SkyClaimsTimings.CLIENT_JOIN.startTimingIfSync();
         if (!PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() || Island.hasIsland(player.getUniqueId())) {
+            SkyClaimsTimings.CLIENT_JOIN.abort();
             return;
         }
 
@@ -51,5 +54,6 @@ public class ClientJoinHandler {
             .delayTicks(40)
             .submit(PLUGIN);
 
+        SkyClaimsTimings.CLIENT_JOIN.stopTimingIfSync();
     }
 }

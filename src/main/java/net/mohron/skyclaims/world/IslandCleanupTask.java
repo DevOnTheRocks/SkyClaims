@@ -20,6 +20,7 @@ package net.mohron.skyclaims.world;
 
 import com.google.common.base.Stopwatch;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Options;
 import org.spongepowered.api.Sponge;
 
@@ -33,6 +34,7 @@ public class IslandCleanupTask implements Runnable {
 
     @Override
     public void run() {
+        SkyClaimsTimings.ISLAND_CLEANUP.startTimingIfSync();
         PLUGIN.getLogger().info("Starting Island Cleanup.");
         Stopwatch sw = Stopwatch.createStarted();
         SkyClaims.islands.values()
@@ -52,5 +54,6 @@ public class IslandCleanupTask implements Runnable {
             });
         sw.stop();
         PLUGIN.getLogger().info(String.format("Finished Island Cleanup in %dms.", sw.elapsed(TimeUnit.MILLISECONDS)));
+        SkyClaimsTimings.ISLAND_CLEANUP.stopTimingIfSync();
     }
 }

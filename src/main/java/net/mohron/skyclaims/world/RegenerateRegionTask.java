@@ -20,6 +20,7 @@ package net.mohron.skyclaims.world;
 
 import com.google.common.base.Stopwatch;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
@@ -53,6 +54,7 @@ public class RegenerateRegionTask implements Runnable {
 
     @Override
     public void run() {
+        SkyClaimsTimings.CLEAR_ISLAND.startTimingIfSync();
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
         PLUGIN.getLogger().info(String.format("Begin clearing region (%s, %s)", region.getX(), region.getZ()));
@@ -104,5 +106,7 @@ public class RegenerateRegionTask implements Runnable {
                 .execute(new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic))
                 .submit(PLUGIN);
         }
+
+        SkyClaimsTimings.CLEAR_ISLAND.stopTimingIfSync();
     }
 }

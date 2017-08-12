@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.world;
 
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
@@ -54,6 +55,7 @@ public class GenerateIslandTask implements Runnable {
 
     @Override
     public void run() {
+        SkyClaimsTimings.GENERATE_ISLAND.startTimingIfSync();
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
         File inputFile = new File(PLUGIN.getConfigDir().toString(), String.format("schematics%s%s.schematic", File.separator, schematic));
 
@@ -63,6 +65,7 @@ public class GenerateIslandTask implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
             PLUGIN.getLogger().error("Error loading schematic: " + e.getMessage());
+            SkyClaimsTimings.GENERATE_ISLAND.abort();
             return;
         }
 
@@ -107,5 +110,6 @@ public class GenerateIslandTask implements Runnable {
                 .execute(CommandUtil.createTeleportConsumer(p1, spawn))
                 .submit(PLUGIN);
         });
+        SkyClaimsTimings.GENERATE_ISLAND.stopTimingIfSync();
     }
 }

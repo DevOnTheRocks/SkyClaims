@@ -309,6 +309,10 @@ public class SkyClaims {
         });
     }
 
+    public PluginContainer getPluginContainer() {
+        return pluginContainer;
+    }
+
     public GriefPreventionApi getGriefPrevention() {
         return griefPrevention;
     }
