@@ -20,10 +20,10 @@ package net.mohron.skyclaims.database;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.StorageConfig;
 import net.mohron.skyclaims.world.Island;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -117,7 +117,7 @@ public class SqliteDatabase extends Database {
         File outputFile = new File(String.format("%s%sskyclaims_backup.db", config.getLocation(), File.separator));
 
         try {
-            FileUtils.copyFile(inputFile, outputFile);
+            Files.copy(inputFile, outputFile);
         } catch (IOException e) {
             e.printStackTrace();
             SkyClaims.getInstance().getLogger().error("Error occurred while backing up legacy SQLite DB.");

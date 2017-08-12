@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.config;
 
+import com.google.common.io.Resources;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -25,7 +26,6 @@ import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -97,22 +97,31 @@ public class ConfigManager {
      * Create the default schematic file, from resource, into the config-specified folder
      */
     private void initializeSchematic() {
-        Path schemDir = Paths.get(PLUGIN.getConfigDir() + File.separator + "schematics");
-        if (!Files.exists(schemDir)) {
+        String[] schematics = {"gardenofglass", "skyfactory"};
+        File schemDir = Paths.get(PLUGIN.getConfigDir() + File.separator + "schematics").toFile();
+        if (!schemDir.exists() || !schemDir.isDirectory()) {
             try {
-                Files.createDirectory(schemDir);
-            } catch (IOException e) {
+                boolean success = schemDir.mkdir();
+                if (!success) {
+                    throw new IOException();
+                }
+            } catch (SecurityException | IOException e) {
                 LOGGER.error(String.format("Failed to create schematics directory.\r\n %s", e.getMessage()));
             }
         }
-        Path defaultSchem = Paths.get(String.format("%s%sschematics%sisland.schematic", PLUGIN.getConfigDir(), File.separator, File.separator));
-        if (!Files.exists(defaultSchem)) {
-            try {
-                //noinspection ConstantConditions - Resource will always be included
-                FileUtils.copyURLToFile(this.getClass().getClassLoader().getResource("island.schematic"), defaultSchem.toFile());
-            } catch (IOException e) {
-                LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
+        try {
+            //noinspection ConstantConditions - schemDir.list() is being checked for null
+            if (schemDir.list() == null || schemDir.list().length < 1) {
+                for (String name : schematics) {
+                    File schematic = Paths.get(String.format("%s%s%s.schematic", schemDir.toPath(), File.separator, name)).toFile();
+                    //noinspection ConstantConditions - Resource will always be included
+                    Resources.asByteSource(this.getClass().getClassLoader()
+                        .getResource(name + ".schematic"))
+                        .copyTo(com.google.common.io.Files.asByteSink(schematic));
+                }
             }
+        } catch (SecurityException | IOException e) {
+            LOGGER.error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
         }
     }
 }

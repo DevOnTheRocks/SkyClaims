@@ -46,7 +46,6 @@ repositories {
 
 dependencies {
     compile("org.spongepowered:spongeapi:${spongeapi}")
-    compile("org.spongepowered:spongeforge:${spongeforge}")
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
     runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
