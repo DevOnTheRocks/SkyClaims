@@ -1,10 +1,10 @@
 plugins {
-    id 'java'
-    id 'idea'
-    id 'signing'
-    id 'ninja.miserable.blossom' version '1.0.1'
-    id 'com.github.johnrengelman.shadow' version '2.0.1'
-    id 'org.spongepowered.plugin' version '0.6'
+    id "java"
+    id "idea"
+    id "signing"
+    id "ninja.miserable.blossom" version "1.0.1"
+    id "com.github.johnrengelman.shadow" version "2.0.1"
+    id "org.spongepowered.plugin" version "0.6"
     id "com.qixalite.spongestart" version "1.6.0"
 }
 
@@ -17,26 +17,26 @@ if (System.getenv().BUILD_NUMBER != null) {
 }
 
 compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
+    sourceCompatibility = targetCompatibility = "1.8"
 }
 
 repositories {
     jcenter()
     maven {
-        name = 'Sponge'
-        url = 'http://repo.spongepowered.org/maven'
+        name = "Sponge"
+        url = "http://repo.spongepowered.org/maven"
     }
     maven {
-        name = 'Forge'
-        url = 'http://files.minecraftforge.net/maven'
+        name = "Forge"
+        url = "http://files.minecraftforge.net/maven"
     }
     maven {
-        name = 'Nucleus'
-        url = 'http://repo.drnaylor.co.uk/artifactory/list/minecraft'
+        name = "Nucleus"
+        url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
     }
     maven {
-        name = 'QuickStart'
-        url = 'http://repo.drnaylor.co.uk/artifactory/list/quickstart'
+        name = "QuickStart"
+        url = "http://repo.drnaylor.co.uk/artifactory/list/quickstart"
     }
     maven {
         name "LuckPerms"
@@ -50,7 +50,7 @@ dependencies {
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
     runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
     runtimeOnly("io.github.nucleuspowered:Nucleus:${nucleus}")
-    //compile fileTree(dir: 'libs', include: '*.jar')
+    //compile fileTree(dir: "libs", include: "*.jar")
 }
 
 shadowJar {
@@ -61,23 +61,23 @@ shadowJar {
 }
 
 blossom {
-    def pluginInfo = 'src/main/java/net/mohron/skyclaims/PluginInfo.java'
+    def pluginInfo = "src/main/java/net/mohron/skyclaims/PluginInfo.java"
 
-    replaceToken '@NAME@', project.name, pluginInfo
-    replaceToken '@VERSION@', project.version, pluginInfo
-    replaceToken '@DESCRIPTION@', project.description, pluginInfo
+    replaceToken "@NAME@", project.name, pluginInfo
+    replaceToken "@VERSION@", project.version, pluginInfo
+    replaceToken "@DESCRIPTION@", project.description, pluginInfo
 }
 
 spongestart{
     eula true
-    minecraft '1.10.2'
-    type 'stable'
+    minecraft "1.10.2"
+    type "stable"
     spongeForgeVersion properties.spongeforge
-    forgeServerFolder 'run/API5/'
+    forgeServerFolder "run/API5/"
 }
 
 signing {
-    required {Project.hasProperty('signing.keyId')}
+    required {Project.hasProperty("signing.keyId")}
     sign configurations.archives, configurations.shadow
 }
 

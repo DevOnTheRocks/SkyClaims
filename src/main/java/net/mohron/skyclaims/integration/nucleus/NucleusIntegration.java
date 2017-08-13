@@ -30,6 +30,7 @@ import net.mohron.skyclaims.integration.Version;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
@@ -57,13 +58,9 @@ public class NucleusIntegration {
         }
     }
 
-    @Listener
+    @Listener(order = Order.EARLY)
     public void onGameAboutToStart(GameAboutToStartServerEvent event) {
-        NucleusConfig config = PLUGIN.getConfig().getIntegrationConfig().getNucleus();
-
-        if (config.isHomesEnabled()) {
-            initHomeSupport();
-        }
+        initHomeSupport();
 
         //kitService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusKitService.class);
         //afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
@@ -71,12 +68,12 @@ public class NucleusIntegration {
 
     @Listener
     public void onReload(GameReloadEvent event) {
-        CommandHome.register();
-        CommandSetHome.register();
+        initHomeSupport();
     }
 
     private void initHomeSupport() {
-        if (NucleusAPI.getHomeService().isPresent()) {
+        if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled()
+            && NucleusAPI.getHomeService().isPresent()) {
             homeService = NucleusAPI.getHomeService().get();
             CommandHome.register();
             CommandSetHome.register();
