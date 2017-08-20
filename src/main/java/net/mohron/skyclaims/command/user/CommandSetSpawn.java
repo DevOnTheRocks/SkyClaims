@@ -67,8 +67,8 @@ public class CommandSetSpawn extends CommandBase {
 
         island.setSpawn(player.getTransform());
         player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
-            TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), TextColors.GRAY, " ,",
-            TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), TextColors.GRAY, " ,",
+            TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), TextColors.GRAY, ", ",
+            TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), TextColors.GRAY, ", ",
             TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), TextColors.GRAY, ")"));
 
         return CommandResult.success();
