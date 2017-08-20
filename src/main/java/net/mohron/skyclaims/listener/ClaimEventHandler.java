@@ -108,7 +108,7 @@ public class ClaimEventHandler {
                 return;
             }
             Island island = Island.get(claim).get();
-            if (island.isLocked() && !player.hasPermission(Permissions.COMMAND_LOCK_BYPASS) && !island.hasPermissions(player)) {
+            if (island.isLocked() && !player.hasPermission(Permissions.COMMAND_LOCK_BYPASS) && !island.isMember(player)) {
                 event.setCancelled(true);
                 event.setMessage(Text.of(TextColors.RED, "You do not have permission to enter ", island.getName(), TextColors.RED, "."));
             }

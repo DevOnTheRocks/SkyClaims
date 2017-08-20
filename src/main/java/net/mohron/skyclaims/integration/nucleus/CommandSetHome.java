@@ -62,7 +62,7 @@ public class CommandSetHome extends CommandBase {
         Island island = Island.get(player.getLocation())
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to set a home!")));
 
-        if (!island.hasPermissions(player)) {
+        if (!island.isMember(player)) {
             throw new CommandException(Text.of(TextColors.RED, "You must have permission to set home on this island!"));
         }
 

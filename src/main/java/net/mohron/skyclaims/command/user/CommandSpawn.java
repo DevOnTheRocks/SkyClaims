@@ -68,7 +68,7 @@ public class CommandSpawn extends CommandBase {
         Island island = Island.getByOwner(user.getUniqueId())
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
 
-        if (island.isLocked() && !island.hasPermissions(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
+        if (island.isLocked() && !island.isMember(player) && !src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
             throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
         }
 

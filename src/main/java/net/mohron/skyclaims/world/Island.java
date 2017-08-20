@@ -324,9 +324,16 @@ public class Island {
         return getTileEntities().size();
     }
 
-    public boolean hasPermissions(User user) {
+    public boolean isMember(User user) {
         return user.getUniqueId().equals(owner)
-            || (getClaim().isPresent() && getClaim().get().isTrusted(user.getUniqueId()));
+            || (getClaim().isPresent()
+            && getClaim().get().isUserTrusted(user, TrustType.BUILDER)
+            || getClaim().get().isUserTrusted(user, TrustType.MANAGER));
+    }
+
+    public boolean isManager(User user) {
+        return user.getUniqueId().equals(owner)
+            || (getClaim().isPresent() && getClaim().get().isUserTrusted(user, TrustType.MANAGER));
     }
 
     public Collection<Player> getPlayers() {

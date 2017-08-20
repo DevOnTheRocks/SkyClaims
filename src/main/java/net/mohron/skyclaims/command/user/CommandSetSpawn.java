@@ -61,7 +61,7 @@ public class CommandSetSpawn extends CommandBase {
         Island island = Island.get(player.getLocation())
             .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
 
-        if (!island.getOwnerUniqueId().equals(player.getUniqueId()) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS)) {
+        if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS)) {
             throw new CommandException(Text.of("Only the island owner may use this command!"));
         }
 

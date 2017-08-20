@@ -74,7 +74,7 @@ public class IslandArgument extends CommandElement {
             boolean admin = src.hasPermission(Permissions.COMMAND_LIST_ALL);
             return SkyClaims.islands.entrySet().stream()
                 .filter(i -> i.getValue().getOwnerName().toLowerCase().startsWith(arg))
-                .filter(i -> admin || !(src instanceof Player) || i.getValue().hasPermissions((Player) src))
+                .filter(i -> admin || !(src instanceof Player) || i.getValue().isMember((Player) src))
                 .map(m -> m.getValue().getOwnerName())
                 .collect(Collectors.toList());
         } catch (ArgumentParseException e) {
