@@ -36,13 +36,13 @@ public class EntitySpawnHandler {
 
     @Listener
     public void onEntitySpawn(SpawnEntityEvent event) {
+
         SkyClaimsTimings.ENTITY_SPAWN.startTimingIfSync();
-        if (event instanceof DropItemEvent) {
+
+        if (event instanceof DropItemEvent || !event.getEntities().get(0).getWorld().equals(PLUGIN.getConfig().getWorldConfig().getWorld())) {
             SkyClaimsTimings.ENTITY_SPAWN.abort();
             return;
         }
-
-        event.filterEntityLocations(l -> l.getExtent().equals(PLUGIN.getConfig().getWorldConfig().getWorld()));
 
         event.filterEntities(entity -> {
             Island island = SkyClaims.islands.values().stream()
@@ -69,7 +69,8 @@ public class EntitySpawnHandler {
             limit = Options.getMaxSpawns(island.getOwnerUniqueId());
             return (limit <= 0 || limit >= hostile + passive);
         });
-        SkyClaimsTimings.ENTITY_SPAWN.stopTimingIfSync();;
+
+        SkyClaimsTimings.ENTITY_SPAWN.stopTimingIfSync();
     }
 
 }
