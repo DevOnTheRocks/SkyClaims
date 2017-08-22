@@ -75,13 +75,13 @@ public class CommandExpand extends CommandBase {
         Claim claim = island.getClaim()
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The expand command can only be used on protected islands.")));
 
-        // Check if the command source owns the island
-        if (!island.getOwnerUniqueId().equals(player.getUniqueId())) {
+        // Check if the command source is a Manager
+        if (!island.isManager(player)) {
             throw new CommandException(Text.of("Only the island owner may use this command!"));
         }
 
         int width = claim.getWidth();
-        int maxSize = Options.getMaxSize(player.getUniqueId()) * 2;
+        int maxSize = Options.getMaxSize(island.getOwnerUniqueId()) * 2;
 
         // Check if expanding would exceed the max size
         if (width >= maxSize || width + blocks * 2 > maxSize) {
