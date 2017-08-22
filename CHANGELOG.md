@@ -1,16 +1,17 @@
 # Change Log
 
 ## Unreleased Features, Changes & Bugfixes
-**REQUIRED: SF build 2519+ & GP build 4.0.0.331+ OPTIONAL: Nucleus version 1.0.1+**
+**REQUIRED: SF build 2524+ & GP build 4.2.0.334+ OPTIONAL: Nucleus version 1.0.1+**
 - None
 
-# Beta 24
-**REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**
+# Beta 24 - S7.0
+**REQUIRED: SF build 2524+ & GP build 4.2.0.334+ OPTIONAL: Nucleus version 1.0.1+**
 - Managers can now use `/is setspawn`, `/is setbiome`, & `/is expand`
 - Added enhanced timings support
 - Added Garden of Glass schematic to prepackaged schematics
 - Fixed `/isa reload` breaking `/is home` &`/is sethome` commands
-- Fixed known incompatibility with API 6.0 in entity limit feature
+- Fixed entity limit feature preventing spawning in other dimensions
+- Updated to latest Sponge API 7.0 snapshot
 
 # Beta 23.1 - S7.0
 **REQUIRED: SF build 2524+ & GP build 4.2.0.334+ OPTIONAL: Nucleus version 1.0.1+**
