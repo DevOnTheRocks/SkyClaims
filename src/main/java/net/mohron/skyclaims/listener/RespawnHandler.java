@@ -17,6 +17,7 @@
  */
 package net.mohron.skyclaims.listener;
 
+import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Transform;
@@ -29,12 +30,15 @@ public class RespawnHandler {
 
     @Listener
     public void onPlayerRespawn(RespawnPlayerEvent event, @Root Player player) {
+        SkyClaimsTimings.PLAYER_RESPAWN.startTimingIfSync();
         if (event.isBedSpawn() || !Island.hasIsland(player.getUniqueId())) {
+            SkyClaimsTimings.PLAYER_RESPAWN.abort();
             return;
         }
 
         Island.getByOwner(player.getUniqueId())
             .ifPresent(island -> Sponge.getGame().getTeleportHelper().getSafeLocation(island.getSpawn().getLocation())
                 .ifPresent(spawn -> event.setToTransform(new Transform<>(spawn))));
+        SkyClaimsTimings.PLAYER_RESPAWN.stopTimingIfSync();
     }
 }

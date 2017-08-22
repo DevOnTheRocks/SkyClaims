@@ -24,6 +24,7 @@ import me.ryanhamshire.griefprevention.api.event.CreateClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.DeleteClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.ResizeClaimEvent;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.entity.living.player.Player;
@@ -41,18 +42,23 @@ public class ClaimEventHandler {
 
     @Listener
     public void onClaimCreate(CreateClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
+        SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
         if (!claim.getWorld().equals(world) || !claim.isBasicClaim()) {
+            SkyClaimsTimings.CLAIM_HANDLER.abort();
             return;
         }
 
         event.setMessage(Text.of(TextColors.RED, "You cannot create a basic claim in this dimension!"));
         event.setCancelled(true);
+
+        SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
     }
 
     @Listener
     public void onClaimDelete(DeleteClaimEvent event, @Root Player player) {
+        SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
         for (Claim claim : event.getClaims()) {
@@ -71,33 +77,43 @@ public class ClaimEventHandler {
                 event.setCancelled(true);
             }
         }
+
+        SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
     }
 
     @Listener
     public void onClaimResize(ResizeClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
+        SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
         if (!claim.getWorld().equals(world) || !claim.isBasicClaim()) {
+            SkyClaimsTimings.CLAIM_HANDLER.abort();
             return;
         }
 
         event.setMessage(Text.of(TextColors.RED, "You cannot resize an island claim!"));
         event.setCancelled(true);
+
+        SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
     }
 
     @Listener
     public void onClaimBorder(BorderClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
+        SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
         if (claim.getWorld().equals(world) && claim.isBasicClaim()) {
             if (!Island.get(claim).isPresent()) {
+                SkyClaimsTimings.CLAIM_HANDLER.abort();
                 return;
             }
             Island island = Island.get(claim).get();
-            if (island.isLocked() && !player.hasPermission(Permissions.COMMAND_LOCK_BYPASS) && !island.hasPermissions(player)) {
+            if (island.isLocked() && !player.hasPermission(Permissions.COMMAND_LOCK_BYPASS) && !island.isMember(player)) {
                 event.setCancelled(true);
                 event.setMessage(Text.of(TextColors.RED, "You do not have permission to enter ", island.getName(), TextColors.RED, "."));
             }
         }
+
+        SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
     }
 }

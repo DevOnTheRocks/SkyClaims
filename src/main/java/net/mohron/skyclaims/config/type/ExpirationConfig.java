@@ -25,12 +25,12 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class ExpirationConfig {
 
-    @Setting(value = "Enabled", comment = "Whether SkyClaims should remove inactive islands that exceed the expiration threshold")
+    @Setting(value = "Enabled", comment = "Whether SkyClaims should remove inactive islands that exceed the expiration threshold.")
     private boolean enabled = false;
-    @Setting(value = "Interval", comment = "The frequency, in minutes, that islands will be considered for removal")
+    @Setting(value = "Interval", comment = "The frequency, in minutes, that islands will be considered for removal.")
     private int interval = 15;
-    @Setting(value = "Threshold", comment = "The amount of time, in days, that an island must be inactive before removal\n" +
-        "Can be overridden with the 'skyclaims.expiration' option")
+    @Setting(value = "Threshold", comment = "The amount of time, in days, that an island must be inactive before removal.\n" +
+        "Can be overridden with the 'skyclaims.expiration' option.")
     private int threshold = 30;
 
     public boolean isEnabled() {

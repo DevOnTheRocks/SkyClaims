@@ -95,7 +95,7 @@ public class CommandList extends CommandBase {
         boolean spawnOthers = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS);
 
         SkyClaims.islands.values().stream()
-            .filter(i -> user == null || i.hasPermissions(user))
+            .filter(i -> user == null || i.isMember(user))
             .sorted(sortType)
             .forEach(island -> listText.add(Text.of(
                 getLocked(island),
@@ -105,7 +105,7 @@ public class CommandList extends CommandBase {
                         CommandUtil
                             .createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer(src)))
                     ),
-                (!island.isLocked() || ((player == null || island.hasPermissions(player)) || spawnOthers))
+                (!island.isLocked() || ((player == null || island.isMember(player)) || spawnOthers))
                     ? getClickableCoords(src, island) : getCoords(island)
             )));
 

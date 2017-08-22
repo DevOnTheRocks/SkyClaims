@@ -22,6 +22,7 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimFlag;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.SkyClaimsTimings;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -38,6 +39,7 @@ public class WorldLoadHandler {
 
     @Listener(order = Order.LAST)
     public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World targetWorld) {
+        SkyClaimsTimings.WORLD_LOAD.startTimingIfSync();
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
         if (targetWorld.equals(world)) {
@@ -70,5 +72,6 @@ public class WorldLoadHandler {
                     });
             }
         }
+        SkyClaimsTimings.WORLD_LOAD.stopTimingIfSync();
     }
 }
