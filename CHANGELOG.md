@@ -4,6 +4,14 @@
 **REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**
 - None
 
+# Beta 24
+**REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**
+- Managers can now use `/is setspawn`, `/is setbiome`, & `/is expand`
+- Added enhanced timings support
+- Added Garden of Glass schematic to prepackaged schematics
+- Fixed `/isa reload` breaking `/is home` &`/is sethome` commands
+- Fixed known incompatibility with API 6.0 in entity limit feature
+
 # Beta 23.1
 **REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**
 - Minimum Sponge Forge build now 2519 & minimum GriefPrevention build 332.
