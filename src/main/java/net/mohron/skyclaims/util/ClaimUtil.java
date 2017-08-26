@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.flowpowered.math.vector.Vector3i;
@@ -86,9 +87,11 @@ public class ClaimUtil {
     private static ClaimResult createIslandClaimResult(@Nonnull UUID ownerUniqueId, @Nonnull Region region) {
         int initialSpacing = 256 - Options.getMinSize(ownerUniqueId);
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
-        checkNotNull(world, "Error Creating Claim: World is null");
+        checkNotNull(world, "Error Creating Claim: World (%s) is null", world.getName());
+        checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded", world.getName());
         checkNotNull(ownerUniqueId, "Error Creating Claim: Owner is null");
         checkNotNull(region, "Error Creating Claim: Region is null");
+
         return Claim.builder()
             .type(ClaimType.BASIC)
             .world(world)
@@ -123,7 +126,8 @@ public class ClaimUtil {
 
     private static ClaimResult createSpawnClaimResult(List<Region> regions) {
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
-        checkNotNull(world, "Error Creating Claim: World is null");
+        checkNotNull(world, "Error Creating Claim: World (%s) is null", world.getName());
+        checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded", world.getName());
         Region lesserRegion = new Region(0, 0);
         Region greaterRegion = new Region(0, 0);
         for (Region region : regions) {
