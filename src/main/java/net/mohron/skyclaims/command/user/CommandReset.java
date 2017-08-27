@@ -37,9 +37,11 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.function.Consumer;
+
 public class CommandReset extends CommandBase {
 
-    public static final String HELP_TEXT = "delete your island and inventory so you can start over.";
+    public static final String HELP_TEXT = "reset your island and inventory so you can start over.";
     private static final Text CONFIRM = Text.of("confirm");
     private static final Text SCHEMATIC = Text.of("schematic");
 
@@ -80,7 +82,7 @@ public class CommandReset extends CommandBase {
                 TextColors.WHITE, "[",
                 Text.builder("YES")
                     .color(TextColors.GREEN)
-                    .onClick(TextActions.runCommand("/is reset confirm " + schematic)),
+                    .onClick(TextActions.executeCallback(resetIsland(player, island, schematic))),
                 TextColors.WHITE, "] [",
                 Text.builder("NO")
                     .color(TextColors.RED)
@@ -88,6 +90,14 @@ public class CommandReset extends CommandBase {
                 TextColors.WHITE, "]"
             ));
         } else {
+            resetIsland(player, island, schematic);
+        }
+
+        return CommandResult.success();
+    }
+
+    private Consumer<CommandSource> resetIsland(Player player, Island island, String schematic) {
+        return src -> {
             player.getEnderChestInventory().clear();
             player.getInventory().clear();
 
@@ -95,10 +105,8 @@ public class CommandReset extends CommandBase {
             Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
             island.getPlayers().forEach(p -> p.setLocationSafely(spawn));
 
-            src.sendMessage(Text.of("Please be patient while your island is reset."));
+            player.sendMessage(Text.of("Please be patient while your island is reset."));
             island.reset(schematic);
-        }
-
-        return CommandResult.success();
+        };
     }
 }

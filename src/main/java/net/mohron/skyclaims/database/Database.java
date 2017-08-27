@@ -94,7 +94,7 @@ public abstract class Database implements IDatabase {
             SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
         }
 
-        SkyClaims.getInstance().getLogger().info("Loaded SkyClaims MySQL Data. Count: " + islands.size());
+        SkyClaims.getInstance().getLogger().info("Loaded SkyClaims MySQL Data. Count: {}", islands.size());
         return islands;
     }
 
@@ -139,7 +139,7 @@ public abstract class Database implements IDatabase {
 
             statement.execute();
         } catch (SQLException e) {
-            SkyClaims.getInstance().getLogger().error(String.format("Error inserting Island into the database: %s", e.getMessage()));
+            SkyClaims.getInstance().getLogger().error("Error inserting Island into the database: {}", e.getMessage());
         }
     }
 
@@ -156,7 +156,7 @@ public abstract class Database implements IDatabase {
 
             statement.execute();
         } catch (SQLException e) {
-            SkyClaims.getInstance().getLogger().error(String.format("Error removing Island from the database: %s", e.getMessage()));
+            SkyClaims.getInstance().getLogger().error("Error removing Island from the database: {}", e.getMessage());
         }
     }
 
