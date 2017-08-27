@@ -78,7 +78,7 @@ public class SqliteDatabase extends Database {
     public void migrate() {
         HashMap<UUID, Island> islands;
 
-        SkyClaims.getInstance().getLogger().info(String.format("Table size: %s", countColumns()));
+        SkyClaims.getInstance().getLogger().info("Table size: {}", countColumns());
 
         if (countColumns() == 6) {
             SkyClaims.getInstance().getLogger().info("Migrating the database..");
@@ -151,8 +151,6 @@ public class SqliteDatabase extends Database {
                 boolean locked = results.getBoolean("locked");
 
                 Vector3d spawnLocation = new Vector3d(x, y, z);
-                //				SkyClaims.getInstance().getLogger().debug(String.format("Loading %s, %s, %s, %s, %s", islandId, ownerId, claimId,
-                // spawnLocation.toString(), locked));
                 Island island = new Island(islandId, ownerId, claimId, spawnLocation, locked);
 
                 islands.put(islandId, island);
@@ -162,7 +160,7 @@ public class SqliteDatabase extends Database {
             SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
         }
 
-        SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Data. Count: " + islands.size());
+        SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Data. Count: {}", islands.size());
         return islands;
     }
 
@@ -195,7 +193,7 @@ public class SqliteDatabase extends Database {
             SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
         }
 
-        SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Legacy Data. Count: " + islands.size());
+        SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Legacy Data. Count: {}", islands.size());
         return islands;
     }
 }

@@ -50,10 +50,10 @@ public class NucleusIntegration {
 
         metaService = NucleusAPI.getMetaService();
         if (Version.of(metaService.semanticVersion()).compareTo(PluginInfo.NUCLEUS_VERSION) >= 0) {
-            PLUGIN.getLogger().info(String.format("Successfully integrated with Nucleus %s!", metaService.version()));
+            PLUGIN.getLogger().info("Successfully integrated with Nucleus {}!", metaService.version());
         } else {
-            PLUGIN.getLogger().info(String.format("Found Nucleus %s. SkyClaims requires Nucleus %s+... disabling integration",
-                metaService.semanticVersion(), PluginInfo.NUCLEUS_VERSION));
+            PLUGIN.getLogger().info("Found Nucleus {}. SkyClaims requires Nucleus {}+... disabling integration.",
+                metaService.semanticVersion(), PluginInfo.NUCLEUS_VERSION);
             Sponge.getEventManager().unregisterListeners(this);
         }
     }

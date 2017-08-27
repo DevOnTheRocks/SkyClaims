@@ -57,7 +57,7 @@ public class RegenerateRegionTask implements Runnable {
         SkyClaimsTimings.CLEAR_ISLAND.startTimingIfSync();
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-        PLUGIN.getLogger().info(String.format("Begin clearing region (%s, %s)", region.getX(), region.getZ()));
+        PLUGIN.getLogger().info("Begin clearing region ({}, {})", region.getX(), region.getZ());
 
         Stopwatch sw = Stopwatch.createStarted();
 

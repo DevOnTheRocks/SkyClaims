@@ -21,6 +21,7 @@ package net.mohron.skyclaims.world.region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.util.ClaimUtil;
+import org.apache.commons.lang3.text.StrBuilder;
 import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class SpiralRegionPattern implements IRegionPattern {
         spawnRegions = PLUGIN.getConfig().getWorldConfig().getSpawnRegions();
         int islandCount = SkyClaims.islands.size();
         int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
-        String log = "Region Pattern: [";
+        StrBuilder log = new StrBuilder("Region Pattern: [");
 
         ArrayList<Region> coordinates = new ArrayList<>(generationSize);
         int[] delta = {0, -1};
@@ -54,35 +55,36 @@ public class SpiralRegionPattern implements IRegionPattern {
                 delta[1] = a;
             }
             coordinates.add(new Region(x, y));
-            log += String.format("(%s,%s),", x, y);
+            if (i % 10 == 0) log.appendNewLine();
+            log.append(String.format("(%s,%s),", x, y));
             x += delta[0];
             y += delta[1];
         }
-        PLUGIN.getLogger().debug(log + "]");
-        PLUGIN.getLogger().debug(String.format("Coordinates length: %s", coordinates.size()));
+
+        PLUGIN.getLogger().debug(log.append("]").build());
+        PLUGIN.getLogger().debug("Coordinates length: {}", coordinates.size());
         return coordinates;
     }
 
     public Region nextRegion() throws InvalidRegionException {
         spawnRegions = PLUGIN.getConfig().getWorldConfig().getSpawnRegions();
-        ArrayList<Region> spawnRegions = new ArrayList<>(SpiralRegionPattern.spawnRegions);
+        ArrayList<Region> spawn = new ArrayList<>(spawnRegions);
         ArrayList<Region> regions = generateRegionPattern();
         int iterator = 0;
 
-        PLUGIN.getLogger().debug(String
-            .format("Checking for next region out of %s points with %s spawn regions.", regions.size(), SpiralRegionPattern.spawnRegions));
+        PLUGIN.getLogger().debug("Checking for next region out of {} points with {} spawn regions.", regions.size(), spawnRegions);
 
         for (Region region : regions) {
-            if (iterator < SpiralRegionPattern.spawnRegions) {
-                spawnRegions.add(region);
-                PLUGIN.getLogger().debug(String.format("Skipping (%s, %s) for spawn", region.getX(), region.getZ()));
+            if (iterator < spawnRegions) {
+                spawn.add(region);
+                PLUGIN.getLogger().debug("Skipping ({}, {}) for spawn", region.getX(), region.getZ());
                 iterator++;
                 continue;
             } else if (SkyClaims.islands.isEmpty()) {
-                ClaimUtil.createSpawnClaim(spawnRegions);
+                ClaimUtil.createSpawnClaim(spawn);
             }
 
-            PLUGIN.getLogger().debug(String.format("Checking region (%s, %s) for island", region.getX(), region.getZ()));
+            PLUGIN.getLogger().debug("Checking region ({}, {}) for island", region.getX(), region.getZ());
 
             if (!Region.isOccupied(region)) {
                 return region;
