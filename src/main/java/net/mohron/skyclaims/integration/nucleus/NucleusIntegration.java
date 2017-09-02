@@ -25,7 +25,6 @@ import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusKitService;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.integration.NucleusConfig;
 import net.mohron.skyclaims.integration.Version;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;

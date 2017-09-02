@@ -23,12 +23,12 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.data.PlayerData;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
+import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -37,7 +37,9 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-public class CommandExpand extends CommandBase {
+import javax.annotation.Nonnull;
+
+public class CommandExpand extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to expand your island.";
     private static final GriefPreventionApi GP = PLUGIN.getGriefPrevention();
@@ -46,7 +48,10 @@ public class CommandExpand extends CommandBase {
     public static CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_EXPAND)
         .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.optional(GenericArguments.integer(BLOCKS)))
+        .arguments(GenericArguments.seq(
+            GenericArguments.optional(Argument.island(ISLAND)),
+            GenericArguments.optional(GenericArguments.integer(BLOCKS))
+        ))
         .executor(new CommandExpand())
         .build();
 
@@ -61,23 +66,15 @@ public class CommandExpand extends CommandBase {
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            throw new CommandException(Text.of("You must be a player to use this command!"));
-        }
-
-        Player player = (Player) src;
+    @Override public CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException {
         int blocks = args.<Integer>getOne(BLOCKS).orElse(0);
 
-        Island island = Island.get(player.getLocation())
-            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command.")));
         Claim claim = island.getClaim()
-            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The expand command can only be used on protected islands.")));
+            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "This command can only be used on claimed islands.")));
 
-        // Check if the command source is a Manager
+        // Check if the player is a Manager
         if (!island.isManager(player)) {
-            throw new CommandException(Text.of("Only the island owner may use this command!"));
+            throw new CommandException(Text.of("Only an island manager may use this command!"));
         }
 
         int width = claim.getWidth();
@@ -94,13 +91,25 @@ public class CommandExpand extends CommandBase {
         // Check if a non-positive block amount was provided
         if (blocks < 1) {
             player.sendMessage(Text.of(
-                TextColors.GRAY, "It will cost ", TextColors.LIGHT_PURPLE, (Math.pow(width + 1, 2) - claim.getArea()) * 256,
-                TextColors.GRAY, " claim blocks to expand your island by ", TextColors.LIGHT_PURPLE, "1", TextColors.GRAY, "."
+                TextColors.GRAY, "It will cost ",
+                TextColors.LIGHT_PURPLE, (Math.pow((width + 1), 2) * 256 - claim.getArea()),
+                TextColors.GRAY, " claim blocks to expand your island by ",
+                TextColors.LIGHT_PURPLE, "1",
+                TextColors.GRAY, "."
             ));
-            player.sendMessage(Text
-                .builder("Do you want to continue expanding your island?")
-                .color(TextColors.GREEN)
-                .onHover(TextActions.showText(Text.of("Click here to expand."))).onClick(TextActions.runCommand("/is expand 1")).build()
+            player.sendMessage(Text.of(
+                TextColors.GRAY, "Do you want to continue expanding your island?",
+                Text.NEW_LINE,
+                TextColors.WHITE, "[",
+                Text.builder("YES")
+                    .color(TextColors.GREEN)
+                    .onClick(TextActions.runCommand("/is expand 1")),
+                TextColors.WHITE, "] [",
+                Text.builder("NO")
+                    .color(TextColors.RED)
+                    .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
+                TextColors.WHITE, "]"
+                )
             );
             return CommandResult.success();
         }
@@ -110,21 +119,28 @@ public class CommandExpand extends CommandBase {
         int bal = playerData.getRemainingClaimBlocks();
         int cost = (int) (Math.pow(width + blocks, 2) - claim.getArea()) * 256;
 
-        // Check if the player has enough claim blocks to expand
+        // Check if the TextColors.RED,  has enough claim blocks to expand
         if (bal < cost) {
             throw new CommandException(Text.of(
-                TextColors.RED, "You need ", TextColors.LIGHT_PURPLE, cost,
-                " claim blocks (", TextColors.LIGHT_PURPLE, bal, TextColors.RED, ") to expand your island by ",
-                TextColors.LIGHT_PURPLE, blocks, TextColors.RED, "."
+                TextColors.RED, "You need ",
+                TextColors.LIGHT_PURPLE, cost,
+                TextColors.RED, " claim blocks (",
+                TextColors.LIGHT_PURPLE, bal,
+                TextColors.RED, ") to expand your island by ",
+                TextColors.LIGHT_PURPLE, blocks,
+                TextColors.RED, "."
             ));
         }
 
-        // Use the player's claim blocks to expand the island
+        // Use the TextColors.RED, 's claim blocks to expand the island
         playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks() - cost);
         island.expand(blocks);
         player.sendMessage(Text.of(
-            TextColors.GREEN, "Your island has been expanded to ", TextColors.LIGHT_PURPLE,
-            island.getWidth(), TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.GREEN, "."
+            TextColors.GREEN, "Your island has been expanded to ",
+            TextColors.LIGHT_PURPLE, island.getWidth(),
+            TextColors.GRAY, "x",
+            TextColors.LIGHT_PURPLE, island.getWidth(),
+            TextColors.GREEN, "."
         ));
 
         return CommandResult.success();

@@ -18,30 +18,35 @@
 
 package net.mohron.skyclaims.config.type;
 
+import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.spongepowered.api.world.World;
 
+import java.util.List;
+
 @ConfigSerializable
 public class WorldConfig {
 
     @Setting(value = "SkyClaims-World", comment = "Name of the world to manage islands in. Default: world")
-    private String worldName;
-    @Setting(value = "Island-Height", comment = "Height to build islands at. Default: 72")
-    private int defaultHeight;
-    @Setting(value = "Spawn-Regions", comment = "The height & width of regions to reserve for Spawn. Default: 1")
-    private int spawnRegions;
-
-    public WorldConfig() {
-        worldName = "world";
-        defaultHeight = 72;
-        spawnRegions = 1;
-    }
+    private String worldName = "world";
+    @Setting(value = "Void-Dimensions", comment = "A list of world names to generate as void. Default: world, DIM-1, DIM1")
+    private List<String> voidDimensions = Lists.newArrayList("world", "DIM-1", "DIM1");
+    @Setting(value = "Island-Height", comment = "Height to build islands at (0-255). Default: 72")
+    private int defaultHeight = 72;
+    @Setting(value = "Spawn-Regions", comment = "The height & width of regions to reserve for spawn (min 1). Default: 1")
+    private int spawnRegions = 1;
+    @Setting(value = "List-Schematics")
+    private boolean listSchematics= true;
 
     public World getWorld() {
         return SkyClaims.getInstance().getGame().getServer().getWorld(worldName).orElse(WorldUtil.getDefaultWorld());
+    }
+
+    public List<String> getVoidDimensions() {
+        return voidDimensions;
     }
 
     public String getWorldName() {
@@ -49,10 +54,14 @@ public class WorldConfig {
     }
 
     public int getDefaultHeight() {
-        return defaultHeight;
+        return (defaultHeight < 0 || defaultHeight > 255) ? 72 : defaultHeight;
     }
 
     public int getSpawnRegions() {
-        return spawnRegions;
+        return (spawnRegions < 1) ? 1 : spawnRegions;
+    }
+
+    public boolean isListSchematics() {
+        return listSchematics;
     }
 }

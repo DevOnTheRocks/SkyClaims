@@ -4,7 +4,13 @@
 **REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**
 - None
 
-# Beta 24
+# Beta 25 SNAPSHOT - S5.1
+**REQUIRED: SF build 2519+ & GP build 4.0.0.378+ OPTIONAL: Nucleus version 1.1.0+**
+- `/is create` & `/is reset` now support generating a clickable list of available schematics
+- Added Void Island Control Schematics to prepackaged schematics
+- Fixed an IndexOutOfBoundsException with the entity limits feature
+
+# Beta 24 - S5.1
 **REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**
 - Managers can now use `/is setspawn`, `/is setbiome`, & `/is expand`
 - Added enhanced timings support
@@ -12,7 +18,7 @@
 - Fixed `/isa reload` breaking `/is home` &`/is sethome` commands
 - Fixed known incompatibility with API 6.0 in entity limit feature
 
-# Beta 23.1
+# Beta 23.1 - S5.1
 **REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**
 - Minimum Sponge Forge build now 2519 & minimum GriefPrevention build 332.
 - Island claims now bypass size restrictions
