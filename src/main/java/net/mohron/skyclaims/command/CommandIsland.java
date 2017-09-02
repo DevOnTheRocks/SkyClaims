@@ -51,6 +51,7 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.List;
 import java.util.Map;
@@ -245,7 +246,7 @@ public class CommandIsland extends CommandBase {
         if (hasPerms) {
             PaginationList.builder()
                 .title(Text.of(TextColors.AQUA, NAME, " Help"))
-                .padding(Text.of(TextColors.AQUA, "-"))
+                .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
                 .contents(helpText)
                 .sendTo(src);
         } else {
