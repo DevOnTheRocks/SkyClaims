@@ -77,6 +77,7 @@ public class GenerateIslandTask implements Runnable {
                 PLUGIN.getLogger().warn("Loaded legacy schematic: {}", e.getMessage());
             } catch (Exception e2) {
                 PLUGIN.getLogger().error("Invalid schematic file ({})!\n{}", schematic, e2);
+                SkyClaimsTimings.GENERATE_ISLAND.abort();
                 return;
             }
         }

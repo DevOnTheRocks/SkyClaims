@@ -74,7 +74,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
 
         // Check if the player is a Manager
         if (!island.isManager(player)) {
-            throw new CommandException(Text.of("Only an island manager may use this command!"));
+            throw new CommandException(Text.of(TextColors.RED, "Only an island manager may use this command!"));
         }
 
         int width = claim.getWidth();

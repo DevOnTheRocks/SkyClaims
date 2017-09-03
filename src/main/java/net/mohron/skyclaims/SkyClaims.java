@@ -185,8 +185,7 @@ public class SkyClaims {
         }
 
         permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
-        if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
-            .equalsIgnoreCase("sponge")) {
+        if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
             logger.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
             enabled = false;
             return;
@@ -206,7 +205,7 @@ public class SkyClaims {
         database = initializeDatabase();
 
         islands = database.loadData();
-        logger.info("{}: {} islands loaded.", world.getName(), islands.size());
+        logger.info("{} islands loaded.", islands.size());
         if (!saveQueue.isEmpty()) {
             logger.info("Saving {} claims that were malformed.", saveQueue.size());
             database.saveData(saveQueue);
