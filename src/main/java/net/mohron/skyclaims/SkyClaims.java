@@ -136,7 +136,7 @@ public class SkyClaims {
 
     @Listener
     public void onPreInitialization(GamePreInitializationEvent event) {
-        logger.info(String.format("%s %s is initializing...", NAME, VERSION));
+        logger.info("{} {} is initializing...", NAME, VERSION);
 
         defaultConfig = new GlobalConfig();
         pluginConfigManager = new ConfigManager(configManager);
@@ -157,19 +157,19 @@ public class SkyClaims {
 
         if (griefPrevention != null) {
             if (griefPrevention.getApiVersion() < GP_API_VERSION) {
-                logger.error(String.format(
-                    "GriefPrevention API version %s is unsupported! Please update to API version %s+.",
+                logger.error(
+                    "GriefPrevention API version {} is unsupported! Please update to API version {}+.",
                     griefPrevention.getApiVersion(), GP_API_VERSION
-                ));
+                );
                 enabled = false;
             } else if (Version.of(griefPrevention.getImplementationVersion()).compareTo(GP_VERSION) < 0) {
-                logger.error(String.format(
-                    "GriefPrevention version %s is unsupported! Please update to version %s+.",
+                logger.error(
+                    "GriefPrevention version {} is unsupported! Please update to version {}+.",
                     griefPrevention.getImplementationVersion(), GP_VERSION
-                ));
+                );
                 enabled = false;
             } else {
-                logger.info(String.format("Successfully integrated with GriefPrevention %s!", griefPrevention.getImplementationVersion()));
+                logger.info("Successfully integrated with GriefPrevention {}!", griefPrevention.getImplementationVersion());
             }
         } else {
             logger.error("GriefPrevention Integration Failed! Disabling SkyClaims.");
@@ -185,8 +185,7 @@ public class SkyClaims {
         }
 
         permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
-        if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId()
-            .equalsIgnoreCase("sponge")) {
+        if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
             logger.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
             enabled = false;
             return;
@@ -206,9 +205,9 @@ public class SkyClaims {
         database = initializeDatabase();
 
         islands = database.loadData();
-        logger.info("Islands Loaded: " + islands.size());
+        logger.info("{} islands loaded.", islands.size());
         if (!saveQueue.isEmpty()) {
-            logger.info("Saving " + saveQueue.size() + " claims that were malformed");
+            logger.info("Saving {} claims that were malformed.", saveQueue.size());
             database.saveData(saveQueue);
         }
 
@@ -222,7 +221,7 @@ public class SkyClaims {
         if (!enabled) {
             return;
         }
-        logger.info(String.format("%S %S is stopping...", NAME, VERSION));
+        logger.info("{} {} is stopping...", NAME, VERSION);
     }
 
     @Listener

@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.flowpowered.math.vector.Vector3i;
@@ -56,24 +57,24 @@ public class ClaimUtil {
             switch (claimResult.getResultType()) {
                 case SUCCESS:
                     claim = claimResult.getClaim().get();
-                    PLUGIN.getLogger().debug(String.format(
-                        "Creating %s's claim in region (%s, %s). Claimed from %sx, %sz - %sx, %sz.",
+                    PLUGIN.getLogger().debug(
+                        "Creating {}'s claim in region ({}, {}). Claimed from {}x, {}z - {}x, {}z.",
                         getName(ownerUniqueId),
                         region.getX(), region.getZ(),
                         claim.getLesserBoundaryCorner().getBlockX(), claim.getLesserBoundaryCorner().getBlockZ(),
                         claim.getGreaterBoundaryCorner().getBlockX(), claim.getGreaterBoundaryCorner().getBlockZ()
-                    ));
+                    );
                     break;
                 case OVERLAPPING_CLAIM:
                     for (Claim claim1 : claimResult.getClaims()) {
                         claimManager.deleteClaim(claim1, PLUGIN.getCause());
                     }
-                    PLUGIN.getLogger().info(String.format(
-                        "Removing claim overlapping %s's island (Owner: %s, ID: %s).",
+                    PLUGIN.getLogger().info(
+                        "Removing claim overlapping {}'s island (Owner: {}, ID: {}).",
                         getName(ownerUniqueId),
                         claimResult.getClaim().get().getOwnerName(),
                         claimResult.getClaim().get().getUniqueId()
-                    ));
+                    );
                     break;
                 default:
                     throw new CreateIslandException(Text.of(TextColors.RED, "Failed to create claim: ", claimResult.getResultType()));
@@ -86,9 +87,11 @@ public class ClaimUtil {
     private static ClaimResult createIslandClaimResult(@Nonnull UUID ownerUniqueId, @Nonnull Region region) {
         int initialSpacing = 256 - Options.getMinSize(ownerUniqueId);
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
-        checkNotNull(world, "Error Creating Claim: World is null");
+        checkNotNull(world, "Error Creating Claim: World (%s) is null", world.getName());
+        checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded", world.getName());
         checkNotNull(ownerUniqueId, "Error Creating Claim: Owner is null");
         checkNotNull(region, "Error Creating Claim: Region is null");
+
         return Claim.builder()
             .type(ClaimType.BASIC)
             .world(world)
@@ -115,15 +118,14 @@ public class ClaimUtil {
     public static void createSpawnClaim(List<Region> regions) {
         ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
         if (claimResult.successful()) {
-            PLUGIN.getLogger().debug(String.format("Reserved %s regions for spawn. Admin Claim: %s", regions.size(),
-                claimResult.getClaim().get().getUniqueId()
-            ));
+            PLUGIN.getLogger().debug("Reserved {} regions for spawn. Admin Claim: {}", regions.size(), claimResult.getClaim().get().getUniqueId());
         }
     }
 
     private static ClaimResult createSpawnClaimResult(List<Region> regions) {
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
-        checkNotNull(world, "Error Creating Claim: World is null");
+        checkNotNull(world, "Error Creating Claim: World (%s) is null", world.getName());
+        checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded", world.getName());
         Region lesserRegion = new Region(0, 0);
         Region greaterRegion = new Region(0, 0);
         for (Region region : regions) {
@@ -148,14 +150,13 @@ public class ClaimUtil {
             .build();
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private static String getName(UUID uuid) {
-        Optional<User> user = PLUGIN.getGame().getServiceManager().provide(UserStorageService.class).get().get(uuid);
+        Optional<User> user = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid);
         if (user.isPresent()) {
             return user.get().getName();
         } else {
             try {
-                return PLUGIN.getGame().getServer().getGameProfileManager().get(uuid).get().getName().get();
+                return PLUGIN.getGame().getServer().getGameProfileManager().get(uuid).get().getName().orElse("somebody");
             } catch (Exception e) {
                 return "somebody";
             }

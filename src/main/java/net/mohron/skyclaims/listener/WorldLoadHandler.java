@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.listener;
 
+import com.google.common.collect.Maps;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimFlag;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
@@ -33,9 +34,17 @@ import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.world.World;
 
+import java.util.EnumMap;
+
 public class WorldLoadHandler {
 
     private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+    private final EnumMap<ClaimFlag, Tristate> WILDERNESS_OVERRIDES = Maps.newEnumMap(ClaimFlag.class);
+
+    public WorldLoadHandler() {
+        WILDERNESS_OVERRIDES.put(ClaimFlag.BLOCK_BREAK, Tristate.FALSE);
+        WILDERNESS_OVERRIDES.put(ClaimFlag.BLOCK_PLACE, Tristate.FALSE);
+    }
 
     @Listener(order = Order.LAST)
     public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World targetWorld) {
@@ -48,30 +57,19 @@ public class WorldLoadHandler {
             Subject subject = Sponge.getServiceManager().provideUnchecked(PermissionService.class).getDefaults();
             String target = "any:any";
 
-            if (wilderness.getPermissionValue(subject, ClaimFlag.BLOCK_BREAK, target) != Tristate.FALSE) {
-                wilderness.setPermission(subject, ClaimFlag.BLOCK_BREAK, target, Tristate.FALSE, PLUGIN.getCause())
-                    .whenComplete((result, throwable) -> {
+            WILDERNESS_OVERRIDES.forEach((flag, value) -> {
+                if (wilderness.getPermissionValue(subject, flag, target) != value) {
+                    wilderness.setPermission(subject, flag, target, value, PLUGIN.getCause()).whenComplete((result, throwable) -> {
                         if (result.successful()) {
-                            PLUGIN.getLogger().info(String.format("Set %s flag in wilderness (%s) to false.", ClaimFlag.BLOCK_BREAK, world.getName
-                                ()));
+                            PLUGIN.getLogger().info("{}: Set {} flag in wilderness to {}.", world.getName(), flag, value.toString());
                         } else {
                             PLUGIN.getLogger().info(result.getResultType().toString());
                         }
                     });
-            }
-
-            if (wilderness.getPermissionValue(subject, ClaimFlag.BLOCK_PLACE, target) != Tristate.FALSE) {
-                wilderness.setPermission(subject, ClaimFlag.BLOCK_PLACE, target, Tristate.FALSE, PLUGIN.getCause())
-                    .whenComplete((result, throwable) -> {
-                        if (result.successful()) {
-                            PLUGIN.getLogger().info(String.format("Set %s flag in wilderness (%s) to false.", ClaimFlag.BLOCK_PLACE, world.getName
-                                ()));
-                        } else {
-                            PLUGIN.getLogger().info(result.getResultType().toString());
-                        }
-                    });
-            }
+                }
+            });
         }
+
         SkyClaimsTimings.WORLD_LOAD.stopTimingIfSync();
     }
 }

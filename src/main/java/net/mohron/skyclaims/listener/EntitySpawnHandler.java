@@ -39,7 +39,9 @@ public class EntitySpawnHandler {
 
         SkyClaimsTimings.ENTITY_SPAWN.startTimingIfSync();
 
-        if (event instanceof DropItemEvent || !event.getEntities().get(0).getWorld().equals(PLUGIN.getConfig().getWorldConfig().getWorld())) {
+        if (event instanceof DropItemEvent
+            || event.getEntities().isEmpty()
+            || !event.getEntities().get(0).getWorld().equals(PLUGIN.getConfig().getWorldConfig().getWorld())) {
             SkyClaimsTimings.ENTITY_SPAWN.abort();
             return;
         }

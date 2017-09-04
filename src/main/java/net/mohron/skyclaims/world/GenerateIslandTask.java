@@ -27,7 +27,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
-import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.world.BlockChangeFlag;
 import org.spongepowered.api.world.Location;
@@ -72,9 +71,15 @@ public class GenerateIslandTask implements Runnable {
         ArchetypeVolume volume;
         try {
             volume = DataTranslators.SCHEMATIC.translate(schematicData);
-        } catch (InvalidDataException e) {
-            volume = DataTranslators.LEGACY_SCHEMATIC.translate(schematicData);
-            PLUGIN.getLogger().warn("Loaded legacy schematic: " + e.getMessage());
+        } catch (Exception e) {
+            try {
+                volume = DataTranslators.LEGACY_SCHEMATIC.translate(schematicData);
+                PLUGIN.getLogger().warn("Loaded legacy schematic: {}", e.getMessage());
+            } catch (Exception e2) {
+                PLUGIN.getLogger().error("Invalid schematic file ({})!\n{}", schematic, e2);
+                SkyClaimsTimings.GENERATE_ISLAND.abort();
+                return;
+            }
         }
 
         Location<World> centerBlock = island.getRegion().getCenter();

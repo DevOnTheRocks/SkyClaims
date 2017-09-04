@@ -45,10 +45,10 @@ public class ClientJoinHandler {
             .execute(src -> {
                 try {
                     new Island(player, Options.getDefaultSchematic(player.getUniqueId()));
-                    PLUGIN.getLogger().info(String.format("Automatically created an island for %s.", player.getName()));
+                    PLUGIN.getLogger().info("Automatically created an island for {}.", player.getName());
                 } catch (CreateIslandException e) {
                     // Oh well, we tried!
-                    PLUGIN.getLogger().warn(String.format("Failed to create an island on join for %s.\n%s", player.getName(), e.getMessage()));
+                    PLUGIN.getLogger().warn("Failed to create an island on join for {}.\n{}", player.getName(), e.getMessage());
                 }
             })
             .delayTicks(40)

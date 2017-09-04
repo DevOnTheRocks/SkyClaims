@@ -24,14 +24,15 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-public class CommandSetSpawn extends CommandBase {
+import javax.annotation.Nonnull;
+
+public class CommandSetSpawn extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "set your spawn location for your island.";
 
@@ -52,12 +53,7 @@ public class CommandSetSpawn extends CommandBase {
         }
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            throw new CommandException(Text.of("You must be a player to use this command!"));
-        }
-
-        Player player = (Player) src;
+    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
         Island island = Island.get(player.getLocation())
             .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
 

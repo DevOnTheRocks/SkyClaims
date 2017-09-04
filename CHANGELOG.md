@@ -4,6 +4,12 @@
 **REQUIRED: SF build 2524+ & GP build 4.2.0.334+ OPTIONAL: Nucleus version 1.0.1+**
 - None
 
+# Beta 25 SNAPSHOT - S7.0
+**REQUIRED: SF build 2524+ & GP build 4.2.0.401+ OPTIONAL: Nucleus version 1.1.0+**
+- `/is create` & `/is reset` now support generating a clickable list of available schematics
+- Added Void Island Control Schematics to prepackaged schematics
+- Fixed an IndexOutOfBoundsException with the entity limits feature
+
 # Beta 24 - S7.0
 **REQUIRED: SF build 2524+ & GP build 4.2.0.334+ OPTIONAL: Nucleus version 1.0.1+**
 - Managers can now use `/is setspawn`, `/is setbiome`, & `/is expand`

@@ -37,7 +37,9 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.biome.BiomeType;
 
-public class CommandSetBiome extends CommandBase {
+import javax.annotation.Nonnull;
+
+public class CommandSetBiome extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "set the biome of a block, chunk or island.";
     private static final Text BIOME = Text.of("biome");
@@ -64,12 +66,7 @@ public class CommandSetBiome extends CommandBase {
         }
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            throw new CommandException(Text.of("You must be a player to run this command!"));
-        }
-
-        Player player = (Player) src;
+    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
         BiomeType biome = args.<BiomeType>getOne(BIOME)
             .orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
         Island island = Island.get(player.getLocation())
@@ -84,7 +81,7 @@ public class CommandSetBiome extends CommandBase {
         switch (target) {
             case BLOCK:
                 WorldUtil.setBlockBiome(player.getLocation(), biome);
-                src.sendMessage(Text.of(
+                player.sendMessage(Text.of(
                     TextColors.GREEN, "Successfully changed the biome at ",
                     TextColors.DARK_PURPLE, player.getLocation().getBlockX(),
                     TextColors.GREEN, ",",
@@ -94,14 +91,14 @@ public class CommandSetBiome extends CommandBase {
                 break;
             case CHUNK:
                 WorldUtil.setChunkBiome(player.getLocation(), biome);
-                src.sendMessage(Text.of(
+                player.sendMessage(Text.of(
                     TextColors.GREEN, "Successfully changed the biome in this chunk to ",
                     TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
                 ));
                 break;
             case ISLAND:
                 WorldUtil.setIslandBiome(island, biome);
-                src.sendMessage(Text.of(
+                player.sendMessage(Text.of(
                     TextColors.GREEN, "Successfully changed the biome on this island to ",
                     TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
                 ));

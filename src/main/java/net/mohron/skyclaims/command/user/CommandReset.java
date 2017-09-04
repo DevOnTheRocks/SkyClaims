@@ -21,6 +21,7 @@ package net.mohron.skyclaims.command.user;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
@@ -31,25 +32,30 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-public class CommandReset extends CommandBase {
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-    public static final String HELP_TEXT = "delete your island and inventory so you can start over.";
-    private static final Text CONFIRM = Text.of("confirm");
+import javax.annotation.Nonnull;
+
+public class CommandReset extends CommandBase.PlayerCommand {
+
+    public static final String HELP_TEXT = "reset your island and inventory so you can start over.";
     private static final Text SCHEMATIC = Text.of("schematic");
 
     public static CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_RESET)
         .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.seq(
-            GenericArguments.optional(GenericArguments.literal(CONFIRM, "confirm")),
-            GenericArguments.optional(Argument.schematic(SCHEMATIC))
-        ))
+        .arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
         .executor(new CommandReset())
         .build();
 
@@ -64,30 +70,58 @@ public class CommandReset extends CommandBase {
         }
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            throw new CommandException(Text.of("You must be a player to run this command!"));
-        }
-        Player player = (Player) src;
+    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
         Island island = Island.getByOwner(player.getUniqueId())
             .orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
-        String schematic = args.<String>getOne(SCHEMATIC).orElse(Options.getDefaultSchematic(player.getUniqueId()));
 
-        if (!args.hasAny(CONFIRM)) {
-            player.sendMessage(Text.of(
-                "Are you sure you want to reset your island and inventory? This cannot be undone!", Text.NEW_LINE,
-                TextColors.GOLD, "Do you want to continue?", Text.NEW_LINE,
-                TextColors.WHITE, "[",
-                Text.builder("YES")
-                    .color(TextColors.GREEN)
-                    .onClick(TextActions.runCommand("/is reset confirm " + schematic)),
-                TextColors.WHITE, "] [",
-                Text.builder("NO")
-                    .color(TextColors.RED)
-                    .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
-                TextColors.WHITE, "]"
-            ));
+        Optional<String> schematic = args.getOne(SCHEMATIC);
+        if (schematic.isPresent()) {
+            getConfirmation(island, schematic.get()).accept(player);
+        } else if (PLUGIN.getConfig().getWorldConfig().isListSchematics()) {
+            listSchematics(player, island);
         } else {
+            getConfirmation(island, Options.getDefaultSchematic(player.getUniqueId())).accept(player);
+        }
+
+        return CommandResult.empty();
+    }
+
+    private void listSchematics(Player player, Island island) {
+        boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
+        List<Text> schematics = SchematicArgument.SCHEMATICS.keySet().stream()
+            .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.toLowerCase()))
+            .map(s -> Text.builder(s).onClick(TextActions.executeCallback(getConfirmation(island, s))).build())
+            .collect(Collectors.toList());
+        PaginationList.builder()
+            .title(Text.of(TextColors.AQUA, "Starter Islands"))
+            .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+            .contents(schematics)
+            .sendTo(player);
+    }
+
+    private Consumer<CommandSource> getConfirmation(Island island, String schematic) {
+        return src -> {
+            if (src instanceof Player) {
+                Player player = (Player) src;
+                player.sendMessage(Text.of(
+                    "Are you sure you want to reset your island and inventory? This cannot be undone!", Text.NEW_LINE,
+                    TextColors.GOLD, "Do you want to continue?", Text.NEW_LINE,
+                    TextColors.WHITE, "[",
+                    Text.builder("YES")
+                        .color(TextColors.GREEN)
+                        .onClick(TextActions.executeCallback(resetIsland(player, island, schematic))),
+                    TextColors.WHITE, "] [",
+                    Text.builder("NO")
+                        .color(TextColors.RED)
+                        .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
+                    TextColors.WHITE, "]"
+                ));
+            }
+        };
+    }
+
+    private Consumer<CommandSource> resetIsland(Player player, Island island, String schematic) {
+        return src -> {
             player.getEnderChestInventory().clear();
             player.getInventory().clear();
 
@@ -95,10 +129,8 @@ public class CommandReset extends CommandBase {
             Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
             island.getPlayers().forEach(p -> p.setLocationSafely(spawn));
 
-            src.sendMessage(Text.of("Please be patient while your island is reset."));
+            player.sendMessage(Text.of("Please be patient while your island is reset."));
             island.reset(schematic);
-        }
-
-        return CommandResult.success();
+        };
     }
 }
