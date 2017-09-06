@@ -1,33 +1,10 @@
 # SkyClaims
 
-SkyClaims is a plugin for SkyBlock servers that run [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) for protection.
-Instead of reinventing the wheel and adding custom protection for islands, SkyClaims will implement claims from one of Sponge's most powerful plugins, GriefPrevention!
-With this design, nearly every GriefPrevention feature will be available to players for managing their islands.
-
-This plugin is in Beta. Live support is available for the latest builds through [Discord](https://discord.gg/EkVQycV)!
-
-# SkyClaims
-
 SkyClaims是一个运行在Sponge服务端并且依赖于[GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123)保护的空岛服务器插件。
 SkyClaims利用在Sponge服务端上非常棒的一款领地插件GriefPrevention来生成领地保护你的空岛。
 正因为这个特性使得在GriefPrevention上面的几乎所有功能都能在玩家创建的空岛中使用。
 
 本插件还在beta阶段，最新版本的支持在这里[Discord](https://discord.gg/EkVQycV)！
-
-## Features
-
-- [X] Complete control of command usage with granular permissions (ie specific biomes for setbiome)
-- [X] Automatic creation of islands and their encompassing claim
-- [X] Support multiple island designs via Sponge schematics
-- [X] Expanding islands using claim blocks or other resource (econ)
-- [X] Isolation of islands to their own Minecraft region file
-- [X] Allow spawn/tp on your island at a configurable location 
-- [X] Use GriefPrevention trust commands to work in teams
-- [X] Change the biome of a block, chunk or entire island
-- [X] Limit entity spawning per island
-- [X] Automatic removal of inactive islands 
-- [ ] Configurable island layouts (linear & spiral planned)
-- [ ] Add an island messaging channel so you can chat within your island
 
 ## 功能
 
@@ -44,32 +21,14 @@ SkyClaims利用在Sponge服务端上非常棒的一款领地插件GriefPreventio
 - [ ] 可配置的岛屿布局格式 (linear & spiral planned)
 - [ ] 添加岛屿私聊频道方便队伍聊天
 
-## Dependencies
-
-- **Required:**
-   - [Sponge](https://www.spongepowered.org/downloads) - 1.10.2-2281-5.2.0-BETA-2519+
-   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.0.0.332+
-   - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended
-- **Optional:**
-   - [Nucleus](https://nucleuspowered.org) - 1.0.1-LTS+
-
 ## 依赖插件
 
 - **必须插件**
    - [Sponge](https://www.spongepowered.org/downloads) - 1.10.2-2281-5.2.0-BETA-2519+
    - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.0.0.332+
    - Permission Plugin - 推荐使用[LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274)
-- **可选插件**（译者注：这里多推荐一个经济类插件，以便支持岛屿的经济扩展，仅支持API5.0/6.0 here give one econ plugin for sport economy,only for API5.0/6.0）
+- **可选插件**
    - [Nucleus](https://nucleuspowered.org) - 1.0.1-LTS+
-   - [Total Economy](https://ore.spongepowered.org/Erigitic/Total-Economy)
-
-## Additional Information
-
-**Plugin releases are available on [Ore](https://ore.spongepowered.org/Mohron/SkyClaims/).**
-
-**Detailed feature information is available on our [Wiki](https://github.com/DevOnTheRocks/SkyClaims/wiki/).**
-
-**Bug reports and feature requests can be made on [GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues).**
 
 ## 附加信息
 
