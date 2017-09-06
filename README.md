@@ -1,42 +1,42 @@
 # SkyClaims
 
-SkyClaims is a plugin for SkyBlock servers that run [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) for protection.
-Instead of reinventing the wheel and adding custom protection for islands, SkyClaims will implement claims from one of Sponge's most powerful plugins, GriefPrevention!
-With this design, nearly every GriefPrevention feature will be available to players for managing their islands.
+SkyClaims是一个运行在Sponge服务端并且依赖于[GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123)保护的空岛服务器插件。
+SkyClaims利用在Sponge服务端上非常棒的一款领地插件GriefPrevention来生成领地保护你的空岛。
+正因为这个特性使得在GriefPrevention上面的几乎所有功能都能在玩家创建的空岛中使用。
 
-This plugin is in Beta. Live support is available for the latest builds through [Discord](https://discord.gg/EkVQycV)!
+本插件还在beta阶段，最新版本的支持在这里[Discord](https://discord.gg/EkVQycV)！
 
-## Features
+## 功能
 
-- [X] Complete control of command usage with granular permissions (ie specific biomes for setbiome)
-- [X] Automatic creation of islands and their encompassing claim
-- [X] Support multiple island designs via Sponge schematics
-- [X] Expanding islands using claim blocks or other resource (econ)
-- [X] Isolation of islands to their own Minecraft region file
-- [X] Allow spawn/tp on your island at a configurable location 
-- [X] Use GriefPrevention trust commands to work in teams
-- [X] Change the biome of a block, chunk or entire island
-- [X] Limit entity spawning per island
-- [X] Automatic removal of inactive islands 
-- [ ] Configurable island layouts (linear & spiral planned)
-- [ ] Add an island messaging channel so you can chat within your island
+- [X] 完整而详尽的命令权限。（例如：利用/setbiome定义特定的生物群系）
+- [X] 自动创建空岛以及周围领地范围
+- [X] 利用Sponge的schematics文件支持多种预设的空岛模板
+- [X] 可扩展空岛领地范围（需要付出一些资源/金钱需要经济插件支持）
+- [X] 可单独创建一个空岛世界与其他世界分离
+- [X] 自定义岛屿重生点或者tp点
+- [X] 利用GriefPrevention的/trust命令来创建一个空岛队伍
+- [X] 可自定义修改生物群系，小到一个方块，大到你的全岛，随你定义
+- [X] 可以定义限制刷怪机制
+- [X] 自动移除非活跃岛屿
+- [ ] 可配置的岛屿布局格式 (线性或是螺旋状分布岛屿，详见wiki部分)
+- [ ] 添加岛屿私聊频道方便队伍聊天
 
-## Dependencies
+## 依赖插件
 
-- **Required:**
+- **必须插件**
    - [Sponge](https://www.spongepowered.org/downloads) - 1.10.2-2281-5.2.0-BETA-2519+
    - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.0.0.332+
-   - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended
-- **Optional:**
-   - [Nucleus](https://nucleuspowered.org) - 1.0.1-LTS+
+   - Permission Plugin - 推荐使用[LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274)
+- **可选插件**
+   - [Nucleus](https://nucleuspowered.org) - 1.0.1-LTS+
 
-## Additional Information
+## 附加信息
 
-**Plugin releases are available on [Ore](https://ore.spongepowered.org/Mohron/SkyClaims/).**
+**插件发布地址[Ore](https://ore.spongepowered.org/Mohron/SkyClaims/)。**
 
-**Detailed feature information is available on our [Wiki](https://github.com/DevOnTheRocks/SkyClaims/wiki/).**
+**详细的功能特性信息请看这里（有中文翻译版本，渣翻有不对的或者漏翻的请指正）[Wiki](https://github.com/DevOnTheRocks/SkyClaims/wiki/)。**
 
-**Bug reports and feature requests can be made on [GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues).**
+**Bug提交和功能建议可以发到这里[GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues)。**
 
 [![Discord](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Discord.png)](https://discord.gg/EkVQycV)
 | [![Patreon](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Patreon.png)](https://www.patreon.com/mohron)
