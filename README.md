@@ -1,7 +1,6 @@
 # SkyClaims
 
 **[English (en-US)](https://github.com/DevOnTheRocks/SkyClaims/README.md)** | [[Chinese (zh-CN)]](https://github.com/DevOnTheRocks/SkyClaims/README.zh-CN.md)
-# SkyClaims
  
  SkyClaims是一个运行在Sponge服务端并且依赖于[GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123)保护的空岛服务器插件。
  SkyClaims利用在Sponge服务端上非常棒的一款领地插件GriefPrevention来生成领地保护你的空岛。
