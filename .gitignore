@@ -8,7 +8,7 @@
 !/gradlew*
 !/CHANGELOG.md
 !/LICENSE.md
-!/README.md
+!/README*
 !/settings.gradle
 !/SkyClaims.xml
 !/.travis.yml
