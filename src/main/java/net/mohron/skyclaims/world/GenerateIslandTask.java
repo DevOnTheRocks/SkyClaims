@@ -109,12 +109,15 @@ public class GenerateIslandTask implements Runnable {
             WorldUtil.setRegionBiome(island, biomeType);
         });
 
-        Sponge.getServer().getPlayer(owner).ifPresent(p1 -> {
-            PLUGIN.getGame().getScheduler().createTaskBuilder()
-                .delayTicks(20)
-                .execute(CommandUtil.createTeleportConsumer(p1, spawn))
-                .submit(PLUGIN);
-        });
+        if (PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate()) {
+            Sponge.getServer().getPlayer(owner).ifPresent(p1 -> {
+                PLUGIN.getGame().getScheduler().createTaskBuilder()
+                    .delayTicks(20)
+                    .execute(CommandUtil.createTeleportConsumer(p1, spawn))
+                    .submit(PLUGIN);
+            });
+        }
+
         SkyClaimsTimings.GENERATE_ISLAND.stopTimingIfSync();
     }
 }
