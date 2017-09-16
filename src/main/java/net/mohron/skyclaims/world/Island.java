@@ -129,10 +129,7 @@ public class Island {
     }
 
     public static Optional<Island> get(UUID islandUniqueId) {
-        return SkyClaims.islands.entrySet().stream()
-            .filter(i -> i.getValue().getUniqueId().equals(islandUniqueId))
-            .map(Map.Entry::getValue)
-            .findFirst();
+        return Optional.ofNullable(SkyClaims.islands.get(islandUniqueId));
     }
 
     public static Optional<Island> get(Location<World> location) {
