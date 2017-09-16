@@ -107,7 +107,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
                 TextColors.WHITE, "] [",
                 Text.builder("NO")
                     .color(TextColors.RED)
-                    .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
+                    .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island expansion canceled!")))),
                 TextColors.WHITE, "]"
                 )
             );
