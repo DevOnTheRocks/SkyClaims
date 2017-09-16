@@ -27,7 +27,6 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -37,20 +36,19 @@ public class CommandUtil {
 
     public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location) {
         return teleport -> {
-            if (!(src instanceof Player)) {
-                return;
-            }
-            Player player = (Player) src;
-            Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
-            if (safeLocation == null) {
-                player.sendMessage(Text.of(
-                    TextColors.RED, "Location is not safe. ",
-                    Text.of(TextColors.GREEN, "Are you sure you want to teleport here?").toBuilder()
-                        .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-                        .style(TextStyles.UNDERLINE)
-                ));
-            } else {
-                player.setLocation(safeLocation);
+            if (src instanceof Player) {
+                Player player = (Player) src;
+                Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+                if (safeLocation == null) {
+                    player.sendMessage(Text.of(
+                        TextColors.RED, "Location is not safe.", Text.NEW_LINE,
+                        Text.builder("Are you sure you want to teleport here?")
+                            .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+                            .color(TextColors.GREEN)
+                    ));
+                } else {
+                    player.setLocation(safeLocation);
+                }
             }
         };
     }
@@ -60,10 +58,10 @@ public class CommandUtil {
             Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
             if (safeLocation == null) {
                 player.sendMessage(Text.of(
-                    TextColors.RED, "Location is not safe. ",
-                    Text.of(TextColors.GREEN, "Are you sure you want to teleport here?").toBuilder()
+                    TextColors.RED, "Location is not safe.", Text.NEW_LINE,
+                    Text.builder("Are you sure you want to teleport here?")
                         .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-                        .style(TextStyles.UNDERLINE)
+                        .color(TextColors.GREEN)
                 ));
             } else {
                 player.setLocation(safeLocation);

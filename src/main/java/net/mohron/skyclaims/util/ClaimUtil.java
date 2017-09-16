@@ -72,7 +72,7 @@ public class ClaimUtil {
                     PLUGIN.getLogger().info(
                         "Removing claim overlapping {}'s island (Owner: {}, ID: {}).",
                         getName(ownerUniqueId),
-                        claimResult.getClaim().get().getOwnerName(),
+                        claimResult.getClaim().get().getOwnerName().toPlain(),
                         claimResult.getClaim().get().getUniqueId()
                     );
                     break;
