@@ -23,14 +23,18 @@ import me.ryanhamshire.griefprevention.api.event.BorderClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.CreateClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.DeleteClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.ResizeClaimEvent;
+import me.ryanhamshire.griefprevention.api.event.UserTrustClaimEvent;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.team.Invite;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -111,6 +115,59 @@ public class ClaimEventHandler {
             if (island.isLocked() && !player.hasPermission(Permissions.COMMAND_LOCK_BYPASS) && !island.isMember(player)) {
                 event.setCancelled(true);
                 event.setMessage(Text.of(TextColors.RED, "You do not have permission to enter ", island.getName(), TextColors.RED, "."));
+            }
+        }
+
+        SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
+    }
+
+    @Listener
+    public void onTrustClaim(UserTrustClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
+        SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
+        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+
+        if (PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getDisabledTrustTypes().contains(event.getTrustType())) {
+            event.setCancelled(true);
+            event.setMessage(Text.of(TextColors.RED, "The use of ", TextColors.GOLD, event.getTrustType(), TextColors.RED, " has been disabled."));
+            return;
+        }
+
+        if (claim.getWorld().equals(world)) {
+            // Get The top level claim
+            if (claim.isSubdivision()) {
+                Claim parent = claim;
+                while (parent.getParent().isPresent()) {
+                    parent = parent.getParent().get();
+                }
+                claim = parent;
+            }
+            // Ignore non-basic claims or claims without an island.
+            if (!claim.isBasicClaim() && !Island.get(claim).isPresent()) {
+                SkyClaimsTimings.CLAIM_HANDLER.abort();
+                return;
+            }
+            // Send out invites
+            Island island = Island.get(claim).get();
+            for (PrivilegeType type : PrivilegeType.values()) {
+                if (type.getTrustType() == event.getTrustType()) {
+                    event.setCancelled(true);
+                    event.getUsers().forEach(uuid -> PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid)
+                        .ifPresent(user -> {
+                            Invite invite = Invite.builder()
+                                .island(island)
+                                .sender(player)
+                                .receiver(user)
+                                .privilegeType(type)
+                                .build();
+
+                            if (PLUGIN.getInviteService().inviteExists(invite)) {
+                                event.setMessage(Text.of(TextColors.RED, "Invite already exists!"));
+                            } else {
+                                invite.send();
+                                event.setMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
+                            }
+                        }));
+                }
             }
         }
 

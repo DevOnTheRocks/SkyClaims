@@ -1,14 +1,27 @@
 # Change Log
 
-## Unreleased Features, Changes & Bugfixes
-**REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**
-- None
+## Upcoming/Unreleased Features, Changes & Bugfixes
+**REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+- Added Void World Generation capabilities
+- Added Nether portal fix
 
 # Beta 25 SNAPSHOT - S5.1
-**REQUIRED: SF build 2519+ & GP build 4.0.0.378+ OPTIONAL: Nucleus version 1.1.0+**
-- `/is create` & `/is reset` now support generating a clickable list of available schematics
-- Added Void Island Control Schematics to prepackaged schematics
+**REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+- Added Island invite system for working in teams
+    - Added `/is invite` - `skyclaims.command.invite`
+    - Added `/is kick` - `skyclaims.command.kick`
+    - Added` /is leave` - `skyclaims.command.leave`
+    - Use of GriefPrevention's `/trust` & `/permissiontrust` on an island is handled by `/is invite`
+- Reworked `/is list` permissions
+    - `skyclaims.command.list.base` - allows a player to use the list command 
+    _(shows a player's islands ie. **owner**, **manager**, or **trusted**)_
+    - `skyclaims.command.list.unlocked` - allows a player to list all unlocked islands
+    - `skyclaims.command.list.sort` - allows a player to use the list sorting features
+    - `skyclaims.admin.list` - allows a player to list all islands
+- Added _Misc/Teleport-on-Creation_ config to disable automatic teleportation after island creation
+- `/is create` & `/is reset` now support generating a clickable list from available schematics
 - Fixed an IndexOutOfBoundsException with the entity limits feature
+- Added Void Island Control Schematics to prepackaged schematics
 
 # Beta 24 - S5.1
 **REQUIRED: SF build 2519+ & GP build 4.0.0.332+ OPTIONAL: Nucleus version 1.0.1+**

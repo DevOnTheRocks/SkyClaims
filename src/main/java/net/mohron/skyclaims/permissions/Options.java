@@ -84,6 +84,10 @@ public class Options {
         return getIntOption(playerUniqueId, EXPIRATION, PLUGIN.getConfig().getExpirationConfig().getThreshold());
     }
 
+    public static int getMaxIslands(UUID playerUniqueId) {
+        return getIntOption(playerUniqueId, MAX_ISLANDS, PLUGIN.getConfig().getOptionsConfig().getMaxIslands());
+    }
+
     private static String getStringOption(UUID playerUniqueId, String option, String defaultValue) {
         return PERMISSION_SERVICE.getUserSubjects().get(playerUniqueId.toString()).getOption(option).orElse(defaultValue);
     }

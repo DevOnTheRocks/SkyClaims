@@ -26,6 +26,8 @@ public class Permissions {
     public static final String COMMAND_HOME = "skyclaims.command.home";
     public static final String COMMAND_INFO = "skyclaims.command.info";
     public static final String COMMAND_INVITE = "skyclaims.command.invite";
+    public static final String COMMAND_KICK = "skyclaims.command.kick";
+    public static final String COMMAND_LEAVE = "skyclaims.command.leave";
     public static final String COMMAND_LIST = "skyclaims.command.list.base";
     public static final String COMMAND_LIST_UNLOCKED = "skyclaims.command.list.unlocked";
     public static final String COMMAND_LIST_SORT = "skyclaims.command.list.sort";

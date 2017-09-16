@@ -1,0 +1,162 @@
+/*
+ * SkyClaims - A Skyblock plugin made for Sponge
+ * Copyright (C) 2017 Mohron
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SkyClaims is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SkyClaims.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package net.mohron.skyclaims.team;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.world.Island;
+import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColors;
+
+import java.time.Instant;
+
+import javax.annotation.Nonnull;
+
+public class Invite {
+
+    private Island island;
+    private User sender;
+    private User receiver;
+    private PrivilegeType privilegeType;
+    private Instant sent;
+
+    private Invite(Island island, User sender, User receiver, PrivilegeType privilegeType) {
+        this.island = island;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.privilegeType = privilegeType;
+        this.sent = Instant.now();
+        SkyClaims.getInstance().getInviteService().addInvite(receiver, this);
+    }
+
+    public Island getIsland() {
+        return island;
+    }
+
+    public User getSender() {
+        return sender;
+    }
+
+    public PrivilegeType getPrivilegeType() {
+        return privilegeType;
+    }
+
+    public Instant getSent() {
+        return sent;
+    }
+
+    public void send() {
+        receiver.getPlayer().ifPresent(p -> p.sendMessage(Text.of(
+            island.getPrivilegeType(sender).format(sender.getName()),
+            TextColors.GRAY, " has invited you to be a ",
+            privilegeType.toText(),
+            TextColors.GRAY, " of ",
+            island.getName(),
+            TextColors.GRAY, "!", Text.NEW_LINE,
+            TextColors.WHITE, "[",
+            Text.builder("ACCEPT")
+                .color(TextColors.GREEN)
+                .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Click to accept")))
+                .onClick(TextActions.executeCallback(src -> {
+                    if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
+                        src.sendMessage(Text.of(
+                            TextColors.GREEN, "You are now a ", privilegeType.toText(), TextColors.GREEN, " on ", island.getName(), TextColors.GREEN, "!"
+                        ));
+                        this.accept();
+                    }
+                })),
+            TextColors.WHITE, "] [",
+            Text.builder("DENY")
+                .color(TextColors.RED)
+                .onHover(TextActions.showText(Text.of(TextColors.RED, "Click to deny")))
+                .onClick(TextActions.executeCallback(src -> {
+                    if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
+                        src.sendMessage(Text.of(
+                            TextColors.GREEN, "You have denied ", island.getPrivilegeType(sender).format(sender.getName()),
+                            TextColors.GREEN, "'s invite to ", island.getName(), TextColors.GREEN, "!"
+                        ));
+                        this.deny();
+                    }
+                })),
+            TextColors.WHITE, "]"
+        )));
+    }
+
+    public void accept() {
+        island.addMember(receiver, privilegeType);
+        SkyClaims.getInstance().getInviteService().removeInvite(receiver, this);
+    }
+
+    public void deny() {
+        SkyClaims.getInstance().getInviteService().removeInvite(receiver, this);
+    }
+
+    public static Invite.Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private Island island;
+        private User sender;
+        private User receiver;
+        private PrivilegeType privilegeType;
+
+        public Builder() {
+            this.privilegeType = PrivilegeType.MEMBER;
+        }
+
+        public Builder island(@Nonnull Island island) {
+            checkNotNull(island);
+            this.island = island;
+            return this;
+        }
+
+        public Builder sender(@Nonnull User sender) {
+            checkNotNull(sender);
+            this.sender = sender;
+            return this;
+        }
+
+        public Builder receiver(@Nonnull User receiver) {
+            checkNotNull(receiver);
+            this.receiver = receiver;
+            return this;
+        }
+
+        public Builder privilegeType(@Nonnull PrivilegeType privilegeType) {
+            checkNotNull(privilegeType);
+            this.privilegeType = privilegeType;
+            return this;
+        }
+
+        public Invite build() {
+            checkNotNull(island);
+            checkNotNull(sender);
+            checkNotNull(receiver);
+            checkNotNull(privilegeType);
+            checkArgument(!sender.equals(receiver));
+            return new Invite(island, sender, receiver, privilegeType);
+        }
+    }
+}

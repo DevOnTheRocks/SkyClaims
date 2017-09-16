@@ -35,10 +35,6 @@ repositories {
         url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
     }
     maven {
-        name = "QuickStart"
-        url = "http://repo.drnaylor.co.uk/artifactory/list/quickstart"
-    }
-    maven {
         name "LuckPerms"
         url "https://repo.lucko.me/"
     }
@@ -49,7 +45,6 @@ dependencies {
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
     runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
-    runtimeOnly("io.github.nucleuspowered:Nucleus:${nucleus}")
     //compile fileTree(dir: "libs", include: "*.jar")
 }
 

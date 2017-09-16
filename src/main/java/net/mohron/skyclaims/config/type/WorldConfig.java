@@ -39,7 +39,7 @@ public class WorldConfig {
     @Setting(value = "Spawn-Regions", comment = "The height & width of regions to reserve for spawn (min 1). Default: 1")
     private int spawnRegions = 1;
     @Setting(value = "List-Schematics")
-    private boolean listSchematics= true;
+    private boolean listSchematics = true;
 
     public World getWorld() {
         return SkyClaims.getInstance().getGame().getServer().getWorld(worldName).orElse(WorldUtil.getDefaultWorld());
