@@ -59,7 +59,7 @@ public class WorldLoadHandler {
 
             WILDERNESS_OVERRIDES.forEach((flag, value) -> {
                 if (wilderness.getPermissionValue(subject, flag, target) != value) {
-                    wilderness.setPermission(subject, flag, target, value, PLUGIN.getCause()).whenComplete((result, throwable) -> {
+                    wilderness.setPermission(subject, flag, target, value).whenComplete((result, throwable) -> {
                         if (result.successful()) {
                             PLUGIN.getLogger().info("{}: Set {} flag in wilderness to {}.", world.getName(), flag, value.toString());
                         } else {

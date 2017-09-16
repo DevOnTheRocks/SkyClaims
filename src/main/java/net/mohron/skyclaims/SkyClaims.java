@@ -320,10 +320,6 @@ public class SkyClaims {
         return permissionService;
     }
 
-    public Cause getCause() {
-        return Cause.source(pluginContainer).build();
-    }
-
     public Logger getLogger() {
         return logger;
     }

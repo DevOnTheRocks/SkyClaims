@@ -23,6 +23,7 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -77,7 +78,8 @@ public class CommandSetHome extends CommandBase {
 
     private boolean modifyOrCreateHome(Player player) {
         try {
-            NucleusIntegration.getHomeService().modifyOrCreateHome(PLUGIN.getCause(), player, "Island", player.getLocation(), player.getRotation());
+            NucleusIntegration.getHomeService()
+                .modifyOrCreateHome(Sponge.getCauseStackManager().getCurrentCause(), player, "Island", player.getLocation(), player.getRotation());
             player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
             return true;
         } catch (NucleusException e) {

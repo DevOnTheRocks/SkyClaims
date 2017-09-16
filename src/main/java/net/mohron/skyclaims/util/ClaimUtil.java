@@ -67,7 +67,7 @@ public class ClaimUtil {
                     break;
                 case OVERLAPPING_CLAIM:
                     for (Claim claim1 : claimResult.getClaims()) {
-                        claimManager.deleteClaim(claim1, PLUGIN.getCause());
+                        claimManager.deleteClaim(claim1);
                     }
                     PLUGIN.getLogger().info(
                         "Removing claim overlapping {}'s island (Owner: {}, ID: {}).",
@@ -105,7 +105,6 @@ public class ClaimUtil {
                     region.getGreaterBoundary().getZ() - initialSpacing
                 )
             )
-            .cause(PLUGIN.getCause())
             .owner(ownerUniqueId)
             .expire(false)
             .resizable(false)
@@ -146,7 +145,6 @@ public class ClaimUtil {
                 new Vector3i(lesserRegion.getLesserBoundary().getX(), 0, lesserRegion.getLesserBoundary().getZ()),
                 new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())
             )
-            .cause(PLUGIN.getCause())
             .build();
     }
 
