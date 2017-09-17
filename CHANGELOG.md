@@ -11,6 +11,8 @@
     - Added `/is invite` - `skyclaims.command.invite`
     - Added `/is kick` - `skyclaims.command.kick`
     - Added` /is leave` - `skyclaims.command.leave`
+    - Added` /is promote` - `skyclaims.command.promote`
+    - Added` /is demote` - `skyclaims.command.demote`
     - Use of GriefPrevention's `/trust` & `/permissiontrust` on an island is handled by `/is invite`
 - Reworked `/is list` permissions
     - `skyclaims.command.list.base` - allows a player to use the list command 

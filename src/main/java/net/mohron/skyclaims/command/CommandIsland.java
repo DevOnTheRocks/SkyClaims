@@ -25,9 +25,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.PluginInfo;
+import net.mohron.skyclaims.command.team.CommandDemote;
 import net.mohron.skyclaims.command.team.CommandInvite;
 import net.mohron.skyclaims.command.team.CommandKick;
 import net.mohron.skyclaims.command.team.CommandLeave;
+import net.mohron.skyclaims.command.team.CommandPromote;
 import net.mohron.skyclaims.command.user.CommandCreate;
 import net.mohron.skyclaims.command.user.CommandExpand;
 import net.mohron.skyclaims.command.user.CommandInfo;
@@ -97,12 +99,14 @@ public class CommandIsland extends CommandBase {
     private static void registerSubCommands() {
         CommandCreate.register();
         CommandExpand.register();
+        CommandDemote.register();
         CommandInfo.register();
         CommandInvite.register();
         CommandKick.register();
         CommandLeave.register();
         CommandList.register();
         CommandLock.register();
+        CommandPromote.register();
         CommandRegen.register();
         CommandReset.register();
         CommandSetBiome.register();
@@ -143,6 +147,14 @@ public class CommandIsland extends CommandBase {
                 TextColors.GRAY, " [blocks]",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandExpand.HELP_TEXT
+            ));
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_DEMOTE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is demote").onClick(TextActions.suggestCommand("/is demote ")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandDemote.HELP_TEXT
             ));
         }
 
@@ -198,6 +210,14 @@ public class CommandIsland extends CommandBase {
                 TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? " [island|all]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandLock.HELP_TEXT
+            ));
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_PROMOTE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is promote").onClick(TextActions.suggestCommand("/is promote ")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandPromote.HELP_TEXT
             ));
         }
 

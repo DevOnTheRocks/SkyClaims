@@ -35,26 +35,26 @@ import org.spongepowered.api.text.format.TextColors;
 
 import javax.annotation.Nonnull;
 
-public class CommandKick extends CommandBase.IslandCommand {
+public class CommandDemote extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to remove players from an island.";
+    public static final String HELP_TEXT = "used to demote a player on an island.";
     private static final Text USER = Text.of("user");
 
     public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_KICK)
+        .permission(Permissions.COMMAND_DEMOTE)
         .arguments(GenericArguments.user(USER))
         .description(Text.of(HELP_TEXT))
-        .executor(new CommandKick())
+        .executor(new CommandDemote())
         .build();
 
     public static void register() {
         try {
-            CommandIsland.addSubCommand(commandSpec, "kick");
+            CommandIsland.addSubCommand(commandSpec, "demote");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandKick");
+            PLUGIN.getLogger().debug("Registered command: CommandDemote");
         } catch (UnsupportedOperationException e) {
             e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandKick");
+            PLUGIN.getLogger().error("Failed to register command: CommandDemote");
         }
     }
 
@@ -64,26 +64,17 @@ public class CommandKick extends CommandBase.IslandCommand {
         if (user == null) {
             throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
         } else if (player.equals(user)) {
-            throw new CommandException(Text.of(TextColors.RED, "You cannot kick yourself!"));
-        } else if (island.getPrivilegeType(user) == PrivilegeType.NONE) {
-            throw new CommandException(Text.of(
-                PrivilegeType.NONE.format(user.getName()), TextColors.RED, " is not a member of ", island.getName(), TextColors.RED, "!"
+            throw new CommandException(Text.of(TextColors.RED, "You cannot demote yourself!"));
+        } else if (!island.isOwner(player)) {
+            throw new CommandException(Text.of(TextColors.RED, "You do not have permission to demote players on this island!"));
+        } else {
+            PrivilegeType type = island.getPrivilegeType(user);
+            player.sendMessage(Text.of(
+                type.format(user.getName()), TextColors.RED, " has been demoted from a ",
+                island.getPrivilegeType(user).toText(), TextColors.RED, " to a ", type.toText(), TextColors.RED, "."
             ));
-        } else if (island.getPrivilegeType(player).ordinal() >= island.getPrivilegeType(user).ordinal()) {
-            throw new CommandException(Text.of(
-                TextColors.RED, "You do not have permission to kick ", island.getPrivilegeType(user).format(user.getName()),
-                " from ", island.getName(), TextColors.RED, "."
-            ));
+            island.demote(user);
         }
-
-        user.getPlayer().ifPresent(p -> {
-            if (island.getPlayers().contains(p)) {
-                p.setLocationSafely(island.getWorld().getSpawnLocation());
-            }
-            p.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
-        });
-
-        island.removeMember(user);
 
         return CommandResult.success();
     }

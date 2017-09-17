@@ -92,28 +92,16 @@ public class CommandInvite extends CommandBase.IslandCommand {
                 .sendTo(player);
         } else if (player.equals(user)) {
             throw new CommandException(Text.of(TextColors.RED, "You cannot invite yourself!"));
-        } else if (island.getPrivilegeType(user) == type) {
+        } else if (island.getPrivilegeType(user) != PrivilegeType.NONE) {
             throw new CommandException(Text.of(
-                island.getPrivilegeType(user).format(user.getName()), TextColors.RED, " is already a ", type.toText(), TextColors.RED, "!"
+                island.getPrivilegeType(user).format(user.getName()), TextColors.RED, " is already a ", island.getPrivilegeType(user).toText(),
+                TextColors.RED, " on ", island.getName(), TextColors.RED, "!"
             ));
         } else if (type == PrivilegeType.MEMBER && !island.isManager(player) || !island.getOwnerUniqueId().equals(player.getUniqueId())) {
             throw new CommandException(Text.of(
                 TextColors.RED, "You do not have permission to send ", type == PrivilegeType.OWNER ? "an " : "a ",
-                type.toText(),
-                TextColors.RED, " invite for ",
-                island.getName(),
-                TextColors.RED, "!"
+                type.toText(), TextColors.RED, " invite for ", island.getName(), TextColors.RED, "!"
             ));
-        } else if (island.getPrivilegeType(user) == PrivilegeType.MEMBER || island.getPrivilegeType(user) == PrivilegeType.MANAGER) {
-            player.sendMessage(Text.of(
-                type.format(user.getName()),
-                TextColors.GREEN, " has been changed from a ",
-                island.getPrivilegeType(user).toText(),
-                " to a ",
-                type.toText(), "."
-            ));
-            island.removeMember(user);
-            island.addMember(user, type);
         } else {
             Invite invite = Invite.builder()
                 .island(island)

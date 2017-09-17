@@ -303,9 +303,9 @@ public class Island {
     public void addMember(User user, PrivilegeType type) {
         switch (type) {
             case OWNER:
-                UUID previousOwner = owner;
+                UUID existingOwner = owner;
                 transfer(user);
-                getClaim().ifPresent(c -> c.addUserTrust(previousOwner, TrustType.MANAGER, PLUGIN.getCause()));
+                getClaim().ifPresent(c -> c.addUserTrust(existingOwner, TrustType.MANAGER, PLUGIN.getCause()));
                 break;
             case MANAGER:
             case MEMBER:
@@ -315,6 +315,29 @@ public class Island {
                 getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), type.getTrustType(), PLUGIN.getCause()));
                 break;
         }
+    }
+
+    public void promote(User user) {
+        getClaim().ifPresent(c -> {
+            if (c.isUserTrusted(user, TrustType.BUILDER)) {
+                c.removeUserTrust(user.getUniqueId(), TrustType.BUILDER, PLUGIN.getCause());
+                c.addUserTrust(user.getUniqueId(), TrustType.MANAGER, PLUGIN.getCause());
+            } else if (c.isUserTrusted(user, TrustType.MANAGER)) {
+                c.removeUserTrust(user.getUniqueId(), TrustType.MANAGER, PLUGIN.getCause());
+                UUID existingOwner = owner;
+                transfer(user);
+                c.addUserTrust(existingOwner, TrustType.MANAGER, PLUGIN.getCause());
+            }
+        });
+    }
+
+    public void demote(User user) {
+        getClaim().ifPresent(c -> {
+            if (c.isUserTrusted(user, TrustType.MANAGER)) {
+                c.removeUserTrust(user.getUniqueId(), TrustType.MANAGER, PLUGIN.getCause());
+                c.addUserTrust(user.getUniqueId(), TrustType.BUILDER, PLUGIN.getCause());
+            }
+        });
     }
 
     public void removeMember(User user) {

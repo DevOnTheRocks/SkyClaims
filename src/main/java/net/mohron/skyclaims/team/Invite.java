@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -80,7 +82,8 @@ public class Invite {
                 .onClick(TextActions.executeCallback(src -> {
                     if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
                         src.sendMessage(Text.of(
-                            TextColors.GREEN, "You are now a ", privilegeType.toText(), TextColors.GREEN, " on ", island.getName(), TextColors.GREEN, "!"
+                            TextColors.GREEN, "You are now a ", privilegeType.toText(), TextColors.GREEN, " on ", island.getName(), TextColors.GREEN,
+                            "!"
                         ));
                         this.accept();
                     }
@@ -158,5 +161,28 @@ public class Invite {
             checkArgument(!sender.equals(receiver));
             return new Invite(island, sender, receiver, privilegeType);
         }
+    }
+
+    @Override public int hashCode() {
+        return new HashCodeBuilder()
+            .append(island.getUniqueId())
+            .append(sender.getUniqueId())
+            .append(receiver.getUniqueId())
+            .toHashCode();
+    }
+
+    @Override public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof Invite)) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        Invite invite = (Invite) obj;
+        return new EqualsBuilder()
+            .append(island.getUniqueId(), invite.island.getUniqueId())
+            .append(sender.getUniqueId(), invite.sender.getUniqueId())
+            .append(receiver.getUniqueId(), invite.receiver.getUniqueId())
+            .build();
     }
 }
