@@ -40,6 +40,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -84,6 +85,8 @@ public class CommandInfo extends CommandBase {
             }
         }
 
+        SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
+
         List<Text> infoText = islands.stream()
             .map(island -> Text.of(
                 (src instanceof Player) ? getAdminShortcuts(src, island) : Text.EMPTY,
@@ -94,8 +97,8 @@ public class CommandInfo extends CommandBase {
                 TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
                 TextColors.YELLOW, "Entities", TextColors.WHITE, " : ", getEntities(island), Text.NEW_LINE,
                 TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", getSpawn(island), Text.NEW_LINE,
-                TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateCreated(), Text.NEW_LINE,
-                TextColors.YELLOW, "Last Active", TextColors.WHITE, " : ", TextColors.GRAY, island.getDateLastActive(), Text.NEW_LINE,
+                TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, sdf.format(island.getDateCreated()), Text.NEW_LINE,
+                TextColors.YELLOW, "Last Active", TextColors.WHITE, " : ", TextColors.GRAY, sdf.format(island.getDateLastActive()), Text.NEW_LINE,
                 TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY, island.getUniqueId(), Text.NEW_LINE,
                 (island.getClaim().isPresent()) ? Text.of(
                     TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(

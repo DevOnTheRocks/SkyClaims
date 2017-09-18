@@ -18,9 +18,11 @@
 
 package net.mohron.skyclaims.config.type;
 
+import net.mohron.skyclaims.SkyClaims;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,9 @@ public class MiscConfig {
     private List<String> createCommands = new ArrayList<>();
     @Setting(value = "Reset-Commands", comment = "Commands to run on island resets only. Use @p in place of the player's name.")
     private List<String> resetCommands = new ArrayList<>();
+    @Setting(value = "Date-Format", comment = "The date format used throughout the plugin.\n" +
+        "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html")
+    private String dateFormat = "MMMM d, yyyy h:mm a";
 
     public boolean createIslandOnJoin() {
         return islandOnJoin;
@@ -50,5 +55,14 @@ public class MiscConfig {
 
     public List<String> getResetCommands() {
         return resetCommands;
+    }
+
+    public SimpleDateFormat getDateFormat() {
+        try {
+            return new SimpleDateFormat(dateFormat);
+        } catch (IllegalArgumentException e) {
+            SkyClaims.getInstance().getLogger().info("Invalid Date Format: {}", dateFormat);
+            return new SimpleDateFormat("dd MMM yy  hh:mm a");
+        }
     }
 }

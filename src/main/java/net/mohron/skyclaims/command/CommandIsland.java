@@ -133,14 +133,6 @@ public class CommandIsland extends CommandBase {
             ));
         }
 
-        if (src.hasPermission(Permissions.COMMAND_HOME)) {
-            helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is home").onClick(TextActions.runCommand("/is home")),
-                TextColors.DARK_GRAY, " - ",
-                TextColors.DARK_GREEN, CommandHome.HELP_TEXT
-            ));
-        }
-
         if (src.hasPermission(Permissions.COMMAND_EXPAND)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is expand").onClick(TextActions.suggestCommand("/is expand ")),
@@ -155,6 +147,14 @@ public class CommandIsland extends CommandBase {
                 TextColors.AQUA, Text.builder("is demote").onClick(TextActions.suggestCommand("/is demote ")),
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandDemote.HELP_TEXT
+            ));
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_HOME)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is home").onClick(TextActions.runCommand("/is home")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandHome.HELP_TEXT
             ));
         }
 

@@ -33,6 +33,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class InviteService {
             .onClick(TextActions.executeCallback(listIncomingInvites())),
         TextColors.WHITE, "] [",
         Text.builder("Outgoing")
-            .color(TextColors.RED)
+            .color(TextColors.YELLOW)
             .onHover(TextActions.showText(Text.of(TextColors.RED, "List outgoing invites")))
             .onClick(TextActions.executeCallback(listOutgoingInvites())),
         TextColors.WHITE, "] "
@@ -78,6 +79,7 @@ public class InviteService {
     }
 
     private List<Text> getIncomingInviteText(User user) {
+        SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
         return invites.row(user).values().stream()
             .map(invite -> Text.of(
                 TextColors.WHITE, "[",
@@ -96,7 +98,7 @@ public class InviteService {
                 invite.getIsland().getName().toBuilder()
                     .onHover(TextActions.showText(Text.of(
                         TextColors.YELLOW, "Invited by", TextColors.WHITE, " : ", TextColors.GOLD, invite.getSender().getName(), Text.NEW_LINE,
-                        TextColors.YELLOW, "Sent on", TextColors.WHITE, " : ", TextColors.GRAY, Date.from(invite.getSent())
+                        TextColors.YELLOW, "Sent on", TextColors.WHITE, " : ", TextColors.GRAY, sdf.format(Date.from(invite.getSent()))
                     )))
             ))
             .collect(Collectors.toList());
@@ -110,9 +112,10 @@ public class InviteService {
                     .title(Text.of(TextColors.AQUA, "Invite List"))
                     .header(getIslandLimit(player).concat(inviteListHeader))
                     .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-                    .contents(PLUGIN.getInviteService().getIncomingInviteText(player).isEmpty()
-                        ? ImmutableList.of(Text.of(TextColors.RED, "You have no pending invites!"))
-                        : PLUGIN.getInviteService().getIncomingInviteText(player)
+                    .contents(
+                        PLUGIN.getInviteService().getIncomingInviteText(player).isEmpty()
+                            ? ImmutableList.of(Text.of(TextColors.RED, "You have no incoming invites!"))
+                            : PLUGIN.getInviteService().getIncomingInviteText(player)
                     )
                     .sendTo(player);
             }
@@ -120,19 +123,27 @@ public class InviteService {
     }
 
     private List<Text> getOutgoingInviteText(User user) {
+        SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
         return invites.column(user).values().stream()
             .map(invite -> Text.of(
                 TextColors.WHITE, "[",
                 Text.builder("✗")
                     .color(TextColors.RED)
                     .onHover(TextActions.showText(Text.of(TextColors.RED, "Cancel")))
-                    .onClick(TextActions.executeCallback(src -> invite.deny())),
+                    .onClick(TextActions.executeCallback(src -> {
+                        invite.deny();
+                        src.sendMessage(Text.of(
+                            TextColors.GREEN, "Invite to ",
+                            invite.getPrivilegeType().format(invite.getReceiver().getName()),
+                            TextColors.GREEN, " has been canceled."
+                        ));
+                    })),
                 TextColors.WHITE, "] ",
                 invite.getPrivilegeType().format(invite.getReceiver().getName()),
                 TextColors.WHITE, " : ",
                 invite.getIsland().getName(),
                 TextColors.WHITE, " : ",
-                TextColors.GRAY, Date.from(invite.getSent())
+                TextColors.GRAY, sdf.format(Date.from(invite.getSent()))
             ))
             .collect(Collectors.toList());
     }
@@ -145,9 +156,10 @@ public class InviteService {
                     .title(Text.of(TextColors.AQUA, "Invite List"))
                     .header(getIslandLimit(player).concat(inviteListHeader))
                     .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-                    .contents(PLUGIN.getInviteService().getOutgoingInviteText(player).isEmpty()
-                        ? ImmutableList.of(Text.of(TextColors.RED, "You have no pending invites!"))
-                        : PLUGIN.getInviteService().getIncomingInviteText(player)
+                    .contents(
+                        PLUGIN.getInviteService().getOutgoingInviteText(player).isEmpty()
+                            ? ImmutableList.of(Text.of(TextColors.RED, "You have no outgoing invites!"))
+                            : PLUGIN.getInviteService().getOutgoingInviteText(player)
                     )
                     .sendTo(player);
             }
