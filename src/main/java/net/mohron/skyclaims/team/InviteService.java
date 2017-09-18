@@ -68,6 +68,14 @@ public class InviteService {
         return invites.row(user).values().size();
     }
 
+    public Consumer<CommandSource> listIncomingInvites() {
+        return listInvites(Type.INCOMING);
+    }
+
+    public Consumer<CommandSource> listOutgoingInvites() {
+        return listInvites(Type.OUTGOING);
+    }
+
     private List<Text> getIncomingInviteText(User user) {
         SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
         return invites.row(user).values().stream()
@@ -92,10 +100,6 @@ public class InviteService {
                     )))
             ))
             .collect(Collectors.toList());
-    }
-
-    public Consumer<CommandSource> listIncomingInvites() {
-        return listInvites(Type.INCOMING);
     }
 
     private List<Text> getOutgoingInviteText(User user) {
@@ -124,10 +128,6 @@ public class InviteService {
             .collect(Collectors.toList());
     }
 
-    public Consumer<CommandSource> listOutgoingInvites() {
-        return listInvites(Type.OUTGOING);
-    }
-
     private Consumer<CommandSource> listInvites(Type type) {
         return src -> {
             if (src instanceof Player) {
@@ -138,12 +138,12 @@ public class InviteService {
                     TextColors.AQUA, (type == Type.INCOMING) ? "[" : Text.EMPTY,
                     Text.builder("Incoming")
                         .color((type == Type.INCOMING) ? TextColors.GREEN : TextColors.GRAY)
-                        .onHover(TextActions.showText(Text.of(TextColors.GREEN, "List incoming invites")))
+                        .onHover(TextActions.showText(Text.of("Click here to show ", TextColors.GREEN, "incoming", TextColors.RESET, " invites")))
                         .onClick(TextActions.executeCallback(listIncomingInvites())),
                     TextColors.AQUA, (type == Type.INCOMING) ? "] " : " [",
                     Text.builder("Outgoing")
                         .color((type == Type.OUTGOING) ? TextColors.YELLOW : TextColors.GRAY)
-                        .onHover(TextActions.showText(Text.of(TextColors.YELLOW, "List outgoing invites")))
+                        .onHover(TextActions.showText(Text.of("Click here to show ", TextColors.YELLOW, "outgoing", TextColors.RESET, " invites")))
                         .onClick(TextActions.executeCallback(listOutgoingInvites())),
                     TextColors.AQUA, (type == Type.OUTGOING) ? "]" : Text.EMPTY
                 );
@@ -169,5 +169,4 @@ public class InviteService {
             }
         };
     }
-
 }
