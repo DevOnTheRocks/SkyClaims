@@ -66,7 +66,7 @@ public class ClientJoinHandler {
     private void deliverInvites(Player player) {
         SkyClaimsTimings.DELIVER_INVITES.startTimingIfSync();
 
-        int invites = PLUGIN.getInviteService().getInvites(player).size();
+        int invites = PLUGIN.getInviteService().getInviteCount(player);
         if (invites > 0) {
             player.sendMessage(Text.of(
                 TextColors.GRAY, "You have ",
@@ -75,7 +75,7 @@ public class ClientJoinHandler {
                 TextColors.WHITE, "[",
                 Text.builder("OPEN")
                     .color(TextColors.GREEN)
-                    .onClick(TextActions.runCommand("/is invite")),
+                    .onClick(TextActions.executeCallback(PLUGIN.getInviteService().listIncomingInvites())),
                 TextColors.WHITE, "]"
             ));
         }

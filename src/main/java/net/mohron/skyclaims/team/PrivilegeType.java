@@ -18,10 +18,15 @@
 
 package net.mohron.skyclaims.team;
 
+import com.google.common.collect.Maps;
 import me.ryanhamshire.griefprevention.api.claim.TrustType;
+import org.spongepowered.api.command.args.CommandElement;
+import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+
+import java.util.Map;
 
 public enum PrivilegeType {
     OWNER(Text.of(TextColors.BLUE, "Owner"), TrustType.NONE),
@@ -54,5 +59,15 @@ public enum PrivilegeType {
 
     public TrustType getTrustType() {
         return trustType;
+    }
+
+    public static CommandElement getCommandArgument(Text key) {
+        Map<String, PrivilegeType> typeMap = Maps.newHashMap();
+        for (PrivilegeType type : values()) {
+            if (type != NONE) {
+                typeMap.put(type.toString().toLowerCase(), type);
+            }
+        }
+        return GenericArguments.choices(key, typeMap);
     }
 }

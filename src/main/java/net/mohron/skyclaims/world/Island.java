@@ -341,7 +341,11 @@ public class Island {
     }
 
     public void removeMember(User user) {
-        getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), TrustType.NONE, PLUGIN.getCause()));
+        getClaim().ifPresent(c -> {
+            for (TrustType trustType : TrustType.values()) {
+                c.removeUserTrust(user.getUniqueId(), trustType, PLUGIN.getCause());
+            }
+        });
     }
 
     public List<String> getMembers() {

@@ -23,6 +23,7 @@ import me.ryanhamshire.griefprevention.api.event.BorderClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.CreateClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.DeleteClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.ResizeClaimEvent;
+import me.ryanhamshire.griefprevention.api.event.TrustClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.UserTrustClaimEvent;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
@@ -124,14 +125,20 @@ public class ClaimEventHandler {
     @Listener
     public void onTrustClaim(UserTrustClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
         SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
-        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
         if (PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getDisabledTrustTypes().contains(event.getTrustType())) {
             event.setCancelled(true);
             event.setMessage(Text.of(TextColors.RED, "The use of ", TextColors.GOLD, event.getTrustType(), TextColors.RED, " has been disabled."));
+            SkyClaimsTimings.CLAIM_HANDLER.abort();
             return;
         }
 
+        if (player.hasPermission(Permissions.BYPASS_TRUST)) {
+            SkyClaimsTimings.CLAIM_HANDLER.abort();
+            return;
+        }
+
+        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
         if (claim.getWorld().equals(world)) {
             // Get The top level claim
             if (claim.isSubdivision()) {
@@ -151,20 +158,20 @@ public class ClaimEventHandler {
             for (PrivilegeType type : PrivilegeType.values()) {
                 if (type.getTrustType() == event.getTrustType()) {
                     event.setCancelled(true);
-                    event.getUsers().forEach(uuid -> PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid)
-                        .ifPresent(user -> {
-                            Invite invite = Invite.builder()
-                                .island(island)
-                                .sender(player)
-                                .receiver(user)
-                                .privilegeType(type)
-                                .build();
-
-                            if (PLUGIN.getInviteService().inviteExists(invite)) {
-                                event.setMessage(Text.of(TextColors.RED, "Invite already exists!"));
-                            } else {
-                                invite.send();
+                    event.getUsers().forEach(uuid ->
+                        PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).ifPresent(user -> {
+                            if (event instanceof TrustClaimEvent.Add && island.getPrivilegeType(user) != type) {
+                                Invite.builder()
+                                    .island(island)
+                                    .sender(player)
+                                    .receiver(user)
+                                    .privilegeType(type)
+                                    .build()
+                                    .send();
                                 event.setMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
+                            }
+                            if (event instanceof TrustClaimEvent.Remove) {
+                                event.setMessage(Text.of(TextColors.RED, "Use /is kick to remove a player from this island."));
                             }
                         }));
                 }

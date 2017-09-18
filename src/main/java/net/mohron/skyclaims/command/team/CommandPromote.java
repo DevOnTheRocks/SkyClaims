@@ -71,20 +71,16 @@ public class CommandPromote extends CommandBase.IslandCommand {
         } else {
             PrivilegeType type = island.getPrivilegeType(user);
             if (type == PrivilegeType.MANAGER) {
-                Invite invite = Invite.builder()
+                Invite.builder()
                     .island(island)
                     .sender(player)
                     .receiver(user)
                     .privilegeType(type)
-                    .build();
-                if (PLUGIN.getInviteService().inviteExists(invite)) {
-                    throw new CommandException(Text.of(TextColors.RED, "Invite already exists!"));
-                } else {
-                    invite.send();
-                    player.sendMessage(Text.of(
-                        TextColors.GREEN, "Island ownership transfer request sent to ", type.format(user.getName()), TextColors.GREEN, "."
-                    ));
-                }
+                    .build()
+                    .send();
+                player.sendMessage(Text.of(
+                    TextColors.GREEN, "Island ownership transfer request sent to ", type.format(user.getName()), TextColors.GREEN, "."
+                ));
             } else {
                 player.sendMessage(Text.of(
                     type.format(user.getName()), TextColors.GREEN, " has been promoted from a ",

@@ -32,7 +32,7 @@ import java.util.List;
 public class GriefPrevention {
 
     @Setting(value = "Disabled-Trust-Types", comment = "Trust types to disable use on Islands.")
-    private List<TrustType> disabledTrustTypes = Lists.newArrayList(TrustType.NONE, TrustType.ACCESSOR, TrustType.CONTAINER);
+    private List<TrustType> disabledTrustTypes = Lists.newArrayList(TrustType.ACCESSOR, TrustType.CONTAINER);
 
 //    @Setting(value = "Island-Flags", comment = "Use to set up default flags to be set on Island claims.")
 //    private EnumMap<ClaimFlag, Tristate> islandFlags = new EnumMap<ClaimFlag, Tristate>(ClaimFlag.class) {{

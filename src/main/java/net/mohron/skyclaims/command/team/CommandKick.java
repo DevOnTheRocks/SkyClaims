@@ -76,14 +76,18 @@ public class CommandKick extends CommandBase.IslandCommand {
             ));
         }
 
+        PrivilegeType type = island.getPrivilegeType(user);
         user.getPlayer().ifPresent(p -> {
             if (island.getPlayers().contains(p)) {
                 p.setLocationSafely(island.getWorld().getSpawnLocation());
             }
             p.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
         });
-
         island.removeMember(user);
+
+        player.sendMessage(Text.of(
+            type.format(user.getName()), TextColors.RED, " has successfully been removed from ", island.getName(), TextColors.RED, "!"
+        ));
 
         return CommandResult.success();
     }

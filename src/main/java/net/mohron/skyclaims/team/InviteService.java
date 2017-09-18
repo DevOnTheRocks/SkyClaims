@@ -18,32 +18,67 @@
 
 package net.mohron.skyclaims.team;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Table;
+import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.permissions.Options;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
 import java.sql.Date;
-import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class InviteService {
 
-    private Multimap<User, Invite> invites = HashMultimap.create();
+    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
+    private Table<User, User, Invite> invites = HashBasedTable.create();
+
+    private final Text inviteListHeader = Text.of(
+        TextColors.WHITE, "[",
+        Text.builder("Incoming")
+            .color(TextColors.GREEN)
+            .onHover(TextActions.showText(Text.of(TextColors.GREEN, "List incoming invites")))
+            .onClick(TextActions.executeCallback(listIncomingInvites())),
+        TextColors.WHITE, "] [",
+        Text.builder("Outgoing")
+            .color(TextColors.RED)
+            .onHover(TextActions.showText(Text.of(TextColors.RED, "List outgoing invites")))
+            .onClick(TextActions.executeCallback(listOutgoingInvites())),
+        TextColors.WHITE, "] "
+    );
 
     public InviteService() {
 
     }
 
-    public Collection<Invite> getInvites(User user) {
-        return invites.get(user);
+    void addInvite(Invite invite) {
+        invites.put(invite.getReceiver(), invite.getSender(), invite);
     }
 
-    public List<Text> getInviteText(User user) {
-        return invites.get(user).stream()
+    void removeInvite(Invite invite) {
+        invites.remove(invite.getReceiver(), invite.getSender());
+    }
+
+    public boolean inviteExists(Invite invite) {
+        return invites.contains(invite.getReceiver(), invite.getSender());
+    }
+
+    public int getInviteCount(User user) {
+        return invites.row(user).values().size();
+    }
+
+    private List<Text> getIncomingInviteText(User user) {
+        return invites.row(user).values().stream()
             .map(invite -> Text.of(
                 TextColors.WHITE, "[",
                 Text.builder("✓")
@@ -67,15 +102,62 @@ public class InviteService {
             .collect(Collectors.toList());
     }
 
-    void addInvite(User user, Invite invite) {
-        invites.put(user, invite);
+    public Consumer<CommandSource> listIncomingInvites() {
+        return src -> {
+            if (src instanceof Player) {
+                Player player = (Player) src;
+                PaginationList.builder()
+                    .title(Text.of(TextColors.AQUA, "Invite List"))
+                    .header(getIslandLimit(player).concat(inviteListHeader))
+                    .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+                    .contents(PLUGIN.getInviteService().getIncomingInviteText(player).isEmpty()
+                        ? ImmutableList.of(Text.of(TextColors.RED, "You have no pending invites!"))
+                        : PLUGIN.getInviteService().getIncomingInviteText(player)
+                    )
+                    .sendTo(player);
+            }
+        };
     }
 
-    void removeInvite(User user, Invite invite) {
-        invites.remove(user, invite);
+    private List<Text> getOutgoingInviteText(User user) {
+        return invites.column(user).values().stream()
+            .map(invite -> Text.of(
+                TextColors.WHITE, "[",
+                Text.builder("✗")
+                    .color(TextColors.RED)
+                    .onHover(TextActions.showText(Text.of(TextColors.RED, "Cancel")))
+                    .onClick(TextActions.executeCallback(src -> invite.deny())),
+                TextColors.WHITE, "] ",
+                invite.getPrivilegeType().format(invite.getReceiver().getName()),
+                TextColors.WHITE, " : ",
+                invite.getIsland().getName(),
+                TextColors.WHITE, " : ",
+                TextColors.GRAY, Date.from(invite.getSent())
+            ))
+            .collect(Collectors.toList());
     }
 
-    public boolean inviteExists(Invite invite) {
-        return invites.containsValue(invite);
+    public Consumer<CommandSource> listOutgoingInvites() {
+        return src -> {
+            if (src instanceof Player) {
+                Player player = (Player) src;
+                PaginationList.builder()
+                    .title(Text.of(TextColors.AQUA, "Invite List"))
+                    .header(getIslandLimit(player).concat(inviteListHeader))
+                    .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+                    .contents(PLUGIN.getInviteService().getOutgoingInviteText(player).isEmpty()
+                        ? ImmutableList.of(Text.of(TextColors.RED, "You have no pending invites!"))
+                        : PLUGIN.getInviteService().getIncomingInviteText(player)
+                    )
+                    .sendTo(player);
+            }
+        };
+    }
+
+    private Text getIslandLimit(Player player) {
+        int limit = Options.getMaxIslands(player.getUniqueId());
+        return (limit < 1)
+            ? Text.EMPTY
+            : Text.of(TextColors.GRAY, "You may join up to ", TextColors.LIGHT_PURPLE, limit, TextColors.GRAY, " islands.", Text.NEW_LINE);
     }
 }

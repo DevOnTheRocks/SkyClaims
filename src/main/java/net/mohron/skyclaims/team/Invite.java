@@ -36,11 +36,11 @@ import javax.annotation.Nonnull;
 
 public class Invite {
 
-    private Island island;
-    private User sender;
-    private User receiver;
-    private PrivilegeType privilegeType;
-    private Instant sent;
+    private final Island island;
+    private final User sender;
+    private final User receiver;
+    private final PrivilegeType privilegeType;
+    private final Instant sent;
 
     private Invite(Island island, User sender, User receiver, PrivilegeType privilegeType) {
         this.island = island;
@@ -48,7 +48,7 @@ public class Invite {
         this.receiver = receiver;
         this.privilegeType = privilegeType;
         this.sent = Instant.now();
-        SkyClaims.getInstance().getInviteService().addInvite(receiver, this);
+        SkyClaims.getInstance().getInviteService().addInvite(this);
     }
 
     public Island getIsland() {
@@ -57,6 +57,10 @@ public class Invite {
 
     public User getSender() {
         return sender;
+    }
+
+    public User getReceiver() {
+        return receiver;
     }
 
     public PrivilegeType getPrivilegeType() {
@@ -107,11 +111,11 @@ public class Invite {
 
     public void accept() {
         island.addMember(receiver, privilegeType);
-        SkyClaims.getInstance().getInviteService().removeInvite(receiver, this);
+        SkyClaims.getInstance().getInviteService().removeInvite(this);
     }
 
     public void deny() {
-        SkyClaims.getInstance().getInviteService().removeInvite(receiver, this);
+        SkyClaims.getInstance().getInviteService().removeInvite(this);
     }
 
     public static Invite.Builder builder() {

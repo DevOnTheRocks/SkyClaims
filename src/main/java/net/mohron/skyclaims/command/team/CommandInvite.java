@@ -18,12 +18,11 @@
 
 package net.mohron.skyclaims.command.team;
 
-import com.google.common.collect.ImmutableList;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.Invite;
+import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
@@ -33,7 +32,6 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
@@ -52,7 +50,7 @@ public class CommandInvite extends CommandBase.IslandCommand {
         .arguments(
             GenericArguments.optional(GenericArguments.seq(
                 GenericArguments.user(USER),
-                GenericArguments.optional(GenericArguments.enumValue(PRIVILEGE, PrivilegeType.class))
+                GenericArguments.optional(PrivilegeType.getCommandArgument(PRIVILEGE))
             )),
             GenericArguments.optional(GenericArguments.literal(LIST, "list"))
         )
@@ -81,15 +79,7 @@ public class CommandInvite extends CommandBase.IslandCommand {
         }
 
         if (user == null || args.hasAny(LIST)) {
-            PaginationList.builder()
-                .title(Text.of(TextColors.AQUA, "Invite List"))
-                .header(getIslandLimit(player))
-                .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-                .contents(PLUGIN.getInviteService().getInviteText(player).isEmpty()
-                    ? ImmutableList.of(Text.of(TextColors.RED, "You have no pending invites!"))
-                    : PLUGIN.getInviteService().getInviteText(player)
-                )
-                .sendTo(player);
+            PLUGIN.getInviteService().listIncomingInvites().accept(player);
         } else if (player.equals(user)) {
             throw new CommandException(Text.of(TextColors.RED, "You cannot invite yourself!"));
         } else if (island.getPrivilegeType(user) != PrivilegeType.NONE) {
@@ -97,31 +87,23 @@ public class CommandInvite extends CommandBase.IslandCommand {
                 island.getPrivilegeType(user).format(user.getName()), TextColors.RED, " is already a ", island.getPrivilegeType(user).toText(),
                 TextColors.RED, " on ", island.getName(), TextColors.RED, "!"
             ));
-        } else if (type == PrivilegeType.MEMBER && !island.isManager(player) || !island.getOwnerUniqueId().equals(player.getUniqueId())) {
+        } else if (!island.isOwner(player) || island.getPrivilegeType(player).ordinal() >= type.ordinal()) {
             throw new CommandException(Text.of(
                 TextColors.RED, "You do not have permission to send ", type == PrivilegeType.OWNER ? "an " : "a ",
                 type.toText(), TextColors.RED, " invite for ", island.getName(), TextColors.RED, "!"
             ));
         } else {
-            Invite invite = Invite.builder()
+            Invite.builder()
                 .island(island)
                 .sender(player)
                 .receiver(user)
                 .privilegeType(type)
-                .build();
-            if (PLUGIN.getInviteService().inviteExists(invite)) {
-                throw new CommandException(Text.of(TextColors.RED, "Invite already exists!"));
-            } else {
-                invite.send();
-                player.sendMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
-            }
+                .build()
+                .send();
+            player.sendMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
         }
 
         return CommandResult.success();
     }
 
-    private Text getIslandLimit(Player player) {
-        int limit = Options.getMaxIslands(player.getUniqueId());
-        return (limit < 1) ? null : Text.of(TextColors.GRAY, "You may join up to ", TextColors.LIGHT_PURPLE, limit, TextColors.GRAY, " islands.");
-    }
 }
