@@ -59,6 +59,8 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -118,11 +120,19 @@ public class CommandIsland extends CommandBase {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         List<Text> helpText = Lists.newArrayList();
 
-        helpText.add(Text.of(
-            TextColors.WHITE, "SkyClaims utilizes GriefPrevention for world protection and management. Go to ",
-            TextColors.YELLOW, "http://bit.ly/mcgpuser",
-            TextColors.WHITE, " to learn more."
-        ));
+        URL gpHelp = null;
+        try {
+            gpHelp = new URL("http://bit.ly/mcgpuser");
+        } catch (MalformedURLException ignored) {
+        }
+        Text gpInfo = Text.of(
+            TextColors.WHITE, "SkyClaims uses GriefPrevention to provide island protection. Learn more at ",
+            Text.builder("http://bit.ly/mcgpuser")
+                .color(TextColors.YELLOW)
+                .onHover(TextActions.showText(Text.of("Click to open")))
+                .onClick(gpHelp != null ? TextActions.openUrl(gpHelp) : null),
+            TextColors.WHITE, "."
+        );
 
         if (src.hasPermission(Permissions.COMMAND_CREATE)) {
             helpText.add(Text.of(
@@ -283,18 +293,19 @@ public class CommandIsland extends CommandBase {
             ));
         }
 
-        if (helpText.size() > 1) {
+        if (helpText.isEmpty()) {
+            src.sendMessage(Text.of(TextColors.AQUA, NAME, " ", VERSION));
+        } else {
             if (src instanceof Player) {
                 PaginationList.builder()
                     .title(Text.of(TextColors.AQUA, NAME, " Help"))
                     .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+                    .header(gpInfo)
                     .contents(helpText)
                     .sendTo(src);
             } else {
                 helpText.forEach(src::sendMessage);
             }
-        } else {
-            src.sendMessage(Text.of(NAME, " ", VERSION));
         }
 
         return CommandResult.success();

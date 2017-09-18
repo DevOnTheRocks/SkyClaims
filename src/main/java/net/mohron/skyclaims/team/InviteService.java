@@ -44,22 +44,12 @@ public class InviteService {
 
     private Table<User, User, Invite> invites = HashBasedTable.create();
 
-    private final Text inviteListHeader = Text.of(
-        TextColors.WHITE, "[",
-        Text.builder("Incoming")
-            .color(TextColors.GREEN)
-            .onHover(TextActions.showText(Text.of(TextColors.GREEN, "List incoming invites")))
-            .onClick(TextActions.executeCallback(listIncomingInvites())),
-        TextColors.WHITE, "] [",
-        Text.builder("Outgoing")
-            .color(TextColors.YELLOW)
-            .onHover(TextActions.showText(Text.of(TextColors.RED, "List outgoing invites")))
-            .onClick(TextActions.executeCallback(listOutgoingInvites())),
-        TextColors.WHITE, "] "
-    );
-
     public InviteService() {
 
+    }
+
+    private enum Type {
+        INCOMING, OUTGOING;
     }
 
     void addInvite(Invite invite) {
@@ -105,21 +95,7 @@ public class InviteService {
     }
 
     public Consumer<CommandSource> listIncomingInvites() {
-        return src -> {
-            if (src instanceof Player) {
-                Player player = (Player) src;
-                PaginationList.builder()
-                    .title(Text.of(TextColors.AQUA, "Invite List"))
-                    .header(getIslandLimit(player).concat(inviteListHeader))
-                    .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-                    .contents(
-                        PLUGIN.getInviteService().getIncomingInviteText(player).isEmpty()
-                            ? ImmutableList.of(Text.of(TextColors.RED, "You have no incoming invites!"))
-                            : PLUGIN.getInviteService().getIncomingInviteText(player)
-                    )
-                    .sendTo(player);
-            }
-        };
+        return listInvites(Type.INCOMING);
     }
 
     private List<Text> getOutgoingInviteText(User user) {
@@ -149,27 +125,49 @@ public class InviteService {
     }
 
     public Consumer<CommandSource> listOutgoingInvites() {
+        return listInvites(Type.OUTGOING);
+    }
+
+    private Consumer<CommandSource> listInvites(Type type) {
         return src -> {
             if (src instanceof Player) {
                 Player player = (Player) src;
+
+                Text title = Text.of(
+                    TextColors.AQUA, "Invites : ",
+                    TextColors.AQUA, (type == Type.INCOMING) ? "[" : Text.EMPTY,
+                    Text.builder("Incoming")
+                        .color((type == Type.INCOMING) ? TextColors.GREEN : TextColors.GRAY)
+                        .onHover(TextActions.showText(Text.of(TextColors.GREEN, "List incoming invites")))
+                        .onClick(TextActions.executeCallback(listIncomingInvites())),
+                    TextColors.AQUA, (type == Type.INCOMING) ? "] " : " [",
+                    Text.builder("Outgoing")
+                        .color((type == Type.OUTGOING) ? TextColors.YELLOW : TextColors.GRAY)
+                        .onHover(TextActions.showText(Text.of(TextColors.YELLOW, "List outgoing invites")))
+                        .onClick(TextActions.executeCallback(listOutgoingInvites())),
+                    TextColors.AQUA, (type == Type.OUTGOING) ? "]" : Text.EMPTY
+                );
+
+                List<Text> contents = (type == Type.INCOMING)
+                    ? PLUGIN.getInviteService().getIncomingInviteText(player)
+                    : PLUGIN.getInviteService().getOutgoingInviteText(player);
+                if (contents.isEmpty()) {
+                    contents = ImmutableList.of(Text.of(TextColors.RED, "You have no ", type.toString().toLowerCase(), " invites!"));
+                }
+
+                int limit = Options.getMaxIslands(player.getUniqueId());
+                Text header = (limit < 1)
+                    ? null
+                    : Text.of(TextColors.GRAY, "You may join up to ", TextColors.LIGHT_PURPLE, limit, TextColors.GRAY, " islands.", Text.NEW_LINE);
+
                 PaginationList.builder()
-                    .title(Text.of(TextColors.AQUA, "Invite List"))
-                    .header(getIslandLimit(player).concat(inviteListHeader))
+                    .title(title)
+                    .header(header)
                     .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-                    .contents(
-                        PLUGIN.getInviteService().getOutgoingInviteText(player).isEmpty()
-                            ? ImmutableList.of(Text.of(TextColors.RED, "You have no outgoing invites!"))
-                            : PLUGIN.getInviteService().getOutgoingInviteText(player)
-                    )
+                    .contents(contents)
                     .sendTo(player);
             }
         };
     }
 
-    private Text getIslandLimit(Player player) {
-        int limit = Options.getMaxIslands(player.getUniqueId());
-        return (limit < 1)
-            ? Text.EMPTY
-            : Text.of(TextColors.GRAY, "You may join up to ", TextColors.LIGHT_PURPLE, limit, TextColors.GRAY, " islands.", Text.NEW_LINE);
-    }
 }
