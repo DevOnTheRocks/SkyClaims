@@ -20,7 +20,7 @@ package net.mohron.skyclaims.world;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
@@ -30,6 +30,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.permissions.Options;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
@@ -53,9 +54,9 @@ import org.spongepowered.api.world.World;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -129,10 +130,7 @@ public class Island {
     }
 
     public static Optional<Island> get(UUID islandUniqueId) {
-        return SkyClaims.islands.entrySet().stream()
-            .filter(i -> i.getValue().getUniqueId().equals(islandUniqueId))
-            .map(Map.Entry::getValue)
-            .findFirst();
+        return Optional.ofNullable(SkyClaims.islands.get(islandUniqueId));
     }
 
     public static Optional<Island> get(Location<World> location) {
@@ -297,13 +295,73 @@ public class Island {
         return getWidth() == width;
     }
 
-    public Set<String> getMembers() {
-        Set<String> members = Sets.newHashSet();
+    public void addMember(User user) {
+        addMember(user, PrivilegeType.MEMBER);
+    }
+
+    public void addMember(User user, PrivilegeType type) {
+        switch (type) {
+            case OWNER:
+                UUID existingOwner = owner;
+                transfer(user);
+                getClaim().ifPresent(c -> c.addUserTrust(existingOwner, TrustType.MANAGER));
+                break;
+            case MANAGER:
+            case MEMBER:
+                getClaim().ifPresent(c -> c.addUserTrust(user.getUniqueId(), type.getTrustType()));
+                break;
+            case NONE:
+                getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), type.getTrustType()));
+                break;
+        }
+    }
+
+    public void promote(User user) {
+        getClaim().ifPresent(c -> {
+            if (c.isUserTrusted(user, TrustType.BUILDER)) {
+                c.removeUserTrust(user.getUniqueId(), TrustType.BUILDER);
+                c.addUserTrust(user.getUniqueId(), TrustType.MANAGER);
+            } else if (c.isUserTrusted(user, TrustType.MANAGER)) {
+                c.removeUserTrust(user.getUniqueId(), TrustType.MANAGER);
+                UUID existingOwner = owner;
+                transfer(user);
+                c.addUserTrust(existingOwner, TrustType.MANAGER);
+            }
+        });
+    }
+
+    public void demote(User user) {
+        getClaim().ifPresent(c -> {
+            if (c.isUserTrusted(user, TrustType.MANAGER)) {
+                c.removeUserTrust(user.getUniqueId(), TrustType.MANAGER);
+                c.addUserTrust(user.getUniqueId(), TrustType.BUILDER);
+            }
+        });
+    }
+
+    public void removeMember(User user) {
+        getClaim().ifPresent(c -> {
+            for (TrustType trustType : TrustType.values()) {
+                c.removeUserTrust(user.getUniqueId(), trustType);
+            }
+        });
+    }
+
+    public List<String> getMembers() {
+        List<String> members = Lists.newArrayList();
         if (!getClaim().isPresent()) {
             return members;
         }
         for (UUID builder : getClaim().get().getUserTrusts(TrustType.BUILDER)) {
             members.add(getName(builder));
+        }
+        return members;
+    }
+
+    public List<String> getManagers() {
+        List<String> members = Lists.newArrayList();
+        if (!getClaim().isPresent()) {
+            return members;
         }
         for (UUID manager : getClaim().get().getUserTrusts(TrustType.MANAGER)) {
             members.add(getName(manager));
@@ -333,6 +391,22 @@ public class Island {
     public boolean isManager(User user) {
         return user.getUniqueId().equals(owner)
             || (getClaim().isPresent() && getClaim().get().isUserTrusted(user, TrustType.MANAGER));
+    }
+
+    public boolean isOwner(User user) {
+        return user.getUniqueId().equals(owner);
+    }
+
+    public PrivilegeType getPrivilegeType(User user) {
+        if (isOwner(user)) {
+            return PrivilegeType.OWNER;
+        } else if (isManager(user)) {
+            return PrivilegeType.MANAGER;
+        } else if (isMember(user)) {
+            return PrivilegeType.MEMBER;
+        } else {
+            return PrivilegeType.NONE;
+        }
     }
 
     public Collection<Player> getPlayers() {

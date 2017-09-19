@@ -1,5 +1,9 @@
 # SkyClaims
 
+<img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/united_states.png" title="en-US" height="20"> <b>English</b> 
+| <a href="https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/README.zh-CN.md"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> Chinese</a>
+<hr/>
+
 SkyClaims is a plugin for SkyBlock servers that run [GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) for protection.
 Instead of reinventing the wheel and adding custom protection for islands, SkyClaims will implement claims from one of Sponge's most powerful plugins, GriefPrevention!
 With this design, nearly every GriefPrevention feature will be available to players for managing their islands.
@@ -11,15 +15,21 @@ This plugin is in Beta. Live support is available for the latest builds through 
 - [X] Complete control of command usage with granular permissions (ie specific biomes for setbiome)
 - [X] Automatic creation of islands and their encompassing claim
 - [X] Support multiple island designs via Sponge schematics
-- [X] Expanding islands using claim blocks or other resource (econ)
+- [X] Expanding islands using claim blocks
 - [X] Isolation of islands to their own Minecraft region file
-- [X] Allow spawn/tp on your island at a configurable location 
-- [X] Use GriefPrevention trust commands to work in teams
+- [X] Allow spawn/tp on your island at a configurable location
+- [X] Work in teams:
+    - [X] Invite new players to an island
+    - [X] Kick existing players from an island
+    - [X] Leave an island
+    - [X] Transfer island ownership to another player
+    - [ ] Limit the number of islands a player may join
 - [X] Change the biome of a block, chunk or entire island
 - [X] Limit entity spawning per island
-- [X] Automatic removal of inactive islands 
+- [X] Automatic removal of inactive islands
 - [ ] Configurable island layouts (linear & spiral planned)
-- [ ] Add an island messaging channel so you can chat within your island
+- [ ] Island messaging channel for chatting within your island
+- [ ] Economy support for schematics & island expansion
 
 ## Dependencies
 
@@ -28,7 +38,8 @@ This plugin is in Beta. Live support is available for the latest builds through 
    - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.12.2-4.2.0.334+
    - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended
 - **Optional:**
-   - [Nucleus](https://nucleuspowered.org) - 1.0.1-LTS+
+   - [Nucleus](https://nucleuspowered.org) - 1.1.3-LTS+
+   <!-- - Economy Plugin - [Economy Lite](https://ore.spongepowered.org/Flibio/EconomyLite), [Total Economy](https://ore.spongepowered.org/Erigitic/Total-Economy), or any other Sponge Economy plugin of your choosing. -->
 
 ## Additional Information
 

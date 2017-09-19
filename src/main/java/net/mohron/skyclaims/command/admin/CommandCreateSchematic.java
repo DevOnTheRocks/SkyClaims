@@ -44,7 +44,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class CommandCreateSchematic extends CommandBase {
+import javax.annotation.Nonnull;
+
+public class CommandCreateSchematic extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "used to save the selected area as an island schematic";
     private static final Text NAME = Text.of("name");
@@ -66,16 +68,10 @@ public class CommandCreateSchematic extends CommandBase {
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            src.sendMessage(Text.of(TextColors.RED, "You must be a player to use this command."));
-            return CommandResult.success();
-        }
-        Player player = (Player) src;
+    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
         SchematicHandler.PlayerData data = SchematicHandler.get(player);
         if (data.getPos1() == null || data.getPos2() == null) {
-            player.sendMessage(Text.of(TextColors.RED, "You must set both positions before copying"));
+            player.sendMessage(Text.of(TextColors.RED, "You must set both positions before copying."));
             return CommandResult.success();
         }
         Vector3i min = data.getPos1().min(data.getPos2());

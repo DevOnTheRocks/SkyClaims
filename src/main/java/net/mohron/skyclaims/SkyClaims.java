@@ -49,6 +49,7 @@ import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.listener.WorldLoadHandler;
 import net.mohron.skyclaims.metrics.Metrics;
+import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandCleanupTask;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -121,6 +122,8 @@ public class SkyClaims {
 
     private IDatabase database;
 
+    private InviteService inviteService;
+
     private boolean enabled = true;
 
     private static final String cleanup = "skyclaims.island.cleanup";
@@ -190,6 +193,8 @@ public class SkyClaims {
             enabled = false;
             return;
         }
+
+        inviteService = new InviteService();
 
         registerListeners();
         registerTasks();
@@ -318,6 +323,10 @@ public class SkyClaims {
 
     public PermissionService getPermissionService() {
         return permissionService;
+    }
+
+    public InviteService getInviteService() {
+        return inviteService;
     }
 
     public Logger getLogger() {

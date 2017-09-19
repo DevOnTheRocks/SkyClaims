@@ -20,6 +20,10 @@ compileJava {
     sourceCompatibility = targetCompatibility = "1.8"
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 repositories {
     jcenter()
     maven {
@@ -45,7 +49,7 @@ dependencies {
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
     runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
-    //compile fileTree(dir: 'libs', include: '*.jar')
+    //compile fileTree(dir: "libs", include: "*.jar")
 }
 
 shadowJar {

@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.config.type;
 
+import net.mohron.skyclaims.config.type.integration.GriefPrevention;
 import net.mohron.skyclaims.config.type.integration.NucleusConfig;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
@@ -25,8 +26,15 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class IntegrationConfig {
 
+    @Setting(value = "Grief-Prevention")
+    private GriefPrevention griefPrevention = new GriefPrevention();
+
     @Setting(value = "Nucleus")
     private NucleusConfig nucleus = new NucleusConfig();
+
+    public GriefPrevention getGriefPrevention() {
+        return griefPrevention;
+    }
 
     public NucleusConfig getNucleus() {
         return nucleus;

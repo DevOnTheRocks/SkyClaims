@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 public interface CommandRequirement extends CommandExecutor {
 
     interface RequiresIsland {
+
         CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException;
     }
 

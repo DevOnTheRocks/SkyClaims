@@ -77,7 +77,7 @@ public class CommandReset extends CommandBase.PlayerCommand {
         Optional<String> schematic = args.getOne(SCHEMATIC);
         if (schematic.isPresent()) {
             getConfirmation(island, schematic.get()).accept(player);
-        } else if (PLUGIN.getConfig().getWorldConfig().isListSchematics()) {
+        } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics()) {
             listSchematics(player, island);
         } else {
             getConfirmation(island, Options.getDefaultSchematic(player.getUniqueId())).accept(player);
