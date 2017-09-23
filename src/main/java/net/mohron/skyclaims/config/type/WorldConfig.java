@@ -52,11 +52,11 @@ public class WorldConfig {
     }
 
     public int getDefaultHeight() {
-        return (defaultHeight < 0 || defaultHeight > 255) ? 72 : defaultHeight;
+        return Math.min(1, Math.max(255, defaultHeight));
     }
 
     public int getSpawnRegions() {
-        return (spawnRegions < 1) ? 1 : spawnRegions;
+        return Math.min(1, spawnRegions);
     }
 
 }
