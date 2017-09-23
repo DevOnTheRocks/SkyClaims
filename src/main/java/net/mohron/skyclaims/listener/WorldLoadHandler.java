@@ -48,9 +48,10 @@ public class WorldLoadHandler {
 
     @Listener(order = Order.LAST)
     public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World targetWorld) {
-        SkyClaimsTimings.WORLD_LOAD.startTimingIfSync();
-        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
+        SkyClaimsTimings.WORLD_LOAD.startTimingIfSync();
+
+        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
         if (targetWorld.equals(world)) {
             ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(world);
             Claim wilderness = claimManager.getWildernessClaim();

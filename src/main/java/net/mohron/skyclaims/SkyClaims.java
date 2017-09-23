@@ -54,6 +54,7 @@ import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandCleanupTask;
+import net.mohron.skyclaims.world.gen.VoidWorldGeneratorModifier;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -64,21 +65,27 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.event.world.ConstructWorldPropertiesEvent;
+import org.spongepowered.api.event.world.LoadWorldEvent;
+import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -121,7 +128,7 @@ public class SkyClaims {
     @DefaultConfig(sharedRoot = false)
     private ConfigurationLoader<CommentedConfigurationNode> configManager;
     private ConfigManager pluginConfigManager;
-    private GlobalConfig defaultConfig;
+    private GlobalConfig config;
 
     private IDatabase database;
 
@@ -144,7 +151,7 @@ public class SkyClaims {
     public void onPreInitialization(GamePreInitializationEvent event) {
         logger.info("{} {} is initializing...", NAME, VERSION);
 
-        defaultConfig = new GlobalConfig();
+        config = new GlobalConfig();
         pluginConfigManager = new ConfigManager(configManager);
         pluginConfigManager.save();
 
@@ -203,26 +210,39 @@ public class SkyClaims {
         registerListeners();
         registerTasks();
         registerCommands();
+        addCustomMetrics();
     }
 
     @Listener
-    public void onServerStarted(GameStartedServerEvent event) {
-        if (!enabled) {
+    public void onConstructWorldProperties(ConstructWorldPropertiesEvent event) {
+        if (/*!event.getWorldProperties().isInitialized() &&*/ config.getWorldConfig().getVoidDimensions().contains(event.getWorldProperties().getWorldName())) {
+            Collection<WorldGeneratorModifier> modifiers = event.getWorldProperties().getGeneratorModifiers();
+            modifiers.add(new VoidWorldGeneratorModifier());
+            event.getWorldProperties().setGeneratorModifiers(modifiers);
+            logger.info("{} set to use the Enhanced Void World Generation Modifier.", event.getWorldProperties().getWorldName());
+        }
+    }
+
+    @Listener(order = Order.LATE)
+    public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World world) {
+        if (!enabled || !griefPrevention.isEnabled(world) || !world.equals(config.getWorldConfig().getWorld())) {
             return;
         }
 
-        database = initializeDatabase();
-
-        islands = database.loadData();
-        logger.info("{} islands loaded.", islands.size());
+        islands.putAll(database.loadData());
+        logger.info("{}: {} islands loaded.", world.getName(), islands.size());
         if (!saveQueue.isEmpty()) {
             logger.info("Saving {} claims that were malformed.", saveQueue.size());
             database.saveData(saveQueue);
         }
+    }
 
-        addCustomMetrics();
-
-        logger.info("Initialization complete.");
+    @Listener(order = Order.LATE)
+    public void onWorldUnload(UnloadWorldEvent event, @Getter(value = "getTargetWorld") World world) {
+        islands.values().stream()
+            .filter(island -> island.getWorld().equals(world))
+            .forEach(island -> islands.remove(island.getUniqueId()));
+        logger.info("{}: Islands unloaded.", world.getName());
     }
 
     @Listener
@@ -294,7 +314,7 @@ public class SkyClaims {
     }
 
     private IDatabase initializeDatabase() {
-        String type = defaultConfig.getStorageConfig().getType();
+        String type = config.getStorageConfig().getType();
         if (type.equalsIgnoreCase("SQLite")) {
             return new SqliteDatabase();
         } else if (type.equalsIgnoreCase("MySQL")) {
@@ -344,15 +364,11 @@ public class SkyClaims {
     }
 
     public GlobalConfig getConfig() {
-        return this.defaultConfig;
+        return this.config;
     }
 
     public void setConfig(GlobalConfig config) {
-        this.defaultConfig = config;
-    }
-
-    public ConfigManager getConfigManager() {
-        return this.pluginConfigManager;
+        this.config = config;
     }
 
     public Path getConfigDir() {
