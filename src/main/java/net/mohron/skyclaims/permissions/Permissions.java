@@ -22,14 +22,18 @@ public class Permissions {
 
     // User Permissions
     public static final String COMMAND_CREATE = "skyclaims.command.create";
+    public static final String COMMAND_DEMOTE = "skyclaims.command.demote";
     public static final String COMMAND_EXPAND = "skyclaims.command.expand";
     public static final String COMMAND_HOME = "skyclaims.command.home";
     public static final String COMMAND_INFO = "skyclaims.command.info";
     public static final String COMMAND_INVITE = "skyclaims.command.invite";
+    public static final String COMMAND_KICK = "skyclaims.command.kick";
+    public static final String COMMAND_LEAVE = "skyclaims.command.leave";
     public static final String COMMAND_LIST = "skyclaims.command.list.base";
     public static final String COMMAND_LIST_UNLOCKED = "skyclaims.command.list.unlocked";
     public static final String COMMAND_LIST_SORT = "skyclaims.command.list.sort";
     public static final String COMMAND_LOCK = "skyclaims.command.lock";
+    public static final String COMMAND_PROMOTE = "skyclaims.command.promote";
     public static final String COMMAND_REGEN = "skyclaims.command.regen";
     public static final String COMMAND_RESET = "skyclaims.command.reset";
     public static final String COMMAND_SPAWN = "skyclaims.command.spawn";
@@ -58,4 +62,5 @@ public class Permissions {
     public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
     public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
     public static final String COMMAND_TRANSFER = "skyclaims.admin.transfer";
+    public static final String BYPASS_TRUST = "skyclaims.admin.bypass.trust";
 }

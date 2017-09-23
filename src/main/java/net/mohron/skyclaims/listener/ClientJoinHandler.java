@@ -28,6 +28,9 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColors;
 
 public class ClientJoinHandler {
 
@@ -35,11 +38,14 @@ public class ClientJoinHandler {
 
     @Listener
     public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
-        SkyClaimsTimings.CLIENT_JOIN.startTimingIfSync();
-        if (!PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() || Island.hasIsland(player.getUniqueId())) {
-            SkyClaimsTimings.CLIENT_JOIN.abort();
-            return;
+        if (PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() && !Island.hasIsland(player.getUniqueId())) {
+            createIslandOnJoin(player);
         }
+        deliverInvites(player);
+    }
+
+    private void createIslandOnJoin(Player player) {
+        SkyClaimsTimings.CREATE_ISLAND_ON_JOIN.startTimingIfSync();
 
         Sponge.getScheduler().createTaskBuilder()
             .execute(src -> {
@@ -54,6 +60,26 @@ public class ClientJoinHandler {
             .delayTicks(40)
             .submit(PLUGIN);
 
-        SkyClaimsTimings.CLIENT_JOIN.stopTimingIfSync();
+        SkyClaimsTimings.CREATE_ISLAND_ON_JOIN.stopTimingIfSync();
+    }
+
+    private void deliverInvites(Player player) {
+        SkyClaimsTimings.DELIVER_INVITES.startTimingIfSync();
+
+        int invites = PLUGIN.getInviteService().getInviteCount(player);
+        if (invites > 0) {
+            player.sendMessage(Text.of(
+                TextColors.GRAY, "You have ",
+                TextColors.LIGHT_PURPLE, invites,
+                TextColors.GRAY, " waiting for your response! ",
+                TextColors.WHITE, "[",
+                Text.builder("OPEN")
+                    .color(TextColors.GREEN)
+                    .onClick(TextActions.executeCallback(PLUGIN.getInviteService().listIncomingInvites())),
+                TextColors.WHITE, "]"
+            ));
+        }
+
+        SkyClaimsTimings.DELIVER_INVITES.stopTimingIfSync();
     }
 }

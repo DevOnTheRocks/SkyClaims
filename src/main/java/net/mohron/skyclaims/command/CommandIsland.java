@@ -25,6 +25,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.mohron.skyclaims.PluginInfo;
+import net.mohron.skyclaims.command.team.CommandDemote;
+import net.mohron.skyclaims.command.team.CommandInvite;
+import net.mohron.skyclaims.command.team.CommandKick;
+import net.mohron.skyclaims.command.team.CommandLeave;
+import net.mohron.skyclaims.command.team.CommandPromote;
 import net.mohron.skyclaims.command.user.CommandCreate;
 import net.mohron.skyclaims.command.user.CommandExpand;
 import net.mohron.skyclaims.command.user.CommandInfo;
@@ -47,12 +52,15 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -93,9 +101,14 @@ public class CommandIsland extends CommandBase {
     private static void registerSubCommands() {
         CommandCreate.register();
         CommandExpand.register();
+        CommandDemote.register();
         CommandInfo.register();
+        CommandInvite.register();
+        CommandKick.register();
+        CommandLeave.register();
         CommandList.register();
         CommandLock.register();
+        CommandPromote.register();
         CommandRegen.register();
         CommandReset.register();
         CommandSetBiome.register();
@@ -106,13 +119,20 @@ public class CommandIsland extends CommandBase {
 
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         List<Text> helpText = Lists.newArrayList();
-        boolean hasPerms = false;
 
-        helpText.add(Text.of(
-            TextColors.WHITE, "SkyClaims utilizes GriefPrevention for world protection and management. Go to ",
-            TextColors.YELLOW, "http://bit.ly/mcgpuser",
-            TextColors.WHITE, " to learn more."
-        ));
+        URL gpHelp = null;
+        try {
+            gpHelp = new URL("http://bit.ly/mcgpuser");
+        } catch (MalformedURLException ignored) {
+        }
+        Text gpInfo = Text.of(
+            TextColors.WHITE, "SkyClaims uses GriefPrevention to provide island protection. Learn more at ",
+            Text.builder("http://bit.ly/mcgpuser")
+                .color(TextColors.YELLOW)
+                .onHover(TextActions.showText(Text.of("Click to open")))
+                .onClick(gpHelp != null ? TextActions.openUrl(gpHelp) : null),
+            TextColors.WHITE, "."
+        );
 
         if (src.hasPermission(Permissions.COMMAND_CREATE)) {
             helpText.add(Text.of(
@@ -121,16 +141,6 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandCreate.HELP_TEXT
             ));
-            hasPerms = true;
-        }
-
-        if (src.hasPermission(Permissions.COMMAND_HOME)) {
-            helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is home").onClick(TextActions.runCommand("/is home")),
-                TextColors.DARK_GRAY, " - ",
-                TextColors.DARK_GREEN, CommandHome.HELP_TEXT
-            ));
-            hasPerms = true;
         }
 
         if (src.hasPermission(Permissions.COMMAND_EXPAND)) {
@@ -140,7 +150,22 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandExpand.HELP_TEXT
             ));
-            hasPerms = true;
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_DEMOTE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is demote").onClick(TextActions.suggestCommand("/is demote ")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandDemote.HELP_TEXT
+            ));
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_HOME)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is home").onClick(TextActions.runCommand("/is home")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandHome.HELP_TEXT
+            ));
         }
 
         if (src.hasPermission(Permissions.COMMAND_INFO)) {
@@ -150,7 +175,33 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandInfo.HELP_TEXT
             ));
-            hasPerms = true;
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_INVITE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is invite").onClick(TextActions.runCommand("/is invite")),
+                TextColors.GRAY, " [user]",
+                TextColors.GRAY, " [privilege]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandInvite.HELP_TEXT
+            ));
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_KICK)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is kick").onClick(TextActions.suggestCommand("/is kick")),
+                TextColors.GRAY, " [user]",
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandKick.HELP_TEXT
+            ));
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_LEAVE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is leave").onClick(TextActions.runCommand("/is leave")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandLeave.HELP_TEXT
+            ));
         }
 
         if (src.hasPermission(Permissions.COMMAND_LIST)) {
@@ -161,7 +212,6 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandList.HELP_TEXT
             ));
-            hasPerms = true;
         }
 
         if (src.hasPermission(Permissions.COMMAND_LOCK)) {
@@ -171,7 +221,14 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandLock.HELP_TEXT
             ));
-            hasPerms = true;
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_PROMOTE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, Text.builder("is promote").onClick(TextActions.suggestCommand("/is promote ")),
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandPromote.HELP_TEXT
+            ));
         }
 
         if (src.hasPermission(Permissions.COMMAND_REGEN)) {
@@ -181,7 +238,6 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandRegen.HELP_TEXT
             ));
-            hasPerms = true;
         }
 
         if (src.hasPermission(Permissions.COMMAND_RESET)) {
@@ -191,7 +247,6 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandReset.HELP_TEXT
             ));
-            hasPerms = true;
         }
 
         if (src.hasPermission(Permissions.COMMAND_SET_BIOME)) {
@@ -202,7 +257,6 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandSetBiome.HELP_TEXT
             ));
-            hasPerms = true;
         }
 
         if (src.hasPermission(Permissions.COMMAND_SET_HOME)) {
@@ -211,7 +265,6 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandSetHome.HELP_TEXT
             ));
-            hasPerms = true;
         }
 
         if (src.hasPermission(Permissions.COMMAND_SET_SPAWN)) {
@@ -220,7 +273,6 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandSetSpawn.HELP_TEXT
             ));
-            hasPerms = true;
         }
 
         if (src.hasPermission(Permissions.COMMAND_SPAWN)) {
@@ -230,7 +282,6 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandSpawn.HELP_TEXT
             ));
-            hasPerms = true;
         }
 
         if (src.hasPermission(Permissions.COMMAND_LOCK)) {
@@ -240,17 +291,21 @@ public class CommandIsland extends CommandBase {
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandUnlock.HELP_TEXT
             ));
-            hasPerms = true;
         }
 
-        if (hasPerms) {
-            PaginationList.builder()
-                .title(Text.of(TextColors.AQUA, NAME, " Help"))
-                .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-                .contents(helpText)
-                .sendTo(src);
+        if (helpText.isEmpty()) {
+            src.sendMessage(Text.of(TextColors.AQUA, NAME, " ", VERSION));
         } else {
-            src.sendMessage(Text.of(NAME + " " + VERSION));
+            if (src instanceof Player) {
+                PaginationList.builder()
+                    .title(Text.of(TextColors.AQUA, NAME, " Help"))
+                    .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+                    .header(gpInfo)
+                    .contents(helpText)
+                    .sendTo(src);
+            } else {
+                helpText.forEach(src::sendMessage);
+            }
         }
 
         return CommandResult.success();

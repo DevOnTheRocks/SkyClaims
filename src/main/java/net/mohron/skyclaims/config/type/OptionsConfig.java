@@ -28,10 +28,12 @@ public class OptionsConfig {
     private String schematic = "skyfactory";
     @Setting(value = "default-biome", comment = "The biome type to use, if any, to set an island to on creation and reset.")
     private String biome = "";
-    @Setting(value = "min-size", comment = "Half of the width of an island, in blocks, used to claim the player's usable space.")
+    @Setting(value = "min-size", comment = "Half of the width of an island, in blocks, used to claim the player's usable space (8-256).")
     private int minSize = 48;
-    @Setting(value = "max-size", comment = "Half of the max width of an island, in blocks.")
+    @Setting(value = "max-size", comment = "Half of the max width of an island, in blocks (min-256).")
     private int maxSize = 64;
+    @Setting(value = "max-islands", comment = "The max number of islands a player can join. 0 to disable.")
+    private int maxIslands = 0;
 
     public String getSchematic() {
         return schematic;
@@ -42,10 +44,14 @@ public class OptionsConfig {
     }
 
     public int getMinSize() {
-        return (minSize < 8 || minSize > 256) ? 48 : minSize;
+        return Math.max(8, Math.min(minSize, 256));
     }
 
     public int getMaxSize() {
-        return (maxSize < minSize || maxSize > 256) ? minSize : maxSize;
+        return Math.max(minSize, Math.min(maxSize, 256));
+    }
+
+    public int getMaxIslands() {
+        return maxIslands;
     }
 }

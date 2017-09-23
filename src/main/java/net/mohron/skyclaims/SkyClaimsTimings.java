@@ -30,6 +30,8 @@ public class SkyClaimsTimings {
 
     // LISTENERS
     public static final Timing CLIENT_JOIN = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onClientJoin");
+    public static final Timing CREATE_ISLAND_ON_JOIN = Timings.of(SkyClaims.getInstance().getPluginContainer(), "createIslandOnJoin", CLIENT_JOIN);
+    public static final Timing DELIVER_INVITES = Timings.of(SkyClaims.getInstance().getPluginContainer(), "deliverInvites", CLIENT_JOIN);
     public static final Timing ENTITY_SPAWN = Timings.of(SkyClaims.getInstance().getPluginContainer(), "EntitySpawn");
     public static final Timing PLAYER_RESPAWN = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onPlayerRespawn");
     public static final Timing SCHEMATIC_HANDLER = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onSelectSchematic");
