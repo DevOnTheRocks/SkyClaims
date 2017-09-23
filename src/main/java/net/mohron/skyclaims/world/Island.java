@@ -45,6 +45,8 @@ import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.service.context.Context;
+import org.spongepowered.api.service.context.ContextSource;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -60,12 +62,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Island {
+public class Island implements ContextSource {
 
     private static final SkyClaims PLUGIN = SkyClaims.getInstance();
     private static final IRegionPattern PATTERN = new SpiralRegionPattern();
 
-    private UUID id;
+    private final UUID id;
+    private final Context context;
+
     private UUID owner;
     private UUID claim;
     private Transform<World> spawn;
@@ -73,7 +77,7 @@ public class Island {
 
     public Island(User owner, String schematic) throws CreateIslandException {
         this.id = UUID.randomUUID();
-
+        this.context = new Context("island", this.id.toString());
         this.owner = owner.getUniqueId();
         Region region;
         try {
@@ -105,6 +109,7 @@ public class Island {
 
     public Island(UUID id, UUID owner, UUID claimId, Vector3d spawnLocation, boolean locked) {
         this.id = id;
+        this.context = new Context("island", this.id.toString());
         this.owner = owner;
         this.spawn = new Transform<>(PLUGIN.getConfig().getWorldConfig().getWorld(), spawnLocation);
         this.locked = locked;
@@ -179,6 +184,10 @@ public class Island {
 
     public UUID getUniqueId() {
         return id;
+    }
+
+    @Override public Context getContext() {
+        return this.context;
     }
 
     public UUID getOwnerUniqueId() {
@@ -384,8 +393,8 @@ public class Island {
 
     public boolean isMember(User user) {
         return user.getUniqueId().equals(owner)
-            || (getClaim().isPresent()
-            && getClaim().get().isUserTrusted(user, TrustType.BUILDER)
+            || getClaim().isPresent()
+            && (getClaim().get().isUserTrusted(user, TrustType.BUILDER)
             || getClaim().get().isUserTrusted(user, TrustType.MANAGER));
     }
 
