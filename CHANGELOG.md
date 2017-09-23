@@ -5,7 +5,7 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
-# Beta 25 SNAPSHOT - S7.0
+# Beta 25 - S7.0
 **REQUIRED: SF build 2624+ & GP build 4.2.0.418+ OPTIONAL: Nucleus version 1.2.0+**
 - Added island invite & rank system for working together with other players
     - Added `/is invite` - `skyclaims.command.invite`

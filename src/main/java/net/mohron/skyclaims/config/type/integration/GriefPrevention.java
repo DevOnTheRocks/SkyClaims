@@ -19,13 +19,10 @@
 package net.mohron.skyclaims.config.type.integration;
 
 import com.google.common.collect.Lists;
-import me.ryanhamshire.griefprevention.api.claim.ClaimFlag;
 import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import org.spongepowered.api.util.Tristate;
 
-import java.util.EnumMap;
 import java.util.List;
 
 @ConfigSerializable
