@@ -92,7 +92,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
         if (blocks < 1) {
             player.sendMessage(Text.of(
                 TextColors.GRAY, "It will cost ",
-                TextColors.LIGHT_PURPLE, (Math.pow((width + 1), 2) * 256 - claim.getArea()),
+                TextColors.LIGHT_PURPLE, (int) Math.pow(width + 1, 2) * (GP.isWildernessCuboidsEnabled() ? 256 : 1) - claim.getClaimBlocks(),
                 TextColors.GRAY, " claim blocks to expand your island by ",
                 TextColors.LIGHT_PURPLE, "1",
                 TextColors.GRAY, "."
@@ -117,9 +117,9 @@ public class CommandExpand extends CommandBase.IslandCommand {
         PlayerData playerData = GP.getWorldPlayerData(island.getWorld().getProperties(), island.getOwnerUniqueId())
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load GriefPrevention player data.")));
         int bal = playerData.getRemainingClaimBlocks();
-        int cost = (int) (Math.pow(width + blocks, 2) - claim.getArea()) * 256;
+        int cost = (int) Math.pow(width + blocks, 2) * (GP.isWildernessCuboidsEnabled() ? 256 : 1) - claim.getClaimBlocks();
 
-        // Check if the TextColors.RED,  has enough claim blocks to expand
+        // Check if the Owner, has enough claim blocks to expand
         if (bal < cost) {
             throw new CommandException(Text.of(
                 TextColors.RED, "You need ",
@@ -132,7 +132,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
             ));
         }
 
-        // Use the TextColors.RED, 's claim blocks to expand the island
+        // Use the Owner's claim blocks to expand the island
         playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks() - cost);
         island.expand(blocks);
         player.sendMessage(Text.of(
