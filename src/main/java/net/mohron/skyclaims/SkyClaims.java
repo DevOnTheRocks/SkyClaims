@@ -46,6 +46,7 @@ import net.mohron.skyclaims.integration.nucleus.NucleusIntegration;
 import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.EntitySpawnHandler;
+import net.mohron.skyclaims.listener.NetherPortalHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.listener.WorldLoadHandler;
@@ -265,6 +266,10 @@ public class SkyClaims {
 
         if (getConfig().getEntityConfig().isLimitSpawning()) {
             getGame().getEventManager().registerListeners(this, new EntitySpawnHandler());
+        }
+
+        if (getConfig().getWorldConfig().getNether().isPortalFix()) {
+            getGame().getEventManager().registerListeners(this, new NetherPortalHandler());
         }
     }
 

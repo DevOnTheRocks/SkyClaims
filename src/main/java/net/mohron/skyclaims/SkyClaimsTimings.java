@@ -37,5 +37,6 @@ public class SkyClaimsTimings {
     public static final Timing SCHEMATIC_HANDLER = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onSelectSchematic");
     public static final Timing WORLD_LOAD = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onWorldLoad");
     public static final Timing CLAIM_HANDLER = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onClaimEvent");
+    public static final Timing PORTAL_HANDLER = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onPortalUse");
 
 }
