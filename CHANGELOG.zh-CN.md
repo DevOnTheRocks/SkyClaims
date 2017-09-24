@@ -1,11 +1,14 @@
 # 更新日志
 
+<a href="https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/CHANGELOG.md"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/united_states.png" title="en-US" height="20"> English</a>
+| <img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> <b>Chinese</b>
+
 ## 即将到来的更新
 **必须插件：SF 2558+ & GP 4.0.0.415+ 可选插件：Nucleus 1.1.3+**
 - 添加空白世界生成的能力
 - 修复地狱门
 
-#Beta 25 - S5.1
+# Beta 25 - S5.1
 **必须插件：SF 2558+ & GP 4.0.0.415+ 可选插件：Nucleus 1.1.3+**
 - 添加空岛邀请以及排名系统
     - 添加命令 `/is invite` - `skyclaims.command.invite`

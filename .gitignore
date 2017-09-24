@@ -6,9 +6,9 @@
 !/.gitignore
 !/build.gradle
 !/gradlew*
-!/CHANGELOG.md
+!/CHANGELOG*.md
 !/LICENSE.md
-!/README*
+!/README*.md
 !/settings.gradle
 !/SkyClaims.xml
 !/.travis.yml

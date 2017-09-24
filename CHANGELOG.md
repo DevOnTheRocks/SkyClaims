@@ -1,5 +1,8 @@
 # Change Log
 
+<img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/united_states.png" title="en-US" height="20"> <b>English</b> 
+| <a href="https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/CHANGELOG.zh-CN.md"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> Chinese</a>
+
 ## Upcoming/Unreleased Features, Changes & Bugfixes
 **REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
 - Added Void World Generation capabilities
