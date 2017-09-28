@@ -8,6 +8,12 @@
 - 添加空白世界生成的能力
 - 修复地狱门
 
+# Beta 25.1 - S5.1 Hotfix
+**必须插件：SF 2558+ & GP 4.0.0.415+ 可选插件：Nucleus 1.1.3+**
+- Fixed islands being created at Y 1 instead of the configured height.
+- Added configurable spawn world
+- Added `/scversion` - `skyclaims.admin.version` to aid in debugging dependency issues
+
 # Beta 25 - S5.1
 **必须插件：SF 2558+ & GP 4.0.0.415+ 可选插件：Nucleus 1.1.3+**
 - 添加空岛邀请以及排名系统
