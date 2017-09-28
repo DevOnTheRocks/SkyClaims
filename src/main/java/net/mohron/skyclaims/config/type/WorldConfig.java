@@ -23,6 +23,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.List;
@@ -32,6 +33,8 @@ public class WorldConfig {
 
     @Setting(value = "SkyClaims-World", comment = "Name of the world to manage islands in. Default: world")
     private String worldName = "world";
+    @Setting(value = "Spawn-World", comment = "Use to override the world used when sending players to spawn.")
+    private String spawnWorld = "";
     @Setting(value = "Void-Dimensions", comment = "A list of world names to generate as void. Default: world, DIM-1, DIM1")
     private List<String> voidDimensions = Lists.newArrayList("world", "DIM-1", "DIM1");
     @Setting(value = "Island-Height", comment = "Height to build islands at (0-255). Default: 72")
@@ -43,12 +46,13 @@ public class WorldConfig {
         return SkyClaims.getInstance().getGame().getServer().getWorld(worldName).orElse(WorldUtil.getDefaultWorld());
     }
 
-    public List<String> getVoidDimensions() {
-        return voidDimensions;
+    public Location<World> getSpawn() {
+        World world = SkyClaims.getInstance().getGame().getServer().getWorld(spawnWorld).orElse(WorldUtil.getDefaultWorld());
+        return world.isLoaded() ? world.getSpawnLocation() : getWorld().getSpawnLocation();
     }
 
-    public String getWorldName() {
-        return worldName;
+    public List<String> getVoidDimensions() {
+        return voidDimensions;
     }
 
     public int getDefaultHeight() {

@@ -5,6 +5,7 @@
 
 ## Upcoming/Unreleased Features, Changes & Bugfixes
 **REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+- Added configurable spawn world
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
