@@ -62,5 +62,6 @@ public class Permissions {
     public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
     public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
     public static final String COMMAND_TRANSFER = "skyclaims.admin.transfer";
+    public static final String COMMAND_VERSION = "skyclaims.admin.version";
     public static final String BYPASS_TRUST = "skyclaims.admin.bypass.trust";
 }

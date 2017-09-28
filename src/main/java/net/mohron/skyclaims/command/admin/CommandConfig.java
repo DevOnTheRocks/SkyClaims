@@ -92,7 +92,7 @@ public class CommandConfig extends CommandBase {
         configText.add(Text.of(
             TextColors.BLUE, "World", TextColors.WHITE, " | ",
             TextColors.YELLOW, "Island-Height", TextColors.WHITE, " : ",
-            TextColors.GRAY, config.getWorldConfig().getDefaultHeight()
+            TextColors.GRAY, config.getWorldConfig().getIslandHeight()
         ));
         configText.add(Text.of(
             TextColors.BLUE, "World", TextColors.WHITE, " | ",

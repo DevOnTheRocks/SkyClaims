@@ -1,9 +1,18 @@
 # Change Log
 
+<img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/united_states.png" title="en-US" height="20"> <b>English</b> 
+| <a href="https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-7/CHANGELOG.zh-CN.md"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> Chinese</a>
+
 ## Upcoming/Unreleased Features, Changes & Bugfixes
-**REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+**REQUIRED: SF build 2624+ & GP build 4.2.0.418+ OPTIONAL: Nucleus version 1.2.0+**
 - Added Void World Generation capabilities
 - Added Nether portal fix
+
+# Beta 25.1 - S7.0 Hotfix 
+**REQUIRED: SF build 2624+ & GP build 4.2.0.418+ OPTIONAL: Nucleus version 1.2.0+**
+- Fixed islands being created at Y 1 instead of the configured height.
+- Added configurable spawn world
+- Added `/scversion` - `skyclaims.admin.version` to aid in debugging dependency issues
 
 # Beta 25 - S7.0
 **REQUIRED: SF build 2624+ & GP build 4.2.0.418+ OPTIONAL: Nucleus version 1.2.0+**

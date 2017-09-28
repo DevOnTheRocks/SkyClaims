@@ -126,8 +126,7 @@ public class CommandReset extends CommandBase.PlayerCommand {
             player.getInventory().clear();
 
             // Teleport any players located in the island's region to spawn
-            Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
-            island.getPlayers().forEach(p -> p.setLocationSafely(spawn));
+            island.getPlayers().forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
 
             player.sendMessage(Text.of("Please be patient while your island is reset."));
             island.reset(schematic);

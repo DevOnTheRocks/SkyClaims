@@ -67,7 +67,7 @@ public class RegenerateRegionTask implements Runnable {
                     chunk.loadChunk(false);
                     // Teleport any players to world spawn
                     chunk.getEntities(e -> e instanceof Player)
-                        .forEach(e -> e.setLocationSafely(world.getSpawnLocation()));
+                        .forEach(e -> e.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
                     // Clear the contents of an tile entity with an inventory
                     chunk.getTileEntities(e -> e instanceof TileEntityCarrier)
                         .forEach(e -> ((TileEntityCarrier) e).getInventory().clear());

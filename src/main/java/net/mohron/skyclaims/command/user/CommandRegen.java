@@ -87,8 +87,7 @@ public class CommandRegen extends CommandBase {
     private Consumer<CommandSource> regen(Island island, String schematic) {
         return src -> {
             // Teleport any players located in the island's region to spawn
-            Location<World> spawn = PLUGIN.getConfig().getWorldConfig().getWorld().getSpawnLocation();
-            island.getPlayers().forEach(p -> p.setLocationSafely(spawn));
+            island.getPlayers().forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
 
             src.sendMessage(Text.of("Please be patient while your island is reset."));
             island.regen(schematic);
