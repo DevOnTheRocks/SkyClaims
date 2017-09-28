@@ -9,6 +9,11 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
+# Beta 25.1 - S5.1 Hotfix 
+**REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+- Fixed islands being created at Y 1 instead of the configured height.
+- Added `/scversion` - `skyclaims.admin.version` to aid in debugging dependency issues
+
 # Beta 25 - S5.1
 **REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
 - Added island invite & rank system for working together with other players
