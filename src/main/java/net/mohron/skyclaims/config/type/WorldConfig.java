@@ -47,7 +47,7 @@ public class WorldConfig {
     }
 
     public Location<World> getSpawn() {
-        World world = SkyClaims.getInstance().getGame().getServer().getWorld(spawnWorld).orElse(WorldUtil.getDefaultWorld());
+        World world = SkyClaims.getInstance().getGame().getServer().getWorld(spawnWorld).orElse(getWorld());
         return world.isLoaded() ? world.getSpawnLocation() : getWorld().getSpawnLocation();
     }
 
