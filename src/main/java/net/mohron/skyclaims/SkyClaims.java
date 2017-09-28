@@ -35,6 +35,7 @@ import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandAdmin;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.SchematicArgument;
+import net.mohron.skyclaims.command.debug.CommandVersion;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import net.mohron.skyclaims.database.IDatabase;
@@ -183,6 +184,7 @@ public class SkyClaims {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Listener(order = Order.LATE)
     public void onAboutToStart(GameAboutToStartServerEvent event) {
+        registerDebugCommands();
         if (!enabled) {
             return;
         }
@@ -274,6 +276,10 @@ public class SkyClaims {
                 .async()
                 .submit(this);
         }
+    }
+
+    private void registerDebugCommands() {
+        CommandVersion.register();
     }
 
     private void registerCommands() {
