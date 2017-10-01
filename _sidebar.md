@@ -1,0 +1,8 @@
+﻿  - [Home](README.md)
+  - [FAQ](faq.md)
+  - [Commands](commands.md)
+  - [Island Layout](island-layout.md)
+  - [Biome Types](biome-types.md)
+  - [Options](options.md)
+  - [Schematics](schematics.md)
+  - [Permissions](https://github.com/DevOnTheRocks/SkyClaims/blob/development/src/main/java/net/mohron/skyclaims/permissions/Permissions.java)

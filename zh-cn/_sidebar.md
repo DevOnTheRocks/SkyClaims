@@ -1,0 +1,8 @@
+﻿  - [首页](zh-cn/README.md)
+  - [FAQ](zh-cn/faq.md)
+  - [命令](zh-cn/commands.md)
+  - [空岛生成相关](zh-cn/island-layout.md)
+  - [生物群落类别](zh-cn/biome-types.md)
+  - [设置](zh-cn/options.md)
+  - [空岛模板](zh-cn/schematics.md)
+  - [权限管理](https://github.com/DevOnTheRocks/SkyClaims/blob/development/src/main/java/net/mohron/skyclaims/permissions/Permissions.java)

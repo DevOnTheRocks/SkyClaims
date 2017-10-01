@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkyClaims Docs</title>
+  <meta name="description" content="Description">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+    <style>
+    .app-nav li ul {
+        overflow-y: hidden;
+    }
+    </style>
+</head>
+<body>
+  <div id="app">Please wait...</div>
+</body>
+<script>
+  window.$docsify = {
+    name: 'SkyClaims Docs',
+    repo: '',
+    loadSidebar: true,
+    externalLinkTarget: '_blank',
+    loadNavbar: true,
+    search: {
+      noData: {
+        '/zh-cn/': '没有结果!',
+        '/': 'No results!'
+      },
+      paths: 'auto',
+      placeholder: {
+        '/zh-cn/': '搜索',
+        '/': 'Search'
+      }
+    },
+  }
+</script>
+<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+</html>
