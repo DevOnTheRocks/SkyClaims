@@ -26,6 +26,7 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
+import me.ryanhamshire.griefprevention.api.data.PlayerData;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
@@ -84,7 +85,7 @@ public class ClaimUtil {
         return claim;
     }
 
-    private static ClaimResult createIslandClaimResult(@Nonnull UUID ownerUniqueId, @Nonnull Region region) {
+    private static ClaimResult createIslandClaimResult(@Nonnull UUID ownerUniqueId, @Nonnull Region region) throws CreateIslandException {
         int initialSpacing = 256 - Options.getMinSize(ownerUniqueId);
         World world = PLUGIN.getConfig().getWorldConfig().getWorld();
         checkNotNull(world, "Error Creating Claim: World (%s) is null", world.getName());
@@ -92,16 +93,19 @@ public class ClaimUtil {
         checkNotNull(ownerUniqueId, "Error Creating Claim: Owner is null");
         checkNotNull(region, "Error Creating Claim: Region is null");
 
+        PlayerData playerData = PLUGIN.getGriefPrevention().getWorldPlayerData(world.getProperties(), ownerUniqueId)
+            .orElseThrow(() -> new CreateIslandException(Text.of(TextColors.RED, "Unable to load GriefPrevention player data!")));
+
         return Claim.builder()
-            .type(ClaimType.BASIC)
+            .type(ClaimType.TOWN)
             .world(world)
             .bounds(
                 new Vector3i(
-                    region.getLesserBoundary().getX() + initialSpacing, 0,
+                    region.getLesserBoundary().getX() + initialSpacing, playerData.getMinClaimLevel(),
                     region.getLesserBoundary().getZ() + initialSpacing
                 ),
                 new Vector3i(
-                    region.getGreaterBoundary().getX() - initialSpacing, 255,
+                    region.getGreaterBoundary().getX() - initialSpacing, playerData.getMaxClaimLevel(),
                     region.getGreaterBoundary().getZ() - initialSpacing
                 )
             )

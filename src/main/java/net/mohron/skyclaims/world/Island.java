@@ -25,6 +25,7 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
+import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
@@ -53,6 +54,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -123,6 +125,9 @@ public class Island implements ContextSource {
             // Resize claims smaller than the player's initial-size
             if (claim.getWidth() < initialWidth) {
                 setWidth(initialWidth);
+            }
+            if (claim.getType() != ClaimType.TOWN) {
+                claim.changeType(ClaimType.TOWN);
             }
         } else {
             try {
@@ -221,11 +226,11 @@ public class Island implements ContextSource {
     }
 
     public Date getDateCreated() {
-        return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateCreated()) : null;
+        return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateCreated()) : Date.from(Instant.now());
     }
 
     public Date getDateLastActive() {
-        return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateLastActive()) : null;
+        return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateLastActive()) : Date.from(Instant.now());
     }
 
     public Text getName() {
@@ -305,10 +310,6 @@ public class Island implements ContextSource {
         return getWidth() == width;
     }
 
-    public void addMember(User user) {
-        addMember(user, PrivilegeType.MEMBER);
-    }
-
     public void addMember(User user, PrivilegeType type) {
         switch (type) {
             case OWNER:
@@ -329,10 +330,10 @@ public class Island implements ContextSource {
     public void promote(User user) {
         getClaim().ifPresent(c -> {
             if (c.isUserTrusted(user, TrustType.BUILDER)) {
-                c.removeUserTrust(user.getUniqueId(), TrustType.BUILDER, PLUGIN.getCause());
+                c.removeUserTrust(user.getUniqueId(), TrustType.NONE, PLUGIN.getCause());
                 c.addUserTrust(user.getUniqueId(), TrustType.MANAGER, PLUGIN.getCause());
             } else if (c.isUserTrusted(user, TrustType.MANAGER)) {
-                c.removeUserTrust(user.getUniqueId(), TrustType.MANAGER, PLUGIN.getCause());
+                c.removeUserTrust(user.getUniqueId(), TrustType.NONE, PLUGIN.getCause());
                 UUID existingOwner = owner;
                 transfer(user);
                 c.addUserTrust(existingOwner, TrustType.MANAGER, PLUGIN.getCause());
@@ -343,18 +344,14 @@ public class Island implements ContextSource {
     public void demote(User user) {
         getClaim().ifPresent(c -> {
             if (c.isUserTrusted(user, TrustType.MANAGER)) {
-                c.removeUserTrust(user.getUniqueId(), TrustType.MANAGER, PLUGIN.getCause());
+                c.removeUserTrust(user.getUniqueId(), TrustType.NONE, PLUGIN.getCause());
                 c.addUserTrust(user.getUniqueId(), TrustType.BUILDER, PLUGIN.getCause());
             }
         });
     }
 
     public void removeMember(User user) {
-        getClaim().ifPresent(c -> {
-            for (TrustType trustType : TrustType.values()) {
-                c.removeUserTrust(user.getUniqueId(), trustType, PLUGIN.getCause());
-            }
-        });
+        getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), TrustType.NONE, PLUGIN.getCause()));
     }
 
     public List<String> getMembers() {

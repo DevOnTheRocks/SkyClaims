@@ -41,40 +41,46 @@ public class SchematicHandler {
 
     private static final Map<UUID, PlayerData> PLAYER_DATA = Maps.newHashMap();
 
-    public static PlayerData get(Player pl) {
-        return PLAYER_DATA.computeIfAbsent(pl.getUniqueId(), k -> new PlayerData(pl.getUniqueId()));
-    }
-
     @Listener
     public void onInteract(InteractBlockEvent.Secondary.MainHand event, @Root Player player) {
         SkyClaimsTimings.SCHEMATIC_HANDLER.startTimingIfSync();
+
         if (!player.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
             SkyClaimsTimings.SCHEMATIC_HANDLER.abort();
             return;
         }
+
         Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
         if (item.isPresent() && item.get().getItem().equals(ItemTypes.GOLDEN_AXE) && event.getTargetBlock() != BlockSnapshot.NONE) {
             get(player).setPos2(event.getTargetBlock().getPosition());
             player.sendMessage(Text.of(TextColors.LIGHT_PURPLE, "Position 2 set to " + event.getTargetBlock().getPosition()));
             event.setCancelled(true);
         }
+
         SkyClaimsTimings.SCHEMATIC_HANDLER.stopTimingIfSync();
     }
 
     @Listener
     public void onInteract(InteractBlockEvent.Primary.MainHand event, @Root Player player) {
         SkyClaimsTimings.SCHEMATIC_HANDLER.startTimingIfSync();
+
         if (!player.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
             SkyClaimsTimings.SCHEMATIC_HANDLER.abort();
             return;
         }
+
         Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
         if (item.isPresent() && item.get().getItem().equals(ItemTypes.GOLDEN_AXE)) {
             get(player).setPos1(event.getTargetBlock().getPosition());
             player.sendMessage(Text.of(TextColors.LIGHT_PURPLE, "Position 1 set to " + event.getTargetBlock().getPosition()));
             event.setCancelled(true);
         }
+
         SkyClaimsTimings.SCHEMATIC_HANDLER.stopTimingIfSync();
+    }
+
+    public static PlayerData get(Player pl) {
+        return PLAYER_DATA.computeIfAbsent(pl.getUniqueId(), k -> new PlayerData(pl.getUniqueId()));
     }
 
     public static class PlayerData {

@@ -4,9 +4,16 @@
 | <a href="https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/CHANGELOG.zh-CN.md"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> Chinese</a>
 
 ## Upcoming/Unreleased Features, Changes & Bugfixes
-**REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+**REQUIRED: SF build 2637+ & GP build 4.0.1.440+ OPTIONAL: Nucleus version 1.1.3+**
 - Added Void World Generation capabilities
 - Added Nether portal fix
+
+# Beta 26 - S5.1
+**REQUIRED: SF build 2637+ & GP build 4.0.1.440+ OPTIONAL: Nucleus version 1.1.3+**
+- Updated for latest GP API changes
+- Islands now use the TOWN claim type.
+- Fixed a rare NPE that would occur when using `/is info` on an island with a missing claim
+- Islands **should** support the new min/max level options in GP
 
 # Beta 25.1 - S5.1 Hotfix
 **REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**

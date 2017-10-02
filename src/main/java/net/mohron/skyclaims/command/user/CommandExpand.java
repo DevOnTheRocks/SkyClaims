@@ -20,6 +20,7 @@ package net.mohron.skyclaims.command.user;
 
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
+import me.ryanhamshire.griefprevention.api.claim.ClaimBlockSystem;
 import me.ryanhamshire.griefprevention.api.data.PlayerData;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
@@ -67,6 +68,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
     }
 
     @Override public CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException {
+        boolean useVolume = GP.getClaimBlockSystem() == ClaimBlockSystem.VOLUME;
         int blocks = args.<Integer>getOne(BLOCKS).orElse(0);
 
         Claim claim = island.getClaim()
@@ -92,7 +94,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
         if (blocks < 1) {
             player.sendMessage(Text.of(
                 TextColors.GRAY, "It will cost ",
-                TextColors.LIGHT_PURPLE, (int) Math.pow(width + 1, 2) * (GP.isWildernessCuboidsEnabled() ? 256 : 1) - claim.getClaimBlocks(),
+                TextColors.LIGHT_PURPLE, (int) Math.pow(width + 1, 2) * (useVolume ? 256 : 1) - claim.getClaimBlocks(),
                 TextColors.GRAY, " claim blocks to expand your island by ",
                 TextColors.LIGHT_PURPLE, "1",
                 TextColors.GRAY, "."
@@ -115,9 +117,9 @@ public class CommandExpand extends CommandBase.IslandCommand {
         }
 
         PlayerData playerData = GP.getWorldPlayerData(island.getWorld().getProperties(), island.getOwnerUniqueId())
-            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load GriefPrevention player data.")));
+            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load GriefPrevention player data!")));
         int bal = playerData.getRemainingClaimBlocks();
-        int cost = (int) Math.pow(width + blocks, 2) * (GP.isWildernessCuboidsEnabled() ? 256 : 1) - claim.getClaimBlocks();
+        int cost = (int) Math.pow(width + blocks, 2) * (useVolume ? 256 : 1) - claim.getClaimBlocks();
 
         // Check if the Owner, has enough claim blocks to expand
         if (bal < cost) {
