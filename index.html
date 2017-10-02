@@ -20,6 +20,7 @@
     name: 'SkyClaims Docs',
     repo: '',
     loadSidebar: true,
+    subMaxLevel: 3,
     externalLinkTarget: '_blank',
     loadNavbar: true,
     search: 'auto',
@@ -38,12 +39,19 @@
       function(hook, vm) {
         hook.beforeEach(function (html) {
           var url = 'https://github.com/DevOnTheRocks/SkyClaims/blob/gh-pages/' + vm.route.file
-          var editHtml = '[:memo: Edit this page](' + url + ')\n'
+          var editHtml = '[Edit this page on Github](' + url + ')\n'
 
-          return editHtml
-            + html
-            + '\n----\n'
+          return html
+            + '\n\n----\n'
             + editHtml
+        })
+      },
+      function (hook) {
+        hook.afterEach(function (html) {
+            html = html.replace(/<a/g, '<a target="_blank"')
+                .replace(/<li>\[\s\]/g, '<li class="check-box"><input onclick="return false" type="checkbox">')
+                .replace(/<li>\[(X|x)\]/g, '<li class="check-box"><input checked onclick="return false" type="checkbox">');
+            return html;
         })
       }
     ]
