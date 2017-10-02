@@ -85,7 +85,10 @@ public class CommandCreate extends CommandBase.PlayerCommand {
     }
 
     private CommandResult createIsland(Player player, String schematic) throws CommandException {
-        player.sendMessage(Text.of(TextColors.GREEN, "Your island is being created. You will be teleported shortly."));
+        player.sendMessage(Text.of(
+            TextColors.GREEN, "Your island is being created.",
+            PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
+        ));
 
         try {
             new Island(player, schematic);
@@ -118,7 +121,10 @@ public class CommandCreate extends CommandBase.PlayerCommand {
                     return;
                 }
                 try {
-                    player.sendMessage(Text.of(TextColors.GREEN, "Your island is being created. You will be teleported shortly."));
+                    player.sendMessage(Text.of(
+                        TextColors.GREEN, "Your island is being created.",
+                        PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
+                    ));
                     new Island(player, s);
                 } catch (CreateIslandException e) {
                     player.sendMessage(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getMessage()));
