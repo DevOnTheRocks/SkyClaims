@@ -1,5 +1,6 @@
 *
 !.gitignore
+!.nojekyll
 !*.md
 !*.htm*
 !*.png
