@@ -77,7 +77,7 @@ public class CommandCreate extends CommandBase.PlayerCommand {
         Optional<String> schematic = args.getOne(SCHEMATIC);
         if (schematic.isPresent()) {
             return createIsland(player, schematic.get());
-        } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics()) {
+        } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics() && SchematicArgument.SCHEMATICS.size() > 1) {
             return listSchematics(player);
         } else {
             return createIsland(player, Options.getDefaultSchematic(player.getUniqueId()));

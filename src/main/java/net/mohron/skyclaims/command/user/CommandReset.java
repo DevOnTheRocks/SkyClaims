@@ -37,8 +37,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +75,7 @@ public class CommandReset extends CommandBase.PlayerCommand {
         Optional<String> schematic = args.getOne(SCHEMATIC);
         if (schematic.isPresent()) {
             getConfirmation(island, schematic.get()).accept(player);
-        } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics()) {
+        } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics() && SchematicArgument.SCHEMATICS.size() > 1) {
             listSchematics(player, island);
         } else {
             getConfirmation(island, Options.getDefaultSchematic(player.getUniqueId())).accept(player);
