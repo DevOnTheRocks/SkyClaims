@@ -13,6 +13,7 @@
 - Updated for latest GP API changes
 - Islands now use the TOWN claim type.
 - Fixed a rare NPE that would occur when using `/is info` on an island with a missing claim
+- Added Sky Exchange island schematic _(must enable command blocks & recommend set World/Island-Height config to 1)_
 - Islands **should** support the new min/max level options in GP
 
 # Beta 25.1 - S5.1 Hotfix

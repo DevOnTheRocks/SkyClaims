@@ -155,6 +155,7 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_DEMOTE)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is demote").onClick(TextActions.suggestCommand("/is demote ")),
+                TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandDemote.HELP_TEXT
             ));
@@ -190,7 +191,7 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_KICK)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is kick").onClick(TextActions.suggestCommand("/is kick")),
-                TextColors.GRAY, " [user]",
+                TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandKick.HELP_TEXT
             ));
@@ -226,6 +227,7 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_PROMOTE)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is promote").onClick(TextActions.suggestCommand("/is promote ")),
+                TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandPromote.HELP_TEXT
             ));
