@@ -22,7 +22,6 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.Invite;
-import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
@@ -35,9 +34,9 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandInvite extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
@@ -69,7 +68,7 @@ public class CommandInvite extends CommandBase.IslandCommand {
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
         User user = args.<User>getOne(USER).orElse(null);
         PrivilegeType type = args.<PrivilegeType>getOne(PRIVILEGE).orElse(PrivilegeType.MEMBER);
 

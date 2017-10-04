@@ -38,12 +38,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@NonnullByDefault
 public class CommandList extends CommandBase {
 
     public static final String HELP_TEXT = "display a list of the current islands.";
@@ -71,7 +73,7 @@ public class CommandList extends CommandBase {
         }
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (SkyClaims.islands.isEmpty()) {
             src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
             return CommandResult.empty();

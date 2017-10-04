@@ -34,12 +34,14 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
+@NonnullByDefault
 public class CommandLock extends CommandBase {
 
     public static final String HELP_TEXT = "used to prevent untrusted players from visiting to your island.";
@@ -68,8 +70,7 @@ public class CommandLock extends CommandBase {
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (args.hasAny(ISLAND)) {
             return lockIslands(src, args.getAll(ISLAND));
         }

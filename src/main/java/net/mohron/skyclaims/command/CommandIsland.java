@@ -58,12 +58,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+@NonnullByDefault
 public class CommandIsland extends CommandBase {
 
     private static final String HELP_TEXT = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);

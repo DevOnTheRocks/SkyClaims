@@ -30,7 +30,9 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
+@NonnullByDefault
 public class CommandDelete extends CommandBase {
 
     public static final String HELP_TEXT = "used to delete a player's island";
@@ -54,8 +56,7 @@ public class CommandDelete extends CommandBase {
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         User user = args.<User>getOne(USER)
             .orElseThrow(() -> new CommandException(Text.of("Invalid user")));
         Island island = Island.getByOwner(user.getUniqueId())

@@ -34,11 +34,11 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.function.Consumer;
 
+@NonnullByDefault
 public class CommandRegen extends CommandBase {
 
     public static final String HELP_TEXT = "regenerate your island using a schematic.";
@@ -62,7 +62,7 @@ public class CommandRegen extends CommandBase {
         }
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (!(src instanceof Player)) {
             throw new CommandException(Text.of("You must be a player to run this command!"));
         }

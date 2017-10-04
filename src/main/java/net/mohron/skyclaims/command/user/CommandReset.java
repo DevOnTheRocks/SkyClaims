@@ -37,14 +37,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandReset extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "reset your island and inventory so you can start over.";
@@ -68,7 +68,7 @@ public class CommandReset extends CommandBase.PlayerCommand {
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
         Island island = Island.getByOwner(player.getUniqueId())
             .orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
 

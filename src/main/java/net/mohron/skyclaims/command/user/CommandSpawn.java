@@ -32,9 +32,9 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandSpawn extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "teleport to an island's spawn point.";
@@ -58,7 +58,7 @@ public class CommandSpawn extends CommandBase.PlayerCommand {
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
         User user = args.<User>getOne(USER).orElse(player);
         Island island = Island.getByOwner(user.getUniqueId())
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));

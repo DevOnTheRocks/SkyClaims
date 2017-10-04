@@ -39,6 +39,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -47,6 +48,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@NonnullByDefault
 public class CommandInfo extends CommandBase {
 
     public static final String HELP_TEXT = "display detailed information on your island.";
@@ -70,7 +72,7 @@ public class CommandInfo extends CommandBase {
         }
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         List<Island> islands = Lists.newArrayList();
 
         if (src instanceof Player && !args.hasAny(ISLAND)) {

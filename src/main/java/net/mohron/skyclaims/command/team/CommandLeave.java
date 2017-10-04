@@ -31,11 +31,11 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandLeave extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to leave an island.";
@@ -57,7 +57,7 @@ public class CommandLeave extends CommandBase.IslandCommand {
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
 
         if (island.isOwner(player)) {
             throw new CommandException(Text.of(TextColors.RED, "You must transfer island ownership before leaving."));

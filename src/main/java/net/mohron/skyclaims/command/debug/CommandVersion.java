@@ -33,12 +33,12 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandVersion extends CommandBase {
 
     public static final String HELP_TEXT = "used to view loaded config settings.";
@@ -59,8 +59,7 @@ public class CommandVersion extends CommandBase {
         }
     }
 
-    @Nonnull @Override
-    public CommandResult execute(@Nonnull CommandSource src, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         List<Text> texts = Lists.newArrayList();
 
         // Minecraft

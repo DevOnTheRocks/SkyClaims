@@ -24,19 +24,19 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public interface CommandRequirement extends CommandExecutor {
 
     interface RequiresIsland {
 
-        CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException;
+        CommandResult execute(Player player, Island island, CommandContext args) throws CommandException;
     }
 
     interface RequiresPlayer {
 
-        CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException;
+        CommandResult execute(Player player, CommandContext args) throws CommandException;
     }
 
 }

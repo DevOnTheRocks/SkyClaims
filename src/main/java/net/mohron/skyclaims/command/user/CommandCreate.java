@@ -38,14 +38,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandCreate extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "create an island.";
@@ -69,7 +69,7 @@ public class CommandCreate extends CommandBase.PlayerCommand {
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
         if (Island.hasIsland(player.getUniqueId())) {
             throw new CommandException(Text.of(TextColors.RED, "You already have an island!"));
         }

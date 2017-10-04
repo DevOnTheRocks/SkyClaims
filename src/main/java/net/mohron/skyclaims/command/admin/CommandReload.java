@@ -27,7 +27,9 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
+@NonnullByDefault
 public class CommandReload extends CommandBase {
 
     public static final String HELP_TEXT = "used to reload SkyClaims's config, schematics, & database.";
@@ -48,8 +50,7 @@ public class CommandReload extends CommandBase {
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         PLUGIN.reload();
         src.sendMessage(Text.of(TextColors.GREEN, "Successfully reloaded SkyClaims!"));
         return CommandResult.success();

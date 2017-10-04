@@ -41,9 +41,11 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 
+@NonnullByDefault
 public class CommandAdmin extends CommandBase {
 
     public static final String HELP_TEXT = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
@@ -55,7 +57,6 @@ public class CommandAdmin extends CommandBase {
         .child(CommandConfig.commandSpec, "config")
         .child(CommandDelete.commandSpec, "delete")
         .child(CommandReload.commandSpec, "reload")
-        //.child(CommandSetup.commandSpec, "setup")
         .child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
         .child(CommandTransfer.commandSpec, "transfer")
         .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
