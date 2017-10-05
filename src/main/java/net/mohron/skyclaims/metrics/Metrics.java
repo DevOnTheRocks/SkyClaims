@@ -20,11 +20,13 @@ package net.mohron.skyclaims.metrics;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
+import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -43,13 +45,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.zip.GZIPOutputStream;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -61,27 +62,50 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class Metrics {
 
+    static {
+        // You can use the property to disable the check in your test environment
+        if (System.getProperty("bstats.relocatecheck") == null || !System.getProperty("bstats.relocatecheck").equals("false")) {
+            // Maven's Relocate is clever and changes strings, too. So we have to use this little "trick" ... :D
+            final String defaultPackage = new String(
+                new byte[]{'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's', '.', 's', 'p', 'o', 'n', 'g', 'e'});
+            final String examplePackage = new String(new byte[]{'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
+            // We want to make sure nobody just copy & pastes the example and use the wrong package names
+            if (Metrics.class.getPackage().getName().equals(defaultPackage) || Metrics.class.getPackage().getName().equals(examplePackage)) {
+                throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
+            }
+        }
+    }
+
     // The version of this bStats class
     public static final int B_STATS_VERSION = 1;
 
     // The url to which the data is sent
     private static final String URL = "https://bStats.org/submitData/sponge";
-    // A list with all known metrics class objects including this one
-    private static final List<Object> knownMetricsInstances = new ArrayList<>();
+
     // We use this flag to ensure only one instance of this class exist
     private static boolean created = false;
-    // The plugin
-    private final PluginContainer plugin;
-    // A list with all custom charts
-    private final List<CustomChart> charts = new ArrayList<>();
+
     // The logger
     private Logger logger;
+
+    // The plugin
+    private final PluginContainer plugin;
+
     // Is bStats enabled on this server?
     private boolean enabled;
+
     // The uuid of the server
     private String serverUUID;
+
     // Should failed requests be logged?
     private boolean logFailedRequests = false;
+
+    // A list with all known metrics class objects including this one
+    private static final List<Object> knownMetricsInstances = new ArrayList<>();
+
+    // A list with all custom charts
+    private final List<CustomChart> charts = new ArrayList<>();
+
     // The config path
     private Path configDir;
 
@@ -135,66 +159,6 @@ public class Metrics {
     }
 
     /**
-     * Links an other metrics class with this class.
-     * This method is called using Reflection.
-     *
-     * @param metrics An object of the metrics class to link.
-     */
-    public static void linkMetrics(Object metrics) {
-        knownMetricsInstances.add(metrics);
-    }
-
-    /**
-     * Sends the data to the bStats server.
-     *
-     * @param data The data to send.
-     * @throws Exception If the request failed.
-     */
-    private static void sendData(JsonObject data) throws Exception {
-        Validate.notNull(data, "Data cannot be null");
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(URL).openConnection();
-
-        // Compress the data to save bandwidth
-        byte[] compressedData = compress(data.toString());
-
-        // Add headers
-        connection.setRequestMethod("POST");
-        connection.addRequestProperty("Accept", "application/json");
-        connection.addRequestProperty("Connection", "close");
-        connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
-        connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
-        connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
-        connection.setRequestProperty("User-Agent", "MC-Server/" + B_STATS_VERSION);
-
-        // Send data
-        connection.setDoOutput(true);
-        DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-        outputStream.write(compressedData);
-        outputStream.flush();
-        outputStream.close();
-
-        connection.getInputStream().close(); // We don't care about the response - Just send our data :)
-    }
-
-    /**
-     * Gzips the given String.
-     *
-     * @param str The string to gzip.
-     * @return The gzipped String.
-     * @throws IOException If the compression failed.
-     */
-    private static byte[] compress(final String str) throws IOException {
-        if (str == null) {
-            return null;
-        }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        GZIPOutputStream gzip = new GZIPOutputStream(outputStream);
-        gzip.write(str.getBytes("UTF-8"));
-        gzip.close();
-        return outputStream.toByteArray();
-    }
-
-    /**
      * Adds a custom chart.
      *
      * @param chart The chart to add.
@@ -202,6 +166,16 @@ public class Metrics {
     public void addCustomChart(CustomChart chart) {
         Validate.notNull(chart, "Chart cannot be null");
         charts.add(chart);
+    }
+
+    /**
+     * Links an other metrics class with this class.
+     * This method is called using Reflection.
+     *
+     * @param metrics An object of the metrics class to link.
+     */
+    public static void linkMetrics(Object metrics) {
+        knownMetricsInstances.add(metrics);
     }
 
     /**
@@ -267,6 +241,7 @@ public class Metrics {
         playerAmount = playerAmount > 200 ? 200 : playerAmount;
         int onlineMode = Sponge.getServer().getOnlineMode() ? 1 : 0;
         String minecraftVersion = Sponge.getGame().getPlatform().getMinecraftVersion().getName();
+        String spongeImplementation = Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getName();
 
         // OS/Java specific data
         String javaVersion = System.getProperty("java.version");
@@ -282,6 +257,7 @@ public class Metrics {
         data.addProperty("playerAmount", playerAmount);
         data.addProperty("onlineMode", onlineMode);
         data.addProperty("minecraftVersion", minecraftVersion);
+        data.addProperty("spongeImplementation", spongeImplementation);
 
         data.addProperty("javaVersion", javaVersion);
         data.addProperty("osName", osName);
@@ -436,320 +412,54 @@ public class Metrics {
         }
     }
 
+    /**
+     * Sends the data to the bStats server.
+     *
+     * @param data The data to send.
+     * @throws Exception If the request failed.
+     */
+    private static void sendData(JsonObject data) throws Exception {
+        Validate.notNull(data, "Data cannot be null");
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(URL).openConnection();
+
+        // Compress the data to save bandwidth
+        byte[] compressedData = compress(data.toString());
+
+        // Add headers
+        connection.setRequestMethod("POST");
+        connection.addRequestProperty("Accept", "application/json");
+        connection.addRequestProperty("Connection", "close");
+        connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
+        connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
+        connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
+        connection.setRequestProperty("User-Agent", "MC-Server/" + B_STATS_VERSION);
+
+        // Send data
+        connection.setDoOutput(true);
+        DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+        outputStream.write(compressedData);
+        outputStream.flush();
+        outputStream.close();
+
+        connection.getInputStream().close(); // We don't care about the response - Just send our data :)
+    }
 
     /**
-     * A enum which is used for custom maps.
+     * Gzips the given String.
+     *
+     * @param str The string to gzip.
+     * @return The gzipped String.
+     * @throws IOException If the compression failed.
      */
-    public enum Country {
-
-        /**
-         * bStats will use the country of the server.
-         */
-        AUTO_DETECT("AUTO", "Auto Detected"),
-
-        ANDORRA("AD", "Andorra"),
-        UNITED_ARAB_EMIRATES("AE", "United Arab Emirates"),
-        AFGHANISTAN("AF", "Afghanistan"),
-        ANTIGUA_AND_BARBUDA("AG", "Antigua and Barbuda"),
-        ANGUILLA("AI", "Anguilla"),
-        ALBANIA("AL", "Albania"),
-        ARMENIA("AM", "Armenia"),
-        NETHERLANDS_ANTILLES("AN", "Netherlands Antilles"),
-        ANGOLA("AO", "Angola"),
-        ANTARCTICA("AQ", "Antarctica"),
-        ARGENTINA("AR", "Argentina"),
-        AMERICAN_SAMOA("AS", "American Samoa"),
-        AUSTRIA("AT", "Austria"),
-        AUSTRALIA("AU", "Australia"),
-        ARUBA("AW", "Aruba"),
-        ALAND_ISLANDS("AX", "Aland Islands"),
-        AZERBAIJAN("AZ", "Azerbaijan"),
-        BOSNIA_AND_HERZEGOVINA("BA", "Bosnia and Herzegovina"),
-        BARBADOS("BB", "Barbados"),
-        BANGLADESH("BD", "Bangladesh"),
-        BELGIUM("BE", "Belgium"),
-        BURKINA_FASO("BF", "Burkina Faso"),
-        BULGARIA("BG", "Bulgaria"),
-        BAHRAIN("BH", "Bahrain"),
-        BURUNDI("BI", "Burundi"),
-        BENIN("BJ", "Benin"),
-        SAINT_BARTHELEMY("BL", "Saint Barthelemy"),
-        BERMUDA("BM", "Bermuda"),
-        BRUNEI("BN", "Brunei"),
-        BOLIVIA("BO", "Bolivia"),
-        BONAIRE_SINT_EUSTATIUS_AND_SABA("BQ", "Bonaire, Sint Eustatius and Saba"),
-        BRAZIL("BR", "Brazil"),
-        BAHAMAS("BS", "Bahamas"),
-        BHUTAN("BT", "Bhutan"),
-        BOUVET_ISLAND("BV", "Bouvet Island"),
-        BOTSWANA("BW", "Botswana"),
-        BELARUS("BY", "Belarus"),
-        BELIZE("BZ", "Belize"),
-        CANADA("CA", "Canada"),
-        COCOS_ISLANDS("CC", "Cocos Islands"),
-        THE_DEMOCRATIC_REPUBLIC_OF_CONGO("CD", "The Democratic Republic Of Congo"),
-        CENTRAL_AFRICAN_REPUBLIC("CF", "Central African Republic"),
-        CONGO("CG", "Congo"),
-        SWITZERLAND("CH", "Switzerland"),
-        COTE_D_IVOIRE("CI", "Cote d'Ivoire"),
-        COOK_ISLANDS("CK", "Cook Islands"),
-        CHILE("CL", "Chile"),
-        CAMEROON("CM", "Cameroon"),
-        CHINA("CN", "China"),
-        COLOMBIA("CO", "Colombia"),
-        COSTA_RICA("CR", "Costa Rica"),
-        CUBA("CU", "Cuba"),
-        CAPE_VERDE("CV", "Cape Verde"),
-        CURACAO("CW", "Curacao"),
-        CHRISTMAS_ISLAND("CX", "Christmas Island"),
-        CYPRUS("CY", "Cyprus"),
-        CZECH_REPUBLIC("CZ", "Czech Republic"),
-        GERMANY("DE", "Germany"),
-        DJIBOUTI("DJ", "Djibouti"),
-        DENMARK("DK", "Denmark"),
-        DOMINICA("DM", "Dominica"),
-        DOMINICAN_REPUBLIC("DO", "Dominican Republic"),
-        ALGERIA("DZ", "Algeria"),
-        ECUADOR("EC", "Ecuador"),
-        ESTONIA("EE", "Estonia"),
-        EGYPT("EG", "Egypt"),
-        WESTERN_SAHARA("EH", "Western Sahara"),
-        ERITREA("ER", "Eritrea"),
-        SPAIN("ES", "Spain"),
-        ETHIOPIA("ET", "Ethiopia"),
-        FINLAND("FI", "Finland"),
-        FIJI("FJ", "Fiji"),
-        FALKLAND_ISLANDS("FK", "Falkland Islands"),
-        MICRONESIA("FM", "Micronesia"),
-        FAROE_ISLANDS("FO", "Faroe Islands"),
-        FRANCE("FR", "France"),
-        GABON("GA", "Gabon"),
-        UNITED_KINGDOM("GB", "United Kingdom"),
-        GRENADA("GD", "Grenada"),
-        GEORGIA("GE", "Georgia"),
-        FRENCH_GUIANA("GF", "French Guiana"),
-        GUERNSEY("GG", "Guernsey"),
-        GHANA("GH", "Ghana"),
-        GIBRALTAR("GI", "Gibraltar"),
-        GREENLAND("GL", "Greenland"),
-        GAMBIA("GM", "Gambia"),
-        GUINEA("GN", "Guinea"),
-        GUADELOUPE("GP", "Guadeloupe"),
-        EQUATORIAL_GUINEA("GQ", "Equatorial Guinea"),
-        GREECE("GR", "Greece"),
-        SOUTH_GEORGIA_AND_THE_SOUTH_SANDWICH_ISLANDS("GS", "South Georgia And The South Sandwich Islands"),
-        GUATEMALA("GT", "Guatemala"),
-        GUAM("GU", "Guam"),
-        GUINEA_BISSAU("GW", "Guinea-Bissau"),
-        GUYANA("GY", "Guyana"),
-        HONG_KONG("HK", "Hong Kong"),
-        HEARD_ISLAND_AND_MCDONALD_ISLANDS("HM", "Heard Island And McDonald Islands"),
-        HONDURAS("HN", "Honduras"),
-        CROATIA("HR", "Croatia"),
-        HAITI("HT", "Haiti"),
-        HUNGARY("HU", "Hungary"),
-        INDONESIA("ID", "Indonesia"),
-        IRELAND("IE", "Ireland"),
-        ISRAEL("IL", "Israel"),
-        ISLE_OF_MAN("IM", "Isle Of Man"),
-        INDIA("IN", "India"),
-        BRITISH_INDIAN_OCEAN_TERRITORY("IO", "British Indian Ocean Territory"),
-        IRAQ("IQ", "Iraq"),
-        IRAN("IR", "Iran"),
-        ICELAND("IS", "Iceland"),
-        ITALY("IT", "Italy"),
-        JERSEY("JE", "Jersey"),
-        JAMAICA("JM", "Jamaica"),
-        JORDAN("JO", "Jordan"),
-        JAPAN("JP", "Japan"),
-        KENYA("KE", "Kenya"),
-        KYRGYZSTAN("KG", "Kyrgyzstan"),
-        CAMBODIA("KH", "Cambodia"),
-        KIRIBATI("KI", "Kiribati"),
-        COMOROS("KM", "Comoros"),
-        SAINT_KITTS_AND_NEVIS("KN", "Saint Kitts And Nevis"),
-        NORTH_KOREA("KP", "North Korea"),
-        SOUTH_KOREA("KR", "South Korea"),
-        KUWAIT("KW", "Kuwait"),
-        CAYMAN_ISLANDS("KY", "Cayman Islands"),
-        KAZAKHSTAN("KZ", "Kazakhstan"),
-        LAOS("LA", "Laos"),
-        LEBANON("LB", "Lebanon"),
-        SAINT_LUCIA("LC", "Saint Lucia"),
-        LIECHTENSTEIN("LI", "Liechtenstein"),
-        SRI_LANKA("LK", "Sri Lanka"),
-        LIBERIA("LR", "Liberia"),
-        LESOTHO("LS", "Lesotho"),
-        LITHUANIA("LT", "Lithuania"),
-        LUXEMBOURG("LU", "Luxembourg"),
-        LATVIA("LV", "Latvia"),
-        LIBYA("LY", "Libya"),
-        MOROCCO("MA", "Morocco"),
-        MONACO("MC", "Monaco"),
-        MOLDOVA("MD", "Moldova"),
-        MONTENEGRO("ME", "Montenegro"),
-        SAINT_MARTIN("MF", "Saint Martin"),
-        MADAGASCAR("MG", "Madagascar"),
-        MARSHALL_ISLANDS("MH", "Marshall Islands"),
-        MACEDONIA("MK", "Macedonia"),
-        MALI("ML", "Mali"),
-        MYANMAR("MM", "Myanmar"),
-        MONGOLIA("MN", "Mongolia"),
-        MACAO("MO", "Macao"),
-        NORTHERN_MARIANA_ISLANDS("MP", "Northern Mariana Islands"),
-        MARTINIQUE("MQ", "Martinique"),
-        MAURITANIA("MR", "Mauritania"),
-        MONTSERRAT("MS", "Montserrat"),
-        MALTA("MT", "Malta"),
-        MAURITIUS("MU", "Mauritius"),
-        MALDIVES("MV", "Maldives"),
-        MALAWI("MW", "Malawi"),
-        MEXICO("MX", "Mexico"),
-        MALAYSIA("MY", "Malaysia"),
-        MOZAMBIQUE("MZ", "Mozambique"),
-        NAMIBIA("NA", "Namibia"),
-        NEW_CALEDONIA("NC", "New Caledonia"),
-        NIGER("NE", "Niger"),
-        NORFOLK_ISLAND("NF", "Norfolk Island"),
-        NIGERIA("NG", "Nigeria"),
-        NICARAGUA("NI", "Nicaragua"),
-        NETHERLANDS("NL", "Netherlands"),
-        NORWAY("NO", "Norway"),
-        NEPAL("NP", "Nepal"),
-        NAURU("NR", "Nauru"),
-        NIUE("NU", "Niue"),
-        NEW_ZEALAND("NZ", "New Zealand"),
-        OMAN("OM", "Oman"),
-        PANAMA("PA", "Panama"),
-        PERU("PE", "Peru"),
-        FRENCH_POLYNESIA("PF", "French Polynesia"),
-        PAPUA_NEW_GUINEA("PG", "Papua New Guinea"),
-        PHILIPPINES("PH", "Philippines"),
-        PAKISTAN("PK", "Pakistan"),
-        POLAND("PL", "Poland"),
-        SAINT_PIERRE_AND_MIQUELON("PM", "Saint Pierre And Miquelon"),
-        PITCAIRN("PN", "Pitcairn"),
-        PUERTO_RICO("PR", "Puerto Rico"),
-        PALESTINE("PS", "Palestine"),
-        PORTUGAL("PT", "Portugal"),
-        PALAU("PW", "Palau"),
-        PARAGUAY("PY", "Paraguay"),
-        QATAR("QA", "Qatar"),
-        REUNION("RE", "Reunion"),
-        ROMANIA("RO", "Romania"),
-        SERBIA("RS", "Serbia"),
-        RUSSIA("RU", "Russia"),
-        RWANDA("RW", "Rwanda"),
-        SAUDI_ARABIA("SA", "Saudi Arabia"),
-        SOLOMON_ISLANDS("SB", "Solomon Islands"),
-        SEYCHELLES("SC", "Seychelles"),
-        SUDAN("SD", "Sudan"),
-        SWEDEN("SE", "Sweden"),
-        SINGAPORE("SG", "Singapore"),
-        SAINT_HELENA("SH", "Saint Helena"),
-        SLOVENIA("SI", "Slovenia"),
-        SVALBARD_AND_JAN_MAYEN("SJ", "Svalbard And Jan Mayen"),
-        SLOVAKIA("SK", "Slovakia"),
-        SIERRA_LEONE("SL", "Sierra Leone"),
-        SAN_MARINO("SM", "San Marino"),
-        SENEGAL("SN", "Senegal"),
-        SOMALIA("SO", "Somalia"),
-        SURINAME("SR", "Suriname"),
-        SOUTH_SUDAN("SS", "South Sudan"),
-        SAO_TOME_AND_PRINCIPE("ST", "Sao Tome And Principe"),
-        EL_SALVADOR("SV", "El Salvador"),
-        SINT_MAARTEN_DUTCH_PART("SX", "Sint Maarten (Dutch part)"),
-        SYRIA("SY", "Syria"),
-        SWAZILAND("SZ", "Swaziland"),
-        TURKS_AND_CAICOS_ISLANDS("TC", "Turks And Caicos Islands"),
-        CHAD("TD", "Chad"),
-        FRENCH_SOUTHERN_TERRITORIES("TF", "French Southern Territories"),
-        TOGO("TG", "Togo"),
-        THAILAND("TH", "Thailand"),
-        TAJIKISTAN("TJ", "Tajikistan"),
-        TOKELAU("TK", "Tokelau"),
-        TIMOR_LESTE("TL", "Timor-Leste"),
-        TURKMENISTAN("TM", "Turkmenistan"),
-        TUNISIA("TN", "Tunisia"),
-        TONGA("TO", "Tonga"),
-        TURKEY("TR", "Turkey"),
-        TRINIDAD_AND_TOBAGO("TT", "Trinidad and Tobago"),
-        TUVALU("TV", "Tuvalu"),
-        TAIWAN("TW", "Taiwan"),
-        TANZANIA("TZ", "Tanzania"),
-        UKRAINE("UA", "Ukraine"),
-        UGANDA("UG", "Uganda"),
-        UNITED_STATES_MINOR_OUTLYING_ISLANDS("UM", "United States Minor Outlying Islands"),
-        UNITED_STATES("US", "United States"),
-        URUGUAY("UY", "Uruguay"),
-        UZBEKISTAN("UZ", "Uzbekistan"),
-        VATICAN("VA", "Vatican"),
-        SAINT_VINCENT_AND_THE_GRENADINES("VC", "Saint Vincent And The Grenadines"),
-        VENEZUELA("VE", "Venezuela"),
-        BRITISH_VIRGIN_ISLANDS("VG", "British Virgin Islands"),
-        U_S__VIRGIN_ISLANDS("VI", "U.S. Virgin Islands"),
-        VIETNAM("VN", "Vietnam"),
-        VANUATU("VU", "Vanuatu"),
-        WALLIS_AND_FUTUNA("WF", "Wallis And Futuna"),
-        SAMOA("WS", "Samoa"),
-        YEMEN("YE", "Yemen"),
-        MAYOTTE("YT", "Mayotte"),
-        SOUTH_AFRICA("ZA", "South Africa"),
-        ZAMBIA("ZM", "Zambia"),
-        ZIMBABWE("ZW", "Zimbabwe");
-
-        private String isoTag;
-        private String name;
-
-        Country(String isoTag, String name) {
-            this.isoTag = isoTag;
-            this.name = name;
-        }
-
-        /**
-         * Gets a country by it's iso tag.
-         *
-         * @param isoTag The iso tag of the county.
-         * @return The country with the given iso tag or <code>null</code> if unknown.
-         */
-        public static Country byIsoTag(String isoTag) {
-            for (Country country : Country.values()) {
-                if (country.getCountryIsoTag().equals(isoTag)) {
-                    return country;
-                }
-            }
+    private static byte[] compress(final String str) throws IOException {
+        if (str == null) {
             return null;
         }
-
-        /**
-         * Gets a country by a locale.
-         *
-         * @param locale The locale.
-         * @return The country from the giben locale or <code>null</code> if unknown country or
-         * if the locale does not contain a country.
-         */
-        public static Country byLocale(Locale locale) {
-            return byIsoTag(locale.getCountry());
-        }
-
-        /**
-         * Gets the name of the country.
-         *
-         * @return The name of the country.
-         */
-        public String getCountryName() {
-            return name;
-        }
-
-        /**
-         * Gets the iso tag of the country.
-         *
-         * @return The iso tag of the country.
-         */
-        public String getCountryIsoTag() {
-            return isoTag;
-        }
-
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(outputStream);
+        gzip.write(str.getBytes("UTF-8"));
+        gzip.close();
+        return outputStream.toByteArray();
     }
 
     /**
@@ -758,21 +468,21 @@ public class Metrics {
     public static abstract class CustomChart {
 
         // The id of the chart
-        protected final String chartId;
+        private final String chartId;
 
         /**
          * Class constructor.
          *
          * @param chartId The id of the chart.
          */
-        public CustomChart(String chartId) {
+        CustomChart(String chartId) {
             if (chartId == null || chartId.isEmpty()) {
                 throw new IllegalArgumentException("ChartId cannot be null or empty!");
             }
             this.chartId = chartId;
         }
 
-        protected JsonObject getRequestJsonObject(Logger logger, boolean logFailedRequests) {
+        private JsonObject getRequestJsonObject(Logger logger, boolean logFailedRequests) {
             JsonObject chart = new JsonObject();
             chart.addProperty("chartId", chartId);
             try {
@@ -791,35 +501,32 @@ public class Metrics {
             return chart;
         }
 
-        protected abstract JsonObject getChartData();
+        protected abstract JsonObject getChartData() throws Exception;
 
     }
 
     /**
      * Represents a custom simple pie.
      */
-    public static abstract class SimplePie extends CustomChart {
+    public static class SimplePie extends CustomChart {
+
+        private final Callable<String> callable;
 
         /**
          * Class constructor.
          *
          * @param chartId The id of the chart.
+         * @param callable The callable which is used to request the chart data.
          */
-        public SimplePie(String chartId) {
+        public SimplePie(String chartId, Callable<String> callable) {
             super(chartId);
+            this.callable = callable;
         }
 
-        /**
-         * Gets the value of the pie.
-         *
-         * @return The value of the pie.
-         */
-        public abstract String getValue();
-
         @Override
-        protected JsonObject getChartData() {
+        protected JsonObject getChartData() throws Exception {
             JsonObject data = new JsonObject();
-            String value = getValue();
+            String value = callable.call();
             if (value == null || value.isEmpty()) {
                 // Null = skip the chart
                 return null;
@@ -832,31 +539,26 @@ public class Metrics {
     /**
      * Represents a custom advanced pie.
      */
-    public static abstract class AdvancedPie extends CustomChart {
+    public static class AdvancedPie extends CustomChart {
+
+        private final Callable<Map<String, Integer>> callable;
 
         /**
          * Class constructor.
          *
          * @param chartId The id of the chart.
+         * @param callable The callable which is used to request the chart data.
          */
-        public AdvancedPie(String chartId) {
+        public AdvancedPie(String chartId, Callable<Map<String, Integer>> callable) {
             super(chartId);
+            this.callable = callable;
         }
 
-        /**
-         * Gets the values of the pie.
-         *
-         * @param valueMap Just an empty map. The only reason it exists is to make your life easier.
-         *                 You don't have to create a map yourself!
-         * @return The values of the pie.
-         */
-        public abstract HashMap<String, Integer> getValues(HashMap<String, Integer> valueMap);
-
         @Override
-        protected JsonObject getChartData() {
+        protected JsonObject getChartData() throws Exception {
             JsonObject data = new JsonObject();
             JsonObject values = new JsonObject();
-            HashMap<String, Integer> map = getValues(new HashMap<>());
+            Map<String, Integer> map = callable.call();
             if (map == null || map.isEmpty()) {
                 // Null = skip the chart
                 return null;
@@ -879,30 +581,76 @@ public class Metrics {
     }
 
     /**
-     * Represents a custom single line chart.
+     * Represents a custom drilldown pie.
      */
-    public static abstract class SingleLineChart extends CustomChart {
+    public static class DrilldownPie extends CustomChart {
+
+        private final Callable<Map<String, Map<String, Integer>>> callable;
 
         /**
          * Class constructor.
          *
          * @param chartId The id of the chart.
+         * @param callable The callable which is used to request the chart data.
          */
-        public SingleLineChart(String chartId) {
+        public DrilldownPie(String chartId, Callable<Map<String, Map<String, Integer>>> callable) {
             super(chartId);
+            this.callable = callable;
         }
 
+        @Override
+        public JsonObject getChartData() throws Exception {
+            JsonObject data = new JsonObject();
+            JsonObject values = new JsonObject();
+            Map<String, Map<String, Integer>> map = callable.call();
+            if (map == null || map.isEmpty()) {
+                // Null = skip the chart
+                return null;
+            }
+            boolean reallyAllSkipped = true;
+            for (Map.Entry<String, Map<String, Integer>> entryValues : map.entrySet()) {
+                JsonObject value = new JsonObject();
+                boolean allSkipped = true;
+                for (Map.Entry<String, Integer> valueEntry : map.get(entryValues.getKey()).entrySet()) {
+                    value.addProperty(valueEntry.getKey(), valueEntry.getValue());
+                    allSkipped = false;
+                }
+                if (!allSkipped) {
+                    reallyAllSkipped = false;
+                    values.add(entryValues.getKey(), value);
+                }
+            }
+            if (reallyAllSkipped) {
+                // Null = skip the chart
+                return null;
+            }
+            data.add("values", values);
+            return data;
+        }
+    }
+
+    /**
+     * Represents a custom single line chart.
+     */
+    public static class SingleLineChart extends CustomChart {
+
+        private final Callable<Integer> callable;
+
         /**
-         * Gets the value of the chart.
+         * Class constructor.
          *
-         * @return The value of the chart.
+         * @param chartId The id of the chart.
+         * @param callable The callable which is used to request the chart data.
          */
-        public abstract int getValue();
+        public SingleLineChart(String chartId, Callable<Integer> callable) {
+            super(chartId);
+            this.callable = callable;
+        }
 
         @Override
-        protected JsonObject getChartData() {
+        protected JsonObject getChartData() throws Exception {
             JsonObject data = new JsonObject();
-            int value = getValue();
+            int value = callable.call();
             if (value == 0) {
                 // Null = skip the chart
                 return null;
@@ -916,31 +664,26 @@ public class Metrics {
     /**
      * Represents a custom multi line chart.
      */
-    public static abstract class MultiLineChart extends CustomChart {
+    public static class MultiLineChart extends CustomChart {
+
+        private final Callable<Map<String, Integer>> callable;
 
         /**
          * Class constructor.
          *
          * @param chartId The id of the chart.
+         * @param callable The callable which is used to request the chart data.
          */
-        public MultiLineChart(String chartId) {
+        public MultiLineChart(String chartId, Callable<Map<String, Integer>> callable) {
             super(chartId);
+            this.callable = callable;
         }
 
-        /**
-         * Gets the values of the chart.
-         *
-         * @param valueMap Just an empty map. The only reason it exists is to make your life easier.
-         *                 You don't have to create a map yourself!
-         * @return The values of the chart.
-         */
-        public abstract HashMap<String, Integer> getValues(HashMap<String, Integer> valueMap);
-
         @Override
-        protected JsonObject getChartData() {
+        protected JsonObject getChartData() throws Exception {
             JsonObject data = new JsonObject();
             JsonObject values = new JsonObject();
-            HashMap<String, Integer> map = getValues(new HashMap<>());
+            Map<String, Integer> map = callable.call();
             if (map == null || map.isEmpty()) {
                 // Null = skip the chart
                 return null;
@@ -964,80 +707,81 @@ public class Metrics {
     }
 
     /**
-     * Represents a custom simple map chart.
+     * Represents a custom simple bar chart.
      */
-    public static abstract class SimpleMapChart extends CustomChart {
+    public static class SimpleBarChart extends CustomChart {
+
+        private final Callable<Map<String, Integer>> callable;
 
         /**
          * Class constructor.
          *
          * @param chartId The id of the chart.
+         * @param callable The callable which is used to request the chart data.
          */
-        public SimpleMapChart(String chartId) {
+        public SimpleBarChart(String chartId, Callable<Map<String, Integer>> callable) {
             super(chartId);
+            this.callable = callable;
         }
 
-        /**
-         * Gets the value of the chart.
-         *
-         * @return The value of the chart.
-         */
-        public abstract Country getValue();
-
         @Override
-        protected JsonObject getChartData() {
+        protected JsonObject getChartData() throws Exception {
             JsonObject data = new JsonObject();
-            Country value = getValue();
-
-            if (value == null) {
+            JsonObject values = new JsonObject();
+            Map<String, Integer> map = callable.call();
+            if (map == null || map.isEmpty()) {
                 // Null = skip the chart
                 return null;
             }
-            data.addProperty("value", value.getCountryIsoTag());
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                JsonArray categoryValues = new JsonArray();
+                categoryValues.add(new JsonPrimitive(entry.getValue()));
+                values.add(entry.getKey(), categoryValues);
+            }
+            data.add("values", values);
             return data;
         }
 
     }
 
     /**
-     * Represents a custom advanced map chart.
+     * Represents a custom advanced bar chart.
      */
-    public static abstract class AdvancedMapChart extends CustomChart {
+    public static class AdvancedBarChart extends CustomChart {
+
+        private final Callable<Map<String, int[]>> callable;
 
         /**
          * Class constructor.
          *
          * @param chartId The id of the chart.
+         * @param callable The callable which is used to request the chart data.
          */
-        public AdvancedMapChart(String chartId) {
+        public AdvancedBarChart(String chartId, Callable<Map<String, int[]>> callable) {
             super(chartId);
+            this.callable = callable;
         }
 
-        /**
-         * Gets the value of the chart.
-         *
-         * @param valueMap Just an empty map. The only reason it exists is to make your life easier.
-         *                 You don't have to create a map yourself!
-         * @return The value of the chart.
-         */
-        public abstract HashMap<Country, Integer> getValues(HashMap<Country, Integer> valueMap);
-
         @Override
-        protected JsonObject getChartData() {
+        protected JsonObject getChartData() throws Exception {
             JsonObject data = new JsonObject();
             JsonObject values = new JsonObject();
-            HashMap<Country, Integer> map = getValues(new HashMap<>());
+            Map<String, int[]> map = callable.call();
             if (map == null || map.isEmpty()) {
                 // Null = skip the chart
                 return null;
             }
             boolean allSkipped = true;
-            for (Map.Entry<Country, Integer> entry : map.entrySet()) {
-                if (entry.getValue() == 0) {
+            for (Map.Entry<String, int[]> entry : map.entrySet()) {
+                if (entry.getValue().length == 0) {
                     continue; // Skip this invalid
                 }
                 allSkipped = false;
-                values.addProperty(entry.getKey().getCountryIsoTag(), entry.getValue());
+                JsonArray categoryValues = new JsonArray();
+                for (int categoryValue : entry.getValue()) {
+                    categoryValues.add(new JsonPrimitive(categoryValue));
+                }
+                values.add(entry.getKey(), categoryValues);
             }
             if (allSkipped) {
                 // Null = skip the chart
