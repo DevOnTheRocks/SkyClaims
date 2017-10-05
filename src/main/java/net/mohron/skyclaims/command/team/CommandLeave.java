@@ -40,13 +40,13 @@ public class CommandLeave extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to leave an island.";
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_LEAVE)
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandLeave())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_LEAVE)
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandLeave())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "leave");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);

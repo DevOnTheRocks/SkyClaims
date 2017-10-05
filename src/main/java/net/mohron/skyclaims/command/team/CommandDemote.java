@@ -40,14 +40,14 @@ public class CommandDemote extends CommandBase.IslandCommand {
     public static final String HELP_TEXT = "used to demote a player on an island.";
     private static final Text USER = Text.of("user");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_DEMOTE)
-        .arguments(GenericArguments.user(USER))
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandDemote())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_DEMOTE)
+            .arguments(GenericArguments.user(USER))
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandDemote())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "demote");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);

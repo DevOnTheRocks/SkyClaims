@@ -44,17 +44,17 @@ public class CommandSetBiome extends CommandBase.PlayerCommand {
     private static final Text BIOME = Text.of("biome");
     private static final Text TARGET = Text.of("target");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_SET_BIOME)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.seq(
-            Argument.biome(BIOME),
-            GenericArguments.optional(Argument.target(TARGET))
-        ))
-        .executor(new CommandSetBiome())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_SET_BIOME)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.seq(
+                Argument.biome(BIOME),
+                GenericArguments.optional(Argument.target(TARGET))
+            ))
+            .executor(new CommandSetBiome())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "setbiome");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);

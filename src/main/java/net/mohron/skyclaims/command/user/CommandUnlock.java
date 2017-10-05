@@ -48,18 +48,18 @@ public class CommandUnlock extends CommandBase {
     private static final Text ALL = Text.of("all");
     private static final Text ISLAND = Text.of("island");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_LOCK)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.firstParsing(
-            GenericArguments
-                .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
-            GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
-        ))
-        .executor(new CommandUnlock())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_LOCK)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.firstParsing(
+                GenericArguments
+                    .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
+                GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
+            ))
+            .executor(new CommandUnlock())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "unlock");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);

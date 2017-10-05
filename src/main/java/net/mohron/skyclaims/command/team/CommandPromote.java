@@ -41,14 +41,14 @@ public class CommandPromote extends CommandBase.IslandCommand {
     public static final String HELP_TEXT = "used to promote a player on an island.";
     private static final Text USER = Text.of("user");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_PROMOTE)
-        .arguments(GenericArguments.user(USER))
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandPromote())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_PROMOTE)
+            .arguments(GenericArguments.user(USER))
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandPromote())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "promote");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);

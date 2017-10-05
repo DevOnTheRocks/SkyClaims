@@ -54,14 +54,14 @@ public class CommandInfo extends CommandBase {
     public static final String HELP_TEXT = "display detailed information on your island.";
     private static final Text ISLAND = Text.of("island");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_INFO)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.optional(Argument.island(ISLAND)))
-        .executor(new CommandInfo())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_INFO)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.optional(Argument.island(ISLAND)))
+            .executor(new CommandInfo())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "info");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandinfo");

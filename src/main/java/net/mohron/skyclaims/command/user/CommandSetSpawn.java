@@ -36,13 +36,13 @@ public class CommandSetSpawn extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "set your spawn location for your island.";
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_SET_SPAWN)
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandSetSpawn())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_SET_SPAWN)
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandSetSpawn())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "setspawn");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);

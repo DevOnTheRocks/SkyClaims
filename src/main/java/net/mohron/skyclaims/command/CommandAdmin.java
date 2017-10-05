@@ -51,19 +51,19 @@ public class CommandAdmin extends CommandBase {
     public static final String HELP_TEXT = String.format("use to run %s's admin commands or display help info", PluginInfo.NAME);
     private static final Text HELP = Text.of("help");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_ADMIN)
-        .description(Text.of(HELP_TEXT))
-        .child(CommandConfig.commandSpec, "config")
-        .child(CommandDelete.commandSpec, "delete")
-        .child(CommandReload.commandSpec, "reload")
-        .child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
-        .child(CommandTransfer.commandSpec, "transfer")
-        .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
-        .executor(new CommandAdmin())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_ADMIN)
+            .description(Text.of(HELP_TEXT))
+            .child(CommandConfig.commandSpec, "config")
+            .child(CommandDelete.commandSpec, "delete")
+            .child(CommandReload.commandSpec, "reload")
+            .child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
+            .child(CommandTransfer.commandSpec, "transfer")
+            .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
+            .executor(new CommandAdmin())
+            .build();
+
         try {
             registerSubCommands();
             CommandIsland.addSubCommand(commandSpec, "admin");

@@ -46,17 +46,17 @@ public class CommandExpand extends CommandBase.IslandCommand {
     private static final GriefPreventionApi GP = PLUGIN.getGriefPrevention();
     private static final Text BLOCKS = Text.of("size");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_EXPAND)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.seq(
-            GenericArguments.optional(Argument.island(ISLAND)),
-            GenericArguments.optional(GenericArguments.integer(BLOCKS))
-        ))
-        .executor(new CommandExpand())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_EXPAND)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.seq(
+                GenericArguments.optional(Argument.island(ISLAND)),
+                GenericArguments.optional(GenericArguments.integer(BLOCKS))
+            ))
+            .executor(new CommandExpand())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "expand");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);

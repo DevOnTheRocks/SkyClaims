@@ -40,14 +40,14 @@ public class CommandSpawn extends CommandBase.PlayerCommand {
     public static final String HELP_TEXT = "teleport to an island's spawn point.";
     private static final Text USER = Text.of("user");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_SPAWN)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.optional(GenericArguments.user(USER)))
-        .executor(new CommandSpawn())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_SPAWN)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.optional(GenericArguments.user(USER)))
+            .executor(new CommandSpawn())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "spawn", "tp");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);

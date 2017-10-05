@@ -52,17 +52,17 @@ public class CommandList extends CommandBase {
     private static final Text USER = Text.of("user");
     private static final Text SORT = Text.of("sort");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_LIST)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.firstParsing(
-            GenericArguments.optional(GenericArguments.user(USER)),
-            GenericArguments.optional(GenericArguments.requiringPermission(Argument.sort(SORT), Permissions.COMMAND_LIST_SORT))
-        ))
-        .executor(new CommandList())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_LIST)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.firstParsing(
+                GenericArguments.optional(GenericArguments.user(USER)),
+                GenericArguments.optional(GenericArguments.requiringPermission(Argument.sort(SORT), Permissions.COMMAND_LIST_SORT))
+            ))
+            .executor(new CommandList())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "list");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandlist");

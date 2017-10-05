@@ -43,13 +43,13 @@ public class CommandVersion extends CommandBase {
 
     public static final String HELP_TEXT = "used to view loaded config settings.";
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_VERSION)
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandVersion())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_VERSION)
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandVersion())
+            .build();
+
         try {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "scversion");
             PLUGIN.getLogger().debug("Registered command: CommandVersion");
