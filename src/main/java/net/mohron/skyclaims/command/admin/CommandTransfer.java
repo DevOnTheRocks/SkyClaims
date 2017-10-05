@@ -52,8 +52,7 @@ public class CommandTransfer extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandTransfer");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandTransfer");
+            PLUGIN.getLogger().error("Failed to register command: CommandTransfer", e);
         }
     }
 

@@ -62,8 +62,7 @@ public class CommandCreateSchematic extends CommandBase.PlayerCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandCreateSchematic");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandCreateSchematic");
+            PLUGIN.getLogger().error("Failed to register command: CommandCreateSchematic", e);
         }
     }
 

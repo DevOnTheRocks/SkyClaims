@@ -53,8 +53,7 @@ public class CommandKick extends CommandBase.IslandCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandKick");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandKick");
+            PLUGIN.getLogger().error("Failed to register command: CommandKick", e);
         }
     }
 

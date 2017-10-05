@@ -308,7 +308,6 @@ public class SkyClaims {
             Map<String, Integer> entry = new HashMap<>();
             entry.put(Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null), 1);
             map.put(api, entry);
-            logger.info(map.toString());
             return map;
         }));
         metrics.addCustomChart(new Metrics.SimplePie("allocated_ram", () ->

@@ -86,8 +86,7 @@ public class CommandIsland extends CommandBase {
             Sponge.getCommandManager().register(PLUGIN, commandSpec, "island", "is");
             PLUGIN.getLogger().debug("Registered command: CommandIsland");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandIsland");
+            PLUGIN.getLogger().error("Failed to register command: CommandIsland", e);
         }
     }
 

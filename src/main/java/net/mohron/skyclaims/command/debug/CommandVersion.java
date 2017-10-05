@@ -54,8 +54,7 @@ public class CommandVersion extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "scversion");
             PLUGIN.getLogger().debug("Registered command: CommandVersion");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandVersion");
+            PLUGIN.getLogger().error("Failed to register command: CommandVersion", e);
         }
     }
 

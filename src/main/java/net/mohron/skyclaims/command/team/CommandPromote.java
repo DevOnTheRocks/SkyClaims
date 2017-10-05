@@ -54,8 +54,7 @@ public class CommandPromote extends CommandBase.IslandCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandPromote");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandPromote");
+            PLUGIN.getLogger().error("Failed to register command: CommandPromote", e);
         }
     }
 

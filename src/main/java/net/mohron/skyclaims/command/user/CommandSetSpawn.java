@@ -48,8 +48,7 @@ public class CommandSetSpawn extends CommandBase.PlayerCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandSetSpawn");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandSetSpawn");
+            PLUGIN.getLogger().error("Failed to register command: CommandSetSpawn", e);
         }
     }
 

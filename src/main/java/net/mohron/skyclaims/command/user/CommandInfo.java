@@ -67,8 +67,7 @@ public class CommandInfo extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandinfo");
             PLUGIN.getLogger().debug("Registered command: CommandInfo");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandInfo");
+            PLUGIN.getLogger().error("Failed to register command: CommandInfo", e);
         }
     }
 

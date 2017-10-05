@@ -63,8 +63,7 @@ public class CommandInvite extends CommandBase.IslandCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandInvite");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandInvite");
+            PLUGIN.getLogger().error("Failed to register command: CommandInvite", e);
         }
     }
 

@@ -62,8 +62,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandExpand");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandExpand");
+            PLUGIN.getLogger().error("Failed to register command: CommandExpand", e);
         }
     }
 

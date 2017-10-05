@@ -70,8 +70,7 @@ public class CommandAdmin extends CommandBase {
             Sponge.getCommandManager().register(PLUGIN, commandSpec, "isa");
             PLUGIN.getLogger().debug("Registered command: CommandAdmin");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandAdmin");
+            PLUGIN.getLogger().error("Failed to register command: CommandAdmin", e);
         }
     }
 

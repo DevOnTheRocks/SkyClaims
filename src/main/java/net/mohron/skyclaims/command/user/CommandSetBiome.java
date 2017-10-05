@@ -60,8 +60,7 @@ public class CommandSetBiome extends CommandBase.PlayerCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandSetBiome");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandSetBiome");
+            PLUGIN.getLogger().error("Failed to register command: CommandSetBiome", e);
         }
     }
 

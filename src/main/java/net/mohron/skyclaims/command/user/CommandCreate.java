@@ -64,8 +64,7 @@ public class CommandCreate extends CommandBase.PlayerCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandCreate");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandCreate");
+            PLUGIN.getLogger().error("Failed to register command: CommandCreate", e);
         }
     }
 

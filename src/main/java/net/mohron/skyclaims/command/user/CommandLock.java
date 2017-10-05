@@ -65,8 +65,7 @@ public class CommandLock extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandLock");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandLock");
+            PLUGIN.getLogger().error("Failed to register command: CommandLock", e);
         }
     }
 

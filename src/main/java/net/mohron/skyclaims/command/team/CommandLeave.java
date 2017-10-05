@@ -52,8 +52,7 @@ public class CommandLeave extends CommandBase.IslandCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandLeave");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandLeave");
+            PLUGIN.getLogger().error("Failed to register command: CommandLeave", e);
         }
     }
 

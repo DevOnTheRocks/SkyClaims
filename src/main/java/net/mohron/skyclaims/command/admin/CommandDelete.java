@@ -51,8 +51,7 @@ public class CommandDelete extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandDelete");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandDelete");
+            PLUGIN.getLogger().error("Failed to register command: CommandDelete", e);
         }
     }
 

@@ -45,8 +45,7 @@ public class CommandReload extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandReload");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandReload");
+            PLUGIN.getLogger().error("Failed to register command: CommandReload", e);
         }
     }
 

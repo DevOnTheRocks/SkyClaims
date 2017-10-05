@@ -49,7 +49,7 @@ public class CommandReset extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "reset your island and inventory so you can start over.";
     private static final Text SCHEMATIC = Text.of("schematic");
-    private static final Text KEEP_INV = Text.of("keep-inv");
+    private static final Text KEEP_INV = Text.of("keepinv");
 
     public static void register() {
         CommandSpec commandSpec = CommandSpec.builder()
@@ -57,9 +57,7 @@ public class CommandReset extends CommandBase.PlayerCommand {
             .description(Text.of(HELP_TEXT))
             .arguments(
                 GenericArguments.optional(Argument.schematic(SCHEMATIC)),
-                GenericArguments.optional(GenericArguments.requiringPermission(
-                    GenericArguments.literal(KEEP_INV, "keep-inv"), Permissions.COMMAND_RESET_KEEP_INV
-                ))
+                GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(KEEP_INV), Permissions.COMMAND_RESET_KEEP_INV))
             )
             .executor(new CommandReset())
             .build();

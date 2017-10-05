@@ -51,8 +51,7 @@ public class CommandConfig extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandConfig");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandConfig");
+            PLUGIN.getLogger().error("Failed to register command: CommandConfig", e);
         }
     }
 

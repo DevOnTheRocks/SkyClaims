@@ -68,8 +68,7 @@ public class CommandList extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandlist");
             PLUGIN.getLogger().debug("Registered command: CommandList");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandList");
+            PLUGIN.getLogger().error("Failed to register command: CommandList", e);
         }
     }
 
