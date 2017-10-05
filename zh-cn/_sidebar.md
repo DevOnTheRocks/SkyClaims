@@ -5,4 +5,4 @@
   - [生物群落类别](zh-cn/biome-types.md)
   - [设置](zh-cn/options.md)
   - [空岛模板](zh-cn/schematics.md)
-  - [权限管理](https://github.com/DevOnTheRocks/SkyClaims/blob/development/src/main/java/net/mohron/skyclaims/permissions/Permissions.java)
+  - [权限管理](https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/src/main/java/net/mohron/skyclaims/permissions/Permissions.java)
