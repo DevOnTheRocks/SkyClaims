@@ -477,11 +477,6 @@ public class Island implements ContextSource {
         PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
     }
 
-    public void reset(String schematic) {
-        RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, true);
-        PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
-    }
-
     public void reset(String schematic, boolean runCommands) {
         RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, runCommands);
         PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);

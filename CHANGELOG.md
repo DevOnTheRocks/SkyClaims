@@ -12,8 +12,9 @@
 **REQUIRED: SF build 2637+ & GP build 4.0.1.451+ OPTIONAL: Nucleus version 1.1.3+**
 - Updated for latest GP API changes
 - Islands now use the TOWN claim type. This makes all Town features available for use
-- Fixed a rare NPE that would occur when using `/is info` on an island with a missing claim
 - Added Sky Exchange island schematic _(must enable command blocks & recommend set World/Island-Height config to 1)_
+- Replaced `/is regen` with `/is reset [keepinv]` argument _(requires_ `skyclaims.admin.reset.keepinv`)
+- Fixed a rare NPE that would occur when using `/is info` on an island with a missing claim
 - Islands **should** support the new min/max level options in GP
 
 # Beta 25.1 - S5.1 Hotfix

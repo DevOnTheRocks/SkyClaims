@@ -35,7 +35,6 @@ import net.mohron.skyclaims.command.user.CommandExpand;
 import net.mohron.skyclaims.command.user.CommandInfo;
 import net.mohron.skyclaims.command.user.CommandList;
 import net.mohron.skyclaims.command.user.CommandLock;
-import net.mohron.skyclaims.command.user.CommandRegen;
 import net.mohron.skyclaims.command.user.CommandReset;
 import net.mohron.skyclaims.command.user.CommandSetBiome;
 import net.mohron.skyclaims.command.user.CommandSetSpawn;
@@ -111,7 +110,6 @@ public class CommandIsland extends CommandBase {
         CommandList.register();
         CommandLock.register();
         CommandPromote.register();
-        CommandRegen.register();
         CommandReset.register();
         CommandSetBiome.register();
         CommandSetSpawn.register();
@@ -235,19 +233,11 @@ public class CommandIsland extends CommandBase {
             ));
         }
 
-        if (src.hasPermission(Permissions.COMMAND_REGEN)) {
-            helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is regen").onClick(TextActions.suggestCommand("/is regen")),
-                TextColors.GRAY, " [schematic]",
-                TextColors.DARK_GRAY, " - ",
-                TextColors.DARK_GREEN, CommandRegen.HELP_TEXT
-            ));
-        }
-
         if (src.hasPermission(Permissions.COMMAND_RESET)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is reset").onClick(TextActions.suggestCommand("/is reset")),
                 TextColors.GRAY, " [schematic]",
+                TextColors.GRAY, src.hasPermission(Permissions.COMMAND_RESET_KEEP_INV) ? " [keepinv]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandReset.HELP_TEXT
             ));
