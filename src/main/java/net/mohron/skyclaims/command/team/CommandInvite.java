@@ -44,20 +44,20 @@ public class CommandInvite extends CommandBase.IslandCommand {
     private static final Text USER = Text.of("user");
     private static final Text PRIVILEGE = Text.of("privilege");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_INVITE)
-        .arguments(
-            GenericArguments.optional(GenericArguments.seq(
-                GenericArguments.user(USER),
-                GenericArguments.optional(PrivilegeType.getCommandArgument(PRIVILEGE))
-            )),
-            GenericArguments.optional(GenericArguments.literal(LIST, "list"))
-        )
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandInvite())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_INVITE)
+            .arguments(GenericArguments.optional(GenericArguments.firstParsing(
+                GenericArguments.seq(
+                    GenericArguments.user(USER),
+                    GenericArguments.optional(PrivilegeType.getCommandArgument(PRIVILEGE), PrivilegeType.MEMBER)
+                ),
+                GenericArguments.literal(LIST, "list")
+            )))
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandInvite())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "invite");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
