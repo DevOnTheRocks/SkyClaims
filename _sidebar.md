@@ -1,5 +1,6 @@
 ﻿  - [Home](README.md)
   - [FAQ](faq.md)
+  - [Changelog](changelog.md)
   - [Commands](commands.md)
   - [Island Layout](island-layout.md)
   - [Biome Types](biome-types.md)
