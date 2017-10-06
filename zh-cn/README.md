@@ -1,13 +1,11 @@
 # 欢迎来到SkyClaims的Wiki页面
 
-SkyClaims是一个运行在Sponge服务端并且依赖于[GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123)保护的空岛服务器插件。
- SkyClaims利用在Sponge服务端上非常棒的一款领地插件GriefPrevention来生成领地保护你的空岛。
- 正因为这个特性使得在GriefPrevention上面的几乎所有功能都能在玩家创建的空岛中使用。
- 
+SkyClaims是一个运行在Sponge服务端并且依赖于[GriefPrevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123)保护的空岛服务器插件。GriefPrevention是一款在Sponge上面非常好的领地保护插件，玩家可以在空岛上面使用GriefPrevention提供的几乎所有功能。
+
  本插件还在beta阶段，最新版本的支持在这里[Discord](https://discord.gg/EkVQycV)！
- 
+
  ## 功能
- 
+
  - [X] 完整而详尽的命令权限。（例如：利用/setbiome定义特定的生物群系）
  - [X] 自动创建空岛以及周围领地范围
  - [X] 利用Sponge的schematics文件支持多种预设的空岛模板
@@ -26,23 +24,30 @@ SkyClaims是一个运行在Sponge服务端并且依赖于[GriefPrevention](https
  - [ ] 可配置的岛屿布局格式 (线性或是螺旋状分布岛屿，详见wiki部分)
  - [ ] 添加岛屿私聊频道方便队伍聊天
  - [ ] 经济插件的支持
- 
+
   ## 依赖插件
- 
+
  - **必须插件**
-   - [Sponge](https://www.spongepowered.org/downloads) - 1.10.2-2281-5.2.0-BETA-2558
-   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.0.0.415
+   - [Sponge](https://www.spongepowered.org/downloads) - 1.10.2-2281-5.2.0-BETA-2558+
+   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.0.0.415+
    - Permission Plugin - 推荐使用[LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274)
  - **可选插件**
-   - [Nucleus](https://nucleuspowered.org) - 1.1.3-LTS
+   - [Nucleus](https://nucleuspowered.org) - 1.1.3-LTS+
    <!-- - Economy Plugin - [Economy Lite](https://ore.spongepowered.org/Flibio/EconomyLite), [Total Economy](https://ore.spongepowered.org/Erigitic/Total-Economy), or any other Sponge Economy plugin of your choosing. -->
 
  ## 附加信息
- 
+
  **插件发布地址[Ore](https://ore.spongepowered.org/Mohron/SkyClaims/)。**
- 
+
  **Bug提交和功能建议可以发到这里[GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues)。**
- 
+
+ [![Discord](_../images/Discord.png)](https://discord.gg/EkVQycV)
+ | [![Patreon](_../images/Patreon.png)](https://www.patreon.com/mohron)
+ | [![PayPal](_../images/Paypal.png)](https://www.paypal.me/mohron)
+
+<!--
+Try the relative path for wiki if not work,change back to absolute path.
+
  [![Discord](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Discord.png)](https://discord.gg/EkVQycV)
  | [![Patreon](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Patreon.png)](https://www.patreon.com/mohron)
- | [![PayPal](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Paypal.png)](https://www.paypal.me/mohron)
+ | [![PayPal](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Paypal.png)](https://www.paypal.me/mohron)-->
