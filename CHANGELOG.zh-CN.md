@@ -8,11 +8,20 @@
 - 添加空白世界生成的能力
 - 修复地狱门
 
+# Beta 26 - S5.1
+**必须插件：SF 2637+ & GP 4.0.1.451+ 可选插件：Nucleus 1.1.3+**
+- 升级至最新的GP API
+- 岛屿现在使用村庄作为默认的生物群落 - 这可以让所有在村庄群落里的特性可用
+- 新增Sky Exchange空岛模板 _(必须开启命令方块&建议设置岛屿生成高度为1)_
+- 将 `/is regen` 替换为 `/is reset [keepinv]` 参数 _(权限需求_ `skyclaims.admin.reset.keepinv`)
+- 修复了当使用`/is info`命令在一个岛屿没有领地时候的一个罕见的空指针错误
+- 空岛现在应该可以支持GP的混合高度设定。
+
 # Beta 25.1 - S5.1 Hotfix
 **必须插件：SF 2558+ & GP 4.0.0.415+ 可选插件：Nucleus 1.1.3+**
-- Fixed islands being created at Y 1 instead of the configured height.
-- Added configurable spawn world
-- Added `/scversion` - `skyclaims.admin.version` to aid in debugging dependency issues
+- 修复了岛屿生成在1高度而不是设置高度的bug
+- 添加可控制的世界出生点
+- 添加命令`/scversion` - `skyclaims.admin.version` 来定位bug位置。
 
 # Beta 25 - S5.1
 **必须插件：SF 2558+ & GP 4.0.0.415+ 可选插件：Nucleus 1.1.3+**
