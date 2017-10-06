@@ -45,7 +45,7 @@ This plugin is in Beta. Live support is available for the latest builds through 
 
 **Plugin releases are available on [Ore](https://ore.spongepowered.org/Mohron/SkyClaims/).**
 
-**Detailed feature information is available on our [Wiki](https://github.com/DevOnTheRocks/SkyClaims/wiki/).**
+**Detailed feature information is available on our [Wiki](https://devontherocks.github.io/SkyClaims/).**
 
 **Bug reports and feature requests can be made on [GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues).**
 
