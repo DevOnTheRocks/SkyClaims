@@ -45,7 +45,7 @@
  
  **插件发布地址[Ore](https://ore.spongepowered.org/Mohron/SkyClaims/)。**
  
- **详细的功能特性信息请看这里（有中文翻译版本，渣翻有不对的或者漏翻的请指正）[Wiki](https://github.com/DevOnTheRocks/SkyClaims/wiki/)。**
+ **详细的功能特性信息请看这里（有中文翻译版本，渣翻有不对的或者漏翻的请指正）[Wiki](https://devontherocks.github.io/SkyClaims/)。**
  
  **Bug提交和功能建议可以发到这里[GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues)。**
  
