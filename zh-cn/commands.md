@@ -12,7 +12,7 @@
 | `is invite [user] [privilege]` | 将某个玩家邀请加入空岛 | `skyclaims.command.invite` |
 | `is kick <user>` | 将某个被邀请玩家踢出 | `skyclaims.command.kick` |
 | `is leave` | 离开某个被邀请的空岛 | `skyclaims.command.leave` |
-| `is list [user] [sort]` | 显示空岛列表，基础权限仅仅允许玩家列出他们所参与的所有空岛列表。此外，你可以允许玩家列出所有的未上锁空岛或者使用排序指令。 || 基础权限：`skyclaims.command.list.base`<br />列出未上锁权限：`skyclaims.command.list.unlocked`<br />是否可以使用排序权限：`skyclaims.command.list.sort`<br />管理员权限：`skyclaims.admin.list` |
+| `is list [user] [sort]` | 显示空岛列表，基础权限仅仅允许玩家列出他们所参与的所有空岛列表。此外，你可以允许玩家列出所有的未上锁空岛或者使用排序指令。 | 基础权限：`skyclaims.command.list.base`<br />列出未上锁权限：`skyclaims.command.list.unlocked`<br />是否可以使用排序权限：`skyclaims.command.list.sort`<br />管理员权限：`skyclaims.admin.list` |
 | `is lock`<br />`is unlock` | 空岛是否上锁，<br />注意：如果上锁，游客将不可访问你的空岛 | `skyclaims.command.lock`<br />管理员权限：`skyclaims.admin.lock.others` |
 | `is promote [user]` | 用来提升某个空岛玩家权限 | `skyclaims.command.promote` |
 | `is reset [schematic] [keepinv]` | 重建空岛 <br />(**注意！**：重建空岛会默认清空物品栏和背包) | `skyclaims.command.reset`<br/>`skyclaims.admin.reset.keepinv`<br/>_*参数支持见 [argument perms](#command-arguments)_ |
