@@ -134,7 +134,7 @@ public class Island implements ContextSource {
                 this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
                 PLUGIN.queueForSaving(this);
             } catch (CreateIslandException e) {
-                PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
+                PLUGIN.getLogger().error(String.format("Failed to create claim while loading %s (%s).", getName().toPlain(), id), e);
             }
         }
     }

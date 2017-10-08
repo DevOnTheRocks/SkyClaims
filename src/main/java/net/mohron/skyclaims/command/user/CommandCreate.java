@@ -93,7 +93,7 @@ public class CommandCreate extends CommandBase.PlayerCommand {
             new Island(player, schematic);
             return CommandResult.success();
         } catch (CreateIslandException e) {
-            throw new CommandException(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getMessage()));
+            throw new CommandException(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
         }
     }
 
@@ -126,7 +126,7 @@ public class CommandCreate extends CommandBase.PlayerCommand {
                     ));
                     new Island(player, s);
                 } catch (CreateIslandException e) {
-                    player.sendMessage(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getMessage()));
+                    player.sendMessage(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
                 }
             }
         };
