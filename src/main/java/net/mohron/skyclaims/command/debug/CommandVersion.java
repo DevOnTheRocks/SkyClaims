@@ -78,9 +78,16 @@ public class CommandVersion extends CommandBase {
             TextColors.YELLOW, PluginInfo.VERSION
         ));
         // GriefPrevention
-        String gp = (PLUGIN.getGriefPrevention() != null) ? PLUGIN.getGriefPrevention().getImplementationVersion() : "Error/Missing";
+        String gp;
+        try {
+            gp = (PLUGIN.getGriefPrevention() != null) ? PLUGIN.getGriefPrevention().getImplementationVersion() : "Error/Missing";
+        } catch (Exception e) {
+            PLUGIN.getLogger().error("Error getting Grief Prevention version.", e);
+            Optional<PluginContainer> plugin = Sponge.getPluginManager().getPlugin("griefprevention");
+            gp = plugin.map(pluginContainer -> pluginContainer.getVersion().get()).orElse("Error/Missing");
+        }
         texts.add(Text.of(
-            TextColors.DARK_AQUA, "GriefPrevention", TextColors.WHITE, " : ",
+            TextColors.DARK_AQUA, "Grief Prevention", TextColors.WHITE, " : ",
             TextColors.YELLOW, gp
         ));
         // Permissions
