@@ -34,38 +34,37 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.world.biome.BiomeType;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandSetBiome extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "set the biome of a block, chunk or island.";
     private static final Text BIOME = Text.of("biome");
     private static final Text TARGET = Text.of("target");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_SET_BIOME)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.seq(
-            Argument.biome(BIOME),
-            GenericArguments.optional(Argument.target(TARGET))
-        ))
-        .executor(new CommandSetBiome())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_SET_BIOME)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.seq(
+                Argument.biome(BIOME),
+                GenericArguments.optional(Argument.target(TARGET))
+            ))
+            .executor(new CommandSetBiome())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "setbiome");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandSetBiome");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandSetBiome");
+            PLUGIN.getLogger().error("Failed to register command: CommandSetBiome", e);
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
         BiomeType biome = args.<BiomeType>getOne(BIOME)
             .orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
         Island island = Island.get(player.getLocation())

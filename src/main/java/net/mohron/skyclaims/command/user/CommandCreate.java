@@ -38,38 +38,37 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandCreate extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "create an island.";
     private static final Text SCHEMATIC = Text.of("schematic");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_CREATE)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
-        .executor(new CommandCreate())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_CREATE)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.optional(Argument.schematic(SCHEMATIC)))
+            .executor(new CommandCreate())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "create");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandCreate");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandCreate");
+            PLUGIN.getLogger().error("Failed to register command: CommandCreate", e);
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
         if (Island.hasIsland(player.getUniqueId())) {
             throw new CommandException(Text.of(TextColors.RED, "You already have an island!"));
         }
@@ -77,7 +76,7 @@ public class CommandCreate extends CommandBase.PlayerCommand {
         Optional<String> schematic = args.getOne(SCHEMATIC);
         if (schematic.isPresent()) {
             return createIsland(player, schematic.get());
-        } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics()) {
+        } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics() && SchematicArgument.SCHEMATICS.size() > 1) {
             return listSchematics(player);
         } else {
             return createIsland(player, Options.getDefaultSchematic(player.getUniqueId()));
@@ -85,13 +84,16 @@ public class CommandCreate extends CommandBase.PlayerCommand {
     }
 
     private CommandResult createIsland(Player player, String schematic) throws CommandException {
-        player.sendMessage(Text.of(TextColors.GREEN, "Your island is being created. You will be teleported shortly."));
+        player.sendMessage(Text.of(
+            TextColors.GREEN, "Your island is being created.",
+            PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
+        ));
 
         try {
             new Island(player, schematic);
             return CommandResult.success();
         } catch (CreateIslandException e) {
-            throw new CommandException(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getMessage()));
+            throw new CommandException(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
         }
     }
 
@@ -118,10 +120,13 @@ public class CommandCreate extends CommandBase.PlayerCommand {
                     return;
                 }
                 try {
-                    player.sendMessage(Text.of(TextColors.GREEN, "Your island is being created. You will be teleported shortly."));
+                    player.sendMessage(Text.of(
+                        TextColors.GREEN, "Your island is being created.",
+                        PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
+                    ));
                     new Island(player, s);
                 } catch (CreateIslandException e) {
-                    player.sendMessage(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getMessage()));
+                    player.sendMessage(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
                 }
             }
         };

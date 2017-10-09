@@ -37,7 +37,7 @@ public class WorldConfig {
     private String spawnWorld = "";
     @Setting(value = "Void-Dimensions", comment = "A list of world names to generate as void. Default: world, DIM-1, DIM1")
     private List<String> voidDimensions = Lists.newArrayList("world", "DIM-1", "DIM1");
-    @Setting(value = "Island-Height", comment = "Height to build islands at (0-255). Default: 72")
+    @Setting(value = "Island-Height", comment = "Height to build islands at (1-255). Default: 72")
     private int islandHeight = 72;
     @Setting(value = "Spawn-Regions", comment = "The height & width of regions to reserve for spawn (min 1). Default: 1")
     private int spawnRegions = 1;

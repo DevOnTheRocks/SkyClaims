@@ -54,7 +54,7 @@ public class ClientJoinHandler {
                     PLUGIN.getLogger().info("Automatically created an island for {}.", player.getName());
                 } catch (CreateIslandException e) {
                     // Oh well, we tried!
-                    PLUGIN.getLogger().warn("Failed to create an island on join for {}.\n{}", player.getName(), e.getMessage());
+                    PLUGIN.getLogger().warn(String.format("Failed to create an island on join for %s.", player.getName()), e);
                 }
             })
             .delayTicks(40)

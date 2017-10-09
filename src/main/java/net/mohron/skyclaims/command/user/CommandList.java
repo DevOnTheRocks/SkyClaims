@@ -38,40 +38,41 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@NonnullByDefault
 public class CommandList extends CommandBase {
 
     public static final String HELP_TEXT = "display a list of the current islands.";
     private static final Text USER = Text.of("user");
     private static final Text SORT = Text.of("sort");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_LIST)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.firstParsing(
-            GenericArguments.optional(GenericArguments.user(USER)),
-            GenericArguments.optional(GenericArguments.requiringPermission(Argument.sort(SORT), Permissions.COMMAND_LIST_SORT))
-        ))
-        .executor(new CommandList())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_LIST)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.firstParsing(
+                GenericArguments.optional(GenericArguments.user(USER)),
+                GenericArguments.optional(GenericArguments.requiringPermission(Argument.sort(SORT), Permissions.COMMAND_LIST_SORT))
+            ))
+            .executor(new CommandList())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "list");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandlist");
             PLUGIN.getLogger().debug("Registered command: CommandList");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandList");
+            PLUGIN.getLogger().error("Failed to register command: CommandList", e);
         }
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (SkyClaims.islands.isEmpty()) {
             src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
             return CommandResult.empty();

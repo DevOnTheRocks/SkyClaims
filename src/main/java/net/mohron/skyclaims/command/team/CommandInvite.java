@@ -34,9 +34,9 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandInvite extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
@@ -44,31 +44,30 @@ public class CommandInvite extends CommandBase.IslandCommand {
     private static final Text USER = Text.of("user");
     private static final Text PRIVILEGE = Text.of("privilege");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_INVITE)
-        .arguments(
-            GenericArguments.optional(GenericArguments.seq(
-                GenericArguments.user(USER),
-                GenericArguments.optional(PrivilegeType.getCommandArgument(PRIVILEGE))
-            )),
-            GenericArguments.optional(GenericArguments.literal(LIST, "list"))
-        )
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandInvite())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_INVITE)
+            .arguments(GenericArguments.optional(GenericArguments.firstParsing(
+                GenericArguments.seq(
+                    GenericArguments.user(USER),
+                    GenericArguments.optional(PrivilegeType.getCommandArgument(PRIVILEGE), PrivilegeType.MEMBER)
+                ),
+                GenericArguments.literal(LIST, "list")
+            )))
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandInvite())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "invite");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandInvite");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandInvite");
+            PLUGIN.getLogger().error("Failed to register command: CommandInvite", e);
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
         User user = args.<User>getOne(USER).orElse(null);
         PrivilegeType type = args.<PrivilegeType>getOne(PRIVILEGE).orElse(PrivilegeType.MEMBER);
 

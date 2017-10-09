@@ -35,6 +35,7 @@ import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.world.extent.ArchetypeVolume;
 import org.spongepowered.api.world.schematic.BlockPaletteTypes;
 import org.spongepowered.api.world.schematic.Schematic;
@@ -43,8 +44,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.zip.GZIPOutputStream;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandCreateSchematic extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "used to save the selected area as an island schematic";
@@ -62,12 +62,11 @@ public class CommandCreateSchematic extends CommandBase.PlayerCommand {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandCreateSchematic");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandCreateSchematic");
+            PLUGIN.getLogger().error("Failed to register command: CommandCreateSchematic", e);
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
         SchematicHandler.PlayerData data = SchematicHandler.get(player);
         if (data.getPos1() == null || data.getPos2() == null) {
             player.sendMessage(Text.of(TextColors.RED, "You must set both positions before copying."));

@@ -34,47 +34,47 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
+@NonnullByDefault
 public class CommandUnlock extends CommandBase {
 
     public static final String HELP_TEXT = "used to allow untrusted players to visit your island.";
     private static final Text ALL = Text.of("all");
     private static final Text ISLAND = Text.of("island");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_LOCK)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.firstParsing(
-            GenericArguments
-                .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
-            GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
-        ))
-        .executor(new CommandUnlock())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_LOCK)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.firstParsing(
+                GenericArguments
+                    .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
+                GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
+            ))
+            .executor(new CommandUnlock())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "unlock");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandUnlock");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandUnlock");
+            PLUGIN.getLogger().error("Failed to register command: CommandUnlock", e);
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (args.hasAny(ISLAND)) {
             return unlockIslands(src, args.getAll(ISLAND));
         }
         if (args.hasAny(ALL)) {
-            unlockAll(src);
+            return unlockAll(src);
         }
         if (!(src instanceof Player)) {
             throw new CommandException(Text.of("You must be a player to run this command!"));

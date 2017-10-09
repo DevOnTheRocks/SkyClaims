@@ -29,12 +29,12 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public abstract class CommandBase implements CommandExecutor {
 
     protected static final SkyClaims PLUGIN = SkyClaims.getInstance();
@@ -43,7 +43,7 @@ public abstract class CommandBase implements CommandExecutor {
 
         protected static final Text ISLAND = Text.of("island");
 
-        @Nonnull @Override public CommandResult execute(@Nonnull CommandSource src, @Nonnull CommandContext args) throws CommandException {
+        @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
             if (!(src instanceof Player)) {
                 throw new CommandException(Text.of(TextColors.RED, "This command can only be used by a player!"));
             }
@@ -67,7 +67,7 @@ public abstract class CommandBase implements CommandExecutor {
 
     public static abstract class PlayerCommand extends CommandBase implements CommandRequirement.RequiresPlayer {
 
-        @Nonnull @Override public CommandResult execute(@Nonnull CommandSource src, @Nonnull CommandContext args) throws CommandException {
+        @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
             if (src instanceof Player) {
                 return execute((Player) src, args);
             }

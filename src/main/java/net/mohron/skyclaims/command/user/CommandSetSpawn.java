@@ -29,31 +29,30 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandSetSpawn extends CommandBase.PlayerCommand {
 
     public static final String HELP_TEXT = "set your spawn location for your island.";
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_SET_SPAWN)
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandSetSpawn())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_SET_SPAWN)
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandSetSpawn())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "setspawn");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandSetSpawn");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandSetSpawn");
+            PLUGIN.getLogger().error("Failed to register command: CommandSetSpawn", e);
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
         Island island = Island.get(player.getLocation())
             .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
 

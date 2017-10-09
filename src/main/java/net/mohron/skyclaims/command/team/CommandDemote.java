@@ -32,33 +32,32 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandDemote extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to demote a player on an island.";
     private static final Text USER = Text.of("user");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_DEMOTE)
-        .arguments(GenericArguments.user(USER))
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandDemote())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_DEMOTE)
+            .arguments(GenericArguments.user(USER))
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandDemote())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "demote");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandDemote");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandDemote");
+            PLUGIN.getLogger().error("Failed to register command: CommandDemote", e);
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
         User user = args.<User>getOne(USER).orElse(null);
 
         if (user == null) {

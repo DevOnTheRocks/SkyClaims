@@ -35,7 +35,6 @@ import net.mohron.skyclaims.command.user.CommandExpand;
 import net.mohron.skyclaims.command.user.CommandInfo;
 import net.mohron.skyclaims.command.user.CommandList;
 import net.mohron.skyclaims.command.user.CommandLock;
-import net.mohron.skyclaims.command.user.CommandRegen;
 import net.mohron.skyclaims.command.user.CommandReset;
 import net.mohron.skyclaims.command.user.CommandSetBiome;
 import net.mohron.skyclaims.command.user.CommandSetSpawn;
@@ -58,12 +57,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+@NonnullByDefault
 public class CommandIsland extends CommandBase {
 
     private static final String HELP_TEXT = String.format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
@@ -85,8 +86,7 @@ public class CommandIsland extends CommandBase {
             Sponge.getCommandManager().register(PLUGIN, commandSpec, "island", "is");
             PLUGIN.getLogger().debug("Registered command: CommandIsland");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandIsland");
+            PLUGIN.getLogger().error("Failed to register command: CommandIsland", e);
         }
     }
 
@@ -109,7 +109,6 @@ public class CommandIsland extends CommandBase {
         CommandList.register();
         CommandLock.register();
         CommandPromote.register();
-        CommandRegen.register();
         CommandReset.register();
         CommandSetBiome.register();
         CommandSetSpawn.register();
@@ -155,6 +154,7 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_DEMOTE)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is demote").onClick(TextActions.suggestCommand("/is demote ")),
+                TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandDemote.HELP_TEXT
             ));
@@ -190,7 +190,7 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_KICK)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is kick").onClick(TextActions.suggestCommand("/is kick")),
-                TextColors.GRAY, " [user]",
+                TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandKick.HELP_TEXT
             ));
@@ -226,17 +226,9 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_PROMOTE)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is promote").onClick(TextActions.suggestCommand("/is promote ")),
+                TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandPromote.HELP_TEXT
-            ));
-        }
-
-        if (src.hasPermission(Permissions.COMMAND_REGEN)) {
-            helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is regen").onClick(TextActions.suggestCommand("/is regen")),
-                TextColors.GRAY, " [schematic]",
-                TextColors.DARK_GRAY, " - ",
-                TextColors.DARK_GREEN, CommandRegen.HELP_TEXT
             ));
         }
 
@@ -244,6 +236,7 @@ public class CommandIsland extends CommandBase {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is reset").onClick(TextActions.suggestCommand("/is reset")),
                 TextColors.GRAY, " [schematic]",
+                TextColors.GRAY, src.hasPermission(Permissions.COMMAND_RESET_KEEP_INV) ? " [keepinv]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandReset.HELP_TEXT
             ));

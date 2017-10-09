@@ -31,7 +31,9 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
+@NonnullByDefault
 public class CommandTransfer extends CommandBase {
 
     public static final String HELP_TEXT = "used to transfer island ownership to another player.";
@@ -50,13 +52,11 @@ public class CommandTransfer extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandTransfer");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandTransfer");
+            PLUGIN.getLogger().error("Failed to register command: CommandTransfer", e);
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         Island island;
         User owner = args.<User>getOne(OWNER).orElse(null);
         User user = args.<User>getOne(USER)

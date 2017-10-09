@@ -31,9 +31,11 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 
+@NonnullByDefault
 public class CommandConfig extends CommandBase {
 
     public static final String HELP_TEXT = "used to view loaded config settings.";
@@ -49,13 +51,11 @@ public class CommandConfig extends CommandBase {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandConfig");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandConfig");
+            PLUGIN.getLogger().error("Failed to register command: CommandConfig", e);
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         GlobalConfig config = PLUGIN.getConfig();
         List<Text> configText = Lists.newArrayList();
 

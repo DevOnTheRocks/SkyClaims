@@ -33,34 +33,32 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandVersion extends CommandBase {
 
     public static final String HELP_TEXT = "used to view loaded config settings.";
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_VERSION)
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandVersion())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_VERSION)
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandVersion())
+            .build();
+
         try {
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "scversion");
             PLUGIN.getLogger().debug("Registered command: CommandVersion");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandVersion");
+            PLUGIN.getLogger().error("Failed to register command: CommandVersion", e);
         }
     }
 
-    @Nonnull @Override
-    public CommandResult execute(@Nonnull CommandSource src, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         List<Text> texts = Lists.newArrayList();
 
         // Minecraft
@@ -80,9 +78,16 @@ public class CommandVersion extends CommandBase {
             TextColors.YELLOW, PluginInfo.VERSION
         ));
         // GriefPrevention
-        String gp = (PLUGIN.getGriefPrevention() != null) ? PLUGIN.getGriefPrevention().getImplementationVersion() : "Error/Missing";
+        String gp;
+        try {
+            gp = (PLUGIN.getGriefPrevention() != null) ? PLUGIN.getGriefPrevention().getImplementationVersion() : "Error/Missing";
+        } catch (Exception e) {
+            PLUGIN.getLogger().error("Error getting Grief Prevention version.", e);
+            Optional<PluginContainer> plugin = Sponge.getPluginManager().getPlugin("griefprevention");
+            gp = plugin.map(pluginContainer -> pluginContainer.getVersion().get()).orElse("Error/Missing");
+        }
         texts.add(Text.of(
-            TextColors.DARK_AQUA, "GriefPrevention", TextColors.WHITE, " : ",
+            TextColors.DARK_AQUA, "Grief Prevention", TextColors.WHITE, " : ",
             TextColors.YELLOW, gp
         ));
         // Permissions

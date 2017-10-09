@@ -77,12 +77,14 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = ID,
+@Plugin(
+    id = ID,
     name = NAME,
     version = VERSION,
     description = DESCRIPTION,
@@ -298,24 +300,18 @@ public class SkyClaims {
     }
 
     private void addCustomMetrics() {
-        metrics.addCustomChart(new Metrics.SingleLineChart("islands") {
-            @Override
-            public int getValue() {
-                return islands.size();
-            }
-        });
-        metrics.addCustomChart(new Metrics.SimplePie("sponge_version") {
-            @Override
-            public String getValue() {
-                return Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null);
-            }
-        });
-        metrics.addCustomChart(new Metrics.SimplePie("allocated_ram") {
-            @Override
-            public String getValue() {
-                return String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0);
-            }
-        });
+        metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> islands.size()));
+        metrics.addCustomChart(new Metrics.DrilldownPie("sponge_version", () -> {
+            Map<String, Map<String, Integer>> map = new HashMap<>();
+            String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion().orElse("?").split("-")[0];
+            Map<String, Integer> entry = new HashMap<>();
+            entry.put(Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null), 1);
+            map.put(api, entry);
+            return map;
+        }));
+        metrics.addCustomChart(new Metrics.SimplePie("allocated_ram", () ->
+            String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0))
+        );
     }
 
     public PluginContainer getPluginContainer() {

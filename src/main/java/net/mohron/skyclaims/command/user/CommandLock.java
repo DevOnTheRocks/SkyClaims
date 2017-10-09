@@ -34,42 +34,42 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
+@NonnullByDefault
 public class CommandLock extends CommandBase {
 
     public static final String HELP_TEXT = "used to prevent untrusted players from visiting to your island.";
     private static final Text ALL = Text.of("all");
     private static final Text ISLAND = Text.of("island");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_LOCK)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.firstParsing(
-            GenericArguments
-                .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
-            GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
-        ))
-        .executor(new CommandLock())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_LOCK)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.firstParsing(
+                GenericArguments
+                    .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
+                GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
+            ))
+            .executor(new CommandLock())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "lock");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandLock");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandLock");
+            PLUGIN.getLogger().error("Failed to register command: CommandLock", e);
         }
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (args.hasAny(ISLAND)) {
             return lockIslands(src, args.getAll(ISLAND));
         }

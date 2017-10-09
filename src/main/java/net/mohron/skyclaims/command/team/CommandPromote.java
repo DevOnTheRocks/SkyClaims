@@ -33,33 +33,32 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandPromote extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to promote a player on an island.";
     private static final Text USER = Text.of("user");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_PROMOTE)
-        .arguments(GenericArguments.user(USER))
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandPromote())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_PROMOTE)
+            .arguments(GenericArguments.user(USER))
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandPromote())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "promote");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandPromote");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandPromote");
+            PLUGIN.getLogger().error("Failed to register command: CommandPromote", e);
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
         User user = args.<User>getOne(USER).orElse(null);
 
         if (user == null) {

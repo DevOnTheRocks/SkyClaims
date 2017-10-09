@@ -35,7 +35,7 @@ public class Version implements Comparable<Version> {
         }
     }
 
-    public static Version of(String string) {
+    public static Version of(@Nonnull String string) {
         return new Version(string);
     }
 

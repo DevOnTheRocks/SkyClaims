@@ -25,6 +25,7 @@ import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
+import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
@@ -53,6 +54,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -124,12 +126,15 @@ public class Island implements ContextSource {
             if (claim.getWidth() < initialWidth) {
                 setWidth(initialWidth);
             }
+            if (claim.getType() != ClaimType.TOWN) {
+                claim.changeType(ClaimType.TOWN);
+            }
         } else {
             try {
                 this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
                 PLUGIN.queueForSaving(this);
             } catch (CreateIslandException e) {
-                PLUGIN.getLogger().error("Failed to create a new claim for island " + id);
+                PLUGIN.getLogger().error(String.format("Failed to create claim while loading %s (%s).", getName().toPlain(), id), e);
             }
         }
     }
@@ -221,11 +226,11 @@ public class Island implements ContextSource {
     }
 
     public Date getDateCreated() {
-        return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateCreated()) : null;
+        return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateCreated()) : Date.from(Instant.now());
     }
 
     public Date getDateLastActive() {
-        return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateLastActive()) : null;
+        return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateLastActive()) : Date.from(Instant.now());
     }
 
     public Text getName() {
@@ -304,10 +309,6 @@ public class Island implements ContextSource {
         return getWidth() == width;
     }
 
-    public void addMember(User user) {
-        addMember(user, PrivilegeType.MEMBER);
-    }
-
     public void addMember(User user, PrivilegeType type) {
         switch (type) {
             case OWNER:
@@ -328,10 +329,10 @@ public class Island implements ContextSource {
     public void promote(User user) {
         getClaim().ifPresent(c -> {
             if (c.isUserTrusted(user, TrustType.BUILDER)) {
-                c.removeUserTrust(user.getUniqueId(), TrustType.BUILDER);
+                c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
                 c.addUserTrust(user.getUniqueId(), TrustType.MANAGER);
             } else if (c.isUserTrusted(user, TrustType.MANAGER)) {
-                c.removeUserTrust(user.getUniqueId(), TrustType.MANAGER);
+                c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
                 UUID existingOwner = owner;
                 transfer(user);
                 c.addUserTrust(existingOwner, TrustType.MANAGER);
@@ -342,18 +343,14 @@ public class Island implements ContextSource {
     public void demote(User user) {
         getClaim().ifPresent(c -> {
             if (c.isUserTrusted(user, TrustType.MANAGER)) {
-                c.removeUserTrust(user.getUniqueId(), TrustType.MANAGER);
+                c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
                 c.addUserTrust(user.getUniqueId(), TrustType.BUILDER);
             }
         });
     }
 
     public void removeMember(User user) {
-        getClaim().ifPresent(c -> {
-            for (TrustType trustType : TrustType.values()) {
-                c.removeUserTrust(user.getUniqueId(), trustType);
-            }
-        });
+        getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), TrustType.NONE));
     }
 
     public List<String> getMembers() {
@@ -479,13 +476,8 @@ public class Island implements ContextSource {
         PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
     }
 
-    public void reset(String schematic) {
-        RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, true);
-        PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
-    }
-
-    public void regen(String schematic) {
-        RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, false);
+    public void reset(String schematic, boolean runCommands) {
+        RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, runCommands);
         PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
     }
 

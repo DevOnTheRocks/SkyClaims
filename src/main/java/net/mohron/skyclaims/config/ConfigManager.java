@@ -97,7 +97,7 @@ public class ConfigManager {
      * Create the default schematic file, from resource, into the config-specified folder
      */
     private void initializeSchematic() {
-        String[] schematics = {"gardenofglass", "grass", "sand", "skyfactory", "snow", "wood"};
+        String[] schematics = {"gardenofglass", "grass", "sand", "skyfactory", "skyresources", "snow", "wood"};
         File schemDir = Paths.get(PLUGIN.getConfigDir() + File.separator + "schematics").toFile();
         if (!schemDir.exists() || !schemDir.isDirectory()) {
             try {

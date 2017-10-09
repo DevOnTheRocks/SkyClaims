@@ -39,6 +39,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -47,30 +48,30 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@NonnullByDefault
 public class CommandInfo extends CommandBase {
 
     public static final String HELP_TEXT = "display detailed information on your island.";
     private static final Text ISLAND = Text.of("island");
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_INFO)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.optional(Argument.island(ISLAND)))
-        .executor(new CommandInfo())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_INFO)
+            .description(Text.of(HELP_TEXT))
+            .arguments(GenericArguments.optional(Argument.island(ISLAND)))
+            .executor(new CommandInfo())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "info");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec, "islandinfo");
             PLUGIN.getLogger().debug("Registered command: CommandInfo");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandInfo");
+            PLUGIN.getLogger().error("Failed to register command: CommandInfo", e);
         }
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         List<Island> islands = Lists.newArrayList();
 
         if (src instanceof Player && !args.hasAny(ISLAND)) {

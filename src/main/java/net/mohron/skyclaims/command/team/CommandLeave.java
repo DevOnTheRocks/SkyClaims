@@ -31,33 +31,32 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-
+@NonnullByDefault
 public class CommandLeave extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to leave an island.";
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_LEAVE)
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandLeave())
-        .build();
-
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_LEAVE)
+            .description(Text.of(HELP_TEXT))
+            .executor(new CommandLeave())
+            .build();
+
         try {
             CommandIsland.addSubCommand(commandSpec, "leave");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandLeave");
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandLeave");
+            PLUGIN.getLogger().error("Failed to register command: CommandLeave", e);
         }
     }
 
-    @Override public CommandResult execute(@Nonnull Player player, @Nonnull Island island, @Nonnull CommandContext args) throws CommandException {
+    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
 
         if (island.isOwner(player)) {
             throw new CommandException(Text.of(TextColors.RED, "You must transfer island ownership before leaving."));
