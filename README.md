@@ -34,11 +34,11 @@ This plugin is in Beta. Live support is available for the latest builds through 
 ## Dependencies
 
 - **Required:**
-   - [Sponge](https://www.spongepowered.org/downloads) - 1.12.1-2444-7.0.0-BETA-2524+
-   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.12.2-4.2.0.334+
+   - [Sponge](https://www.spongepowered.org/downloads) - 1.12.2-2486-7.0.0-BETA-2688+
+   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.12.2-4.3.0.473+
    - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended
 - **Optional:**
-   - [Nucleus](https://nucleuspowered.org) - 1.1.3-LTS+
+   - [Nucleus](https://nucleuspowered.org) - 1.2.0+
    <!-- - Economy Plugin - [Economy Lite](https://ore.spongepowered.org/Flibio/EconomyLite), [Total Economy](https://ore.spongepowered.org/Erigitic/Total-Economy), or any other Sponge Economy plugin of your choosing. -->
 
 ## Additional Information
