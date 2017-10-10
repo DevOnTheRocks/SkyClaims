@@ -47,6 +47,7 @@ public class IslandCleanupTask implements Runnable {
                 if (threshold <= 0 || age < threshold) {
                     return;
                 }
+                Sponge.getScheduler().createTaskBuilder().execute(i::clear).submit(PLUGIN);
                 Sponge.getScheduler().createTaskBuilder().execute(i::delete).submit(PLUGIN);
                 PLUGIN.getLogger().info(String.format("%s (%d,%d) was inactive for %d days and has been removed.",
                     i.getName().toPlain(), i.getRegion().getX(), i.getRegion().getZ(), age)
