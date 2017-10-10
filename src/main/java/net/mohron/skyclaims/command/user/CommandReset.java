@@ -34,6 +34,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
@@ -111,10 +112,12 @@ public class CommandReset extends CommandBase.PlayerCommand {
                     TextColors.WHITE, "[",
                     Text.builder("YES")
                         .color(TextColors.GREEN)
+                        .onHover(TextActions.showText(Text.of("Click to reset")))
                         .onClick(TextActions.executeCallback(resetIsland(player, island, schematic, keepInv))),
                     TextColors.WHITE, "] [",
                     Text.builder("NO")
                         .color(TextColors.RED)
+                        .onHover(TextActions.showText(Text.of("Click to cancel")))
                         .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
                     TextColors.WHITE, "]"
                 ));
