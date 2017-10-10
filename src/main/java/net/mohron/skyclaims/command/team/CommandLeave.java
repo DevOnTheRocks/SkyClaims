@@ -85,7 +85,7 @@ public class CommandLeave extends CommandBase.IslandCommand {
     private Consumer<CommandSource> leaveIsland(Player player, Island island) {
         return src -> {
             if (island.getPlayers().contains(player)) {
-                player.setLocationSafely(island.getWorld().getSpawnLocation());
+                player.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
             }
 
             island.removeMember(player);
