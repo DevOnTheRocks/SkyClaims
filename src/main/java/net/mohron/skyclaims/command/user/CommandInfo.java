@@ -108,7 +108,7 @@ public class CommandInfo extends CommandBase {
                             island.getClaimUniqueId().toString(),
                             createReturnConsumer(src, island.getUniqueId().toString())
                         )))
-                        .onHover(TextActions.showText(Text.of("Click here to check claim info.")))
+                        .onHover(TextActions.showText(Text.of("Click to view claim info")))
                 ) : Text.EMPTY
             ))
             .collect(Collectors.toList());
@@ -131,23 +131,23 @@ public class CommandInfo extends CommandBase {
         Text teleport = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS) ? Text.of(
             TextColors.WHITE, "[",
             TextColors.GOLD, Text.builder("Teleport")
-                .onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn()
-                    .getLocation())))
-                .onHover(TextActions.showText(Text.of("Click to teleport to this island!"))),
+                .onHover(TextActions.showText(Text.of("Click to teleport to this island")))
+                .onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation()))),
             TextColors.WHITE, "] "
         ) : Text.EMPTY;
 
         Text transfer = src.hasPermission(Permissions.COMMAND_TRANSFER) ? Text.of(
             TextColors.WHITE, "[",
             TextColors.GOLD, Text.builder("Transfer")
-                .onClick(TextActions.suggestCommand("/isa transfer " + island.getOwnerName() + " ?"))
-                .onHover(TextActions.showText(Text.of("Click to transfer this island!"))),
+                .onHover(TextActions.showText(Text.of("Click to transfer this island")))
+                .onClick(TextActions.suggestCommand("/isa transfer " + island.getOwnerName() + " ?")),
             TextColors.WHITE, "] "
         ) : Text.EMPTY;
 
         Text delete = src.hasPermission(Permissions.COMMAND_DELETE) ? Text.of(
             TextColors.WHITE, "[",
             TextColors.GOLD, Text.builder("Delete")
+                .onHover(TextActions.showText(Text.of("Click to delete this island")))
                 .onClick(TextActions.executeCallback(consumer -> {
                     src.sendMessage(Text.of(
                         TextColors.GREEN, "Are you sure you want to delete ",
@@ -164,14 +164,14 @@ public class CommandInfo extends CommandBase {
                             .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
                         TextColors.WHITE, "]"
                     ));
-                }))
-                .onHover(TextActions.showText(Text.of("Click to delete this island!"))),
+                })),
             TextColors.WHITE, "] "
         ) : Text.EMPTY;
 
         Text expand = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
             TextColors.WHITE, "[",
             TextColors.GOLD, Text.builder("Expand")
+                .onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2)))
                 .onClick(TextActions.executeCallback(consumer -> {
                     island.expand(1);
                     src.sendMessage(Text.of(
@@ -179,9 +179,7 @@ public class CommandInfo extends CommandBase {
                         TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x", TextColors.LIGHT_PURPLE, island.getWidth(),
                         TextColors.RESET, "!"
                     ));
-                }))
-                .onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2, TextColors.RESET,
-                    "!"))),
+                })),
             TextColors.WHITE, "] "
         ) : Text.EMPTY;
 

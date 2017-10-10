@@ -98,8 +98,7 @@ public class Options {
     }
 
     private static int getIntOption(UUID playerUniqueId, String option, int defaultValue) {
-        String value = PERMISSION_SERVICE.getUserSubjects().getSubject(playerUniqueId.toString()).get().getOption(option).orElse(String.valueOf
-            (defaultValue));
+        String value = PERMISSION_SERVICE.getUserSubjects().getSubject(playerUniqueId.toString()).get().getOption(option).orElse(String.valueOf(defaultValue));
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {

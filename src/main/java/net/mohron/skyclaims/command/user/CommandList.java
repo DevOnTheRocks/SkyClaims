@@ -175,7 +175,7 @@ public class CommandList extends CommandBase {
             TextColors.GRAY, ")");
         return !island.isLocked() || src instanceof Player && island.isMember((Player) src) || src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)
             ? coords.toBuilder()
-            .onHover(TextActions.showText(Text.of("Click here to teleport to this island.")))
+            .onHover(TextActions.showText(Text.of("Click here to teleport to this island")))
             .onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
             .build()
             : coords;
