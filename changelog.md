@@ -5,8 +5,9 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
-# Beta 26 - S5.1
-**REQUIRED: SF build 2637+ & GP build 4.0.1.451+ OPTIONAL: Nucleus version 1.1.3+**
+# Beta 26
+**Sponge API 5/6 - REQUIRES: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
+**Sponge API 7 - REQUIRES: SF build 2688+ & GP build 4.3.0.473+ OPTIONAL: Nucleus version 1.2.0+**
 - Updated for latest GP API changes
 - Islands now use the TOWN claim type - this makes all Town features available for use
 - Added Sky Exchange island schematic _(must enable command blocks & recommend set World/Island-Height config to 1)_
@@ -14,14 +15,16 @@
 - Fixed a rare NPE that would occur when using `/is info` on an island with a missing claim
 - Islands **should** support the new min/max level options in GP
 
-# Beta 25.1 - S5.1 Hotfix
-**REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+# Beta 25.1 - Hotfix
+**Sponge API 5/6 - REQUIRES: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+**Sponge API 7 - REQUIRES: SF build 2624+ & GP build 4.2.0.418+ OPTIONAL: Nucleus version 1.2.0+**
 - Fixed islands being created at Y 1 instead of the configured height.
 - Added configurable spawn world
 - Added `/scversion` - `skyclaims.admin.version` to aid in debugging dependency issues
 
-# Beta 25 - S5.1
-**REQUIRED: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+# Beta 25
+**Sponge API 5/6 - REQUIRES: SF build 2558+ & GP build 4.0.0.415+ OPTIONAL: Nucleus version 1.1.3+**
+**Sponge API 7 - REQUIRES: SF build 2624+ & GP build 4.2.0.418+ OPTIONAL: Nucleus version 1.2.0+**
 - Added island invite & rank system for working together with other players
     - Added `/is invite` - `skyclaims.command.invite`
     - Added `/is kick` - `skyclaims.command.kick`
