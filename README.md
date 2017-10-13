@@ -1,4 +1,4 @@
-# SkyClaims [![Build Status](https://img.shields.io/teamcity/https/ci.devonthe.rocks/s/SkyClaims_Build.svg)](https://ci.devonthe.rocks/viewType.html?buildTypeId=btN&guest=1) [![Releases](https://img.shields.io/github/downloads/DevOnTheRocks/SkyClaims/total.svg)](https://github.com/DevOnTheRocks/SkyClaims/releases) ![Discord](https://img.shields.io/discord/265190931072942080.svg)
+# SkyClaims [![Build Status](https://img.shields.io/teamcity/https/ci.devonthe.rocks/s/SkyClaims_Build.svg)](https://ci.devonthe.rocks/viewType.html?buildTypeId=SkyClaims_Build&guest=1) [![Releases](https://img.shields.io/github/downloads/DevOnTheRocks/SkyClaims/total.svg)](https://github.com/DevOnTheRocks/SkyClaims/releases) ![Discord](https://img.shields.io/discord/265190931072942080.svg)
 
 <img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/united_states.png" title="en-US" height="20"> <b>English</b> 
 | <a href="https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/README.zh-CN.md"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> Chinese</a>
