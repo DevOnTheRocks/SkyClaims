@@ -299,14 +299,22 @@ public class Island implements ContextSource {
         if (width < 0 || width > 512) {
             return false;
         }
-        getClaim().ifPresent(claim -> {
+        PLUGIN.getGriefPrevention().getWorldPlayerData(getWorld().getProperties(), owner).ifPresent(data -> getClaim().ifPresent(claim -> {
             int spacing = (512 - width) / 2;
             claim.resize(
-                new Vector3i(getRegion().getLesserBoundary().getX() + spacing, 0, getRegion().getLesserBoundary().getZ() + spacing),
-                new Vector3i(getRegion().getGreaterBoundary().getX() - spacing, 255, getRegion().getGreaterBoundary().getZ() - spacing),
+                new Vector3i(
+                    getRegion().getLesserBoundary().getX() + spacing,
+                    data.getMinClaimLevel(),
+                    getRegion().getLesserBoundary().getZ() + spacing
+                ),
+                new Vector3i(
+                    getRegion().getGreaterBoundary().getX() - spacing,
+                    data.getMaxClaimLevel(),
+                    getRegion().getGreaterBoundary().getZ() - spacing
+                ),
                 PLUGIN.getCause()
             );
-        });
+        }));
         return getWidth() == width;
     }
 
