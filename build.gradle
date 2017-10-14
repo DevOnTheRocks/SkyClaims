@@ -69,7 +69,7 @@ blossom {
 
 spongestart{
     eula true
-    minecraft '1.12.1'
+    minecraft '1.12.2'
     type 'experimental'
     spongeForgeVersion properties.spongeforge
     forgeServerFolder 'run/API7/'

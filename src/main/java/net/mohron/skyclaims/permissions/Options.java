@@ -88,17 +88,22 @@ public class Options {
         return getIntOption(playerUniqueId, MAX_ISLANDS, PLUGIN.getConfig().getOptionsConfig().getMaxIslands());
     }
 
-    private static String getStringOption(UUID playerUniqueId, String option, String defaultValue) {
-        return PERMISSION_SERVICE.getUserSubjects().getSubject(playerUniqueId.toString()).get().getOption(option).orElse(defaultValue);
+    private static String getStringOption(UUID uuid, String option, String defaultValue) {
+        return !PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent() ?
+            defaultValue :
+            PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(defaultValue);
     }
 
-    private static int getIntOption(UUID playerUniqueId, String option, int defaultValue, int min, int max) {
-        int value = getIntOption(playerUniqueId, option, defaultValue);
+    private static int getIntOption(UUID uuid, String option, int defaultValue, int min, int max) {
+        int value = getIntOption(uuid, option, defaultValue);
         return (value < min || value > max) ? defaultValue : value;
     }
 
-    private static int getIntOption(UUID playerUniqueId, String option, int defaultValue) {
-        String value = PERMISSION_SERVICE.getUserSubjects().getSubject(playerUniqueId.toString()).get().getOption(option).orElse(String.valueOf(defaultValue));
+    private static int getIntOption(UUID uuid, String option, int defaultValue) {
+        if (!PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()) {
+            return defaultValue;
+        }
+        String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(String.valueOf(defaultValue));
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
