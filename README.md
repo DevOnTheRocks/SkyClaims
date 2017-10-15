@@ -1,4 +1,4 @@
-# SkyClaims
+# SkyClaims [![Build Status](https://img.shields.io/teamcity/https/ci.devonthe.rocks/s/SkyClaims_Build.svg)](https://ci.devonthe.rocks/viewType.html?buildTypeId=SkyClaims_Build&guest=1) [![Releases](https://img.shields.io/github/downloads/DevOnTheRocks/SkyClaims/total.svg)](https://github.com/DevOnTheRocks/SkyClaims/releases) ![Discord](https://img.shields.io/discord/265190931072942080.svg)
 
 <img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/united_states.png" title="en-US" height="20"> <b>English</b> 
 | <a href="https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/README.zh-CN.md"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> Chinese</a>
@@ -50,5 +50,4 @@ This plugin is in Beta. Live support is available for the latest builds through 
 **Bug reports and feature requests can be made on [GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues).**
 
 [![Discord](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Discord.png)](https://discord.gg/EkVQycV)
-| [![Patreon](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Patreon.png)](https://www.patreon.com/mohron)
 | [![PayPal](https://github.com/DevOnTheRocks/SkyClaims/wiki/images/Paypal.png)](https://www.paypal.me/mohron)

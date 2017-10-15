@@ -272,7 +272,7 @@ public class SkyClaims {
         if (getConfig().getExpirationConfig().isEnabled()) {
             Sponge.getScheduler().createTaskBuilder()
                 .name(cleanup)
-                .execute(new IslandCleanupTask())
+                .execute(new IslandCleanupTask(islands.values()))
                 .interval(getConfig().getExpirationConfig().getInterval(), TimeUnit.MINUTES)
                 .async()
                 .submit(this);
