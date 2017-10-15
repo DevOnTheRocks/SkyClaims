@@ -41,6 +41,6 @@ SkyClaims是一个运行在Sponge服务端并且依赖于[GriefPrevention](https
 
  **Bug提交和功能建议可以发到这里[GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues)。**
 
-[![Discord](/SkyClaims/_images/Discord.png)](https://discord.gg/EkVQycV)
-| [![Patreon](/SkyClaims/_images/Patreon.png)](https://www.patreon.com/mohron)
-| [![PayPal](/SkyClaims/_images/Paypal.png)](https://www.paypal.me/mohron)
+[![Discord](../SkyClaims/_images/Discord.png)](https://discord.gg/EkVQycV)
+| [![Patreon](../SkyClaims/_images/Patreon.png)](https://www.patreon.com/mohron)
+| [![PayPal](../SkyClaims/_images/Paypal.png)](https://www.paypal.me/mohron)
