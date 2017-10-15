@@ -4,9 +4,18 @@
 | <img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> <b>Chinese</b>
 
 ## 即将到来的更新
-**必须插件：SF 2558+ & GP 4.0.0.415+ 可选插件：Nucleus 1.1.3+**
+**必须插件：SF 2637+ & GP 4.0.0.451+ 可选插件：Nucleus 1.1.3+**
 - 添加空白世界生成的能力
 - 修复地狱门
+
+# Beta 26 - S5.1
+**必须插件：SF 2637+ & GP 4.0.0.451+ 可选插件：Nucleus 1.1.3+**
+- 更新插件最低版本需求
+- 空岛现在使用村庄生物类别 - 这个改动可以让所有村庄的特性得以实现
+- 添加 Sky Exchange island 预设模板 _(需要开启命令方块 & 建议设置世界/岛屿生成高度为1)_
+- 用`/is reset [keepinv]`命令代替`/is regen` (_权限需求_ `skyclaims.admin.reset.keepinv`)
+- 修复了一个不常见的当使用`/is info`命令时候的空指针异常
+- 空岛现在 **应该** 支持GP中新的最大/最小高度的设定
 
 # Beta 25.1 - S5.1 Hotfix
 **必须插件：SF 2558+ & GP 4.0.0.415+ 可选插件：Nucleus 1.1.3+**
@@ -24,7 +33,7 @@
     - 添加命令 `/is demote` - `skyclaims.command.demote`
     - `/is invite`命令现在自动执行GP的 `/trust` & `/permissiontrust` 命令
 - 强化并重写命令`/is list`：
-    - 现在以如下几种方式来代替以前的**[O]** - 拥有者，**[M]** - 管理者，或者**[T]**  信任者，在设置后会出现[L]或[T] 
+    - 现在以如下几种方式来代替以前的**[O]** - 拥有者，**[M]** - 管理者，或者**[T]**  信任者，在设置后会出现[L]或[T]
     - `skyclaims.command.list.base` - 允许玩家使用列表命令（显示玩家的岛屿，即所有者，管理者或受信任者）
     - `skyclaims.command.list.unlocked` - 允许玩家列出所有未上锁的空岛
     - `skyclaims.command.list.sort` - 允许玩家使用列表排序功能
