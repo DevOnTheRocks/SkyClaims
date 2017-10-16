@@ -44,5 +44,4 @@ This plugin is in Beta. Live support is available for the latest builds through 
 **Bug reports and feature requests can be made on [GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues).**
 
 [![Discord](_images/Discord.png)](https://discord.gg/EkVQycV)
-| [![Patreon](_images/Patreon.png)](https://www.patreon.com/mohron)
 | [![PayPal](_images/Paypal.png)](https://www.paypal.me/mohron)
