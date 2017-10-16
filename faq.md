@@ -2,7 +2,7 @@
 
 ## How do I prevent players from building outside their islands?
 
-> ~By default GriefPrevention allows players to build in the wilderness (unclaimed areas). To limit players from building outside their island, (claimed area) permission to `place-block`s must be denied in the wilderness using [GP flags](https://github.com/MinecraftPortCentral/GriefPrevention/wiki/Flags).~ **Update to Beta 23+ to have these flags set automatically.**
+> ~~By default GriefPrevention allows players to build in the wilderness (unclaimed areas). To limit players from building outside their island, (claimed area) permission to `place-block`s must be denied in the wilderness using [GP flags](https://github.com/MinecraftPortCentral/GriefPrevention/wiki/Flags).~~ **Update to Beta 23+ to have these flags set automatically.**
 
 > To manually set the flag, stand/fly in the wilderness _(verify claim type using /claiminfo)_ and run the command `/cf block-break any false`.
 
