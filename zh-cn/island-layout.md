@@ -14,4 +14,4 @@ SkyClaims空岛使用标准生成方式生成。
 这样就会使得各个岛屿之间以一个螺旋状的排列方式来生成。
 当空岛被删除后，该位置将会被重新利用起来用于下一个玩家的空岛生成。
 
-![Spiral Layout](images/SpiralLayout.png)
+![Spiral Layout](/_images/SpiralLayout.png)
