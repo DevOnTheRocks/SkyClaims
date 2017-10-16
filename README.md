@@ -30,8 +30,8 @@ This plugin is in Beta. Live support is available for the latest builds through 
 ## Dependencies
 
 - **Required:**
-   - [Sponge](https://www.spongepowered.org/downloads) - 1.10.2-2281-5.2.0-BETA-2558+
-   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.0.0.415+
+   - [Sponge](https://www.spongepowered.org/downloads) - 1.10.2-2477-5.2.0-BETA-2637+
+   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.10.2-4.0.1.474+
    - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended.
 - **Optional:**
    - [Nucleus](https://nucleuspowered.org) - 1.1.3-LTS+
