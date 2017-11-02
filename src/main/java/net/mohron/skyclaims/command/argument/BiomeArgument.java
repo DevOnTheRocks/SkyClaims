@@ -29,6 +29,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.BiomeTypes;
 
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+@NonnullByDefault
 public class BiomeArgument extends CommandElement {
 
     public static final Map<String, BiomeType> BIOMES = Maps.newHashMap();

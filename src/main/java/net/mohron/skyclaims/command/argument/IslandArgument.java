@@ -30,6 +30,7 @@ import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+@NonnullByDefault
 public class IslandArgument extends CommandElement {
 
     public IslandArgument(@Nullable Text key) {
@@ -55,9 +57,7 @@ public class IslandArgument extends CommandElement {
         try {
             UUID uuid = UUID.fromString(arg);
             if (SkyClaims.islands.containsKey(uuid)) {
-                Set<UUID> islands = Sets.newHashSet();
-                islands.add(uuid);
-                return islands;
+                return Sets.newHashSet(uuid);
             }
         } catch (IllegalArgumentException ignored) {
         }
