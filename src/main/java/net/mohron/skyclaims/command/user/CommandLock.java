@@ -80,13 +80,17 @@ public class CommandLock extends CommandBase {
             throw new CommandException(Text.of("You must be a player to run this command!"));
         }
         Player player = (Player) src;
-        Optional<Island> island = Island.getByOwner(player.getUniqueId());
+        Island island = Island.getByOwner(player.getUniqueId())
+            .orElseThrow(() -> new CommandException(Text.of("You must have an Island to run this command!")));
 
-        if (!island.isPresent()) {
-            throw new CommandException(Text.of("You must have an Island to run this command!"));
-        }
+        island.setLocked(true);
 
-        island.get().setLocked(true);
+        island.getPlayers().forEach(p -> {
+            if (!island.isMember(p)) {
+                p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
+                p.sendMessage(Text.of(island.getName(), TextColors.RED, " has been locked!"));
+            }
+        });
 
         src.sendMessage(Text.of(TextColors.GREEN, "Your island is now locked!"));
         return CommandResult.success();
