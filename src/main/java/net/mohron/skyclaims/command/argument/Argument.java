@@ -30,6 +30,10 @@ public class Argument {
         return new IslandArgument(key);
     }
 
+    public static PositiveIntegerArgument positiveInteger(Text key) {
+        return new PositiveIntegerArgument(key);
+    }
+
     public static SchematicArgument schematic(Text key) {
         return new SchematicArgument(key);
     }

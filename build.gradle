@@ -5,7 +5,7 @@ plugins {
     id "ninja.miserable.blossom" version "1.0.1"
     id "com.github.johnrengelman.shadow" version "2.0.1"
     id "org.spongepowered.plugin" version "0.6"
-    id "com.qixalite.spongestart" version "1.6.0"
+    id 'com.qixalite.spongestart2' version '3.0.1'
 }
 
 group = "net.mohron.skyclaims"
@@ -13,7 +13,7 @@ version = "${major}.${minor}.${patch}-${api}-${suffix}"
 description = "SkyClaims is an Island Management plugin that integrates with GriefPrevention."
 
 if (System.getenv().BUILD_NUMBER != null) {
-    version += "+${System.getenv().BUILD_NUMBER}"
+    version += "-${System.getenv().BUILD_NUMBER}"
 }
 
 compileJava {
@@ -67,11 +67,12 @@ blossom {
     replaceToken "@DESCRIPTION@", project.description, pluginInfo
 }
 
-spongestart{
-    eula true
+spongestart {
+    online 'false'
     minecraft '1.12.2'
+    forge '14.23.0.2503'
     type 'experimental'
-    spongeForgeVersion properties.spongeforge
+    spongeForge properties.spongeforge
     forgeServerFolder 'run/API7/'
 }
 
