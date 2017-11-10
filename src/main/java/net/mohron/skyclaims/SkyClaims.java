@@ -86,6 +86,7 @@ import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -223,13 +224,15 @@ public class SkyClaims {
     }
 
     @Listener
-    public void onConstructWorldProperties(ConstructWorldPropertiesEvent event) {
-        if (!event.getWorldProperties().isInitialized() && config.getWorldConfig().getVoidDimensions()
-            .contains(event.getWorldProperties().getWorldName())) {
-            Collection<WorldGeneratorModifier> modifiers = event.getWorldProperties().getGeneratorModifiers();
+    public void onConstructWorldProperties(ConstructWorldPropertiesEvent event, WorldProperties properties) {
+        if (!properties.isInitialized() && config.getWorldConfig().getVoidDimensions().contains(properties.getWorldName())) {
+            Collection<WorldGeneratorModifier> modifiers = properties.getGeneratorModifiers();
             modifiers.add(voidGenModifier);
-            event.getWorldProperties().setGeneratorModifiers(modifiers);
-            logger.info("{} set to use SkyClaims' Enhanced Void World Generation Modifier.", event.getWorldProperties().getWorldName());
+            properties.setGeneratorModifiers(modifiers);
+            logger.info("{} set to use SkyClaims' Enhanced Void World Generation Modifier.", properties.getWorldName());
+        }
+        if (!properties.isInitialized() && properties.getWorldName().equalsIgnoreCase(config.getWorldConfig().getWorldName())) {
+            setupSpawn = true;
         }
     }
 
@@ -237,6 +240,22 @@ public class SkyClaims {
     public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World world) {
         if (!enabled || !griefPrevention.isEnabled(world) || !world.equals(config.getWorldConfig().getWorld())) {
             return;
+        }
+
+        if (setupSpawn && !config.getWorldConfig().isSeparateSpawn()) {
+            Location<World> spawn = new Region(0, 0).getCenter();
+            int size = 4;
+            for (int x = -size; x <= size; x++) {
+                for (int z = -size; z <= size; z++) {
+                    spawn.add(x, -1, z).setBlock(BlockState.builder().blockType(BlockTypes.BEDROCK).build());
+                    if (Math.abs(x) == size || Math.abs(z) == size) {
+                        spawn.add(x, 1, z).setBlock(BlockState.builder().blockType(BlockTypes.FENCE).build());
+                    }
+                    world.getProperties().setSpawnPosition(spawn.getPosition().toInt());
+                    world.getProperties().setGameRule("spawnRadius", "0");
+                }
+            }
+            logger.info("Spawn area created.");
         }
 
         synchronized (IslandManager.ISLANDS) {
