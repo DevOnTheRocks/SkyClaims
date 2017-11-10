@@ -145,7 +145,8 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_EXPAND)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is expand").onClick(TextActions.suggestCommand("/is expand ")),
-                TextColors.GRAY, " [blocks]",
+                TextColors.GRAY, " [island]",
+                TextColors.GRAY, " <blocks>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandExpand.HELP_TEXT
             ));

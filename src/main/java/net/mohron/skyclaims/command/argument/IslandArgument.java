@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.command.args.CommandArgs;
@@ -48,11 +49,10 @@ public class IslandArgument extends CommandElement {
     }
 
     @Nullable
-    @Override
     protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
         String arg = args.next().toLowerCase();
         if (SkyClaims.islands.isEmpty()) {
-            throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid island!"), arg, 0);
+            throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid islands!"), arg, 0);
         }
         try {
             UUID uuid = UUID.fromString(arg);
@@ -61,21 +61,27 @@ public class IslandArgument extends CommandElement {
             }
         } catch (IllegalArgumentException ignored) {
         }
-        return SkyClaims.islands.entrySet().stream()
+        Set<UUID> islands = SkyClaims.islands.entrySet().stream()
             .filter(i -> i.getValue().getOwnerName().equalsIgnoreCase(arg))
             .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
+        SkyClaims.getInstance().getLogger().info("Island Argument: arg={}, islands={}", arg, islands.size());
+        if (islands.isEmpty()) {
+            throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid islands found for ", arg, "!"), arg, 0);
+        } else {
+            return islands;
+        }
     }
 
-    @Override
     public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
         try {
             String arg = args.peek().toLowerCase();
             boolean admin = src.hasPermission(Permissions.COMMAND_LIST_ALL);
-            return SkyClaims.islands.entrySet().stream()
-                .filter(i -> i.getValue().getOwnerName().toLowerCase().startsWith(arg))
-                .filter(i -> admin || !(src instanceof Player) || i.getValue().isMember((Player) src))
-                .map(m -> m.getValue().getOwnerName())
+            return SkyClaims.islands.values().stream()
+                .filter(i -> i.getOwnerName().toLowerCase().startsWith(arg))
+                .filter(i -> i.getSortableName().toLowerCase().startsWith(arg))
+                .filter(i -> admin || src instanceof Player && i.isMember((Player) src))
+                .map(Island::getOwnerName)
                 .collect(Collectors.toList());
         } catch (ArgumentParseException e) {
             return Lists.newArrayList();

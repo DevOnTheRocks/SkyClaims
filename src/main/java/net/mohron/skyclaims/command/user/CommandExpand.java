@@ -47,7 +47,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
 
     public static final String HELP_TEXT = "used to expand your island.";
     private static final GriefPreventionApi GP = PLUGIN.getGriefPrevention();
-    private static final Text BLOCKS = Text.of("size");
+    private static final Text BLOCKS = Text.of("blocks");
 
     public static void register() {
         CommandSpec commandSpec = CommandSpec.builder()
@@ -55,7 +55,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
             .description(Text.of(HELP_TEXT))
             .arguments(
                 GenericArguments.optional(Argument.island(ISLAND)),
-                GenericArguments.optionalWeak(Argument.positiveInteger(BLOCKS))
+                Argument.positiveInteger(BLOCKS)
             )
             .executor(new CommandExpand())
             .build();
