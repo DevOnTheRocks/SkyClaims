@@ -23,6 +23,7 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -60,7 +61,7 @@ public class CommandSetHome extends CommandBase {
         }
 
         Player player = (Player) src;
-        Island island = Island.get(player.getLocation())
+        Island island = IslandManager.get(player.getLocation())
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to set a home!")));
 
         if (!island.isMember(player)) {

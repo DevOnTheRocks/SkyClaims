@@ -139,54 +139,6 @@ public class Island implements ContextSource {
         }
     }
 
-    public static Optional<Island> get(UUID islandUniqueId) {
-        return Optional.ofNullable(SkyClaims.islands.get(islandUniqueId));
-    }
-
-    public static Optional<Island> get(Location<World> location) {
-        return SkyClaims.islands.entrySet().stream()
-            .filter(i -> i.getValue().contains(location))
-            .map(Map.Entry::getValue)
-            .findFirst();
-    }
-
-    public static Optional<Island> get(Claim claim) {
-        for (Island island : SkyClaims.islands.values()) {
-            if (island.getClaim().isPresent() && island.getClaim().get().equals(claim)) {
-                return Optional.of(island);
-            }
-        }
-        return Optional.empty();
-    }
-
-    @Deprecated
-    public static Optional<Island> getByOwner(UUID owner) {
-        for (Island island : SkyClaims.islands.values()) {
-            if (island.getOwnerUniqueId().equals(owner)) {
-                return Optional.of(island);
-            }
-        }
-        return Optional.empty();
-    }
-
-    public static boolean hasIsland(UUID owner) {
-        if (SkyClaims.islands.isEmpty()) {
-            return false;
-        }
-        for (Island island : SkyClaims.islands.values()) {
-            if (island.getOwnerUniqueId().equals(owner)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static int getIslandsOwned(UUID owner) {
-        return (int) SkyClaims.islands.entrySet().stream()
-            .filter(i -> i.getValue().getOwnerUniqueId().equals(owner))
-            .count();
-    }
-
     public UUID getUniqueId() {
         return id;
     }
@@ -475,7 +427,7 @@ public class Island implements ContextSource {
     }
 
     private void save() {
-        SkyClaims.islands.put(id, this);
+        IslandManager.ISLANDS.put(id, this);
         PLUGIN.getDatabase().saveIsland(this);
     }
 
@@ -491,8 +443,8 @@ public class Island implements ContextSource {
 
     public void delete() {
         ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(getWorld());
-        getClaim().ifPresent(claim -> claimManager.deleteClaim(claim));
-        SkyClaims.islands.remove(id);
+        getClaim().ifPresent(claimManager::deleteClaim);
+        IslandManager.ISLANDS.remove(id);
         PLUGIN.getDatabase().removeIsland(this);
     }
 }

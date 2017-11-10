@@ -21,6 +21,7 @@ package net.mohron.skyclaims.world.region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Coordinate;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -35,11 +36,11 @@ public class Region {
     }
 
     public static boolean isOccupied(Region region) {
-        if (SkyClaims.islands.isEmpty()) {
+        if (IslandManager.ISLANDS.isEmpty()) {
             return false;
         }
 
-        for (Island island : SkyClaims.islands.values()) {
+        for (Island island : IslandManager.ISLANDS.values()) {
             if (region.equals(island.getRegion())) {
                 return true;
             }

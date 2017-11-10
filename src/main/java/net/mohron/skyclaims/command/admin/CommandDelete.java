@@ -21,6 +21,7 @@ package net.mohron.skyclaims.command.admin;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -58,7 +59,7 @@ public class CommandDelete extends CommandBase {
     @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         User user = args.<User>getOne(USER)
             .orElseThrow(() -> new CommandException(Text.of("Invalid user")));
-        Island island = Island.getByOwner(user.getUniqueId())
+        Island island = IslandManager.getByOwner(user.getUniqueId())
             .orElseThrow(() -> new CommandException(Text.of("Invalid island")));
 
         boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);

@@ -22,6 +22,7 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -62,7 +63,7 @@ public class CommandTransfer extends CommandBase {
         User user = args.<User>getOne(USER)
             .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Invalid user!")));
 
-        if (owner != null && Island.getIslandsOwned(owner.getUniqueId()) > 1) {
+        if (owner != null && IslandManager.getIslandsOwned(owner.getUniqueId()) > 1) {
             throw new CommandException(Text.of(
                 TextColors.RED, "The owner supplied has multiple islands. Please go to the island you want to transfer."
             ));
@@ -72,12 +73,12 @@ public class CommandTransfer extends CommandBase {
             if (owner == null) {
                 throw new CommandException(Text.of(TextColors.RED, "You must supply a owner & user to use this command."));
             }
-            island = Island.getByOwner(owner.getUniqueId())
+            island = IslandManager.getByOwner(owner.getUniqueId())
                 .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The owner supplied must have an island!")));
         } else {
-            island = (owner != null) ? Island.getByOwner(owner.getUniqueId())
+            island = (owner != null) ? IslandManager.getByOwner(owner.getUniqueId())
                 .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "The owner supplied must have an island!")))
-                : Island.get(((Player) src).getLocation())
+                : IslandManager.get(((Player) src).getLocation())
                 .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "This command must be run on the island you wish to transfer!")));
         }
 

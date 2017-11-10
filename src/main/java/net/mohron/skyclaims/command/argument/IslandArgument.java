@@ -23,6 +23,7 @@ import com.google.common.collect.Sets;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.command.args.CommandArgs;
@@ -51,17 +52,17 @@ public class IslandArgument extends CommandElement {
     @Nullable
     protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
         String arg = args.next().toLowerCase();
-        if (SkyClaims.islands.isEmpty()) {
+        if (IslandManager.ISLANDS.isEmpty()) {
             throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid islands!"), arg, 0);
         }
         try {
             UUID uuid = UUID.fromString(arg);
-            if (SkyClaims.islands.containsKey(uuid)) {
+            if (IslandManager.ISLANDS.containsKey(uuid)) {
                 return Sets.newHashSet(uuid);
             }
         } catch (IllegalArgumentException ignored) {
         }
-        Set<UUID> islands = SkyClaims.islands.entrySet().stream()
+        Set<UUID> islands = IslandManager.ISLANDS.entrySet().stream()
             .filter(i -> i.getValue().getOwnerName().equalsIgnoreCase(arg))
             .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
@@ -77,7 +78,7 @@ public class IslandArgument extends CommandElement {
         try {
             String arg = args.peek().toLowerCase();
             boolean admin = src.hasPermission(Permissions.COMMAND_LIST_ALL);
-            return SkyClaims.islands.values().stream()
+            return IslandManager.ISLANDS.values().stream()
                 .filter(i -> i.getOwnerName().toLowerCase().startsWith(arg))
                 .filter(i -> i.getSortableName().toLowerCase().startsWith(arg))
                 .filter(i -> admin || src instanceof Player && i.isMember((Player) src))

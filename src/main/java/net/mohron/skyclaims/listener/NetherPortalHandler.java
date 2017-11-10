@@ -20,6 +20,7 @@ package net.mohron.skyclaims.listener;
 
 import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
@@ -39,7 +40,7 @@ public class NetherPortalHandler {
         World to = event.getToTransform().getExtent();
 
         if (from.getDimension().getType().equals(DimensionTypes.NETHER)) {
-            Optional<Island> island = Island.get(event.getToTransform().getLocation().setExtent(to));
+            Optional<Island> island = IslandManager.get(event.getToTransform().getLocation().setExtent(to));
             event.setUsePortalAgent(false);
 
             if (island.isPresent() && (!island.get().isLocked() || island.get().isMember(player))) {
@@ -47,7 +48,7 @@ public class NetherPortalHandler {
                 event.setToTransform(island.get().getSpawn());
             } else {
                 // 2. Your island's spawn
-                island = Island.getByOwner(player.getUniqueId());
+                island = IslandManager.getByOwner(player.getUniqueId());
 
                 if (island.isPresent()) {
                     event.setToTransform(island.get().getSpawn());

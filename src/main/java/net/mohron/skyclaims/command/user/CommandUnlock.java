@@ -19,12 +19,12 @@
 package net.mohron.skyclaims.command.user;
 
 import com.google.common.collect.Lists;
-import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -80,7 +80,7 @@ public class CommandUnlock extends CommandBase {
             throw new CommandException(Text.of("You must be a player to run this command!"));
         }
         Player player = (Player) src;
-        Optional<Island> island = Island.getByOwner(player.getUniqueId());
+        Optional<Island> island = IslandManager.getByOwner(player.getUniqueId());
 
         if (!island.isPresent()) {
             throw new CommandException(Text.of("You must have an Island to run this command!"));
@@ -94,7 +94,7 @@ public class CommandUnlock extends CommandBase {
 
     private CommandResult unlockIslands(CommandSource src, Collection<UUID> islandsIds) {
         ArrayList<Island> islands = Lists.newArrayList();
-        islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+        islandsIds.forEach(i -> IslandManager.get(i).ifPresent(islands::add));
         islands.forEach(island -> {
             island.setLocked(false);
             src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been unlocked!"));
@@ -103,7 +103,7 @@ public class CommandUnlock extends CommandBase {
     }
 
     private CommandResult unlockAll(CommandSource src) {
-        SkyClaims.islands.values().forEach(island -> island.setLocked(false));
+        IslandManager.ISLANDS.values().forEach(island -> island.setLocked(false));
         src.sendMessage(Text.of(TextColors.GREEN, "All islands have been unlocked!"));
         return CommandResult.success();
     }

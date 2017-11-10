@@ -22,6 +22,7 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.CommandContext;
@@ -53,7 +54,7 @@ public class CommandSetSpawn extends CommandBase.PlayerCommand {
     }
 
     @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
-        Island island = Island.get(player.getLocation())
+        Island island = IslandManager.get(player.getLocation())
             .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
 
         if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS)) {

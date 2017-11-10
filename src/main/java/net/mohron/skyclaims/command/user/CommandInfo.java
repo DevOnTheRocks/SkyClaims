@@ -27,6 +27,7 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -75,12 +76,12 @@ public class CommandInfo extends CommandBase {
         List<Island> islands = Lists.newArrayList();
 
         if (src instanceof Player && !args.hasAny(ISLAND)) {
-            islands.add(Island.get(((Player) src).getLocation())
+            islands.add(IslandManager.get(((Player) src).getLocation())
                 .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command.")))
             );
         } else {
             Collection<UUID> islandIds = args.getAll(ISLAND);
-            islandIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+            islandIds.forEach(i -> IslandManager.get(i).ifPresent(islands::add));
             if (islands.size() > 1) {
                 return listIslands();
             }

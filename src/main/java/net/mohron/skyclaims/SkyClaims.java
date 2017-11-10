@@ -27,7 +27,6 @@ import static net.mohron.skyclaims.PluginInfo.NAME;
 import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
 import static net.mohron.skyclaims.PluginInfo.VERSION;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import me.ryanhamshire.griefprevention.GriefPrevention;
@@ -54,13 +53,17 @@ import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandCleanupTask;
+import net.mohron.skyclaims.world.IslandManager;
 import net.mohron.skyclaims.world.gen.VoidWorldGeneratorModifier;
+import net.mohron.skyclaims.world.region.Region;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
@@ -80,6 +83,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
@@ -88,7 +92,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(
@@ -103,8 +106,6 @@ import java.util.concurrent.TimeUnit;
     })
 public class SkyClaims {
 
-    public static Map<UUID, Island> islands = Maps.newHashMap();
-    private static Set<Island> saveQueue = Sets.newHashSet();
     private static SkyClaims instance;
     private GriefPreventionApi griefPrevention;
     private PermissionService permissionService;
@@ -132,11 +133,14 @@ public class SkyClaims {
 
     private IDatabase database;
 
+    private static Set<Island> saveQueue = Sets.newHashSet();
+
     private WorldGeneratorModifier voidGenModifier = new VoidWorldGeneratorModifier();
 
     private InviteService inviteService;
 
     private boolean enabled = true;
+    private boolean setupSpawn = false;
 
     private static final String cleanup = "skyclaims.island.cleanup";
 
@@ -235,8 +239,11 @@ public class SkyClaims {
             return;
         }
 
-        islands.putAll(database.loadData());
-        logger.info("{}: {} islands loaded.", world.getName(), islands.size());
+        synchronized (IslandManager.ISLANDS) {
+            IslandManager.ISLANDS.putAll(database.loadData());
+        }
+
+        logger.info("{}: {} islands loaded.", world.getName(), IslandManager.ISLANDS.size());
         if (!saveQueue.isEmpty()) {
             logger.info("Saving {} claims that were malformed.", saveQueue.size());
             database.saveData(saveQueue);
@@ -245,9 +252,11 @@ public class SkyClaims {
 
     @Listener(order = Order.LATE)
     public void onWorldUnload(UnloadWorldEvent event, @Getter(value = "getTargetWorld") World world) {
-        islands.values().stream()
-            .filter(island -> island.getWorld().equals(world))
-            .forEach(island -> islands.remove(island.getUniqueId()));
+        synchronized (IslandManager.ISLANDS) {
+            IslandManager.ISLANDS.values().stream()
+                .filter(island -> island.getWorld().equals(world))
+                .forEach(island -> IslandManager.ISLANDS.remove(island.getUniqueId()));
+        }
         logger.info("{}: Islands unloaded.", world.getName());
     }
 
@@ -270,7 +279,7 @@ public class SkyClaims {
         // Load Schematics Directory
         SchematicArgument.load();
         // Load Database
-        islands = database.loadData();
+        IslandManager.ISLANDS.putAll(database.loadData());
         // Reload Listeners
         Sponge.getEventManager().unregisterPluginListeners(this);
         registerListeners();
@@ -303,7 +312,7 @@ public class SkyClaims {
         if (getConfig().getExpirationConfig().isEnabled()) {
             Sponge.getScheduler().createTaskBuilder()
                 .name(cleanup)
-                .execute(new IslandCleanupTask(islands.values()))
+                .execute(new IslandCleanupTask(IslandManager.ISLANDS.values()))
                 .interval(getConfig().getExpirationConfig().getInterval(), TimeUnit.MINUTES)
                 .async()
                 .submit(this);
@@ -331,7 +340,7 @@ public class SkyClaims {
     }
 
     private void addCustomMetrics() {
-        metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> islands.size()));
+        metrics.addCustomChart(new Metrics.SingleLineChart("islands", IslandManager.ISLANDS::size));
         metrics.addCustomChart(new Metrics.DrilldownPie("sponge_version", () -> {
             Map<String, Map<String, Integer>> map = new HashMap<>();
             String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion().orElse("?").split("-")[0];

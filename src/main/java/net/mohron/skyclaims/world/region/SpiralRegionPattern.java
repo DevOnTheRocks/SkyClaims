@@ -21,6 +21,7 @@ package net.mohron.skyclaims.world.region;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.util.ClaimUtil;
+import net.mohron.skyclaims.world.IslandManager;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.spongepowered.api.text.Text;
 
@@ -38,7 +39,7 @@ public class SpiralRegionPattern implements IRegionPattern {
      */
     public ArrayList<Region> generateRegionPattern() {
         spawnRegions = PLUGIN.getConfig().getWorldConfig().getSpawnRegions();
-        int islandCount = SkyClaims.islands.size();
+        int islandCount = IslandManager.ISLANDS.size();
         int generationSize = (int) Math.sqrt((double) islandCount + spawnRegions) + 1;
         StrBuilder log = new StrBuilder("Region Pattern: [");
 
@@ -80,7 +81,7 @@ public class SpiralRegionPattern implements IRegionPattern {
                 PLUGIN.getLogger().debug("Skipping ({}, {}) for spawn", region.getX(), region.getZ());
                 iterator++;
                 continue;
-            } else if (SkyClaims.islands.isEmpty()) {
+            } else if (IslandManager.ISLANDS.isEmpty()) {
                 ClaimUtil.createSpawnClaim(spawn);
             }
 

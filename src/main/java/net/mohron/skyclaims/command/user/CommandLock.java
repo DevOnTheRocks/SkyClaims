@@ -19,12 +19,12 @@
 package net.mohron.skyclaims.command.user;
 
 import com.google.common.collect.Lists;
-import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -79,7 +79,7 @@ public class CommandLock extends CommandBase {
             throw new CommandException(Text.of("You must be a player to run this command!"));
         }
         Player player = (Player) src;
-        Island island = Island.getByOwner(player.getUniqueId())
+        Island island = IslandManager.getByOwner(player.getUniqueId())
             .orElseThrow(() -> new CommandException(Text.of("You must have an Island to run this command!")));
 
         island.setLocked(true);
@@ -97,7 +97,7 @@ public class CommandLock extends CommandBase {
 
     private CommandResult lockIslands(CommandSource src, Collection<UUID> islandsIds) {
         ArrayList<Island> islands = Lists.newArrayList();
-        islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+        islandsIds.forEach(i -> IslandManager.get(i).ifPresent(islands::add));
         islands.forEach(island -> {
             island.setLocked(true);
             src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been locked!"));
@@ -106,7 +106,7 @@ public class CommandLock extends CommandBase {
     }
 
     private CommandResult lockAll(CommandSource src) {
-        SkyClaims.islands.values().forEach(island -> island.setLocked(true));
+        IslandManager.ISLANDS.values().forEach(island -> island.setLocked(true));
         src.sendMessage(Text.of(TextColors.GREEN, "All islands have been locked!"));
         return CommandResult.success();
     }

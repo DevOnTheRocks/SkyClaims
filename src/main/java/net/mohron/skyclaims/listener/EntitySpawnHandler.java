@@ -22,6 +22,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.entity.living.Ambient;
 import org.spongepowered.api.entity.living.Aquatic;
 import org.spongepowered.api.entity.living.animal.Animal;
@@ -47,7 +48,7 @@ public class EntitySpawnHandler {
         }
 
         event.filterEntities(entity -> {
-            Island island = SkyClaims.islands.values().stream()
+            Island island = IslandManager.ISLANDS.values().stream()
                 .filter(i -> i.contains(entity.getLocation())).findAny().orElse(null);
             if (island == null) {
                 return true;

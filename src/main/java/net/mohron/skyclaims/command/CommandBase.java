@@ -21,6 +21,7 @@ package net.mohron.skyclaims.command;
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -50,12 +51,12 @@ public abstract class CommandBase implements CommandExecutor {
             if (!args.hasAny(ISLAND)) {
                 return execute(
                     (Player) src,
-                    Island.get(((Player) src).getLocation())
+                    IslandManager.get(((Player) src).getLocation())
                         .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command."))),
                     args);
             } else {
                 List<Island> islands = Lists.newArrayList();
-                args.<UUID>getAll(ISLAND).forEach(i -> Island.get(i).ifPresent(islands::add));
+                args.<UUID>getAll(ISLAND).forEach(i -> IslandManager.get(i).ifPresent(islands::add));
                 if (islands.size() == 1) {
                     return execute((Player) src, islands.get(0), args);
                 } else {

@@ -18,13 +18,13 @@
 
 package net.mohron.skyclaims.command.user;
 
-import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -73,7 +73,7 @@ public class CommandList extends CommandBase {
     }
 
     @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (SkyClaims.islands.isEmpty()) {
+        if (IslandManager.ISLANDS.isEmpty()) {
             src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
             return CommandResult.empty();
         }
@@ -84,7 +84,7 @@ public class CommandList extends CommandBase {
         boolean showUnlocked = src.hasPermission(Permissions.COMMAND_LIST_UNLOCKED);
         boolean showAll = src.hasPermission(Permissions.COMMAND_LIST_ALL);
 
-        List<Text> listText = SkyClaims.islands.values().stream()
+        List<Text> listText = IslandManager.ISLANDS.values().stream()
             .filter(i -> user == null || i.isMember(user))
             .filter(i -> player == null || i.isMember(player) || !i.isLocked() && showUnlocked || showAll)
             .sorted(sortType)

@@ -26,6 +26,7 @@ import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -69,7 +70,7 @@ public class CommandCreate extends CommandBase.PlayerCommand {
     }
 
     @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
-        if (Island.hasIsland(player.getUniqueId())) {
+        if (IslandManager.hasIsland(player.getUniqueId())) {
             throw new CommandException(Text.of(TextColors.RED, "You already have an island!"));
         }
 
@@ -115,7 +116,7 @@ public class CommandCreate extends CommandBase.PlayerCommand {
         return src -> {
             if (src instanceof Player) {
                 Player player = (Player) src;
-                if (Island.hasIsland(player.getUniqueId())) {
+                if (IslandManager.hasIsland(player.getUniqueId())) {
                     player.sendMessage(Text.of(TextColors.RED, "You already have an island!"));
                     return;
                 }

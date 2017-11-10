@@ -23,6 +23,7 @@ import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -38,7 +39,7 @@ public class ClientJoinHandler {
 
     @Listener
     public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
-        if (PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() && !Island.hasIsland(player.getUniqueId())) {
+        if (PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() && !IslandManager.hasIsland(player.getUniqueId())) {
             createIslandOnJoin(player);
         }
         deliverInvites(player);
