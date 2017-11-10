@@ -86,7 +86,7 @@ public class CommandLock extends CommandBase {
         island.setLocked(true);
 
         island.getPlayers().forEach(p -> {
-            if (!island.isMember(p)) {
+            if (!island.isMember(p) && !p.hasPermission(Permissions.EXEMPT_KICK)) {
                 p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
                 p.sendMessage(Text.of(island.getName(), TextColors.RED, " has been locked!"));
             }

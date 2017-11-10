@@ -102,6 +102,7 @@ public class GenerateIslandTask implements Runnable {
             centerBlock.getZ()
         );
         island.setSpawn(new Transform<>(spawn.getExtent(), spawn.getPosition()));
+
         volume.apply(spawn, BlockChangeFlag.NONE);
 
         // Set the region's BiomeType using the default biome option if set
