@@ -29,7 +29,6 @@ import org.spongepowered.api.world.gen.PopulatorTypes;
 import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
-import org.spongepowered.common.world.gen.InternalPopulatorTypes;
 
 /**
  * A modifier that causes a {@link World} to generate with empty chunks.
@@ -45,7 +44,8 @@ public class VoidWorldGeneratorModifier implements WorldGeneratorModifier {
         } else {
             modifySurface(worldGenerator);
         }
-        worldGenerator.setBaseGenerationPopulator((world1, buffer, biomes) -> { });
+        worldGenerator.setBaseGenerationPopulator((world1, buffer, biomes) -> {
+        });
     }
 
     private void modifySurface(WorldGenerator worldGenerator) {
@@ -75,7 +75,6 @@ public class VoidWorldGeneratorModifier implements WorldGeneratorModifier {
     private void modifyEnd(WorldGenerator worldGenerator) {
         worldGenerator.getPopulators().add(new EndPortalFixPopulator());
         BiomeGenerationSettings biomeSettings = worldGenerator.getBiomeSettings(BiomeTypes.SKY);
-        biomeSettings.getPopulators().remove(InternalPopulatorTypes.END_SPIKE);
         biomeSettings.getPopulators().remove(PopulatorTypes.END_ISLAND);
         biomeSettings.getPopulators().remove(PopulatorTypes.CHORUS_FLOWER);
         biomeSettings.getGenerationPopulators().clear();

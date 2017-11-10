@@ -18,7 +18,6 @@
 
 package net.mohron.skyclaims.world.gen;
 
-import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.text.translation.Translation;
@@ -63,8 +62,8 @@ public class EndPortalFixPopulator implements Populator {
     }
 
     @Override public void populate(@Nonnull World world, @Nonnull Extent volume, @Nonnull Random random) {
-        if (volume.containsBlock(0,64, 0) && volume.getBlockType(0, 64, 0).equals(BlockTypes.AIR)) {
-            world.setBlock(0, 64, 0, BlockState.builder().blockType(BlockTypes.END_STONE).build(), SkyClaims.getInstance().getCause());
+        if (volume.containsBlock(0, 64, 0) && volume.getBlockType(0, 64, 0).equals(BlockTypes.AIR)) {
+            world.setBlock(0, 64, 0, BlockState.builder().blockType(BlockTypes.END_STONE).build());
         }
     }
 }

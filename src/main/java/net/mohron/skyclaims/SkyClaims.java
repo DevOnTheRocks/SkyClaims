@@ -84,8 +84,8 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -132,6 +132,8 @@ public class SkyClaims {
 
     private IDatabase database;
 
+    private WorldGeneratorModifier voidGenModifier = new VoidWorldGeneratorModifier();
+
     private InviteService inviteService;
 
     private boolean enabled = true;
@@ -154,6 +156,8 @@ public class SkyClaims {
         config = new GlobalConfig();
         pluginConfigManager = new ConfigManager(configManager);
         pluginConfigManager.save();
+
+        Sponge.getRegistry().register(WorldGeneratorModifier.class, voidGenModifier);
 
         if (Sponge.getPluginManager().isLoaded("nucleus")) {
             Sponge.getEventManager().registerListeners(this, new NucleusIntegration());
@@ -205,6 +209,7 @@ public class SkyClaims {
             return;
         }
 
+        database = initializeDatabase();
         inviteService = new InviteService();
 
         registerListeners();
@@ -215,11 +220,12 @@ public class SkyClaims {
 
     @Listener
     public void onConstructWorldProperties(ConstructWorldPropertiesEvent event) {
-        if (/*!event.getWorldProperties().isInitialized() &&*/ config.getWorldConfig().getVoidDimensions().contains(event.getWorldProperties().getWorldName())) {
+        if (!event.getWorldProperties().isInitialized() && config.getWorldConfig().getVoidDimensions()
+            .contains(event.getWorldProperties().getWorldName())) {
             Collection<WorldGeneratorModifier> modifiers = event.getWorldProperties().getGeneratorModifiers();
-            modifiers.add(new VoidWorldGeneratorModifier());
+            modifiers.add(voidGenModifier);
             event.getWorldProperties().setGeneratorModifiers(modifiers);
-            logger.info("{} set to use the Enhanced Void World Generation Modifier.", event.getWorldProperties().getWorldName());
+            logger.info("{} set to use SkyClaims' Enhanced Void World Generation Modifier.", event.getWorldProperties().getWorldName());
         }
     }
 
