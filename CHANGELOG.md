@@ -8,6 +8,22 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
+# Beta 26.1 - S7.0
+**REQUIRED: SF build 2688+ & GP build 4.3.0.473+ OPTIONAL: Nucleus version 1.2.0+**
+- `/isa delete` is now `/is delete` and may be used by an island owner to delete their island permanently
+    - `skyclaims.command.delete` allows use of the command
+    - `skyclaims.admin.delete` allows deleting of other player's islands & use of the clear argument to delete an island without clearing
+- `/is lock` & `/is unlock` can now be used by island managers
+- Locking an island will now kick non-members from the island
+- Added `skyclaims.admin.kick.exempt` - prevents being removed from an island with `/is kick` and `/is lock`
+- the "island" command argument will now only tab complete island's where a user has the required privilege level 
+to run the command unless they have `skyclaims.admin.list`
+- Fixed an issue with `/is expand` where it would repeatedly display a confirmation message and not expand the island
+- Fixed automated island cleanup not clearing the region 
+- Fixed `/is leave` & `/is kick` not using World/Spawn-World when configured
+- Fixed a NoSuchElementException in the Options class
+- Fixed clickable text objects missing hover text
+
 # Beta 26 - S7.0
 **REQUIRED: SF build 2688+ & GP build 4.3.0.473+ OPTIONAL: Nucleus version 1.2.0+**
 - Updated for latest GP API changes
