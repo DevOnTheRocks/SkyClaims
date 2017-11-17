@@ -224,7 +224,7 @@ public class SkyClaims {
     }
 
     @Listener
-    public void onConstructWorldProperties(ConstructWorldPropertiesEvent event, WorldProperties properties) {
+    public void onConstructWorldProperties(ConstructWorldPropertiesEvent event, @Getter(value = "getWorldProperties") WorldProperties properties) {
         if (!properties.isInitialized() && config.getWorldConfig().getVoidDimensions().contains(properties.getWorldName())) {
             Collection<WorldGeneratorModifier> modifiers = properties.getGeneratorModifiers();
             modifiers.add(voidGenModifier);
