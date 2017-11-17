@@ -22,6 +22,7 @@ public class Permissions {
 
     // User Permissions
     public static final String COMMAND_CREATE = "skyclaims.command.create";
+    public static final String COMMAND_DELETE = "skyclaims.command.delete";
     public static final String COMMAND_DEMOTE = "skyclaims.command.demote";
     public static final String COMMAND_EXPAND = "skyclaims.command.expand";
     public static final String COMMAND_HOME = "skyclaims.command.home";
@@ -51,7 +52,7 @@ public class Permissions {
     public static final String COMMAND_ADMIN = "skyclaims.admin.base";
     public static final String COMMAND_CONFIG = "skyclaims.admin.config";
     public static final String COMMAND_CREATE_SCHEMATIC = "skyclaims.admin.schematic.create";
-    public static final String COMMAND_DELETE = "skyclaims.admin.delete";
+    public static final String COMMAND_DELETE_OTHERS = "skyclaims.admin.delete";
     public static final String COMMAND_EXPAND_OTHERS = "skyclaims.admin.expand";
     public static final String COMMAND_LIST_ALL = "skyclaims.admin.list";
     public static final String COMMAND_LOCK_OTHERS = "skyclaims.admin.lock.others";

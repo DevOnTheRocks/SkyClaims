@@ -31,6 +31,7 @@ import net.mohron.skyclaims.command.team.CommandKick;
 import net.mohron.skyclaims.command.team.CommandLeave;
 import net.mohron.skyclaims.command.team.CommandPromote;
 import net.mohron.skyclaims.command.user.CommandCreate;
+import net.mohron.skyclaims.command.user.CommandDelete;
 import net.mohron.skyclaims.command.user.CommandExpand;
 import net.mohron.skyclaims.command.user.CommandInfo;
 import net.mohron.skyclaims.command.user.CommandList;
@@ -100,8 +101,9 @@ public class CommandIsland extends CommandBase {
 
     private static void registerSubCommands() {
         CommandCreate.register();
-        CommandExpand.register();
+        CommandDelete.register();
         CommandDemote.register();
+        CommandExpand.register();
         CommandInfo.register();
         CommandInvite.register();
         CommandKick.register();
@@ -149,6 +151,16 @@ public class CommandIsland extends CommandBase {
                 TextColors.GRAY, " <blocks>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandExpand.HELP_TEXT
+            ));
+        }
+
+        if (src.hasPermission(Permissions.COMMAND_DELETE)) {
+            helpText.add(Text.of(
+                TextColors.AQUA, "isa delete",
+                TextColors.GOLD, " <player>",
+                TextColors.GRAY, src.hasPermission(Permissions.COMMAND_DELETE_OTHERS) ? " [clear]" : Text.EMPTY,
+                TextColors.DARK_GRAY, " - ",
+                TextColors.DARK_GREEN, CommandDelete.HELP_TEXT
             ));
         }
 
@@ -218,7 +230,7 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_LOCK)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
-                TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? " [island|all]" : Text.EMPTY,
+                TextColors.GRAY, src.hasPermission(Permissions.COMMAND_LOCK_OTHERS) ? " [island|all]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandLock.HELP_TEXT
             ));
@@ -281,7 +293,7 @@ public class CommandIsland extends CommandBase {
         if (src.hasPermission(Permissions.COMMAND_LOCK)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("is unlock").onClick(TextActions.runCommand("/is unlock")),
-                TextColors.GRAY, (src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) ? " [island|all]" : Text.EMPTY,
+                TextColors.GRAY, src.hasPermission(Permissions.COMMAND_LOCK_OTHERS) ? " [island|all]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandUnlock.HELP_TEXT
             ));

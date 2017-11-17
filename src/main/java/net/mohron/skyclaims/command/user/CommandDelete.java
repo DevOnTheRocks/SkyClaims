@@ -16,38 +16,44 @@
  * along with SkyClaims.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.mohron.skyclaims.command.admin;
+package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
+import net.mohron.skyclaims.command.argument.Argument;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 @NonnullByDefault
-public class CommandDelete extends CommandBase {
+public class CommandDelete extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to delete a player's island";
+    public static final String HELP_TEXT = "used to permanently delete an island.";
     private static final Text CLEAR = Text.of("clear");
-    private static final Text USER = Text.of("user");
-
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_DELETE)
-        .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.user(USER), GenericArguments.optional(GenericArguments.bool(CLEAR)))
-        .executor(new CommandDelete())
-        .build();
+    private static final Text ISLAND = Text.of("island");
 
     public static void register() {
+        CommandSpec commandSpec = CommandSpec.builder()
+            .permission(Permissions.COMMAND_DELETE)
+            .description(Text.of(HELP_TEXT))
+            .arguments(
+                Argument.island(ISLAND),
+                GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(CLEAR), Permissions.COMMAND_DELETE_OTHERS))
+            )
+            .executor(new CommandDelete())
+            .build();
+
         try {
+            CommandIsland.addSubCommand(commandSpec, "delete");
             PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
             PLUGIN.getLogger().debug("Registered command: CommandDelete");
         } catch (UnsupportedOperationException e) {
@@ -55,11 +61,10 @@ public class CommandDelete extends CommandBase {
         }
     }
 
-    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        User user = args.<User>getOne(USER)
-            .orElseThrow(() -> new CommandException(Text.of("Invalid user")));
-        Island island = Island.getByOwner(user.getUniqueId())
-            .orElseThrow(() -> new CommandException(Text.of("Invalid island")));
+    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
+        if (!island.getOwnerUniqueId().equals(player.getUniqueId()) && !player.hasPermission(Permissions.COMMAND_DELETE_OTHERS)) {
+            throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to delete ", island.getName(), "!"));
+        }
 
         boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
         if (clear) {
@@ -67,7 +72,7 @@ public class CommandDelete extends CommandBase {
         }
         island.delete();
 
-        src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
+        player.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
         return CommandResult.success();
     }
 }
