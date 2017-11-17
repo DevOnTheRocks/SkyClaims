@@ -19,7 +19,7 @@
 package net.mohron.skyclaims.command.admin;
 
 import net.mohron.skyclaims.command.CommandBase;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
@@ -43,7 +43,7 @@ public class CommandTransfer extends CommandBase {
     public static CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_TRANSFER)
         .description(Text.of(HELP_TEXT))
-        .arguments(Argument.twoUser(OWNER, USER))
+        .arguments(Arguments.twoUser(OWNER, USER))
         .executor(new CommandTransfer())
         .build();
 

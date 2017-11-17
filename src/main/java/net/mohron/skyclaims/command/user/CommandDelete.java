@@ -20,8 +20,9 @@ package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
@@ -46,7 +47,7 @@ public class CommandDelete extends CommandBase.IslandCommand {
             .permission(Permissions.COMMAND_DELETE)
             .description(Text.of(HELP_TEXT))
             .arguments(
-                Argument.island(ISLAND),
+                Arguments.island(ISLAND, PrivilegeType.OWNER),
                 GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(CLEAR), Permissions.COMMAND_DELETE_OTHERS))
             )
             .executor(new CommandDelete())
@@ -62,7 +63,7 @@ public class CommandDelete extends CommandBase.IslandCommand {
     }
 
     @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
-        if (!island.getOwnerUniqueId().equals(player.getUniqueId()) && !player.hasPermission(Permissions.COMMAND_DELETE_OTHERS)) {
+        if (!island.isOwner(player) && !player.hasPermission(Permissions.COMMAND_DELETE_OTHERS)) {
             throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to delete ", island.getName(), "!"));
         }
 

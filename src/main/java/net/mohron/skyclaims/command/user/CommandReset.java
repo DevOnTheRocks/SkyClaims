@@ -20,7 +20,7 @@ package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -56,7 +56,7 @@ public class CommandReset extends CommandBase.PlayerCommand {
             .permission(Permissions.COMMAND_RESET)
             .description(Text.of(HELP_TEXT))
             .arguments(
-                GenericArguments.optional(Argument.schematic(SCHEMATIC)),
+                GenericArguments.optional(Arguments.schematic(SCHEMATIC)),
                 GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(KEEP_INV), Permissions.COMMAND_RESET_KEEP_INV))
             )
             .executor(new CommandReset())

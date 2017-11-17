@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
@@ -55,7 +55,7 @@ public class CommandUnlock extends CommandBase {
             .arguments(GenericArguments.firstParsing(
                 GenericArguments
                     .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
-                GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
+                GenericArguments.optional(GenericArguments.requiringPermission(Arguments.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
             ))
             .executor(new CommandUnlock())
             .build();

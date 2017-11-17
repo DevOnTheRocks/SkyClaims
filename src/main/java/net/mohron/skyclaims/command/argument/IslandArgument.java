@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -44,8 +45,15 @@ import javax.annotation.Nullable;
 @NonnullByDefault
 public class IslandArgument extends CommandElement {
 
+    private PrivilegeType requirement;
+
     public IslandArgument(@Nullable Text key) {
+        this(key, PrivilegeType.MEMBER);
+    }
+
+    public IslandArgument(@Nullable Text key, PrivilegeType requiredPrivilege) {
         super(key);
+        this.requirement = requiredPrivilege;
     }
 
     @Nullable
@@ -78,9 +86,9 @@ public class IslandArgument extends CommandElement {
             String arg = args.peek().toLowerCase();
             boolean admin = src.hasPermission(Permissions.COMMAND_LIST_ALL);
             return SkyClaims.islands.values().stream()
+                .filter(i -> admin || src instanceof Player && i.getPrivilegeType((Player) src) == requirement)
                 .filter(i -> i.getOwnerName().toLowerCase().startsWith(arg))
                 .filter(i -> i.getSortableName().toLowerCase().startsWith(arg))
-                .filter(i -> admin || src instanceof Player && i.isMember((Player) src))
                 .map(Island::getOwnerName)
                 .collect(Collectors.toList());
         } catch (ArgumentParseException e) {

@@ -24,9 +24,10 @@ import me.ryanhamshire.griefprevention.api.claim.ClaimBlockSystem;
 import me.ryanhamshire.griefprevention.api.data.PlayerData;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -54,8 +55,8 @@ public class CommandExpand extends CommandBase.IslandCommand {
             .permission(Permissions.COMMAND_EXPAND)
             .description(Text.of(HELP_TEXT))
             .arguments(
-                GenericArguments.optional(Argument.island(ISLAND)),
-                Argument.positiveInteger(BLOCKS)
+                GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER)),
+                Arguments.positiveInteger(BLOCKS)
             )
             .executor(new CommandExpand())
             .build();
