@@ -31,6 +31,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +41,7 @@ public abstract class CommandBase implements CommandExecutor {
 
     protected static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-    public static abstract class IslandCommand extends CommandBase implements CommandRequirement.RequiresIsland {
+    public static abstract class IslandCommand extends CommandBase implements CommandRequirement.RequiresPlayerIsland {
 
         protected static final Text ISLAND = Text.of("island");
 
@@ -51,7 +53,7 @@ public abstract class CommandBase implements CommandExecutor {
                 return execute(
                     (Player) src,
                     Island.get(((Player) src).getLocation())
-                        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command."))),
+                        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command!"))),
                     args);
             } else {
                 List<Island> islands = Lists.newArrayList();
@@ -75,4 +77,59 @@ public abstract class CommandBase implements CommandExecutor {
         }
     }
 
+    public static abstract class LockCommand extends CommandBase implements CommandRequirement.RequiresIsland {
+
+        private boolean lock;
+
+        public LockCommand(boolean lock) {
+            this.lock = lock;
+        }
+
+        protected static final Text ALL = Text.of("all");
+        protected static final Text ISLAND = Text.of("island");
+
+        @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+            if (args.hasAny(ALL)) {
+                return lockAll(src, lock);
+            }
+            if (!args.hasAny(ISLAND)) {
+                if (src instanceof Player) {
+                    return execute(
+                        src,
+                        Island.get(((Player) src).getLocation())
+                            .orElseThrow(() -> new CommandException(
+                                Text.of(TextColors.RED, "You must provide an island argument or be on an island to use this command!")
+                            )),
+                        args
+                    );
+                } else {
+                    throw new CommandException(Text.of(TextColors.RED, "An island argument is required when executed by a non-player!"));
+                }
+            } else {
+                List<Island> islands = Lists.newArrayList();
+                args.<UUID>getAll(ISLAND).forEach(i -> Island.get(i).ifPresent(islands::add));
+                if (islands.size() == 1) {
+                    return execute(src, islands.get(0), args);
+                } else {
+                    return lockIslands(src, args.getAll(ISLAND), lock);
+                }
+            }
+        }
+
+        private CommandResult lockIslands(CommandSource src, Collection<UUID> islandsIds, boolean lock) {
+            ArrayList<Island> islands = Lists.newArrayList();
+            islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+            islands.forEach(island -> {
+                island.setLocked(lock);
+                src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been locked!"));
+            });
+            return CommandResult.success();
+        }
+
+        private CommandResult lockAll(CommandSource src, boolean lock) {
+            SkyClaims.islands.values().forEach(island -> island.setLocked(lock));
+            src.sendMessage(Text.of(TextColors.GREEN, "All islands have been locked!"));
+            return CommandResult.success();
+        }
+    }
 }

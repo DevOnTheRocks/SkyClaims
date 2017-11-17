@@ -24,8 +24,10 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -42,11 +44,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @NonnullByDefault
-public class CommandUnlock extends CommandBase {
+public class CommandUnlock extends CommandBase.LockCommand {
 
     public static final String HELP_TEXT = "used to allow untrusted players to visit your island.";
-    private static final Text ALL = Text.of("all");
-    private static final Text ISLAND = Text.of("island");
+
+    public CommandUnlock() {
+        super(false);
+    }
 
     public static void register() {
         CommandSpec commandSpec = CommandSpec.builder()
@@ -55,7 +59,7 @@ public class CommandUnlock extends CommandBase {
             .arguments(GenericArguments.firstParsing(
                 GenericArguments
                     .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
-                GenericArguments.optional(GenericArguments.requiringPermission(Arguments.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
+                GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER))
             ))
             .executor(new CommandUnlock())
             .build();
@@ -69,42 +73,14 @@ public class CommandUnlock extends CommandBase {
         }
     }
 
-    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (args.hasAny(ISLAND)) {
-            return unlockIslands(src, args.getAll(ISLAND));
-        }
-        if (args.hasAny(ALL)) {
-            return unlockAll(src);
-        }
-        if (!(src instanceof Player)) {
-            throw new CommandException(Text.of("You must be a player to run this command!"));
-        }
-        Player player = (Player) src;
-        Optional<Island> island = Island.getByOwner(player.getUniqueId());
-
-        if (!island.isPresent()) {
-            throw new CommandException(Text.of("You must have an Island to run this command!"));
+    @Override public CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException {
+        if (src instanceof Player && !island.isManager((Player) src) || !src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
+            throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to unlock ", island.getName(), "!"));
         }
 
-        island.get().setLocked(false);
+        island.setLocked(false);
 
-        src.sendMessage(Text.of(TextColors.GREEN, "Your island is now unlocked!"));
-        return CommandResult.success();
-    }
-
-    private CommandResult unlockIslands(CommandSource src, Collection<UUID> islandsIds) {
-        ArrayList<Island> islands = Lists.newArrayList();
-        islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
-        islands.forEach(island -> {
-            island.setLocked(false);
-            src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been unlocked!"));
-        });
-        return CommandResult.success();
-    }
-
-    private CommandResult unlockAll(CommandSource src) {
-        SkyClaims.islands.values().forEach(island -> island.setLocked(false));
-        src.sendMessage(Text.of(TextColors.GREEN, "All islands have been unlocked!"));
+        src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now unlocked!"));
         return CommandResult.success();
     }
 }
