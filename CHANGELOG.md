@@ -9,7 +9,7 @@
 - Added Nether portal fix
 
 # Beta 26.1 - S5.1
-**REQUIRED: SF build 2688+ & GP build 4.3.0.473+ OPTIONAL: Nucleus version 1.2.0+**
+**REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
 - `/isa delete` is now `/is delete` and may be used by an island owner to delete their island permanently
     - `skyclaims.command.delete` allows use of the command
     - `skyclaims.admin.delete` allows deleting of other player's islands & use of the clear argument to delete an island without clearing

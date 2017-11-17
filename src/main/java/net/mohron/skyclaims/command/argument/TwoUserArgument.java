@@ -18,7 +18,6 @@
 
 package net.mohron.skyclaims.command.argument;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.command.CommandSource;
@@ -30,6 +29,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.GuavaCollectors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class TwoUserArgument extends CommandElement {
                 .map(GameProfile::getName)
                 .filter(s -> s.isPresent() && s.get().startsWith(name))
                 .map(Optional::get)
-                .collect(ImmutableList.toImmutableList());
+                .collect(GuavaCollectors.toImmutableList());
         } catch (ArgumentParseException e) {
             return Lists.newArrayList();
         }
