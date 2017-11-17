@@ -67,8 +67,7 @@ blossom {
     replaceToken "@DESCRIPTION@", project.description, pluginInfo
 }
 
-spongestart{
-    eula true
+spongestart {
     minecraft "1.10.2"
     type "stable"
     spongeForgeVersion properties.spongeforge

@@ -21,7 +21,7 @@ package net.mohron.skyclaims.command.user;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
@@ -58,7 +58,7 @@ public class CommandList extends CommandBase {
             .description(Text.of(HELP_TEXT))
             .arguments(GenericArguments.firstParsing(
                 GenericArguments.optional(GenericArguments.user(USER)),
-                GenericArguments.optional(GenericArguments.requiringPermission(Argument.sort(SORT), Permissions.COMMAND_LIST_SORT))
+                GenericArguments.optional(GenericArguments.requiringPermission(Arguments.sort(SORT), Permissions.COMMAND_LIST_SORT))
             ))
             .executor(new CommandList())
             .build();

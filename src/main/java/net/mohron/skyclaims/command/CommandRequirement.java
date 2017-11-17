@@ -21,6 +21,7 @@ package net.mohron.skyclaims.command;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
@@ -31,12 +32,17 @@ public interface CommandRequirement extends CommandExecutor {
 
     interface RequiresIsland {
 
-        CommandResult execute(Player player, Island island, CommandContext args) throws CommandException;
+        CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException;
     }
 
     interface RequiresPlayer {
 
         CommandResult execute(Player player, CommandContext args) throws CommandException;
+    }
+
+    interface RequiresPlayerIsland {
+
+        CommandResult execute(Player player, Island island, CommandContext args) throws CommandException;
     }
 
 }

@@ -20,7 +20,7 @@ package net.mohron.skyclaims.command.user;
 
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.command.argument.Targets;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.WorldUtil;
@@ -49,8 +49,8 @@ public class CommandSetBiome extends CommandBase.PlayerCommand {
             .permission(Permissions.COMMAND_SET_BIOME)
             .description(Text.of(HELP_TEXT))
             .arguments(GenericArguments.seq(
-                Argument.biome(BIOME),
-                GenericArguments.optional(Argument.target(TARGET))
+                Arguments.biome(BIOME),
+                GenericArguments.optional(Arguments.target(TARGET))
             ))
             .executor(new CommandSetBiome())
             .build();

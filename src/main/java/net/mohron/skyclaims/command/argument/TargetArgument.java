@@ -29,6 +29,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+@NonnullByDefault
 public class TargetArgument extends CommandElement {
 
     private static final SkyClaims PLUGIN = SkyClaims.getInstance();

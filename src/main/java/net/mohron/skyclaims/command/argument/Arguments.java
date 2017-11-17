@@ -18,16 +18,25 @@
 
 package net.mohron.skyclaims.command.argument;
 
+import net.mohron.skyclaims.team.PrivilegeType;
 import org.spongepowered.api.text.Text;
 
-public class Argument {
+public class Arguments {
 
     public static BiomeArgument biome(Text key) {
         return new BiomeArgument(key);
     }
 
+    public static IslandArgument island(Text key, PrivilegeType type) {
+        return new IslandArgument(key, type);
+    }
+
     public static IslandArgument island(Text key) {
         return new IslandArgument(key);
+    }
+
+    public static PositiveIntegerArgument positiveInteger(Text key) {
+        return new PositiveIntegerArgument(key);
     }
 
     public static SchematicArgument schematic(Text key) {

@@ -28,6 +28,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+@NonnullByDefault
 public class SortArgument extends CommandElement {
 
     public static final Map<String, Comparator<Island>> SORT_TYPES = Maps.newHashMap();

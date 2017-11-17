@@ -25,7 +25,6 @@ import com.google.common.collect.Lists;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.command.admin.CommandConfig;
 import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
-import net.mohron.skyclaims.command.admin.CommandDelete;
 import net.mohron.skyclaims.command.admin.CommandReload;
 import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -56,7 +55,6 @@ public class CommandAdmin extends CommandBase {
             .permission(Permissions.COMMAND_ADMIN)
             .description(Text.of(HELP_TEXT))
             .child(CommandConfig.commandSpec, "config")
-            .child(CommandDelete.commandSpec, "delete")
             .child(CommandReload.commandSpec, "reload")
             .child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
             .child(CommandTransfer.commandSpec, "transfer")
@@ -77,7 +75,6 @@ public class CommandAdmin extends CommandBase {
     private static void registerSubCommands() {
         CommandConfig.register();
         CommandCreateSchematic.register();
-        CommandDelete.register();
         CommandReload.register();
         CommandTransfer.register();
     }
@@ -103,16 +100,6 @@ public class CommandAdmin extends CommandBase {
             hasPerms = true;
         }
 
-        if (src.hasPermission(Permissions.COMMAND_DELETE)) {
-            helpText.add(Text.of(
-                TextColors.AQUA, "isa delete",
-                TextColors.GOLD, " <player>",
-                TextColors.GRAY, " [clear]",
-                TextColors.DARK_GRAY, " - ",
-                TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
-            hasPerms = true;
-        }
-
         if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
@@ -127,7 +114,7 @@ public class CommandAdmin extends CommandBase {
                 TextColors.GRAY, " [owner]",
                 TextColors.GOLD, " <player>",
                 TextColors.DARK_GRAY, " - ",
-                TextColors.DARK_GREEN, CommandDelete.HELP_TEXT));
+                TextColors.DARK_GREEN, CommandTransfer.HELP_TEXT));
             hasPerms = true;
         }
 

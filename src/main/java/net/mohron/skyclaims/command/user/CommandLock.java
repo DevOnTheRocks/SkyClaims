@@ -18,14 +18,14 @@
 
 package net.mohron.skyclaims.command.user;
 
-import com.google.common.collect.Lists;
-import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -36,17 +36,14 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
-
 @NonnullByDefault
-public class CommandLock extends CommandBase {
+public class CommandLock extends CommandBase.LockCommand {
 
     public static final String HELP_TEXT = "used to prevent untrusted players from visiting to your island.";
-    private static final Text ALL = Text.of("all");
-    private static final Text ISLAND = Text.of("island");
+
+    public CommandLock() {
+        super(true);
+    }
 
     public static void register() {
         CommandSpec commandSpec = CommandSpec.builder()
@@ -55,7 +52,7 @@ public class CommandLock extends CommandBase {
             .arguments(GenericArguments.firstParsing(
                 GenericArguments
                     .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
-                GenericArguments.optional(GenericArguments.requiringPermission(Argument.island(ISLAND), Permissions.COMMAND_LOCK_OTHERS))
+                GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER))
             ))
             .executor(new CommandLock())
             .build();
@@ -69,42 +66,22 @@ public class CommandLock extends CommandBase {
         }
     }
 
-    @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (args.hasAny(ISLAND)) {
-            return lockIslands(src, args.getAll(ISLAND));
-        }
-        if (args.hasAny(ALL)) {
-            return lockAll(src);
-        }
-        if (!(src instanceof Player)) {
-            throw new CommandException(Text.of("You must be a player to run this command!"));
-        }
-        Player player = (Player) src;
-        Optional<Island> island = Island.getByOwner(player.getUniqueId());
-
-        if (!island.isPresent()) {
-            throw new CommandException(Text.of("You must have an Island to run this command!"));
+    @Override public CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException {
+        if (src instanceof Player && !island.isManager((Player) src) || !src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
+            throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to lock ", island.getName(), "!"));
         }
 
-        island.get().setLocked(true);
+        island.setLocked(true);
 
-        src.sendMessage(Text.of(TextColors.GREEN, "Your island is now locked!"));
-        return CommandResult.success();
-    }
-
-    private CommandResult lockIslands(CommandSource src, Collection<UUID> islandsIds) {
-        ArrayList<Island> islands = Lists.newArrayList();
-        islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
-        islands.forEach(island -> {
-            island.setLocked(true);
-            src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been locked!"));
+        island.getPlayers().forEach(p -> {
+            if (!island.isMember(p) && !p.hasPermission(Permissions.EXEMPT_KICK)) {
+                p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
+                p.sendMessage(Text.of(island.getName(), TextColors.RED, " has been locked!"));
+            }
         });
+
+        src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now locked!"));
         return CommandResult.success();
     }
 
-    private CommandResult lockAll(CommandSource src) {
-        SkyClaims.islands.values().forEach(island -> island.setLocked(true));
-        src.sendMessage(Text.of(TextColors.GREEN, "All islands have been locked!"));
-        return CommandResult.success();
-    }
 }

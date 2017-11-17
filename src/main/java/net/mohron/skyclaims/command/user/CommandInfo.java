@@ -21,7 +21,7 @@ package net.mohron.skyclaims.command.user;
 import com.google.common.collect.Lists;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.Argument;
+import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.PrivilegeType;
@@ -58,7 +58,7 @@ public class CommandInfo extends CommandBase {
         CommandSpec commandSpec = CommandSpec.builder()
             .permission(Permissions.COMMAND_INFO)
             .description(Text.of(HELP_TEXT))
-            .arguments(GenericArguments.optional(Argument.island(ISLAND)))
+            .arguments(GenericArguments.optional(Arguments.island(ISLAND)))
             .executor(new CommandInfo())
             .build();
 
