@@ -156,8 +156,8 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_DELETE)) {
             helpText.add(Text.of(
-                TextColors.AQUA, "isa delete",
-                TextColors.GOLD, " <player>",
+                TextColors.AQUA, Text.builder("is delete").onClick(TextActions.suggestCommand("/is delete")),
+                TextColors.GRAY, " [island]",
                 TextColors.GRAY, src.hasPermission(Permissions.COMMAND_DELETE_OTHERS) ? " [clear]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandDelete.HELP_TEXT
