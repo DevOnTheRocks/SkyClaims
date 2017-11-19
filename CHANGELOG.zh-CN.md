@@ -16,7 +16,7 @@
 - `/is lock` & `/is unlock` 现在空岛管理者也可以使用了
 - 上锁的空岛现在会自动踢出非本岛的成员
 - 添加权限 `skyclaims.admin.kick.exempt` - 防止某人被命令 `/is kick` and `/is lock` 踢出
-- 现在 `island` 命令仅仅会补全他们有权限的部分，除非他们拥有 `skyclaims.admin.list` 权限
+- 现在 `island` 命令仅仅会补全他们有权限的部分，除非他们拥有 `skyclaims.admin.list` 权限 （感谢@luckyu19帮忙理顺这部分的翻译）
 - 修复了当使用 `/is expand` 命令时重复弹出确认消息却不扩展空岛的问题
 - 修复了自动删除空岛不清除区域的问题
 - 修复了命令 `/is leave` & `/is kick` 在当配置文件修改后无法使用的问题
