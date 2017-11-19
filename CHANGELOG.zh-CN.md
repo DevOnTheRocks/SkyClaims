@@ -10,14 +10,13 @@
 
 # Beta 26.1 - S5.1
 **必须插件：SF 2637+ & GP 4.0.0.474+ 可选插件：Nucleus 1.1.3+**
-- 将命令`/isa delete` 修改为 `/is delete` 并且允许空岛所有者将他们的空岛永久删除。
+- 将命令`/isa delete` 修改为 `/is delete` 并且允许空岛所有者将他们的空岛永久删除
     - `skyclaims.command.delete` 基础命令使用权限
     - `skyclaims.admin.delete` 允许删除任意的空岛
-- `/is lock` & `/is unlock` 现在空岛管理者也可以使用了。
+- `/is lock` & `/is unlock` 现在空岛管理者也可以使用了
 - 上锁的空岛现在会自动踢出非本岛的成员
-- 添加权限 `skyclaims.admin.kick.exempt` - 防止某人被命令 `/is kick` and `/is lock` 踢出。
-- the "island" command argument will now only tab complete island's where a user has the required privilege level
-to run the command unless they have `skyclaims.admin.list`
+- 添加权限 `skyclaims.admin.kick.exempt` - 防止某人被命令 `/is kick` and `/is lock` 踢出
+- 现在 `island` 命令仅仅会补全他们有权限的部分，除非他们拥有 `skyclaims.admin.list` 权限
 - 修复了当使用 `/is expand` 命令时重复弹出确认消息却不扩展空岛的问题
 - 修复了自动删除空岛不清除区域的问题
 - 修复了命令 `/is leave` & `/is kick` 在当配置文件修改后无法使用的问题
