@@ -74,10 +74,6 @@ public class CommandUnlock extends CommandBase.LockCommand {
     }
 
     @Override public CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException {
-        if (src instanceof Player && !island.isManager((Player) src) || !src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
-            throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to unlock ", island.getName(), "!"));
-        }
-
         island.setLocked(false);
 
         src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now unlocked!"));

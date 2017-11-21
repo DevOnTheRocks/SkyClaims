@@ -67,10 +67,6 @@ public class CommandLock extends CommandBase.LockCommand {
     }
 
     @Override public CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException {
-        if (src instanceof Player && !island.isManager((Player) src) || !src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
-            throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to lock ", island.getName(), "!"));
-        }
-
         island.setLocked(true);
 
         island.getPlayers().forEach(p -> {

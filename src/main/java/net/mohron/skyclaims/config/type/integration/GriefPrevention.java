@@ -19,11 +19,15 @@
 package net.mohron.skyclaims.config.type.integration;
 
 import com.google.common.collect.Lists;
+import me.ryanhamshire.griefprevention.api.claim.ClaimFlag;
 import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.spongepowered.api.util.Tristate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ConfigSerializable
 public class GriefPrevention {
@@ -37,11 +41,11 @@ public class GriefPrevention {
     //        put(ClaimFlag.ITEM_PICKUP, Tristate.FALSE);
     //    }};
     //
-    //    @Setting(value = "Wilderness-Flags", comment = "Use to set up default flags to be set on the Wilderness claim.")
-    //    private EnumMap<ClaimFlag, Tristate> wildernessFlags = new EnumMap<ClaimFlag, Tristate>(ClaimFlag.class) {{
-    //        put(ClaimFlag.BLOCK_BREAK, Tristate.FALSE);
-    //        put(ClaimFlag.BLOCK_PLACE, Tristate.FALSE);
-    //    }};
+    @Setting(value = "Wilderness-Flags", comment = "Use to set up default flags to be set on the Wilderness claim.")
+    private Map<ClaimFlag, Tristate> wildernessFlags = new HashMap<ClaimFlag, Tristate>() {{
+        put(ClaimFlag.BLOCK_BREAK, Tristate.FALSE);
+        put(ClaimFlag.BLOCK_PLACE, Tristate.FALSE);
+    }};
 
     public List<TrustType> getDisabledTrustTypes() {
         return disabledTrustTypes;
@@ -51,7 +55,7 @@ public class GriefPrevention {
     //        return islandFlags;
     //    }
     //
-    //    public EnumMap<ClaimFlag, Tristate> getWildernessFlags() {
-    //        return wildernessFlags;
-    //    }
+    public Map<ClaimFlag, Tristate> getWildernessFlags() {
+        return wildernessFlags;
+    }
 }

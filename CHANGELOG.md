@@ -8,6 +8,12 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
+# Beta 26.2 - S5.1 Hotfix
+**REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
+- Fixed a bug with `is lock` & `is unlock` where the permission check returns incorrectly
+- Fixed a typo in the `is delete` help text
+- Added a wilderness flag config setting to allows customizing the flags set automatically by SkyClaims
+
 # Beta 26.1 - S5.1
 **REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
 - `/isa delete` is now `/is delete` and may be used by an island owner to delete their island permanently
