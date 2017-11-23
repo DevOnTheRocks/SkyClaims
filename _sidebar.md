@@ -2,6 +2,7 @@
   - [FAQ](faq.md)
   - [Changelog](changelog.md)
   - [Commands](commands.md)
+  - [Privilege System](privilege.md)
   - [Island Layout](island-layout.md)
   - [Biome Types](biome-types.md)
   - [Options](options.md)
