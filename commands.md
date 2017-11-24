@@ -42,7 +42,7 @@
 | `isa`<br />`is admin` | Used to run admin commands or display admin help | `skyclaims.admin.base` |
 | `isa cs <name>`| Used to create a schematic to use with is create<br />(Use a Golden Axe as a selection tool) | `skyclaims.admin.schematic.create` |
 | `isa transfer [owner] <newowner>` | Transfer an island to another player | `skyclaims.admin.transfer` |
-| `isa delete <player> [regen]` | Used to delete the specified player's island, accepts optional true/false to disable region regeneration. (Note: **The island plot will be erased unless you choose to disable plot regen!**) | `skyclaims.admin.delete` |
+| ~~`isa delete <player> [regen]`~~ replaced by `is delete` in B26.1 | Used to delete the specified player's island, accepts optional true/false to disable region regeneration. (Note: **The island plot will be erased unless you choose to disable plot regen!**) | `skyclaims.command.delete` allows use of the command <br /> `skyclaims.admin.delete` allows deleting of other player's islands & use of the clear argument to delete an island without clearing |
 | `isa reload` | Used to reload the config, schematics directory, & database  | `skyclaims.admin.reload` |
 
 ### Debug Commands

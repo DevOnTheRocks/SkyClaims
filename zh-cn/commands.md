@@ -42,7 +42,7 @@
 | `isa`<br />`is admin` | 运行管理员指令或者管理员帮助 | `skyclaims.admin.base` |
 | `isa cs <name>`| 新建空岛模板<br />(选择工具为金斧) | `skyclaims.admin.schematic.create` |
 | `isa transfer [owner] <newowner>` | 将某个空岛转赠给另一个玩家 | `skyclaims.admin.transfer` |
-| `isa delete <player> [regen]` | 删除某玩家岛屿， 接受布尔值参数来决定是否重建 | `skyclaims.admin.delete` |
+|~~ `isa delete <player> [regen]` ~~`is delete` | 删除某玩家岛屿， 接受布尔值参数来决定是否重建(**注意：删除空岛不可恢复，请谨慎操作**)<br />**已经被`is delete`命令替代** | `skyclaims.command.delete` 基础命令使用权限 <br /> `skyclaims.admin.delete` 允许删除任意的空岛 |
 | `isa reload` | 重新加载插件的所有文件  | `skyclaims.admin.reload` |
 
 ### 除错指令
