@@ -8,7 +8,7 @@ SkyClaims提供了一个很好的阶级系统来管理每个玩家对一个空�
 GriefPrevention's [trust types](https://github.com/MinecraftPortCentral/GriefPrevention/wiki/Trust-System).
 
 ## 等级
-**Note：Because the ingame text was not translation, so keep the keyword for check**</br>
+**Note：Because the ingame text was not translation, so keep the keyword for check**<br />
 **注意：因为插件文本未汉化，因此中文部分保留中文和英文两种关键词，以便核对**
 - 拥有者（Owner）
     - 最高的等级权限。
