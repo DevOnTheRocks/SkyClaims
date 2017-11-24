@@ -2,7 +2,7 @@
   - [FAQ](zh-cn/faq.md)
   - [更新日志](zh-cn/changelog.md)
   - [命令](zh-cn/commands.md)
-  - [Privilege System](zh-cn/cprivilege.md) <!-- @subtank needs translation. Remove comment once complete. -->
+  - [阶级系统](zh-cn/privilege.md)
   - [空岛生成相关](zh-cn/island-layout.md)
   - [生物群落类别](zh-cn/biome-types.md)
   - [设置](zh-cn/options.md)
