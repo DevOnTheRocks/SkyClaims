@@ -28,7 +28,6 @@ coolie?hopely not a creeper. ←_← it is first time for playing joke so same.
     - 等價於GP中的建設者權限。
     - 僅僅有最最基礎的空島權限，不能使用任何相關命令或者修改任何空島的特徵。
 - 遊客（None）
-<!--recommend change None to Tourist-->
     - 默認的階級等級
     - 僅僅能夠訪問未上鎖的空島或者直接傳送過去。
     - 不能對任何方塊進行修改。

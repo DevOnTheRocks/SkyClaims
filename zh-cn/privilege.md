@@ -28,7 +28,6 @@ coolie?hopely not a creeper.  ←_←  it is first time for playing joke so same
     - 等价于GP中的建设者权限。
     - 仅仅有最最基础的空岛权限，不能使用任何相关命令或者修改任何空岛的特征。
 - 游客（None）
-<!--recommend change None to Tourist-->
     - 默认的阶级等级
     - 仅仅能够访问未上锁的空岛或者直接传送过去。
     - 不能对任何方块进行修改。
