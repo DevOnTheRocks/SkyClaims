@@ -1,4 +1,4 @@
 ﻿- Translations
-  - [:cn: 简体中文](/zh-cn/)
-  - [:cn: 繁体中文](/zh-tw/)
+  - [:cn: 简中](/zh-cn/)
+  - [:cn: 繁中](/zh-tw/)
   - [:us: English](/)
