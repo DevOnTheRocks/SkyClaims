@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.config.type;
 
+import com.google.common.collect.Lists;
 import net.mohron.skyclaims.SkyClaims;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
@@ -28,7 +29,6 @@ import java.util.List;
 
 @ConfigSerializable
 public class MiscConfig {
-
     @Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.")
     private boolean islandOnJoin = false;
     @Setting(value = "List-Schematics", comment = "Whether players with access to multiple schematics see a list when not specifying a schematic.")

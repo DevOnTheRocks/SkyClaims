@@ -65,7 +65,7 @@ public class CommandAdmin extends CommandBase {
         try {
             registerSubCommands();
             CommandIsland.addSubCommand(commandSpec, "admin");
-            Sponge.getCommandManager().register(PLUGIN, commandSpec, "isa");
+            Sponge.getCommandManager().register(PLUGIN, commandSpec, PLUGIN.getConfig().getCommandConfig().getAdminAlias());
             PLUGIN.getLogger().debug("Registered command: CommandAdmin");
         } catch (UnsupportedOperationException e) {
             PLUGIN.getLogger().error("Failed to register command: CommandAdmin", e);
@@ -80,12 +80,16 @@ public class CommandAdmin extends CommandBase {
     }
 
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        net.mohron.skyclaims.config.type.CommandConfig config = PLUGIN.getConfig().getCommandConfig();
         List<Text> helpText = Lists.newArrayList();
+        String alias = config.getAdminAlias().isEmpty()
+            ? config.getBaseAlias() + " admin "
+            : config.getAdminAlias().get(0) + " ";
         boolean hasPerms = false;
 
         if (src.hasPermission(Permissions.COMMAND_CONFIG)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("isa config").onClick(TextActions.runCommand("/isa config")),
+                TextColors.AQUA, Text.of(TextActions.runCommand("/" + alias + "config"), alias, "config"),
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandConfig.HELP_TEXT));
             hasPerms = true;
@@ -93,7 +97,7 @@ public class CommandAdmin extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
             helpText.add(Text.of(
-                TextColors.AQUA, "isa cs",
+                TextColors.AQUA, alias, "cs",
                 TextColors.GOLD, " <name>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandCreateSchematic.HELP_TEXT));
@@ -102,7 +106,7 @@ public class CommandAdmin extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("isa reload").onClick(TextActions.runCommand("/isa reload")),
+                TextColors.AQUA, Text.of(TextActions.runCommand("/" + alias + "reload"), alias, "reload"),
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandReload.HELP_TEXT));
             hasPerms = true;
@@ -110,7 +114,7 @@ public class CommandAdmin extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_TRANSFER)) {
             helpText.add(Text.of(
-                TextColors.AQUA, "isa transfer",
+                TextColors.AQUA, alias, "transfer",
                 TextColors.GRAY, " [owner]",
                 TextColors.GOLD, " <player>",
                 TextColors.DARK_GRAY, " - ",

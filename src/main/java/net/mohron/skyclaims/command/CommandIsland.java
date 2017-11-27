@@ -84,7 +84,7 @@ public class CommandIsland extends CommandBase {
             .build();
 
         try {
-            Sponge.getCommandManager().register(PLUGIN, commandSpec, "island", "is");
+            Sponge.getCommandManager().register(PLUGIN, commandSpec, PLUGIN.getConfig().getCommandConfig().getBaseAlias());
             PLUGIN.getLogger().debug("Registered command: CommandIsland");
         } catch (UnsupportedOperationException e) {
             PLUGIN.getLogger().error("Failed to register command: CommandIsland", e);
@@ -120,6 +120,7 @@ public class CommandIsland extends CommandBase {
 
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         List<Text> helpText = Lists.newArrayList();
+        String alias = PLUGIN.getConfig().getCommandConfig().getBaseAlias().get(0) + " "; 
 
         URL gpHelp = null;
         try {
@@ -137,7 +138,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_CREATE)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is create").onClick(TextActions.runCommand("/is create")),
+                TextColors.AQUA, Text.builder(alias + "create").onClick(TextActions.runCommand("/" + alias + "create")),
                 TextColors.GRAY, " [schematic]",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandCreate.HELP_TEXT
@@ -146,7 +147,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_EXPAND)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is expand").onClick(TextActions.suggestCommand("/is expand ")),
+                TextColors.AQUA, Text.builder(alias + "expand").onClick(TextActions.suggestCommand("/" + alias + "expand ")),
                 TextColors.GRAY, " [island]",
                 TextColors.GRAY, " <blocks>",
                 TextColors.DARK_GRAY, " - ",
@@ -156,7 +157,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_DELETE)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is delete").onClick(TextActions.suggestCommand("/is delete")),
+                TextColors.AQUA, Text.builder(alias + "delete").onClick(TextActions.suggestCommand("/" + alias + "delete")),
                 TextColors.GRAY, " [island]",
                 TextColors.GRAY, src.hasPermission(Permissions.COMMAND_DELETE_OTHERS) ? " [clear]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
@@ -166,7 +167,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_DEMOTE)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is demote").onClick(TextActions.suggestCommand("/is demote ")),
+                TextColors.AQUA, Text.builder(alias + "demote").onClick(TextActions.suggestCommand("/" + alias + "demote ")),
                 TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandDemote.HELP_TEXT
@@ -175,7 +176,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_HOME)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is home").onClick(TextActions.runCommand("/is home")),
+                TextColors.AQUA, Text.builder(alias + "home").onClick(TextActions.runCommand("/" + alias + "home")),
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandHome.HELP_TEXT
             ));
@@ -183,7 +184,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_INFO)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is info").onClick(TextActions.runCommand("/is info")),
+                TextColors.AQUA, Text.builder(alias + "info").onClick(TextActions.runCommand("/" + alias + "info")),
                 TextColors.GRAY, " [island]",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandInfo.HELP_TEXT
@@ -192,7 +193,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_INVITE)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is invite").onClick(TextActions.runCommand("/is invite")),
+                TextColors.AQUA, Text.builder(alias + "invite").onClick(TextActions.runCommand("/" + alias + "invite")),
                 TextColors.GRAY, " [user]",
                 TextColors.GRAY, " [privilege]",
                 TextColors.DARK_GRAY, " - ",
@@ -202,7 +203,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_KICK)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is kick").onClick(TextActions.suggestCommand("/is kick")),
+                TextColors.AQUA, Text.builder(alias + "kick").onClick(TextActions.suggestCommand("/" + alias + "kick")),
                 TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandKick.HELP_TEXT
@@ -211,7 +212,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_LEAVE)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is leave").onClick(TextActions.runCommand("/is leave")),
+                TextColors.AQUA, Text.builder(alias + "leave").onClick(TextActions.runCommand("/" + alias + "leave")),
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandLeave.HELP_TEXT
             ));
@@ -219,7 +220,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_LIST)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is list").onClick(TextActions.runCommand("/is list")),
+                TextColors.AQUA, Text.builder(alias + "list").onClick(TextActions.runCommand("/" + alias + "list")),
                 TextColors.GRAY, " [user]",
                 TextColors.GRAY, Text.builder(" [sort]").onHover(TextActions.showText(getSortOptions())),
                 TextColors.DARK_GRAY, " - ",
@@ -229,7 +230,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_LOCK)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is lock").onClick(TextActions.runCommand("/is lock")),
+                TextColors.AQUA, Text.builder(alias + "lock").onClick(TextActions.runCommand("/" + alias + "lock")),
                 TextColors.GRAY, src.hasPermission(Permissions.COMMAND_LOCK_OTHERS) ? " [island|all]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandLock.HELP_TEXT
@@ -238,7 +239,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_PROMOTE)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is promote").onClick(TextActions.suggestCommand("/is promote ")),
+                TextColors.AQUA, Text.builder(alias + "promote").onClick(TextActions.suggestCommand("/" + alias + "promote ")),
                 TextColors.GOLD, " <user>",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandPromote.HELP_TEXT
@@ -247,7 +248,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_RESET)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is reset").onClick(TextActions.suggestCommand("/is reset")),
+                TextColors.AQUA, Text.builder(alias + "reset").onClick(TextActions.suggestCommand("/" + alias + "reset")),
                 TextColors.GRAY, " [schematic]",
                 TextColors.GRAY, src.hasPermission(Permissions.COMMAND_RESET_KEEP_INV) ? " [keepinv]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
@@ -257,7 +258,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_SET_BIOME)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is setbiome").onClick(TextActions.suggestCommand("/is setbiome ")),
+                TextColors.AQUA, Text.builder(alias + "setbiome").onClick(TextActions.suggestCommand("/" + alias + "setbiome ")),
                 TextColors.GOLD, " <biome>",
                 TextColors.GRAY, " [target]",
                 TextColors.DARK_GRAY, " - ",
@@ -267,7 +268,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_SET_HOME)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is sethome").onClick(TextActions.runCommand("/is sethome")),
+                TextColors.AQUA, Text.builder(alias + "sethome").onClick(TextActions.runCommand("/" + alias + "sethome")),
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandSetHome.HELP_TEXT
             ));
@@ -275,7 +276,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_SET_SPAWN)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is setspawn").onClick(TextActions.runCommand("/is setspawn")),
+                TextColors.AQUA, Text.builder(alias + "setspawn").onClick(TextActions.runCommand("/" + alias + "setspawn")),
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandSetSpawn.HELP_TEXT
             ));
@@ -283,7 +284,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_SPAWN)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is spawn").onClick(TextActions.runCommand("/is spawn")),
+                TextColors.AQUA, Text.builder(alias + "spawn").onClick(TextActions.runCommand("/" + alias + "spawn")),
                 TextColors.GRAY, " [player]",
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandSpawn.HELP_TEXT
@@ -292,7 +293,7 @@ public class CommandIsland extends CommandBase {
 
         if (src.hasPermission(Permissions.COMMAND_LOCK)) {
             helpText.add(Text.of(
-                TextColors.AQUA, Text.builder("is unlock").onClick(TextActions.runCommand("/is unlock")),
+                TextColors.AQUA, Text.builder(alias + "unlock").onClick(TextActions.runCommand("/" + alias + "unlock")),
                 TextColors.GRAY, src.hasPermission(Permissions.COMMAND_LOCK_OTHERS) ? " [island|all]" : Text.EMPTY,
                 TextColors.DARK_GRAY, " - ",
                 TextColors.DARK_GREEN, CommandUnlock.HELP_TEXT
