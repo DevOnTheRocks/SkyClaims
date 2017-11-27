@@ -34,38 +34,41 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public class CommandSetSpawn extends CommandBase.PlayerCommand {
 
-    public static final String HELP_TEXT = "set your spawn location for your island.";
+  public static final String HELP_TEXT = "set your spawn location for your island.";
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_SET_SPAWN)
-            .description(Text.of(HELP_TEXT))
-            .executor(new CommandSetSpawn())
-            .build();
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_SET_SPAWN)
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandSetSpawn())
+        .build();
 
-        try {
-            CommandIsland.addSubCommand(commandSpec, "setspawn");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandSetSpawn");
-        } catch (UnsupportedOperationException e) {
-            PLUGIN.getLogger().error("Failed to register command: CommandSetSpawn", e);
-        }
+    try {
+      CommandIsland.addSubCommand(commandSpec, "setspawn");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandSetSpawn");
+    } catch (UnsupportedOperationException e) {
+      PLUGIN.getLogger().error("Failed to register command: CommandSetSpawn", e);
+    }
+  }
+
+  @Override
+  public CommandResult execute(Player player, CommandContext args) throws CommandException {
+    Island island = Island.get(player.getLocation())
+        .orElseThrow(
+            () -> new CommandException(Text.of("You must be on an island to use this command!")));
+
+    if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS)) {
+      throw new CommandException(Text.of("Only the island owner may use this command!"));
     }
 
-    @Override public CommandResult execute(Player player, CommandContext args) throws CommandException {
-        Island island = Island.get(player.getLocation())
-            .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
+    island.setSpawn(player.getTransform());
+    player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
+        TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), TextColors.GRAY, ", ",
+        TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), TextColors.GRAY, ", ",
+        TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), TextColors.GRAY,
+        ")"));
 
-        if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS)) {
-            throw new CommandException(Text.of("Only the island owner may use this command!"));
-        }
-
-        island.setSpawn(player.getTransform());
-        player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
-            TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), TextColors.GRAY, ", ",
-            TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), TextColors.GRAY, ", ",
-            TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), TextColors.GRAY, ")"));
-
-        return CommandResult.success();
-    }
+    return CommandResult.success();
+  }
 }

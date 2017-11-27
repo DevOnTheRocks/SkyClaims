@@ -26,17 +26,17 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class IntegrationConfig {
 
-    @Setting(value = "Grief-Prevention")
-    private GriefPrevention griefPrevention = new GriefPrevention();
+  @Setting(value = "Grief-Prevention")
+  private GriefPrevention griefPrevention = new GriefPrevention();
 
-    @Setting(value = "Nucleus")
-    private NucleusConfig nucleus = new NucleusConfig();
+  @Setting(value = "Nucleus")
+  private NucleusConfig nucleus = new NucleusConfig();
 
-    public GriefPrevention getGriefPrevention() {
-        return griefPrevention;
-    }
+  public GriefPrevention getGriefPrevention() {
+    return griefPrevention;
+  }
 
-    public NucleusConfig getNucleus() {
-        return nucleus;
-    }
+  public NucleusConfig getNucleus() {
+    return nucleus;
+  }
 }

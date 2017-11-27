@@ -32,47 +32,49 @@ import org.spongepowered.api.event.item.inventory.DropItemEvent;
 
 public class EntitySpawnHandler {
 
-    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-    @Listener
-    public void onEntitySpawn(SpawnEntityEvent event) {
+  @Listener
+  public void onEntitySpawn(SpawnEntityEvent event) {
 
-        SkyClaimsTimings.ENTITY_SPAWN.startTimingIfSync();
+    SkyClaimsTimings.ENTITY_SPAWN.startTimingIfSync();
 
-        if (event instanceof DropItemEvent
-            || event.getEntities().isEmpty()
-            || !event.getEntities().get(0).getWorld().equals(PLUGIN.getConfig().getWorldConfig().getWorld())) {
-            SkyClaimsTimings.ENTITY_SPAWN.abort();
-            return;
-        }
-
-        event.filterEntities(entity -> {
-            Island island = SkyClaims.islands.values().stream()
-                .filter(i -> i.contains(entity.getLocation())).findAny().orElse(null);
-            if (island == null) {
-                return true;
-            }
-            int limit;
-            int hostile = island.getHostileEntities().size();
-            int passive = island.getPassiveEntities().size();
-            if (entity instanceof Monster) {
-                limit = Options.getMaxHostileSpawns(island.getOwnerUniqueId());
-                if (limit > 0 && hostile >= limit) {
-                    return false;
-                }
-            } else if (entity instanceof Animal || entity instanceof Aquatic || entity instanceof Ambient) {
-                limit = Options.getMaxPassiveSpawns(island.getOwnerUniqueId());
-                if (limit > 0 && passive >= limit) {
-                    return false;
-                }
-            } else {
-                return true;
-            }
-            limit = Options.getMaxSpawns(island.getOwnerUniqueId());
-            return (limit <= 0 || limit >= hostile + passive);
-        });
-
-        SkyClaimsTimings.ENTITY_SPAWN.stopTimingIfSync();
+    if (event instanceof DropItemEvent
+        || event.getEntities().isEmpty()
+        || !event.getEntities().get(0).getWorld()
+        .equals(PLUGIN.getConfig().getWorldConfig().getWorld())) {
+      SkyClaimsTimings.ENTITY_SPAWN.abort();
+      return;
     }
+
+    event.filterEntities(entity -> {
+      Island island = SkyClaims.islands.values().stream()
+          .filter(i -> i.contains(entity.getLocation())).findAny().orElse(null);
+      if (island == null) {
+        return true;
+      }
+      int limit;
+      int hostile = island.getHostileEntities().size();
+      int passive = island.getPassiveEntities().size();
+      if (entity instanceof Monster) {
+        limit = Options.getMaxHostileSpawns(island.getOwnerUniqueId());
+        if (limit > 0 && hostile >= limit) {
+          return false;
+        }
+      } else if (entity instanceof Animal || entity instanceof Aquatic
+          || entity instanceof Ambient) {
+        limit = Options.getMaxPassiveSpawns(island.getOwnerUniqueId());
+        if (limit > 0 && passive >= limit) {
+          return false;
+        }
+      } else {
+        return true;
+      }
+      limit = Options.getMaxSpawns(island.getOwnerUniqueId());
+      return (limit <= 0 || limit >= hostile + passive);
+    });
+
+    SkyClaimsTimings.ENTITY_SPAWN.stopTimingIfSync();
+  }
 
 }

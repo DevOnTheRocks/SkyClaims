@@ -25,13 +25,11 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
@@ -39,45 +37,48 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public class CommandLock extends CommandBase.LockCommand {
 
-    public static final String HELP_TEXT = "used to prevent untrusted players from visiting to your island.";
+  public static final String HELP_TEXT = "used to prevent untrusted players from visiting to your island.";
 
-    public CommandLock() {
-        super(true);
+  public CommandLock() {
+    super(true);
+  }
+
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_LOCK)
+        .description(Text.of(HELP_TEXT))
+        .arguments(GenericArguments.firstParsing(
+            GenericArguments
+                .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"),
+                    Permissions.COMMAND_LOCK_OTHERS)),
+            GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER))
+        ))
+        .executor(new CommandLock())
+        .build();
+
+    try {
+      CommandIsland.addSubCommand(commandSpec, "lock");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandLock");
+    } catch (UnsupportedOperationException e) {
+      PLUGIN.getLogger().error("Failed to register command: CommandLock", e);
     }
+  }
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_LOCK)
-            .description(Text.of(HELP_TEXT))
-            .arguments(GenericArguments.firstParsing(
-                GenericArguments
-                    .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
-                GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER))
-            ))
-            .executor(new CommandLock())
-            .build();
+  @Override
+  public CommandResult execute(CommandSource src, Island island, CommandContext args)
+      throws CommandException {
+    island.setLocked(true);
 
-        try {
-            CommandIsland.addSubCommand(commandSpec, "lock");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandLock");
-        } catch (UnsupportedOperationException e) {
-            PLUGIN.getLogger().error("Failed to register command: CommandLock", e);
-        }
-    }
+    island.getPlayers().forEach(p -> {
+      if (!island.isMember(p) && !p.hasPermission(Permissions.EXEMPT_KICK)) {
+        p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
+        p.sendMessage(Text.of(island.getName(), TextColors.RED, " has been locked!"));
+      }
+    });
 
-    @Override public CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException {
-        island.setLocked(true);
-
-        island.getPlayers().forEach(p -> {
-            if (!island.isMember(p) && !p.hasPermission(Permissions.EXEMPT_KICK)) {
-                p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
-                p.sendMessage(Text.of(island.getName(), TextColors.RED, " has been locked!"));
-            }
-        });
-
-        src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now locked!"));
-        return CommandResult.success();
-    }
+    src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now locked!"));
+    return CommandResult.success();
+  }
 
 }

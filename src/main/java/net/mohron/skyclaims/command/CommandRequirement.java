@@ -30,19 +30,21 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public interface CommandRequirement extends CommandExecutor {
 
-    interface RequiresIsland {
+  interface RequiresIsland {
 
-        CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException;
-    }
+    CommandResult execute(CommandSource src, Island island, CommandContext args)
+        throws CommandException;
+  }
 
-    interface RequiresPlayer {
+  interface RequiresPlayer {
 
-        CommandResult execute(Player player, CommandContext args) throws CommandException;
-    }
+    CommandResult execute(Player player, CommandContext args) throws CommandException;
+  }
 
-    interface RequiresPlayerIsland {
+  interface RequiresPlayerIsland {
 
-        CommandResult execute(Player player, Island island, CommandContext args) throws CommandException;
-    }
+    CommandResult execute(Player player, Island island, CommandContext args)
+        throws CommandException;
+  }
 
 }

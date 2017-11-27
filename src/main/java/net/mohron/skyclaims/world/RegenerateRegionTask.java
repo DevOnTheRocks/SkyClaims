@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.world;
 
 import com.google.common.base.Stopwatch;
+import java.util.concurrent.TimeUnit;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.world.region.Region;
@@ -28,85 +29,88 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.World;
 
-import java.util.concurrent.TimeUnit;
-
 public class RegenerateRegionTask implements Runnable {
 
-    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-    private Region region;
-    private Island island;
-    private String schematic;
-    private boolean commands;
+  private Region region;
+  private Island island;
+  private String schematic;
+  private boolean commands;
 
-    public RegenerateRegionTask(Region region) {
-        this.region = region;
-        this.island = null;
-        this.commands = false;
-    }
+  public RegenerateRegionTask(Region region) {
+    this.region = region;
+    this.island = null;
+    this.commands = false;
+  }
 
-    public RegenerateRegionTask(Island island, String schematic, boolean commands) {
-        this.region = island.getRegion();
-        this.island = island;
-        this.schematic = schematic;
-        this.commands = commands;
-    }
+  public RegenerateRegionTask(Island island, String schematic, boolean commands) {
+    this.region = island.getRegion();
+    this.island = island;
+    this.schematic = schematic;
+    this.commands = commands;
+  }
 
-    @Override
-    public void run() {
-        SkyClaimsTimings.CLEAR_ISLAND.startTimingIfSync();
-        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+  @Override
+  public void run() {
+    SkyClaimsTimings.CLEAR_ISLAND.startTimingIfSync();
+    World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-        PLUGIN.getLogger().info("Begin clearing region ({}, {})", region.getX(), region.getZ());
+    PLUGIN.getLogger().info("Begin clearing region ({}, {})", region.getX(), region.getZ());
 
-        Stopwatch sw = Stopwatch.createStarted();
+    Stopwatch sw = Stopwatch.createStarted();
 
-        for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
-            for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
-                world.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
-                    chunk.loadChunk(false);
-                    // Teleport any players to world spawn
-                    chunk.getEntities(e -> e instanceof Player)
-                        .forEach(e -> e.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
-                    // Clear the contents of an tile entity with an inventory
-                    chunk.getTileEntities(e -> e instanceof TileEntityCarrier)
-                        .forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
-                    for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
-                        for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
-                            for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
-                                if (chunk.getBlockType(bx, by, bz) != BlockTypes.AIR) {
-                                    chunk.getLocation(bx, by, bz).setBlock(BlockTypes.AIR.getDefaultState());
-                                }
-                            }
-                        }
-                    }
-                    // Remove any remaining entities.
-                    chunk.getEntities()
-                        .forEach(Entity::remove);
-                    chunk.unloadChunk();
-                });
-            }
-        }
-
-        sw.stop();
-
-        PLUGIN.getLogger().info(String.format("Finished clearing region (%s, %s) in %dms.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.MILLISECONDS)));
-
-        if (island != null) {
-            if (commands) {
-                // Run reset commands
-                for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
-                    PLUGIN.getGame().getCommandManager()
-                        .process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+    for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX();
+        x += 16) {
+      for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ();
+          z += 16) {
+        world.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
+          chunk.loadChunk(false);
+          // Teleport any players to world spawn
+          chunk.getEntities(e -> e instanceof Player)
+              .forEach(e -> e.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
+          // Clear the contents of an tile entity with an inventory
+          chunk.getTileEntities(e -> e instanceof TileEntityCarrier)
+              .forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
+          for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
+            for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
+              for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
+                if (chunk.getBlockType(bx, by, bz) != BlockTypes.AIR) {
+                  chunk.getLocation(bx, by, bz).setBlock(BlockTypes.AIR.getDefaultState());
                 }
+              }
             }
-
-            PLUGIN.getGame().getScheduler().createTaskBuilder()
-                .delayTicks(1)
-                .execute(new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic))
-                .submit(PLUGIN);
-        }
-
-        SkyClaimsTimings.CLEAR_ISLAND.stopTimingIfSync();
+          }
+          // Remove any remaining entities.
+          chunk.getEntities()
+              .forEach(Entity::remove);
+          chunk.unloadChunk();
+        });
+      }
     }
+
+    sw.stop();
+
+    PLUGIN.getLogger().info(String
+        .format("Finished clearing region (%s, %s) in %dms.", region.getX(), region.getZ(),
+            sw.elapsed(TimeUnit.MILLISECONDS)));
+
+    if (island != null) {
+      if (commands) {
+        // Run reset commands
+        for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
+          PLUGIN.getGame().getCommandManager()
+              .process(PLUGIN.getGame().getServer().getConsole(),
+                  command.replace("@p", island.getOwnerName()));
+        }
+      }
+
+      PLUGIN.getGame().getScheduler().createTaskBuilder()
+          .delayTicks(1)
+          .execute(new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic))
+          .submit(PLUGIN);
+    }
+
+    SkyClaimsTimings.CLEAR_ISLAND.stopTimingIfSync();
+  }
 }

@@ -18,96 +18,107 @@
 
 package net.mohron.skyclaims.permissions;
 
+import java.util.Optional;
+import java.util.UUID;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.BiomeArgument;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.world.biome.BiomeType;
 
-import java.util.Optional;
-import java.util.UUID;
-
 public class Options {
 
-    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-    private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+  private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance()
+      .getPermissionService();
 
-    // SkyClaims Options
-    private static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
-    private static final String DEFAULT_BIOME = "skyclaims.default-biome";
-    private static final String MIN_SIZE = "skyclaims.min-size";
-    private static final String MAX_SIZE = "skyclaims.max-size";
-    private static final String MAX_SPAWNS = "skyclaims.max-spawns";
-    private static final String MAX_HOSTILE = "skyclaims.max-spawns.hostile";
-    private static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
-    private static final String EXPIRATION = "skyclaims.expiration";
-    private static final String MAX_ISLANDS = "skyclaims.max-islands";
+  // SkyClaims Options
+  private static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
+  private static final String DEFAULT_BIOME = "skyclaims.default-biome";
+  private static final String MIN_SIZE = "skyclaims.min-size";
+  private static final String MAX_SIZE = "skyclaims.max-size";
+  private static final String MAX_SPAWNS = "skyclaims.max-spawns";
+  private static final String MAX_HOSTILE = "skyclaims.max-spawns.hostile";
+  private static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
+  private static final String EXPIRATION = "skyclaims.expiration";
+  private static final String MAX_ISLANDS = "skyclaims.max-islands";
 
-    public static String getDefaultSchematic(UUID playerUniqueId) {
-        return getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, PLUGIN.getConfig().getOptionsConfig().getSchematic());
+  public static String getDefaultSchematic(UUID playerUniqueId) {
+    return getStringOption(playerUniqueId, DEFAULT_SCHEMATIC,
+        PLUGIN.getConfig().getOptionsConfig().getSchematic());
+  }
+
+  public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {
+    String biomeOption = getStringOption(playerUniqueId, DEFAULT_BIOME,
+        PLUGIN.getConfig().getOptionsConfig().getBiome());
+    if (StringUtils.isBlank(biomeOption)) {
+      return Optional.empty();
     }
-
-    public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {
-        String biomeOption = getStringOption(playerUniqueId, DEFAULT_BIOME, PLUGIN.getConfig().getOptionsConfig().getBiome());
-        if (StringUtils.isBlank(biomeOption)) {
-            return Optional.empty();
-        }
-        for (BiomeType biome : BiomeArgument.BIOMES.values()) {
-            if (biome.getName().equalsIgnoreCase(biomeOption)) {
-                return Optional.of(biome);
-            }
-        }
-        return Optional.empty();
+    for (BiomeType biome : BiomeArgument.BIOMES.values()) {
+      if (biome.getName().equalsIgnoreCase(biomeOption)) {
+        return Optional.of(biome);
+      }
     }
+    return Optional.empty();
+  }
 
-    public static int getMinSize(UUID playerUniqueId) {
-        return getIntOption(playerUniqueId, MIN_SIZE, PLUGIN.getConfig().getOptionsConfig().getMinSize(), 8, 256);
-    }
+  public static int getMinSize(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, MIN_SIZE,
+        PLUGIN.getConfig().getOptionsConfig().getMinSize(), 8, 256);
+  }
 
-    public static int getMaxSize(UUID playerUniqueId) {
-        return getIntOption(playerUniqueId, MAX_SIZE, PLUGIN.getConfig().getOptionsConfig().getMaxSize(), 8, 256);
-    }
+  public static int getMaxSize(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, MAX_SIZE,
+        PLUGIN.getConfig().getOptionsConfig().getMaxSize(), 8, 256);
+  }
 
-    public static int getMaxSpawns(UUID playerUniqueId) {
-        return getIntOption(playerUniqueId, MAX_SPAWNS, PLUGIN.getConfig().getEntityConfig().getMaxSpawns());
-    }
+  public static int getMaxSpawns(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, MAX_SPAWNS,
+        PLUGIN.getConfig().getEntityConfig().getMaxSpawns());
+  }
 
-    public static int getMaxHostileSpawns(UUID playerUniqueId) {
-        return getIntOption(playerUniqueId, MAX_HOSTILE, PLUGIN.getConfig().getEntityConfig().getMaxHostile());
-    }
+  public static int getMaxHostileSpawns(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, MAX_HOSTILE,
+        PLUGIN.getConfig().getEntityConfig().getMaxHostile());
+  }
 
-    public static int getMaxPassiveSpawns(UUID playerUniqueId) {
-        return getIntOption(playerUniqueId, MAX_PASSIVE, PLUGIN.getConfig().getEntityConfig().getMaxPassive());
-    }
+  public static int getMaxPassiveSpawns(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, MAX_PASSIVE,
+        PLUGIN.getConfig().getEntityConfig().getMaxPassive());
+  }
 
-    public static int getExpiration(UUID playerUniqueId) {
-        return getIntOption(playerUniqueId, EXPIRATION, PLUGIN.getConfig().getExpirationConfig().getThreshold());
-    }
+  public static int getExpiration(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, EXPIRATION,
+        PLUGIN.getConfig().getExpirationConfig().getThreshold());
+  }
 
-    public static int getMaxIslands(UUID playerUniqueId) {
-        return getIntOption(playerUniqueId, MAX_ISLANDS, PLUGIN.getConfig().getOptionsConfig().getMaxIslands());
-    }
+  public static int getMaxIslands(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, MAX_ISLANDS,
+        PLUGIN.getConfig().getOptionsConfig().getMaxIslands());
+  }
 
-    private static String getStringOption(UUID uuid, String option, String defaultValue) {
-        return !PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent() ?
-            defaultValue :
-            PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(defaultValue);
-    }
+  private static String getStringOption(UUID uuid, String option, String defaultValue) {
+    return !PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent() ?
+        defaultValue :
+        PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option)
+            .orElse(defaultValue);
+  }
 
-    private static int getIntOption(UUID uuid, String option, int defaultValue, int min, int max) {
-        int value = getIntOption(uuid, option, defaultValue);
-        return (value < min || value > max) ? defaultValue : value;
-    }
+  private static int getIntOption(UUID uuid, String option, int defaultValue, int min, int max) {
+    int value = getIntOption(uuid, option, defaultValue);
+    return (value < min || value > max) ? defaultValue : value;
+  }
 
-    private static int getIntOption(UUID uuid, String option, int defaultValue) {
-        if (!PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()) {
-            return defaultValue;
-        }
-        String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(String.valueOf(defaultValue));
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return defaultValue;
-        }
+  private static int getIntOption(UUID uuid, String option, int defaultValue) {
+    if (!PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()) {
+      return defaultValue;
     }
+    String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get()
+        .getOption(option).orElse(String.valueOf(defaultValue));
+    try {
+      return Integer.parseInt(value);
+    } catch (NumberFormatException e) {
+      return defaultValue;
+    }
+  }
 }

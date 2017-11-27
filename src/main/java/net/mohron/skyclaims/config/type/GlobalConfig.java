@@ -25,68 +25,68 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class GlobalConfig {
 
-    @Setting(value = "Config-Version")
-    private int version;
-    @Setting(value = "Command")
-    private CommandConfig commandConfig = new CommandConfig();
-    @Setting(value = "Entity")
-    private EntityConfig entityConfig= new EntityConfig();
-    @Setting(value = "Integration")
-    private IntegrationConfig integrationConfig = new IntegrationConfig();
-    @Setting(value = "Island-Expiration")
-    private ExpirationConfig expirationConfig = new ExpirationConfig();
-    @Setting(value = "Misc")
-    private MiscConfig miscConfig = new MiscConfig();
-    @Setting(value = "Options", comment = "The default values options use when not explicitly set.\ngithub.com/DevOnTheRocks/SkyClaims/wiki/Options")
-    private OptionsConfig optionsConfig = new OptionsConfig();
-    @Setting(value = "Permission")
-    private PermissionConfig permissionConfig = new PermissionConfig();
-    @Setting(value = "Storage")
-    private StorageConfig storageConfig = new StorageConfig();
-    @Setting(value = "World")
-    private WorldConfig worldConfig= new WorldConfig();
+  @Setting(value = "Config-Version")
+  private int version;
+  @Setting(value = "Command")
+  private CommandConfig commandConfig = new CommandConfig();
+  @Setting(value = "Entity")
+  private EntityConfig entityConfig = new EntityConfig();
+  @Setting(value = "Integration")
+  private IntegrationConfig integrationConfig = new IntegrationConfig();
+  @Setting(value = "Island-Expiration")
+  private ExpirationConfig expirationConfig = new ExpirationConfig();
+  @Setting(value = "Misc")
+  private MiscConfig miscConfig = new MiscConfig();
+  @Setting(value = "Options", comment = "The default values options use when not explicitly set.\ngithub.com/DevOnTheRocks/SkyClaims/wiki/Options")
+  private OptionsConfig optionsConfig = new OptionsConfig();
+  @Setting(value = "Permission")
+  private PermissionConfig permissionConfig = new PermissionConfig();
+  @Setting(value = "Storage")
+  private StorageConfig storageConfig = new StorageConfig();
+  @Setting(value = "World")
+  private WorldConfig worldConfig = new WorldConfig();
 
-    public GlobalConfig() {
-        version = ConfigManager.CONFIG_VERSION;
-    }
+  public GlobalConfig() {
+    version = ConfigManager.CONFIG_VERSION;
+  }
 
-    public int getVersion() {
-        return version;
-    }
+  public int getVersion() {
+    return version;
+  }
 
-    public CommandConfig getCommandConfig() {
-        return commandConfig;
-    }
+  public CommandConfig getCommandConfig() {
+    return commandConfig;
+  }
 
-    public EntityConfig getEntityConfig() {
-        return entityConfig;
-    }
+  public EntityConfig getEntityConfig() {
+    return entityConfig;
+  }
 
-    public IntegrationConfig getIntegrationConfig() {
-        return integrationConfig;
-    }
+  public IntegrationConfig getIntegrationConfig() {
+    return integrationConfig;
+  }
 
-    public ExpirationConfig getExpirationConfig() {
-        return expirationConfig;
-    }
+  public ExpirationConfig getExpirationConfig() {
+    return expirationConfig;
+  }
 
-    public MiscConfig getMiscConfig() {
-        return miscConfig;
-    }
+  public MiscConfig getMiscConfig() {
+    return miscConfig;
+  }
 
-    public OptionsConfig getOptionsConfig() {
-        return optionsConfig;
-    }
+  public OptionsConfig getOptionsConfig() {
+    return optionsConfig;
+  }
 
-    public PermissionConfig getPermissionConfig() {
-        return permissionConfig;
-    }
+  public PermissionConfig getPermissionConfig() {
+    return permissionConfig;
+  }
 
-    public StorageConfig getStorageConfig() {
-        return storageConfig;
-    }
+  public StorageConfig getStorageConfig() {
+    return storageConfig;
+  }
 
-    public WorldConfig getWorldConfig() {
-        return worldConfig;
-    }
+  public WorldConfig getWorldConfig() {
+    return worldConfig;
+  }
 }

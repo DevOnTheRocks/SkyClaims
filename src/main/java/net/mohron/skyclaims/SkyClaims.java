@@ -30,6 +30,12 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandAdmin;
@@ -76,13 +82,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
 
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 @Plugin(
     id = ID,
     name = NAME,
@@ -95,270 +94,276 @@ import java.util.concurrent.TimeUnit;
     })
 public class SkyClaims {
 
-    public static Map<UUID, Island> islands = Maps.newHashMap();
-    private static Set<Island> saveQueue = Sets.newHashSet();
-    private static SkyClaims instance;
-    private GriefPreventionApi griefPrevention;
-    private PermissionService permissionService;
+  public static Map<UUID, Island> islands = Maps.newHashMap();
+  private static Set<Island> saveQueue = Sets.newHashSet();
+  private static SkyClaims instance;
+  private GriefPreventionApi griefPrevention;
+  private PermissionService permissionService;
 
-    @Inject
-    private PluginContainer pluginContainer;
+  @Inject
+  private PluginContainer pluginContainer;
 
-    @Inject
-    private Logger logger;
+  @Inject
+  private Logger logger;
 
-    @Inject
-    private Game game;
+  @Inject
+  private Game game;
 
-    @Inject
-    private Metrics metrics;
+  @Inject
+  private Metrics metrics;
 
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path configDir;
-    @Inject
-    @DefaultConfig(sharedRoot = false)
-    private ConfigurationLoader<CommentedConfigurationNode> configManager;
-    private ConfigManager pluginConfigManager;
-    private GlobalConfig defaultConfig;
+  @Inject
+  @ConfigDir(sharedRoot = false)
+  private Path configDir;
+  @Inject
+  @DefaultConfig(sharedRoot = false)
+  private ConfigurationLoader<CommentedConfigurationNode> configManager;
+  private ConfigManager pluginConfigManager;
+  private GlobalConfig defaultConfig;
 
-    private IDatabase database;
+  private IDatabase database;
 
-    private InviteService inviteService;
+  private InviteService inviteService;
 
-    private boolean enabled = true;
+  private boolean enabled = true;
 
-    private static final String cleanup = "skyclaims.island.cleanup";
+  private static final String cleanup = "skyclaims.island.cleanup";
 
-    public static SkyClaims getInstance() {
-        return instance;
+  public static SkyClaims getInstance() {
+    return instance;
+  }
+
+  @Listener
+  public void onGameConstruction(GameConstructionEvent event) {
+    instance = this;
+  }
+
+  @Listener
+  public void onPreInitialization(GamePreInitializationEvent event) {
+    logger.info("{} {} is initializing...", NAME, VERSION);
+
+    defaultConfig = new GlobalConfig();
+    pluginConfigManager = new ConfigManager(configManager);
+    pluginConfigManager.save();
+
+    if (Sponge.getPluginManager().isLoaded("nucleus")) {
+      Sponge.getEventManager().registerListeners(this, new NucleusIntegration());
+    }
+  }
+
+  @Listener
+  public void onPostInitialization(GamePostInitializationEvent event) {
+    try {
+      griefPrevention = GriefPrevention.getApi();
+    } catch (IllegalStateException e) {
+      logger.error("GriefPrevention API failed to load.");
     }
 
-    @Listener
-    public void onGameConstruction(GameConstructionEvent event) {
-        instance = this;
-    }
-
-    @Listener
-    public void onPreInitialization(GamePreInitializationEvent event) {
-        logger.info("{} {} is initializing...", NAME, VERSION);
-
-        defaultConfig = new GlobalConfig();
-        pluginConfigManager = new ConfigManager(configManager);
-        pluginConfigManager.save();
-
-        if (Sponge.getPluginManager().isLoaded("nucleus")) {
-            Sponge.getEventManager().registerListeners(this, new NucleusIntegration());
-        }
-    }
-
-    @Listener
-    public void onPostInitialization(GamePostInitializationEvent event) {
-        try {
-            griefPrevention = GriefPrevention.getApi();
-        } catch (IllegalStateException e) {
-            logger.error("GriefPrevention API failed to load.");
-        }
-
-        if (griefPrevention != null) {
-            if (griefPrevention.getApiVersion() < GP_API_VERSION) {
-                logger.error(
-                    "GriefPrevention API version {} is unsupported! Please update to API version {}+.",
-                    griefPrevention.getApiVersion(), GP_API_VERSION
-                );
-                enabled = false;
-            } else if (Version.of(griefPrevention.getImplementationVersion()).compareTo(GP_VERSION) < 0) {
-                logger.error(
-                    "GriefPrevention version {} is unsupported! Please update to version {}+.",
-                    griefPrevention.getImplementationVersion(), GP_VERSION
-                );
-                enabled = false;
-            } else {
-                logger.info("Successfully integrated with GriefPrevention {}!", griefPrevention.getImplementationVersion());
-            }
-        } else {
-            logger.error("GriefPrevention Integration Failed! Disabling SkyClaims.");
-            enabled = false;
-        }
-    }
-
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
-    @Listener(order = Order.LATE)
-    public void onAboutToStart(GameAboutToStartServerEvent event) {
-        registerDebugCommands();
-        if (!enabled) {
-            return;
-        }
-
-        permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
-        if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
-            logger.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
-            enabled = false;
-            return;
-        }
-
-        inviteService = new InviteService();
-
-        registerListeners();
-        registerTasks();
-        registerCommands();
-    }
-
-    @Listener
-    public void onServerStarted(GameStartedServerEvent event) {
-        if (!enabled) {
-            return;
-        }
-
-        database = initializeDatabase();
-
-        islands = database.loadData();
-        logger.info("{} islands loaded.", islands.size());
-        if (!saveQueue.isEmpty()) {
-            logger.info("Saving {} claims that were malformed.", saveQueue.size());
-            database.saveData(saveQueue);
-        }
-
-        addCustomMetrics();
-
-        logger.info("Initialization complete.");
-    }
-
-    @Listener
-    public void onGameStopping(GameStoppingServerEvent event) {
-        if (!enabled) {
-            return;
-        }
-        logger.info("{} {} is stopping...", NAME, VERSION);
-    }
-
-    @Listener
-    public void onReload(GameReloadEvent event) {
-        reload();
-    }
-
-    public void reload() {
-        // Load Plugin Config
-        pluginConfigManager.load();
-        // Load Schematics Directory
-        SchematicArgument.load();
-        // Load Database
-        islands = database.loadData();
-        // Reload Listeners
-        Sponge.getEventManager().unregisterPluginListeners(this);
-        registerListeners();
-        // Reload Tasks
-        Sponge.getScheduler().getTasksByName(cleanup).forEach(Task::cancel);
-        registerTasks();
-        // Reload Commands
-        Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
-        CommandIsland.clearSubCommands();
-        registerCommands();
-    }
-
-    private void registerListeners() {
-        getGame().getEventManager().registerListeners(this, new SchematicHandler());
-        getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
-        getGame().getEventManager().registerListeners(this, new RespawnHandler());
-        getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
-        getGame().getEventManager().registerListeners(this, new WorldLoadHandler());
-
-        if (getConfig().getEntityConfig().isLimitSpawning()) {
-            getGame().getEventManager().registerListeners(this, new EntitySpawnHandler());
-        }
-    }
-
-    private void registerTasks() {
-        if (getConfig().getExpirationConfig().isEnabled()) {
-            Sponge.getScheduler().createTaskBuilder()
-                .name(cleanup)
-                .execute(new IslandCleanupTask(islands.values()))
-                .interval(getConfig().getExpirationConfig().getInterval(), TimeUnit.MINUTES)
-                .async()
-                .submit(this);
-        }
-    }
-
-    private void registerDebugCommands() {
-        CommandVersion.register();
-    }
-
-    private void registerCommands() {
-        CommandIsland.register();
-        CommandAdmin.register();
-    }
-
-    private IDatabase initializeDatabase() {
-        String type = defaultConfig.getStorageConfig().getType();
-        if (type.equalsIgnoreCase("SQLite")) {
-            return new SqliteDatabase();
-        } else if (type.equalsIgnoreCase("MySQL")) {
-            return new MysqlDatabase();
-        } else {
-            return new SqliteDatabase();
-        }
-    }
-
-    private void addCustomMetrics() {
-        metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> islands.size()));
-        metrics.addCustomChart(new Metrics.DrilldownPie("sponge_version", () -> {
-            Map<String, Map<String, Integer>> map = new HashMap<>();
-            String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion().orElse("?").split("-")[0];
-            Map<String, Integer> entry = new HashMap<>();
-            entry.put(Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null), 1);
-            map.put(api, entry);
-            return map;
-        }));
-        metrics.addCustomChart(new Metrics.SimplePie("allocated_ram", () ->
-            String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0))
+    if (griefPrevention != null) {
+      if (griefPrevention.getApiVersion() < GP_API_VERSION) {
+        logger.error(
+            "GriefPrevention API version {} is unsupported! Please update to API version {}+.",
+            griefPrevention.getApiVersion(), GP_API_VERSION
         );
+        enabled = false;
+      } else if (Version.of(griefPrevention.getImplementationVersion()).compareTo(GP_VERSION) < 0) {
+        logger.error(
+            "GriefPrevention version {} is unsupported! Please update to version {}+.",
+            griefPrevention.getImplementationVersion(), GP_VERSION
+        );
+        enabled = false;
+      } else {
+        logger.info("Successfully integrated with GriefPrevention {}!",
+            griefPrevention.getImplementationVersion());
+      }
+    } else {
+      logger.error("GriefPrevention Integration Failed! Disabling SkyClaims.");
+      enabled = false;
+    }
+  }
+
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
+  @Listener(order = Order.LATE)
+  public void onAboutToStart(GameAboutToStartServerEvent event) {
+    registerDebugCommands();
+    if (!enabled) {
+      return;
     }
 
-    public PluginContainer getPluginContainer() {
-        return pluginContainer;
+    permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
+    if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin()
+        .getId().equalsIgnoreCase("sponge")) {
+      logger.error(
+          "Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+      enabled = false;
+      return;
     }
 
-    public GriefPreventionApi getGriefPrevention() {
-        return griefPrevention;
+    inviteService = new InviteService();
+
+    registerListeners();
+    registerTasks();
+    registerCommands();
+  }
+
+  @Listener
+  public void onServerStarted(GameStartedServerEvent event) {
+    if (!enabled) {
+      return;
     }
 
-    public PermissionService getPermissionService() {
-        return permissionService;
+    database = initializeDatabase();
+
+    islands = database.loadData();
+    logger.info("{} islands loaded.", islands.size());
+    if (!saveQueue.isEmpty()) {
+      logger.info("Saving {} claims that were malformed.", saveQueue.size());
+      database.saveData(saveQueue);
     }
 
-    public InviteService getInviteService() {
-        return inviteService;
-    }
+    addCustomMetrics();
 
-    public Logger getLogger() {
-        return logger;
-    }
+    logger.info("Initialization complete.");
+  }
 
-    public Game getGame() {
-        return game;
+  @Listener
+  public void onGameStopping(GameStoppingServerEvent event) {
+    if (!enabled) {
+      return;
     }
+    logger.info("{} {} is stopping...", NAME, VERSION);
+  }
 
-    public GlobalConfig getConfig() {
-        return this.defaultConfig;
-    }
+  @Listener
+  public void onReload(GameReloadEvent event) {
+    reload();
+  }
 
-    public void setConfig(GlobalConfig config) {
-        this.defaultConfig = config;
-    }
+  public void reload() {
+    // Load Plugin Config
+    pluginConfigManager.load();
+    // Load Schematics Directory
+    SchematicArgument.load();
+    // Load Database
+    islands = database.loadData();
+    // Reload Listeners
+    Sponge.getEventManager().unregisterPluginListeners(this);
+    registerListeners();
+    // Reload Tasks
+    Sponge.getScheduler().getTasksByName(cleanup).forEach(Task::cancel);
+    registerTasks();
+    // Reload Commands
+    Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
+    CommandIsland.clearSubCommands();
+    registerCommands();
+  }
 
-    public ConfigManager getConfigManager() {
-        return this.pluginConfigManager;
-    }
+  private void registerListeners() {
+    getGame().getEventManager().registerListeners(this, new SchematicHandler());
+    getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
+    getGame().getEventManager().registerListeners(this, new RespawnHandler());
+    getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
+    getGame().getEventManager().registerListeners(this, new WorldLoadHandler());
 
-    public Path getConfigDir() {
-        return configDir;
+    if (getConfig().getEntityConfig().isLimitSpawning()) {
+      getGame().getEventManager().registerListeners(this, new EntitySpawnHandler());
     }
+  }
 
-    public IDatabase getDatabase() {
-        return database;
+  private void registerTasks() {
+    if (getConfig().getExpirationConfig().isEnabled()) {
+      Sponge.getScheduler().createTaskBuilder()
+          .name(cleanup)
+          .execute(new IslandCleanupTask(islands.values()))
+          .interval(getConfig().getExpirationConfig().getInterval(), TimeUnit.MINUTES)
+          .async()
+          .submit(this);
     }
+  }
 
-    public void queueForSaving(Island island) {
-        saveQueue.add(island);
+  private void registerDebugCommands() {
+    CommandVersion.register();
+  }
+
+  private void registerCommands() {
+    CommandIsland.register();
+    CommandAdmin.register();
+  }
+
+  private IDatabase initializeDatabase() {
+    String type = defaultConfig.getStorageConfig().getType();
+    if (type.equalsIgnoreCase("SQLite")) {
+      return new SqliteDatabase();
+    } else if (type.equalsIgnoreCase("MySQL")) {
+      return new MysqlDatabase();
+    } else {
+      return new SqliteDatabase();
     }
+  }
+
+  private void addCustomMetrics() {
+    metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> islands.size()));
+    metrics.addCustomChart(new Metrics.DrilldownPie("sponge_version", () -> {
+      Map<String, Map<String, Integer>> map = new HashMap<>();
+      String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion()
+          .orElse("?").split("-")[0];
+      Map<String, Integer> entry = new HashMap<>();
+      entry.put(Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion()
+          .orElse(null), 1);
+      map.put(api, entry);
+      return map;
+    }));
+    metrics.addCustomChart(new Metrics.SimplePie("allocated_ram", () ->
+        String.format("%s GB",
+            Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0))
+    );
+  }
+
+  public PluginContainer getPluginContainer() {
+    return pluginContainer;
+  }
+
+  public GriefPreventionApi getGriefPrevention() {
+    return griefPrevention;
+  }
+
+  public PermissionService getPermissionService() {
+    return permissionService;
+  }
+
+  public InviteService getInviteService() {
+    return inviteService;
+  }
+
+  public Logger getLogger() {
+    return logger;
+  }
+
+  public Game getGame() {
+    return game;
+  }
+
+  public GlobalConfig getConfig() {
+    return this.defaultConfig;
+  }
+
+  public void setConfig(GlobalConfig config) {
+    this.defaultConfig = config;
+  }
+
+  public ConfigManager getConfigManager() {
+    return this.pluginConfigManager;
+  }
+
+  public Path getConfigDir() {
+    return configDir;
+  }
+
+  public IDatabase getDatabase() {
+    return database;
+  }
+
+  public void queueForSaving(Island island) {
+    saveQueue.add(island);
+  }
 }

@@ -21,6 +21,8 @@ package net.mohron.skyclaims.team;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.time.Instant;
+import javax.annotation.Nonnull;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -30,163 +32,163 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.time.Instant;
-
-import javax.annotation.Nonnull;
-
 public class Invite {
 
-    private final Island island;
-    private final User sender;
-    private final User receiver;
-    private final PrivilegeType privilegeType;
-    private final Instant sent;
+  private final Island island;
+  private final User sender;
+  private final User receiver;
+  private final PrivilegeType privilegeType;
+  private final Instant sent;
 
-    private Invite(Island island, User sender, User receiver, PrivilegeType privilegeType) {
-        this.island = island;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.privilegeType = privilegeType;
-        this.sent = Instant.now();
-        SkyClaims.getInstance().getInviteService().addInvite(this);
+  private Invite(Island island, User sender, User receiver, PrivilegeType privilegeType) {
+    this.island = island;
+    this.sender = sender;
+    this.receiver = receiver;
+    this.privilegeType = privilegeType;
+    this.sent = Instant.now();
+    SkyClaims.getInstance().getInviteService().addInvite(this);
+  }
+
+  public Island getIsland() {
+    return island;
+  }
+
+  public User getSender() {
+    return sender;
+  }
+
+  public User getReceiver() {
+    return receiver;
+  }
+
+  public PrivilegeType getPrivilegeType() {
+    return privilegeType;
+  }
+
+  public Instant getSent() {
+    return sent;
+  }
+
+  public void send() {
+    receiver.getPlayer().ifPresent(p -> p.sendMessage(Text.of(
+        island.getPrivilegeType(sender).format(sender.getName()),
+        TextColors.GRAY, " has invited you to be a ",
+        privilegeType.toText(),
+        TextColors.GRAY, " of ",
+        island.getName(),
+        TextColors.GRAY, "!", Text.NEW_LINE,
+        TextColors.WHITE, "[",
+        Text.builder("ACCEPT")
+            .color(TextColors.GREEN)
+            .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Click to accept")))
+            .onClick(TextActions.executeCallback(src -> {
+              if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
+                src.sendMessage(Text.of(
+                    TextColors.GREEN, "You are now a ", privilegeType.toText(), TextColors.GREEN,
+                    " on ", island.getName(), TextColors.GREEN,
+                    "!"
+                ));
+                this.accept();
+              }
+            })),
+        TextColors.WHITE, "] [",
+        Text.builder("DENY")
+            .color(TextColors.RED)
+            .onHover(TextActions.showText(Text.of(TextColors.RED, "Click to deny")))
+            .onClick(TextActions.executeCallback(src -> {
+              if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
+                src.sendMessage(Text.of(
+                    TextColors.GREEN, "You have denied ",
+                    island.getPrivilegeType(sender).format(sender.getName()),
+                    TextColors.GREEN, "'s invite to ", island.getName(), TextColors.GREEN, "!"
+                ));
+                this.deny();
+              }
+            })),
+        TextColors.WHITE, "]"
+    )));
+  }
+
+  public void accept() {
+    island.addMember(receiver, privilegeType);
+    SkyClaims.getInstance().getInviteService().removeInvite(this);
+  }
+
+  public void deny() {
+    SkyClaims.getInstance().getInviteService().removeInvite(this);
+  }
+
+  public static Invite.Builder builder() {
+    return new Builder();
+  }
+
+  public static class Builder {
+
+    private Island island;
+    private User sender;
+    private User receiver;
+    private PrivilegeType privilegeType;
+
+    public Builder() {
+      this.privilegeType = PrivilegeType.MEMBER;
     }
 
-    public Island getIsland() {
-        return island;
+    public Builder island(@Nonnull Island island) {
+      checkNotNull(island);
+      this.island = island;
+      return this;
     }
 
-    public User getSender() {
-        return sender;
+    public Builder sender(@Nonnull User sender) {
+      checkNotNull(sender);
+      this.sender = sender;
+      return this;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public Builder receiver(@Nonnull User receiver) {
+      checkNotNull(receiver);
+      this.receiver = receiver;
+      return this;
     }
 
-    public PrivilegeType getPrivilegeType() {
-        return privilegeType;
+    public Builder privilegeType(@Nonnull PrivilegeType privilegeType) {
+      checkNotNull(privilegeType);
+      this.privilegeType = privilegeType;
+      return this;
     }
 
-    public Instant getSent() {
-        return sent;
+    public Invite build() {
+      checkNotNull(island);
+      checkNotNull(sender);
+      checkNotNull(receiver);
+      checkNotNull(privilegeType);
+      checkArgument(!sender.equals(receiver));
+      return new Invite(island, sender, receiver, privilegeType);
     }
+  }
 
-    public void send() {
-        receiver.getPlayer().ifPresent(p -> p.sendMessage(Text.of(
-            island.getPrivilegeType(sender).format(sender.getName()),
-            TextColors.GRAY, " has invited you to be a ",
-            privilegeType.toText(),
-            TextColors.GRAY, " of ",
-            island.getName(),
-            TextColors.GRAY, "!", Text.NEW_LINE,
-            TextColors.WHITE, "[",
-            Text.builder("ACCEPT")
-                .color(TextColors.GREEN)
-                .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Click to accept")))
-                .onClick(TextActions.executeCallback(src -> {
-                    if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
-                        src.sendMessage(Text.of(
-                            TextColors.GREEN, "You are now a ", privilegeType.toText(), TextColors.GREEN, " on ", island.getName(), TextColors.GREEN,
-                            "!"
-                        ));
-                        this.accept();
-                    }
-                })),
-            TextColors.WHITE, "] [",
-            Text.builder("DENY")
-                .color(TextColors.RED)
-                .onHover(TextActions.showText(Text.of(TextColors.RED, "Click to deny")))
-                .onClick(TextActions.executeCallback(src -> {
-                    if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
-                        src.sendMessage(Text.of(
-                            TextColors.GREEN, "You have denied ", island.getPrivilegeType(sender).format(sender.getName()),
-                            TextColors.GREEN, "'s invite to ", island.getName(), TextColors.GREEN, "!"
-                        ));
-                        this.deny();
-                    }
-                })),
-            TextColors.WHITE, "]"
-        )));
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder()
+        .append(island.getUniqueId())
+        .append(sender.getUniqueId())
+        .append(receiver.getUniqueId())
+        .toHashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null || !(obj instanceof Invite)) {
+      return false;
     }
-
-    public void accept() {
-        island.addMember(receiver, privilegeType);
-        SkyClaims.getInstance().getInviteService().removeInvite(this);
+    if (obj == this) {
+      return true;
     }
-
-    public void deny() {
-        SkyClaims.getInstance().getInviteService().removeInvite(this);
-    }
-
-    public static Invite.Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-
-        private Island island;
-        private User sender;
-        private User receiver;
-        private PrivilegeType privilegeType;
-
-        public Builder() {
-            this.privilegeType = PrivilegeType.MEMBER;
-        }
-
-        public Builder island(@Nonnull Island island) {
-            checkNotNull(island);
-            this.island = island;
-            return this;
-        }
-
-        public Builder sender(@Nonnull User sender) {
-            checkNotNull(sender);
-            this.sender = sender;
-            return this;
-        }
-
-        public Builder receiver(@Nonnull User receiver) {
-            checkNotNull(receiver);
-            this.receiver = receiver;
-            return this;
-        }
-
-        public Builder privilegeType(@Nonnull PrivilegeType privilegeType) {
-            checkNotNull(privilegeType);
-            this.privilegeType = privilegeType;
-            return this;
-        }
-
-        public Invite build() {
-            checkNotNull(island);
-            checkNotNull(sender);
-            checkNotNull(receiver);
-            checkNotNull(privilegeType);
-            checkArgument(!sender.equals(receiver));
-            return new Invite(island, sender, receiver, privilegeType);
-        }
-    }
-
-    @Override public int hashCode() {
-        return new HashCodeBuilder()
-            .append(island.getUniqueId())
-            .append(sender.getUniqueId())
-            .append(receiver.getUniqueId())
-            .toHashCode();
-    }
-
-    @Override public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof Invite)) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        Invite invite = (Invite) obj;
-        return new EqualsBuilder()
-            .append(island.getUniqueId(), invite.island.getUniqueId())
-            .append(sender.getUniqueId(), invite.sender.getUniqueId())
-            .append(receiver.getUniqueId(), invite.receiver.getUniqueId())
-            .build();
-    }
+    Invite invite = (Invite) obj;
+    return new EqualsBuilder()
+        .append(island.getUniqueId(), invite.island.getUniqueId())
+        .append(sender.getUniqueId(), invite.sender.getUniqueId())
+        .append(receiver.getUniqueId(), invite.receiver.getUniqueId())
+        .build();
+  }
 }

@@ -10,6 +10,6 @@
 !/LICENSE.md
 !/README*.md
 !/settings.gradle
-!/SkyClaims.xml
+!/intellij-java-google-style.xml
 !/.travis.yml
 !/gradle.properties

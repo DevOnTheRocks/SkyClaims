@@ -19,6 +19,10 @@
 package net.mohron.skyclaims.command;
 
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
@@ -33,121 +37,130 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
 @NonnullByDefault
 public abstract class CommandBase implements CommandExecutor {
 
-    protected static final SkyClaims PLUGIN = SkyClaims.getInstance();
+  protected static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-    public static abstract class IslandCommand extends CommandBase implements CommandRequirement.RequiresPlayerIsland {
+  public static abstract class IslandCommand extends CommandBase implements
+      CommandRequirement.RequiresPlayerIsland {
 
-        protected static final Text ISLAND = Text.of("island");
+    protected static final Text ISLAND = Text.of("island");
 
-        @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-            if (!(src instanceof Player)) {
-                throw new CommandException(Text.of(TextColors.RED, "This command can only be used by a player!"));
-            }
-            if (!args.hasAny(ISLAND)) {
-                return execute(
-                    (Player) src,
-                    Island.get(((Player) src).getLocation())
-                        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to use this command!"))),
-                    args);
-            } else {
-                List<Island> islands = Lists.newArrayList();
-                args.<UUID>getAll(ISLAND).forEach(i -> Island.get(i).ifPresent(islands::add));
-                if (islands.size() == 1) {
-                    return execute((Player) src, islands.get(0), args);
-                } else {
-                    throw new CommandException(Text.of(TextColors.RED, "Multiple island support not yet implemented!"));
-                }
-            }
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      if (!(src instanceof Player)) {
+        throw new CommandException(
+            Text.of(TextColors.RED, "This command can only be used by a player!"));
+      }
+      if (!args.hasAny(ISLAND)) {
+        return execute(
+            (Player) src,
+            Island.get(((Player) src).getLocation())
+                .orElseThrow(() -> new CommandException(
+                    Text.of(TextColors.RED, "You must be on an island to use this command!"))),
+            args);
+      } else {
+        List<Island> islands = Lists.newArrayList();
+        args.<UUID>getAll(ISLAND).forEach(i -> Island.get(i).ifPresent(islands::add));
+        if (islands.size() == 1) {
+          return execute((Player) src, islands.get(0), args);
+        } else {
+          throw new CommandException(
+              Text.of(TextColors.RED, "Multiple island support not yet implemented!"));
         }
+      }
+    }
+  }
+
+  public static abstract class PlayerCommand extends CommandBase implements
+      CommandRequirement.RequiresPlayer {
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      if (src instanceof Player) {
+        return execute((Player) src, args);
+      }
+      throw new CommandException(
+          Text.of(TextColors.RED, "This command can only be used by a player!"));
+    }
+  }
+
+  public static abstract class LockCommand extends CommandBase implements
+      CommandRequirement.RequiresIsland {
+
+    private boolean lock;
+
+    public LockCommand(boolean lock) {
+      this.lock = lock;
     }
 
-    public static abstract class PlayerCommand extends CommandBase implements CommandRequirement.RequiresPlayer {
+    protected static final Text ALL = Text.of("all");
+    protected static final Text ISLAND = Text.of("island");
 
-        @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-            if (src instanceof Player) {
-                return execute((Player) src, args);
-            }
-            throw new CommandException(Text.of(TextColors.RED, "This command can only be used by a player!"));
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      if (args.hasAny(ALL)) {
+        return lockAll(src);
+      }
+      if (!args.hasAny(ISLAND)) {
+        if (src instanceof Player) {
+          Island island = Island.get(((Player) src).getLocation())
+              .orElseThrow(() -> new CommandException(Text.of(
+                  TextColors.RED,
+                  "You must either provide an island argument or be on an island to use this command!"
+              )));
+          checkPerms(src, island);
+          return execute(src, island, args);
+        } else {
+          throw new CommandException(Text.of(TextColors.RED,
+              "An island argument is required when executed by a non-player!"));
         }
+      } else {
+        List<Island> islands = Lists.newArrayList();
+        args.<UUID>getAll(ISLAND).forEach(i -> Island.get(i).ifPresent(islands::add));
+        if (islands.size() == 1) {
+          checkPerms(src, islands.get(0));
+          return execute(src, islands.get(0), args);
+        } else {
+          return lockIslands(src, args.getAll(ISLAND));
+        }
+      }
     }
 
-    public static abstract class LockCommand extends CommandBase implements CommandRequirement.RequiresIsland {
-
-        private boolean lock;
-
-        public LockCommand(boolean lock) {
-            this.lock = lock;
-        }
-
-        protected static final Text ALL = Text.of("all");
-        protected static final Text ISLAND = Text.of("island");
-
-        @Override public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-            if (args.hasAny(ALL)) {
-                return lockAll(src);
-            }
-            if (!args.hasAny(ISLAND)) {
-                if (src instanceof Player) {
-                    Island island = Island.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
-                        TextColors.RED, "You must either provide an island argument or be on an island to use this command!"
-                    )));
-                    checkPerms(src, island);
-                    return execute(src, island, args);
-                } else {
-                    throw new CommandException(Text.of(TextColors.RED, "An island argument is required when executed by a non-player!"));
-                }
-            } else {
-                List<Island> islands = Lists.newArrayList();
-                args.<UUID>getAll(ISLAND).forEach(i -> Island.get(i).ifPresent(islands::add));
-                if (islands.size() == 1) {
-                    checkPerms(src, islands.get(0));
-                    return execute(src, islands.get(0), args);
-                } else {
-                    return lockIslands(src, args.getAll(ISLAND));
-                }
-            }
-        }
-
-        private void checkPerms(CommandSource src, Island island) throws CommandPermissionException {
-            if (!(src instanceof Player && island.isManager((Player) src) || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS))) {
-                throw new CommandPermissionException(Text.of(
-                    TextColors.RED, "You do not have permission to ",
-                    lock ? "lock " : "unlock ",
-                    island.getName(), TextColors.RED, "!"
-                ));
-            }
-        }
-
-        private CommandResult lockIslands(CommandSource src, Collection<UUID> islandsIds) {
-            ArrayList<Island> islands = Lists.newArrayList();
-            islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
-            islands.forEach(island -> {
-                island.setLocked(lock);
-                src.sendMessage(Text.of(
-                    island.getName(),
-                    TextColors.GREEN, " has been ",
-                    lock ? "locked" : "unlocked", "!"
-                ));
-            });
-            return CommandResult.success();
-        }
-
-        private CommandResult lockAll(CommandSource src) {
-            SkyClaims.islands.values().forEach(i -> i.setLocked(lock));
-            src.sendMessage(Text.of(
-                TextColors.DARK_PURPLE, SkyClaims.islands.size(),
-                TextColors.GREEN, " islands have been ",
-                lock ? "locked" : "unlocked", "!"
-            ));
-            return CommandResult.success();
-        }
+    private void checkPerms(CommandSource src, Island island) throws CommandPermissionException {
+      if (!(src instanceof Player && island.isManager((Player) src) || src
+          .hasPermission(Permissions.COMMAND_LOCK_OTHERS))) {
+        throw new CommandPermissionException(Text.of(
+            TextColors.RED, "You do not have permission to ",
+            lock ? "lock " : "unlock ",
+            island.getName(), TextColors.RED, "!"
+        ));
+      }
     }
+
+    private CommandResult lockIslands(CommandSource src, Collection<UUID> islandsIds) {
+      ArrayList<Island> islands = Lists.newArrayList();
+      islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+      islands.forEach(island -> {
+        island.setLocked(lock);
+        src.sendMessage(Text.of(
+            island.getName(),
+            TextColors.GREEN, " has been ",
+            lock ? "locked" : "unlocked", "!"
+        ));
+      });
+      return CommandResult.success();
+    }
+
+    private CommandResult lockAll(CommandSource src) {
+      SkyClaims.islands.values().forEach(i -> i.setLocked(lock));
+      src.sendMessage(Text.of(
+          TextColors.DARK_PURPLE, SkyClaims.islands.size(),
+          TextColors.GREEN, " islands have been ",
+          lock ? "locked" : "unlocked", "!"
+      ));
+      return CommandResult.success();
+    }
+  }
 }

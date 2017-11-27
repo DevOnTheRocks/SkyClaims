@@ -35,57 +35,62 @@ import org.spongepowered.api.text.format.TextColors;
 
 public class CommandSetHome extends CommandBase {
 
-    public static final String HELP_TEXT = "set your island home.";
+  public static final String HELP_TEXT = "set your island home.";
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_SET_HOME)
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandSetHome())
-        .build();
+  public static CommandSpec commandSpec = CommandSpec.builder()
+      .permission(Permissions.COMMAND_SET_HOME)
+      .description(Text.of(HELP_TEXT))
+      .executor(new CommandSetHome())
+      .build();
 
-    public static void register() {
-        try {
-            CommandIsland.addSubCommand(commandSpec, "sethome");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandSetHome");
-        } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandSetHome");
-        }
+  public static void register() {
+    try {
+      CommandIsland.addSubCommand(commandSpec, "sethome");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandSetHome");
+    } catch (UnsupportedOperationException e) {
+      e.printStackTrace();
+      PLUGIN.getLogger().error("Failed to register command: CommandSetHome");
+    }
+  }
+
+  public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    if (!(src instanceof Player)) {
+      throw new CommandException(Text.of("You must be a player to use this command!"));
     }
 
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            throw new CommandException(Text.of("You must be a player to use this command!"));
-        }
+    Player player = (Player) src;
+    Island island = Island.get(player.getLocation())
+        .orElseThrow(() -> new CommandException(
+            Text.of(TextColors.RED, "You must be on an island to set a home!")));
 
-        Player player = (Player) src;
-        Island island = Island.get(player.getLocation())
-            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to set a home!")));
-
-        if (!island.isMember(player)) {
-            throw new CommandException(Text.of(TextColors.RED, "You must have permission to set home on this island!"));
-        }
-
-        boolean success = modifyOrCreateHome(player);
-        if (!success) {
-            throw new CommandException(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
-        }
-
-        return CommandResult.success();
+    if (!island.isMember(player)) {
+      throw new CommandException(
+          Text.of(TextColors.RED, "You must have permission to set home on this island!"));
     }
 
-
-    private boolean modifyOrCreateHome(Player player) {
-        try {
-            NucleusIntegration.getHomeService()
-                .modifyOrCreateHome(Sponge.getCauseStackManager().getCurrentCause(), player, "Island", player.getLocation(), player.getRotation());
-            player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
-            return true;
-        } catch (NucleusException e) {
-            player.sendMessage(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
-            PLUGIN.getGame().getServer().getConsole().sendMessage(e.getText());
-            return false;
-        }
+    boolean success = modifyOrCreateHome(player);
+    if (!success) {
+      throw new CommandException(
+          Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
     }
+
+    return CommandResult.success();
+  }
+
+
+  private boolean modifyOrCreateHome(Player player) {
+    try {
+      NucleusIntegration.getHomeService()
+          .modifyOrCreateHome(Sponge.getCauseStackManager().getCurrentCause(), player, "Island",
+              player.getLocation(), player.getRotation());
+      player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
+      return true;
+    } catch (NucleusException e) {
+      player.sendMessage(
+          Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
+      PLUGIN.getGame().getServer().getConsole().sendMessage(e.getText());
+      return false;
+    }
+  }
 }

@@ -20,6 +20,9 @@ package net.mohron.skyclaims.command.argument;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -32,58 +35,57 @@ import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
 @NonnullByDefault
 public class TwoUserArgument extends CommandElement {
 
-    private final Text key;
-    private final Text key2;
+  private final Text key;
+  private final Text key2;
 
-    public TwoUserArgument(@Nullable Text key, Text key2) {
-        super(key);
-        this.key = key;
-        this.key2 = key2;
-    }
+  public TwoUserArgument(@Nullable Text key, Text key2) {
+    super(key);
+    this.key = key;
+    this.key2 = key2;
+  }
 
-    @Nullable
-    @Override
-    protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
-        return null;
-    }
+  @Nullable
+  @Override
+  protected Object parseValue(CommandSource source, CommandArgs args)
+      throws ArgumentParseException {
+    return null;
+  }
 
-    @Override
-    public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
-        String user1 = args.next();
-        String user2 = args.nextIfPresent().orElse(null);
-        if (user2 != null) {
-            context.putArg(key, getUserFromName(user1));
-            context.putArg(key2, getUserFromName(user2));
-        } else {
-            context.putArg(key2, getUserFromName(user1));
-        }
+  @Override
+  public void parse(CommandSource source, CommandArgs args, CommandContext context)
+      throws ArgumentParseException {
+    String user1 = args.next();
+    String user2 = args.nextIfPresent().orElse(null);
+    if (user2 != null) {
+      context.putArg(key, getUserFromName(user1));
+      context.putArg(key2, getUserFromName(user2));
+    } else {
+      context.putArg(key2, getUserFromName(user1));
     }
+  }
 
-    @Override
-    public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-        try {
-            String name = args.peek().toLowerCase();
-            return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class)
-                .getAll().stream()
-                .map(GameProfile::getName)
-                .filter(s -> s.isPresent() && s.get().startsWith(name))
-                .map(Optional::get)
-                .collect(ImmutableList.toImmutableList());
-        } catch (ArgumentParseException e) {
-            return Lists.newArrayList();
-        }
+  @Override
+  public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
+    try {
+      String name = args.peek().toLowerCase();
+      return SkyClaims.getInstance().getGame().getServiceManager()
+          .provideUnchecked(UserStorageService.class)
+          .getAll().stream()
+          .map(GameProfile::getName)
+          .filter(s -> s.isPresent() && s.get().startsWith(name))
+          .map(Optional::get)
+          .collect(ImmutableList.toImmutableList());
+    } catch (ArgumentParseException e) {
+      return Lists.newArrayList();
     }
+  }
 
-    private User getUserFromName(String name) throws ArgumentParseException {
-        return SkyClaims.getInstance().getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(name)
-            .orElseThrow(() -> new ArgumentParseException(Text.of("Invalid User Supplied"), name, 0));
-    }
+  private User getUserFromName(String name) throws ArgumentParseException {
+    return SkyClaims.getInstance().getGame().getServiceManager()
+        .provideUnchecked(UserStorageService.class).get(name)
+        .orElseThrow(() -> new ArgumentParseException(Text.of("Invalid User Supplied"), name, 0));
+  }
 }

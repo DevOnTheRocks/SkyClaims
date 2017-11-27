@@ -39,69 +39,78 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public class CommandInvite extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
-    private static final Text LIST = Text.of("list");
-    private static final Text USER = Text.of("user");
-    private static final Text PRIVILEGE = Text.of("privilege");
+  public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
+  private static final Text LIST = Text.of("list");
+  private static final Text USER = Text.of("user");
+  private static final Text PRIVILEGE = Text.of("privilege");
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_INVITE)
-            .arguments(GenericArguments.optional(GenericArguments.firstParsing(
-                GenericArguments.seq(
-                    GenericArguments.user(USER),
-                    GenericArguments.optional(PrivilegeType.getCommandArgument(PRIVILEGE), PrivilegeType.MEMBER)
-                ),
-                GenericArguments.literal(LIST, "list")
-            )))
-            .description(Text.of(HELP_TEXT))
-            .executor(new CommandInvite())
-            .build();
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_INVITE)
+        .arguments(GenericArguments.optional(GenericArguments.firstParsing(
+            GenericArguments.seq(
+                GenericArguments.user(USER),
+                GenericArguments
+                    .optional(PrivilegeType.getCommandArgument(PRIVILEGE), PrivilegeType.MEMBER)
+            ),
+            GenericArguments.literal(LIST, "list")
+        )))
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandInvite())
+        .build();
 
-        try {
-            CommandIsland.addSubCommand(commandSpec, "invite");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandInvite");
-        } catch (UnsupportedOperationException e) {
-            PLUGIN.getLogger().error("Failed to register command: CommandInvite", e);
-        }
+    try {
+      CommandIsland.addSubCommand(commandSpec, "invite");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandInvite");
+    } catch (UnsupportedOperationException e) {
+      PLUGIN.getLogger().error("Failed to register command: CommandInvite", e);
+    }
+  }
+
+  @Override
+  public CommandResult execute(Player player, Island island, CommandContext args)
+      throws CommandException {
+    User user = args.<User>getOne(USER).orElse(null);
+    PrivilegeType type = args.<PrivilegeType>getOne(PRIVILEGE).orElse(PrivilegeType.MEMBER);
+
+    if (type == PrivilegeType.NONE) {
+      throw new CommandException(
+          Text.of(TextStyles.ITALIC, "What kind of invite is ", TextStyles.RESET, type.toText(),
+              TextStyles.ITALIC, "?"));
     }
 
-    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
-        User user = args.<User>getOne(USER).orElse(null);
-        PrivilegeType type = args.<PrivilegeType>getOne(PRIVILEGE).orElse(PrivilegeType.MEMBER);
-
-        if (type == PrivilegeType.NONE) {
-            throw new CommandException(
-                Text.of(TextStyles.ITALIC, "What kind of invite is ", TextStyles.RESET, type.toText(), TextStyles.ITALIC, "?"));
-        }
-
-        if (user == null || args.hasAny(LIST)) {
-            PLUGIN.getInviteService().listIncomingInvites().accept(player);
-        } else if (player.equals(user)) {
-            throw new CommandException(Text.of(TextColors.RED, "You cannot invite yourself!"));
-        } else if (island.getPrivilegeType(user) != PrivilegeType.NONE) {
-            throw new CommandException(Text.of(
-                island.getPrivilegeType(user).format(user.getName()), TextColors.RED, " is already a ", island.getPrivilegeType(user).toText(),
-                TextColors.RED, " on ", island.getName(), TextColors.RED, "!"
-            ));
-        } else if (!island.isOwner(player) || island.getPrivilegeType(player).ordinal() >= type.ordinal()) {
-            throw new CommandException(Text.of(
-                TextColors.RED, "You do not have permission to send ", type == PrivilegeType.OWNER ? "an " : "a ",
-                type.toText(), TextColors.RED, " invite for ", island.getName(), TextColors.RED, "!"
-            ));
-        } else {
-            Invite.builder()
-                .island(island)
-                .sender(player)
-                .receiver(user)
-                .privilegeType(type)
-                .build()
-                .send();
-            player.sendMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
-        }
-
-        return CommandResult.success();
+    if (user == null || args.hasAny(LIST)) {
+      PLUGIN.getInviteService().listIncomingInvites().accept(player);
+    } else if (player.equals(user)) {
+      throw new CommandException(Text.of(TextColors.RED, "You cannot invite yourself!"));
+    } else if (island.getPrivilegeType(user) != PrivilegeType.NONE) {
+      throw new CommandException(Text.of(
+          island.getPrivilegeType(user).format(user.getName()), TextColors.RED, " is already a ",
+          island.getPrivilegeType(user).toText(),
+          TextColors.RED, " on ", island.getName(), TextColors.RED, "!"
+      ));
+    } else if (!island.isOwner(player) || island.getPrivilegeType(player).ordinal() >= type
+        .ordinal()) {
+      throw new CommandException(Text.of(
+          TextColors.RED, "You do not have permission to send ",
+          type == PrivilegeType.OWNER ? "an " : "a ",
+          type.toText(), TextColors.RED, " invite for ", island.getName(), TextColors.RED, "!"
+      ));
+    } else {
+      Invite.builder()
+          .island(island)
+          .sender(player)
+          .receiver(user)
+          .privilegeType(type)
+          .build()
+          .send();
+      player.sendMessage(
+          Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()),
+              TextColors.GREEN, "."));
     }
+
+    return CommandResult.success();
+  }
 
 }

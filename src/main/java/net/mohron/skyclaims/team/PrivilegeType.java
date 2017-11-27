@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.team;
 
 import com.google.common.collect.Maps;
+import java.util.Map;
 import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -26,48 +27,46 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-import java.util.Map;
-
 public enum PrivilegeType {
-    OWNER(Text.of(TextColors.BLUE, "Owner"), TrustType.NONE),
-    MANAGER(Text.of(TextColors.GOLD, "Manager"), TrustType.MANAGER),
-    MEMBER(Text.of(TextColors.YELLOW, "Member"), TrustType.BUILDER),
-    NONE(Text.of(TextColors.GRAY, "None"), TrustType.NONE);
+  OWNER(Text.of(TextColors.BLUE, "Owner"), TrustType.NONE),
+  MANAGER(Text.of(TextColors.GOLD, "Manager"), TrustType.MANAGER),
+  MEMBER(Text.of(TextColors.YELLOW, "Member"), TrustType.BUILDER),
+  NONE(Text.of(TextColors.GRAY, "None"), TrustType.NONE);
 
-    private Text text;
-    private TrustType trustType;
+  private Text text;
+  private TrustType trustType;
 
-    PrivilegeType(Text text, TrustType trustType) {
-        this.text = text;
-        this.trustType = trustType;
+  PrivilegeType(Text text, TrustType trustType) {
+    this.text = text;
+    this.trustType = trustType;
+  }
+
+  public Text format(Text text) {
+    return format(text.toPlain());
+  }
+
+  public Text format(String string) {
+    return Text.builder(string)
+        .color(text.getColor())
+        .onHover(TextActions.showText(text))
+        .build();
+  }
+
+  public Text toText() {
+    return text;
+  }
+
+  public TrustType getTrustType() {
+    return trustType;
+  }
+
+  public static CommandElement getCommandArgument(Text key) {
+    Map<String, PrivilegeType> typeMap = Maps.newHashMap();
+    for (PrivilegeType type : values()) {
+      if (type != NONE) {
+        typeMap.put(type.toString().toLowerCase(), type);
+      }
     }
-
-    public Text format(Text text) {
-        return format(text.toPlain());
-    }
-
-    public Text format(String string) {
-        return Text.builder(string)
-            .color(text.getColor())
-            .onHover(TextActions.showText(text))
-            .build();
-    }
-
-    public Text toText() {
-        return text;
-    }
-
-    public TrustType getTrustType() {
-        return trustType;
-    }
-
-    public static CommandElement getCommandArgument(Text key) {
-        Map<String, PrivilegeType> typeMap = Maps.newHashMap();
-        for (PrivilegeType type : values()) {
-            if (type != NONE) {
-                typeMap.put(type.toString().toLowerCase(), type);
-            }
-        }
-        return GenericArguments.choices(key, typeMap);
-    }
+    return GenericArguments.choices(key, typeMap);
+  }
 }

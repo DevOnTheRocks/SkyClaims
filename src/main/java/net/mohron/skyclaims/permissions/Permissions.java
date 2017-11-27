@@ -20,53 +20,53 @@ package net.mohron.skyclaims.permissions;
 
 public class Permissions {
 
-    // User Permissions
-    public static final String COMMAND_CREATE = "skyclaims.command.create";
-    public static final String COMMAND_DELETE = "skyclaims.command.delete";
-    public static final String COMMAND_DEMOTE = "skyclaims.command.demote";
-    public static final String COMMAND_EXPAND = "skyclaims.command.expand";
-    public static final String COMMAND_HOME = "skyclaims.command.home";
-    public static final String COMMAND_INFO = "skyclaims.command.info";
-    public static final String COMMAND_INVITE = "skyclaims.command.invite";
-    public static final String COMMAND_KICK = "skyclaims.command.kick";
-    public static final String COMMAND_LEAVE = "skyclaims.command.leave";
-    public static final String COMMAND_LIST = "skyclaims.command.list.base";
-    public static final String COMMAND_LIST_UNLOCKED = "skyclaims.command.list.unlocked";
-    public static final String COMMAND_LIST_SORT = "skyclaims.command.list.sort";
-    public static final String COMMAND_LOCK = "skyclaims.command.lock";
-    public static final String COMMAND_PROMOTE = "skyclaims.command.promote";
-    public static final String COMMAND_RESET = "skyclaims.command.reset";
-    public static final String COMMAND_SPAWN = "skyclaims.command.spawn";
-    public static final String COMMAND_SET_HOME = "skyclaims.command.sethome";
-    public static final String COMMAND_SET_SPAWN = "skyclaims.command.setspawn";
-    public static final String COMMAND_SET_BIOME = "skyclaims.command.setbiome";
+  // User Permissions
+  public static final String COMMAND_CREATE = "skyclaims.command.create";
+  public static final String COMMAND_DELETE = "skyclaims.command.delete";
+  public static final String COMMAND_DEMOTE = "skyclaims.command.demote";
+  public static final String COMMAND_EXPAND = "skyclaims.command.expand";
+  public static final String COMMAND_HOME = "skyclaims.command.home";
+  public static final String COMMAND_INFO = "skyclaims.command.info";
+  public static final String COMMAND_INVITE = "skyclaims.command.invite";
+  public static final String COMMAND_KICK = "skyclaims.command.kick";
+  public static final String COMMAND_LEAVE = "skyclaims.command.leave";
+  public static final String COMMAND_LIST = "skyclaims.command.list.base";
+  public static final String COMMAND_LIST_UNLOCKED = "skyclaims.command.list.unlocked";
+  public static final String COMMAND_LIST_SORT = "skyclaims.command.list.sort";
+  public static final String COMMAND_LOCK = "skyclaims.command.lock";
+  public static final String COMMAND_PROMOTE = "skyclaims.command.promote";
+  public static final String COMMAND_RESET = "skyclaims.command.reset";
+  public static final String COMMAND_SPAWN = "skyclaims.command.spawn";
+  public static final String COMMAND_SET_HOME = "skyclaims.command.sethome";
+  public static final String COMMAND_SET_SPAWN = "skyclaims.command.setspawn";
+  public static final String COMMAND_SET_BIOME = "skyclaims.command.setbiome";
 
-    // Command Arguments
-    public static final String COMMAND_ARGUMENTS_SCHEMATICS = "skyclaims.arguments.schematics";
-    public static final String COMMAND_ARGUMENTS_BIOMES = "skyclaims.arguments.biomes";
-    public static final String COMMAND_ARGUMENTS_BLOCK = "skyclaims.arguments.block";
-    public static final String COMMAND_ARGUMENTS_CHUNK = "skyclaims.arguments.chunk";
+  // Command Arguments
+  public static final String COMMAND_ARGUMENTS_SCHEMATICS = "skyclaims.arguments.schematics";
+  public static final String COMMAND_ARGUMENTS_BIOMES = "skyclaims.arguments.biomes";
+  public static final String COMMAND_ARGUMENTS_BLOCK = "skyclaims.arguments.block";
+  public static final String COMMAND_ARGUMENTS_CHUNK = "skyclaims.arguments.chunk";
 
-    // Admin Permissions
-    // Commands
-    public static final String COMMAND_ADMIN = "skyclaims.admin.base";
-    public static final String COMMAND_CONFIG = "skyclaims.admin.config";
-    public static final String COMMAND_CREATE_SCHEMATIC = "skyclaims.admin.schematic.create";
-    public static final String COMMAND_DELETE_OTHERS = "skyclaims.admin.delete";
-    public static final String COMMAND_EXPAND_OTHERS = "skyclaims.admin.expand";
-    public static final String COMMAND_LIST_ALL = "skyclaims.admin.list";
-    public static final String COMMAND_LOCK_OTHERS = "skyclaims.admin.lock.others";
-    public static final String COMMAND_RELOAD = "skyclaims.admin.reload";
-    public static final String COMMAND_RESET_KEEP_INV = "skyclaims.admin.reset.keepinv";
-    public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";
-    public static final String COMMAND_SETUP = "skyclaims.admin.setup";
-    public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
-    public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
-    public static final String COMMAND_TRANSFER = "skyclaims.admin.transfer";
-    public static final String COMMAND_VERSION = "skyclaims.admin.version";
-    // Bypass/Exemptions
-    public static final String EXEMPT_KICK = "skyclaims.admin.kick.exempt";
-    public static final String BYPASS_LOCK = "skyclaims.admin.lock.bypass";
-    public static final String BYPASS_TRUST = "skyclaims.admin.trust.bypass";
+  // Admin Permissions
+  // Commands
+  public static final String COMMAND_ADMIN = "skyclaims.admin.base";
+  public static final String COMMAND_CONFIG = "skyclaims.admin.config";
+  public static final String COMMAND_CREATE_SCHEMATIC = "skyclaims.admin.schematic.create";
+  public static final String COMMAND_DELETE_OTHERS = "skyclaims.admin.delete";
+  public static final String COMMAND_EXPAND_OTHERS = "skyclaims.admin.expand";
+  public static final String COMMAND_LIST_ALL = "skyclaims.admin.list";
+  public static final String COMMAND_LOCK_OTHERS = "skyclaims.admin.lock.others";
+  public static final String COMMAND_RELOAD = "skyclaims.admin.reload";
+  public static final String COMMAND_RESET_KEEP_INV = "skyclaims.admin.reset.keepinv";
+  public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";
+  public static final String COMMAND_SETUP = "skyclaims.admin.setup";
+  public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
+  public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
+  public static final String COMMAND_TRANSFER = "skyclaims.admin.transfer";
+  public static final String COMMAND_VERSION = "skyclaims.admin.version";
+  // Bypass/Exemptions
+  public static final String EXEMPT_KICK = "skyclaims.admin.kick.exempt";
+  public static final String BYPASS_LOCK = "skyclaims.admin.lock.bypass";
+  public static final String BYPASS_TRUST = "skyclaims.admin.trust.bypass";
 
 }

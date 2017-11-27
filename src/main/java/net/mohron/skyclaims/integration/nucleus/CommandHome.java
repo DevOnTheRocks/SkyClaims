@@ -20,6 +20,7 @@ package net.mohron.skyclaims.integration.nucleus;
 
 import io.github.nucleuspowered.nucleus.api.nucleusdata.Home;
 import io.github.nucleuspowered.nucleus.api.nucleusdata.NamedLocation;
+import java.util.Optional;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -35,46 +36,45 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
-import java.util.Optional;
-
 public class CommandHome extends CommandBase {
 
-    public static final String HELP_TEXT = "teleport to your home island.";
+  public static final String HELP_TEXT = "teleport to your home island.";
 
-    public static CommandSpec commandSpec = CommandSpec.builder()
-        .permission(Permissions.COMMAND_HOME)
-        .description(Text.of(HELP_TEXT))
-        .executor(new CommandHome())
-        .build();
+  public static CommandSpec commandSpec = CommandSpec.builder()
+      .permission(Permissions.COMMAND_HOME)
+      .description(Text.of(HELP_TEXT))
+      .executor(new CommandHome())
+      .build();
 
-    public static void register() {
-        try {
-            CommandIsland.addSubCommand(commandSpec, "home");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandHome");
-        } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
-            PLUGIN.getLogger().error("Failed to register command: CommandHome");
-        }
+  public static void register() {
+    try {
+      CommandIsland.addSubCommand(commandSpec, "home");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandHome");
+    } catch (UnsupportedOperationException e) {
+      e.printStackTrace();
+      PLUGIN.getLogger().error("Failed to register command: CommandHome");
+    }
+  }
+
+  @Override
+  public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    if (!(src instanceof Player)) {
+      throw new CommandException(Text.of("You must be a player to use this command!"));
     }
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        if (!(src instanceof Player)) {
-            throw new CommandException(Text.of("You must be a player to use this command!"));
-        }
+    Player player = (Player) src;
+    Transform<World> transform = getHome(player)
+        .orElseThrow(() -> new CommandException(
+            Text.of(TextColors.RED, "You must set a home before using this command!")));
 
-        Player player = (Player) src;
-        Transform<World> transform = getHome(player)
-            .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must set a home before using this command!")));
+    player.setTransform(transform);
 
-        player.setTransform(transform);
+    return CommandResult.success();
+  }
 
-        return CommandResult.success();
-    }
-
-    private Optional<Transform<World>> getHome(User user) {
-        Optional<Home> oHome = NucleusIntegration.getHomeService().getHome(user, "Island");
-        return oHome.flatMap(NamedLocation::getTransform);
-    }
+  private Optional<Transform<World>> getHome(User user) {
+    Optional<Home> oHome = NucleusIntegration.getHomeService().getHome(user, "Island");
+    return oHome.flatMap(NamedLocation::getTransform);
+  }
 }

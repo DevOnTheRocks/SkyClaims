@@ -23,35 +23,35 @@ import org.spongepowered.api.text.Text;
 
 public class Arguments {
 
-    public static BiomeArgument biome(Text key) {
-        return new BiomeArgument(key);
-    }
+  public static BiomeArgument biome(Text key) {
+    return new BiomeArgument(key);
+  }
 
-    public static IslandArgument island(Text key, PrivilegeType type) {
-        return new IslandArgument(key, type);
-    }
+  public static IslandArgument island(Text key, PrivilegeType type) {
+    return new IslandArgument(key, type);
+  }
 
-    public static IslandArgument island(Text key) {
-        return new IslandArgument(key);
-    }
+  public static IslandArgument island(Text key) {
+    return new IslandArgument(key);
+  }
 
-    public static PositiveIntegerArgument positiveInteger(Text key) {
-        return new PositiveIntegerArgument(key);
-    }
+  public static PositiveIntegerArgument positiveInteger(Text key) {
+    return new PositiveIntegerArgument(key);
+  }
 
-    public static SchematicArgument schematic(Text key) {
-        return new SchematicArgument(key);
-    }
+  public static SchematicArgument schematic(Text key) {
+    return new SchematicArgument(key);
+  }
 
-    public static SortArgument sort(Text key) {
-        return new SortArgument(key);
-    }
+  public static SortArgument sort(Text key) {
+    return new SortArgument(key);
+  }
 
-    public static TargetArgument target(Text key) {
-        return new TargetArgument(key);
-    }
+  public static TargetArgument target(Text key) {
+    return new TargetArgument(key);
+  }
 
-    public static TwoUserArgument twoUser(Text key, Text key2) {
-        return new TwoUserArgument(key, key2);
-    }
+  public static TwoUserArgument twoUser(Text key, Text key2) {
+    return new TwoUserArgument(key, key2);
+  }
 }

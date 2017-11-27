@@ -20,46 +20,47 @@ package net.mohron.skyclaims.world;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Options;
 import org.spongepowered.api.Sponge;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
 public class IslandCleanupTask implements Runnable {
 
-    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-    private final ImmutableList<Island> islands;
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+  private final ImmutableList<Island> islands;
 
-    public IslandCleanupTask(Collection<Island> islands) {
-        this.islands = ImmutableList.copyOf(islands);
-    }
+  public IslandCleanupTask(Collection<Island> islands) {
+    this.islands = ImmutableList.copyOf(islands);
+  }
 
-    @Override
-    public void run() {
-        SkyClaimsTimings.ISLAND_CLEANUP.startTimingIfSync();
+  @Override
+  public void run() {
+    SkyClaimsTimings.ISLAND_CLEANUP.startTimingIfSync();
 
-        PLUGIN.getLogger().info("Starting Island Cleanup.");
-        Stopwatch sw = Stopwatch.createStarted();
-        islands.forEach(i -> {
-            int age = (int) Duration.between(i.getDateLastActive().toInstant(), Instant.now()).toDays();
-            int threshold = Options.getExpiration(i.getOwnerUniqueId());
-            if (threshold <= 0 || age < threshold) {
-                return;
-            }
-            Sponge.getScheduler().createTaskBuilder().execute(i::clear).submit(PLUGIN);
-            Sponge.getScheduler().createTaskBuilder().execute(i::delete).submit(PLUGIN);
-            PLUGIN.getLogger().info(String.format("%s (%d,%d) was inactive for %d days and has been removed.",
-                i.getName().toPlain(), i.getRegion().getX(), i.getRegion().getZ(), age)
-            );
-        });
-        sw.stop();
-        PLUGIN.getLogger().info(String.format("Finished Island Cleanup in %dms.", sw.elapsed(TimeUnit.MILLISECONDS)));
+    PLUGIN.getLogger().info("Starting Island Cleanup.");
+    Stopwatch sw = Stopwatch.createStarted();
+    islands.forEach(i -> {
+      int age = (int) Duration.between(i.getDateLastActive().toInstant(), Instant.now()).toDays();
+      int threshold = Options.getExpiration(i.getOwnerUniqueId());
+      if (threshold <= 0 || age < threshold) {
+        return;
+      }
+      Sponge.getScheduler().createTaskBuilder().execute(i::clear).submit(PLUGIN);
+      Sponge.getScheduler().createTaskBuilder().execute(i::delete).submit(PLUGIN);
+      PLUGIN.getLogger()
+          .info(String.format("%s (%d,%d) was inactive for %d days and has been removed.",
+              i.getName().toPlain(), i.getRegion().getX(), i.getRegion().getZ(), age)
+          );
+    });
+    sw.stop();
+    PLUGIN.getLogger()
+        .info(String.format("Finished Island Cleanup in %dms.", sw.elapsed(TimeUnit.MILLISECONDS)));
 
-        SkyClaimsTimings.ISLAND_CLEANUP.stopTimingIfSync();
-    }
+    SkyClaimsTimings.ISLAND_CLEANUP.stopTimingIfSync();
+  }
 }

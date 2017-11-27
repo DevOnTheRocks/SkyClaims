@@ -24,31 +24,34 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class EntityConfig {
 
-    @Setting(value = "Limit-Spawning", comment = "Whether SkyClaims should limit island entity spawns.")
-    private boolean limitSpawning = false;
-    @Setting(value = "Max-Hostile", comment = "The max number of hostile mob spawns allowed per island. 0 to disable.\n" +
-        "Can be overridden with the 'skyclaims.max-spawns.hostile' option.")
-    private int maxHostile = 50;
-    @Setting(value = "Max-Passive", comment = "The max number of passive mob spawns allowed per island. 0 to disable.\n" +
-        "Can be overridden with the 'skyclaims.max-spawns.passive' option.")
-    private int maxPassive = 30;
-    @Setting(value = "Max-Spawns", comment = "The overall max number of mob spawns allowed per island. 0 to disable.\n" +
-        "Can be overridden with the 'skyclaims.max-spawns' option.")
-    private int maxSpawns = 70;
+  @Setting(value = "Limit-Spawning", comment = "Whether SkyClaims should limit island entity spawns.")
+  private boolean limitSpawning = false;
+  @Setting(value = "Max-Hostile", comment =
+      "The max number of hostile mob spawns allowed per island. 0 to disable.\n" +
+          "Can be overridden with the 'skyclaims.max-spawns.hostile' option.")
+  private int maxHostile = 50;
+  @Setting(value = "Max-Passive", comment =
+      "The max number of passive mob spawns allowed per island. 0 to disable.\n" +
+          "Can be overridden with the 'skyclaims.max-spawns.passive' option.")
+  private int maxPassive = 30;
+  @Setting(value = "Max-Spawns", comment =
+      "The overall max number of mob spawns allowed per island. 0 to disable.\n" +
+          "Can be overridden with the 'skyclaims.max-spawns' option.")
+  private int maxSpawns = 70;
 
-    public boolean isLimitSpawning() {
-        return limitSpawning;
-    }
+  public boolean isLimitSpawning() {
+    return limitSpawning;
+  }
 
-    public int getMaxHostile() {
-        return maxHostile;
-    }
+  public int getMaxHostile() {
+    return maxHostile;
+  }
 
-    public int getMaxPassive() {
-        return maxPassive;
-    }
+  public int getMaxPassive() {
+    return maxPassive;
+  }
 
-    public int getMaxSpawns() {
-        return maxSpawns;
-    }
+  public int getMaxSpawns() {
+    return maxSpawns;
+  }
 }

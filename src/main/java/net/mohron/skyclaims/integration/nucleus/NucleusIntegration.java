@@ -23,6 +23,7 @@ import io.github.nucleuspowered.nucleus.api.service.NucleusAFKService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusAPIMetaService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
 import io.github.nucleuspowered.nucleus.api.service.NucleusKitService;
+import java.time.Instant;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.integration.Version;
@@ -34,64 +35,63 @@ import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 
-import java.time.Instant;
-
 public class NucleusIntegration {
 
-    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-    private static NucleusAPIMetaService metaService;
-    private static NucleusHomeService homeService;
-    private static NucleusKitService kitService;
-    private static NucleusAFKService afkService;
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+  private static NucleusAPIMetaService metaService;
+  private static NucleusHomeService homeService;
+  private static NucleusKitService kitService;
+  private static NucleusAFKService afkService;
 
-    @Listener
-    public void onPostInitialization(GamePostInitializationEvent event) {
+  @Listener
+  public void onPostInitialization(GamePostInitializationEvent event) {
 
-        metaService = NucleusAPI.getMetaService();
-        if (Version.of(metaService.semanticVersion()).compareTo(PluginInfo.NUCLEUS_VERSION) >= 0) {
-            PLUGIN.getLogger().info("Successfully integrated with Nucleus {}!", metaService.version());
-        } else {
-            PLUGIN.getLogger().info("Found Nucleus {}. SkyClaims requires Nucleus {}+... disabling integration.",
-                metaService.semanticVersion(), PluginInfo.NUCLEUS_VERSION);
-            Sponge.getEventManager().unregisterListeners(this);
-        }
+    metaService = NucleusAPI.getMetaService();
+    if (Version.of(metaService.semanticVersion()).compareTo(PluginInfo.NUCLEUS_VERSION) >= 0) {
+      PLUGIN.getLogger().info("Successfully integrated with Nucleus {}!", metaService.version());
+    } else {
+      PLUGIN.getLogger()
+          .info("Found Nucleus {}. SkyClaims requires Nucleus {}+... disabling integration.",
+              metaService.semanticVersion(), PluginInfo.NUCLEUS_VERSION);
+      Sponge.getEventManager().unregisterListeners(this);
     }
+  }
 
-    @Listener(order = Order.EARLY)
-    public void onGameAboutToStart(GameAboutToStartServerEvent event) {
-        initHomeSupport();
+  @Listener(order = Order.EARLY)
+  public void onGameAboutToStart(GameAboutToStartServerEvent event) {
+    initHomeSupport();
 
-        //kitService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusKitService.class);
-        //afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
+    //kitService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusKitService.class);
+    //afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
+  }
+
+  @Listener
+  public void onReload(GameReloadEvent event) {
+    initHomeSupport();
+  }
+
+  private void initHomeSupport() {
+    if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled()
+        && NucleusAPI.getHomeService().isPresent()) {
+      homeService = NucleusAPI.getHomeService().get();
+      CommandHome.register();
+      CommandSetHome.register();
     }
+  }
 
-    @Listener
-    public void onReload(GameReloadEvent event) {
-        initHomeSupport();
-    }
+  public static NucleusHomeService getHomeService() {
+    return homeService;
+  }
 
-    private void initHomeSupport() {
-        if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled()
-            && NucleusAPI.getHomeService().isPresent()) {
-            homeService = NucleusAPI.getHomeService().get();
-            CommandHome.register();
-            CommandSetHome.register();
-        }
-    }
+  public static NucleusKitService getKitService() {
+    return kitService;
+  }
 
-    public static NucleusHomeService getHomeService() {
-        return homeService;
-    }
+  public static boolean isAFK(Player player) {
+    return afkService.isAFK(player);
+  }
 
-    public static NucleusKitService getKitService() {
-        return kitService;
-    }
-
-    public static boolean isAFK(Player player) {
-        return afkService.isAFK(player);
-    }
-
-    public static Instant lastActivity(Player player) {
-        return afkService.lastActivity(player);
-    }
+  public static Instant lastActivity(Player player) {
+    return afkService.lastActivity(player);
+  }
 }

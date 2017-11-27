@@ -26,75 +26,75 @@ import org.spongepowered.api.world.World;
 
 public class Region {
 
-    private int x;
-    private int z;
+  private int x;
+  private int z;
 
-    public Region(int x, int z) {
-        this.x = x;
-        this.z = z;
+  public Region(int x, int z) {
+    this.x = x;
+    this.z = z;
+  }
+
+  public static boolean isOccupied(Region region) {
+    if (SkyClaims.islands.isEmpty()) {
+      return false;
     }
 
-    public static boolean isOccupied(Region region) {
-        if (SkyClaims.islands.isEmpty()) {
-            return false;
-        }
-
-        for (Island island : SkyClaims.islands.values()) {
-            if (region.equals(island.getRegion())) {
-                return true;
-            }
-        }
-
-        return false;
+    for (Island island : SkyClaims.islands.values()) {
+      if (region.equals(island.getRegion())) {
+        return true;
+      }
     }
 
-    public static Region get(Location<World> location) {
-        return new Region(location.getBlockX() >> 4 >> 5, location.getBlockZ() >> 4 >> 5);
+    return false;
+  }
+
+  public static Region get(Location<World> location) {
+    return new Region(location.getBlockX() >> 4 >> 5, location.getBlockZ() >> 4 >> 5);
+  }
+
+  public int getX() {
+    return x;
+  }
+
+  public int getZ() {
+    return z;
+  }
+
+  public Coordinate getLesserBoundary() {
+    return new Coordinate(x << 5 << 4, z << 5 << 4);
+  }
+
+  public Coordinate getGreaterBoundary() {
+    return new Coordinate((((x + 1) << 5) << 4) - 1, (((z + 1) << 5) << 4) - 1);
+  }
+
+  public Location<World> getCenter() {
+    return new Location<>(
+        SkyClaims.getInstance().getConfig().getWorldConfig().getWorld(),
+        (getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2.0,
+        SkyClaims.getInstance().getConfig().getWorldConfig().getIslandHeight(),
+        (getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2.0
+    );
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
 
-    public int getX() {
-        return x;
-    }
+    Region region = (Region) o;
 
-    public int getZ() {
-        return z;
-    }
+    return x == region.x && z == region.z;
+  }
 
-    public Coordinate getLesserBoundary() {
-        return new Coordinate(x << 5 << 4, z << 5 << 4);
-    }
-
-    public Coordinate getGreaterBoundary() {
-        return new Coordinate((((x + 1) << 5) << 4) - 1, (((z + 1) << 5) << 4) - 1);
-    }
-
-    public Location<World> getCenter() {
-        return new Location<>(
-            SkyClaims.getInstance().getConfig().getWorldConfig().getWorld(),
-            (getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2.0,
-            SkyClaims.getInstance().getConfig().getWorldConfig().getIslandHeight(),
-            (getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2.0
-        );
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Region region = (Region) o;
-
-        return x == region.x && z == region.z;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = x;
-        result = 31 * result + z;
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    int result = x;
+    result = 31 * result + z;
+    return result;
+  }
 }

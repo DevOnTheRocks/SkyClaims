@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.command.team;
 
+import java.util.function.Consumer;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -33,63 +34,69 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-import java.util.function.Consumer;
-
 @NonnullByDefault
 public class CommandLeave extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to leave an island.";
+  public static final String HELP_TEXT = "used to leave an island.";
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_LEAVE)
-            .description(Text.of(HELP_TEXT))
-            .executor(new CommandLeave())
-            .build();
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_LEAVE)
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandLeave())
+        .build();
 
-        try {
-            CommandIsland.addSubCommand(commandSpec, "leave");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandLeave");
-        } catch (UnsupportedOperationException e) {
-            PLUGIN.getLogger().error("Failed to register command: CommandLeave", e);
-        }
+    try {
+      CommandIsland.addSubCommand(commandSpec, "leave");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandLeave");
+    } catch (UnsupportedOperationException e) {
+      PLUGIN.getLogger().error("Failed to register command: CommandLeave", e);
+    }
+  }
+
+  @Override
+  public CommandResult execute(Player player, Island island, CommandContext args)
+      throws CommandException {
+
+    if (island.isOwner(player)) {
+      throw new CommandException(
+          Text.of(TextColors.RED, "You must transfer island ownership before leaving."));
+    } else if (!island.isMember(player)) {
+      throw new CommandException(
+          Text.of(TextColors.RED, "You are not a member of ", island.getName(), TextColors.RED,
+              "!"));
     }
 
-    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
+    player.sendMessage(Text.of(
+        "Are you sure you want to leave ",
+        island.getName(),
+        TextColors.RESET, "?", Text.NEW_LINE,
+        TextColors.WHITE, "[",
+        Text.builder("YES")
+            .color(TextColors.GREEN)
+            .onClick(TextActions.executeCallback(leaveIsland(player, island))),
+        TextColors.WHITE, "] [",
+        Text.builder("NO")
+            .color(TextColors.RED)
+            .onClick(
+                TextActions.executeCallback(s -> s.sendMessage(Text.of("Leave island canceled!")))),
+        TextColors.WHITE, "]"
+    ));
 
-        if (island.isOwner(player)) {
-            throw new CommandException(Text.of(TextColors.RED, "You must transfer island ownership before leaving."));
-        } else if (!island.isMember(player)) {
-            throw new CommandException(Text.of(TextColors.RED, "You are not a member of ", island.getName(), TextColors.RED, "!"));
-        }
+    return CommandResult.success();
+  }
 
-        player.sendMessage(Text.of(
-            "Are you sure you want to leave ",
-            island.getName(),
-            TextColors.RESET, "?", Text.NEW_LINE,
-            TextColors.WHITE, "[",
-            Text.builder("YES")
-                .color(TextColors.GREEN)
-                .onClick(TextActions.executeCallback(leaveIsland(player, island))),
-            TextColors.WHITE, "] [",
-            Text.builder("NO")
-                .color(TextColors.RED)
-                .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Leave island canceled!")))),
-            TextColors.WHITE, "]"
-        ));
+  private Consumer<CommandSource> leaveIsland(Player player, Island island) {
+    return src -> {
+      if (island.getPlayers().contains(player)) {
+        player.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
+      }
 
-        return CommandResult.success();
-    }
-
-    private Consumer<CommandSource> leaveIsland(Player player, Island island) {
-        return src -> {
-            if (island.getPlayers().contains(player)) {
-                player.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
-            }
-
-            island.removeMember(player);
-            player.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
-        };
-    }
+      island.removeMember(player);
+      player.sendMessage(
+          Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED,
+              "!"));
+    };
+  }
 }

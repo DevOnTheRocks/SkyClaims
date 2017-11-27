@@ -19,24 +19,23 @@
 package net.mohron.skyclaims.config.type;
 
 import com.google.common.collect.Lists;
+import java.util.List;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-
-import java.util.List;
 
 @ConfigSerializable
 public class CommandConfig {
 
-    @Setting(value = "Base-Command-Alias", comment = "The alias to use as the base command.")
-    private List<String> baseAlias = Lists.newArrayList("is", "island");
-    @Setting(value = "Admin-Command-Alias", comment = "The alias to use as the base admin command.")
-    private List<String> adminAlias = Lists.newArrayList("isa");
+  @Setting(value = "Base-Command-Alias", comment = "The alias to use as the base command.")
+  private List<String> baseAlias = Lists.newArrayList("is", "island");
+  @Setting(value = "Admin-Command-Alias", comment = "The alias to use as the base admin command.")
+  private List<String> adminAlias = Lists.newArrayList("isa");
 
-    public List<String> getBaseAlias() {
-        return baseAlias.isEmpty() ? Lists.newArrayList("is", "island") : baseAlias;
-    }
+  public List<String> getBaseAlias() {
+    return baseAlias.isEmpty() ? Lists.newArrayList("is", "island") : baseAlias;
+  }
 
-    public List<String> getAdminAlias() {
-        return adminAlias;
-    }
+  public List<String> getAdminAlias() {
+    return adminAlias;
+  }
 }

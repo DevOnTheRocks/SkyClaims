@@ -38,42 +38,47 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public class CommandDelete extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to permanently delete an island.";
-    private static final Text CLEAR = Text.of("clear");
-    private static final Text ISLAND = Text.of("island");
+  public static final String HELP_TEXT = "used to permanently delete an island.";
+  private static final Text CLEAR = Text.of("clear");
+  private static final Text ISLAND = Text.of("island");
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_DELETE)
-            .description(Text.of(HELP_TEXT))
-            .arguments(
-                Arguments.island(ISLAND, PrivilegeType.OWNER),
-                GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(CLEAR), Permissions.COMMAND_DELETE_OTHERS))
-            )
-            .executor(new CommandDelete())
-            .build();
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_DELETE)
+        .description(Text.of(HELP_TEXT))
+        .arguments(
+            Arguments.island(ISLAND, PrivilegeType.OWNER),
+            GenericArguments.optional(GenericArguments
+                .requiringPermission(GenericArguments.bool(CLEAR),
+                    Permissions.COMMAND_DELETE_OTHERS))
+        )
+        .executor(new CommandDelete())
+        .build();
 
-        try {
-            CommandIsland.addSubCommand(commandSpec, "delete");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandDelete");
-        } catch (UnsupportedOperationException e) {
-            PLUGIN.getLogger().error("Failed to register command: CommandDelete", e);
-        }
+    try {
+      CommandIsland.addSubCommand(commandSpec, "delete");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandDelete");
+    } catch (UnsupportedOperationException e) {
+      PLUGIN.getLogger().error("Failed to register command: CommandDelete", e);
+    }
+  }
+
+  @Override
+  public CommandResult execute(Player player, Island island, CommandContext args)
+      throws CommandException {
+    if (!island.isOwner(player) && !player.hasPermission(Permissions.COMMAND_DELETE_OTHERS)) {
+      throw new CommandPermissionException(
+          Text.of(TextColors.RED, "You do not have permission to delete ", island.getName(), "!"));
     }
 
-    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
-        if (!island.isOwner(player) && !player.hasPermission(Permissions.COMMAND_DELETE_OTHERS)) {
-            throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to delete ", island.getName(), "!"));
-        }
-
-        boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
-        if (clear) {
-            island.clear();
-        }
-        island.delete();
-
-        player.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
-        return CommandResult.success();
+    boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
+    if (clear) {
+      island.clear();
     }
+    island.delete();
+
+    player.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
+    return CommandResult.success();
+  }
 }

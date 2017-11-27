@@ -37,57 +37,65 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public class CommandKick extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to remove players from an island.";
-    private static final Text USER = Text.of("user");
+  public static final String HELP_TEXT = "used to remove players from an island.";
+  private static final Text USER = Text.of("user");
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_KICK)
-            .arguments(GenericArguments.user(USER))
-            .description(Text.of(HELP_TEXT))
-            .executor(new CommandKick())
-            .build();
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_KICK)
+        .arguments(GenericArguments.user(USER))
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandKick())
+        .build();
 
-        try {
-            CommandIsland.addSubCommand(commandSpec, "kick");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandKick");
-        } catch (UnsupportedOperationException e) {
-            PLUGIN.getLogger().error("Failed to register command: CommandKick", e);
-        }
+    try {
+      CommandIsland.addSubCommand(commandSpec, "kick");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandKick");
+    } catch (UnsupportedOperationException e) {
+      PLUGIN.getLogger().error("Failed to register command: CommandKick", e);
+    }
+  }
+
+  @Override
+  public CommandResult execute(Player player, Island island, CommandContext args)
+      throws CommandException {
+    User user = args.<User>getOne(USER).orElse(null);
+
+    if (user == null) {
+      throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
+    } else if (player.equals(user)) {
+      throw new CommandException(Text.of(TextColors.RED, "You cannot kick yourself!"));
+    } else if (island.getPrivilegeType(user) == PrivilegeType.NONE) {
+      throw new CommandException(Text.of(
+          PrivilegeType.NONE.format(user.getName()), TextColors.RED, " is not a member of ",
+          island.getName(), TextColors.RED, "!"
+      ));
+    } else if (island.getPrivilegeType(player).ordinal() >= island.getPrivilegeType(user)
+        .ordinal()) {
+      throw new CommandException(Text.of(
+          TextColors.RED, "You do not have permission to kick ",
+          island.getPrivilegeType(user).format(user.getName()),
+          " from ", island.getName(), TextColors.RED, "."
+      ));
     }
 
-    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
-        User user = args.<User>getOne(USER).orElse(null);
+    PrivilegeType type = island.getPrivilegeType(user);
+    user.getPlayer().ifPresent(p -> {
+      if (island.getPlayers().contains(p) && !p.hasPermission(Permissions.EXEMPT_KICK)) {
+        p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
+        p.sendMessage(
+            Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED,
+                "!"));
+      }
+    });
+    island.removeMember(user);
 
-        if (user == null) {
-            throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
-        } else if (player.equals(user)) {
-            throw new CommandException(Text.of(TextColors.RED, "You cannot kick yourself!"));
-        } else if (island.getPrivilegeType(user) == PrivilegeType.NONE) {
-            throw new CommandException(Text.of(
-                PrivilegeType.NONE.format(user.getName()), TextColors.RED, " is not a member of ", island.getName(), TextColors.RED, "!"
-            ));
-        } else if (island.getPrivilegeType(player).ordinal() >= island.getPrivilegeType(user).ordinal()) {
-            throw new CommandException(Text.of(
-                TextColors.RED, "You do not have permission to kick ", island.getPrivilegeType(user).format(user.getName()),
-                " from ", island.getName(), TextColors.RED, "."
-            ));
-        }
+    player.sendMessage(Text.of(
+        type.format(user.getName()), TextColors.RED, " has successfully been removed from ",
+        island.getName(), TextColors.RED, "!"
+    ));
 
-        PrivilegeType type = island.getPrivilegeType(user);
-        user.getPlayer().ifPresent(p -> {
-            if (island.getPlayers().contains(p) && !p.hasPermission(Permissions.EXEMPT_KICK)) {
-                p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
-                p.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
-            }
-        });
-        island.removeMember(user);
-
-        player.sendMessage(Text.of(
-            type.format(user.getName()), TextColors.RED, " has successfully been removed from ", island.getName(), TextColors.RED, "!"
-        ));
-
-        return CommandResult.success();
-    }
+    return CommandResult.success();
+  }
 }
