@@ -39,10 +39,10 @@ public class WorldLoadHandler {
   public void onWorldLoad(LoadWorldEvent event,
       @Getter(value = "getTargetWorld") World targetWorld) {
     SkyClaimsTimings.WORLD_LOAD.startTimingIfSync();
-    World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+    String world = PLUGIN.getConfig().getWorldConfig().getWorldName();
 
-    if (targetWorld.equals(world)) {
-      ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(world);
+    if (targetWorld.getName().equalsIgnoreCase(world)) {
+      ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(targetWorld);
       Claim wilderness = claimManager.getWildernessClaim();
       Subject subject = Sponge.getServiceManager().provideUnchecked(PermissionService.class)
           .getDefaults();
@@ -54,9 +54,9 @@ public class WorldLoadHandler {
               wilderness.setPermission(subject, flag, target, value)
                   .whenComplete((result, throwable) -> {
                     if (result.successful()) {
-                      PLUGIN.getLogger()
-                          .info("{}: Set {} flag in wilderness to {}.", world.getName(), flag,
-                              value.toString());
+                      PLUGIN.getLogger().info(
+                          "{}: Set {} flag in wilderness to {}.", world, flag, value.toString()
+                      );
                     } else {
                       PLUGIN.getLogger().info(result.getResultType().toString());
                     }
