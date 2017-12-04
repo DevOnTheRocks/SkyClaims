@@ -76,6 +76,8 @@ public class CommandDelete extends CommandBase.IslandCommand {
     if (clear) {
       island.clear();
     }
+    island.getPlayers()
+        .forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
     island.delete();
 
     player.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));

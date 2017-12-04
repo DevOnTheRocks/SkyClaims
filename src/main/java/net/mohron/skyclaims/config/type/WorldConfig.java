@@ -22,6 +22,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -49,8 +50,8 @@ public class WorldConfig {
   }
 
   public Location<World> getSpawn() {
-    World world = SkyClaims.getInstance().getGame().getServer().getWorld(spawnWorld)
-        .orElse(getWorld());
+    World world = Sponge.getServer().getWorld(spawnWorld).orElse(getWorld());
+    SkyClaims.getInstance().getLogger().debug("Spawn World: {}", world.getName());
     return world.isLoaded() ? world.getSpawnLocation() : getWorld().getSpawnLocation();
   }
 
