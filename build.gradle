@@ -70,8 +70,7 @@ blossom {
 spongestart {
     online 'false'
     minecraft '1.12.2'
-    forge '14.23.0.2503'
-    type 'experimental'
+    type 'bleeding'
     spongeForge properties.spongeforge
     forgeServerFolder 'run/API7/'
 }

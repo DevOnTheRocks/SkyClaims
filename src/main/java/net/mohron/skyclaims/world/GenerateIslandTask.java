@@ -32,7 +32,7 @@ import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.entity.Transform;
-import org.spongepowered.api.world.BlockChangeFlag;
+import org.spongepowered.api.world.BlockChangeFlags;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.ArchetypeVolume;
@@ -103,7 +103,7 @@ public class GenerateIslandTask implements Runnable {
     );
     island.setSpawn(new Transform<>(spawn.getExtent(), spawn.getPosition()));
 
-    volume.apply(spawn, BlockChangeFlag.NONE);
+    volume.apply(spawn, BlockChangeFlags.NONE);
 
     // Set the region's BiomeType using the default biome option if set
     Options.getDefaultBiome(owner).ifPresent(biomeType -> {
