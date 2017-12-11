@@ -1,12 +1,17 @@
-# Change Log
-
-<img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/united_states.png" title="en-US" height="20"> <b>English</b> 
-| <a href="https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/CHANGELOG.zh-CN.md"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> Chinese</a>
+# Change Log 
 
 # Upcoming/Unreleased Features, Changes & Bugfixes
 **REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
 - Added Void World Generation capabilities
 - Added Nether portal fix
+
+# Beta 27.0 - SNAPSHOT
+**REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
+- Fixed `/is delete` requiring an island argument
+- Fixed `/is delete` not removing players from the island before deletion
+- Fixed wilderness flags applying to the default world when configured to use a different world
+- Added confirmation dialogs to `/is delete`
+- Added configurable root command alias - the first alias is used for help text
 
 # Beta 26.2 - S5.1 Hotfix
 **REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**

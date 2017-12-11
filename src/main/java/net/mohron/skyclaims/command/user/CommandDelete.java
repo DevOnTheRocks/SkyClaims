@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.command.user;
 
+import java.util.function.Consumer;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Arguments;
@@ -27,31 +28,34 @@ import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 
 @NonnullByDefault
 public class CommandDelete extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to permanently delete an island.";
-    private static final Text CLEAR = Text.of("clear");
-    private static final Text ISLAND = Text.of("island");
+  public static final String HELP_TEXT = "used to permanently delete an island.";
+  private static final Text CLEAR = Text.of("clear");
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_DELETE)
-            .description(Text.of(HELP_TEXT))
-            .arguments(
-                Arguments.island(ISLAND, PrivilegeType.OWNER),
-                GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(CLEAR), Permissions.COMMAND_DELETE_OTHERS))
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_DELETE)
+        .description(Text.of(HELP_TEXT))
+        .arguments(
+            GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.OWNER)),
+            GenericArguments.optional(GenericArguments.requiringPermission(
+                GenericArguments.bool(CLEAR), Permissions.COMMAND_DELETE_OTHERS)
             )
-            .executor(new CommandDelete())
-            .build();
+        )
+        .executor(new CommandDelete())
+        .build();
 
         try {
             CommandIsland.addSubCommand(commandSpec, "delete");
@@ -68,14 +72,47 @@ public class CommandDelete extends CommandBase.IslandCommand {
         }
 
     boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
-    if (clear) {
-      island.clear();
-    }
-    island.getPlayers()
-        .forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
-    island.delete();
 
-        player.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
-        return CommandResult.success();
-    }
+    getConfirmation(island, clear).accept(player);
+
+    return CommandResult.success();
+  }
+
+  private Consumer<CommandSource> getConfirmation(Island island, boolean clear) {
+    return src -> {
+      if (src instanceof Player) {
+        Player player = (Player) src;
+        player.sendMessage(Text.of(
+            "Are you sure you want to delete your island? This cannot be undone!", Text.NEW_LINE,
+            TextColors.GOLD, "Do you want to continue?", Text.NEW_LINE,
+            TextColors.WHITE, "[",
+            Text.builder("YES")
+                .color(TextColors.GREEN)
+                .onHover(TextActions.showText(Text.of("Click to delete")))
+                .onClick(
+                    TextActions.executeCallback(deleteIsland(island, clear))),
+            TextColors.WHITE, "] [",
+            Text.builder("NO")
+                .color(TextColors.RED)
+                .onHover(TextActions.showText(Text.of("Click to delete")))
+                .onClick(TextActions
+                    .executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
+            TextColors.WHITE, "]"
+        ));
+      }
+    };
+  }
+
+  private Consumer<CommandSource> deleteIsland(Island island, boolean clear) {
+    return src -> {
+      if (clear) {
+        island.clear();
+      }
+      island.getPlayers()
+          .forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
+      island.delete();
+
+      src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
+    };
+  }
 }
