@@ -67,11 +67,13 @@ public class CommandDelete extends CommandBase.IslandCommand {
             throw new CommandPermissionException(Text.of(TextColors.RED, "You do not have permission to delete ", island.getName(), "!"));
         }
 
-        boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
-        if (clear) {
-            island.clear();
-        }
-        island.delete();
+    boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
+    if (clear) {
+      island.clear();
+    }
+    island.getPlayers()
+        .forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
+    island.delete();
 
         player.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
         return CommandResult.success();
