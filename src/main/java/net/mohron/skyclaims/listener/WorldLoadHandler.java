@@ -33,32 +33,39 @@ import org.spongepowered.api.world.World;
 
 public class WorldLoadHandler {
 
-    private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-    @Listener(order = Order.LAST)
-    public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World targetWorld) {
-        SkyClaimsTimings.WORLD_LOAD.startTimingIfSync();
-        World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+  @Listener(order = Order.LAST)
+  public void onWorldLoad(LoadWorldEvent event,
+      @Getter(value = "getTargetWorld") World targetWorld) {
+    SkyClaimsTimings.WORLD_LOAD.startTimingIfSync();
+    String world = PLUGIN.getConfig().getWorldConfig().getWorldName();
 
-        if (targetWorld.equals(world)) {
-            ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(world);
-            Claim wilderness = claimManager.getWildernessClaim();
-            Subject subject = Sponge.getServiceManager().provideUnchecked(PermissionService.class).getDefaults();
-            String target = "any:any";
+    ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(targetWorld);
+    if (targetWorld.getName().equalsIgnoreCase(world)) {
+      Claim wilderness = claimManager.getWildernessClaim();
+      Subject subject = Sponge.getServiceManager().provideUnchecked(PermissionService.class)
+          .getDefaults();
+      String target = "any:any";
 
-            PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getWildernessFlags().forEach((flag, value) -> {
-                if (wilderness.getPermissionValue(subject, flag, target) != value) {
-                    wilderness.setPermission(subject, flag, target, value, PLUGIN.getCause()).whenComplete((result, throwable) -> {
-                        if (result.successful()) {
-                            PLUGIN.getLogger().info("{}: Set {} flag in wilderness to {}.", world.getName(), flag, value.toString());
-                        } else {
-                            PLUGIN.getLogger().info(result.getResultType().toString());
-                        }
-                    });
-                }
-            });
-        }
-
-        SkyClaimsTimings.WORLD_LOAD.stopTimingIfSync();
+      PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getWildernessFlags()
+          .forEach((flag, value) -> {
+            if (wilderness.getPermissionValue(subject, flag, target) != value) {
+              wilderness.setPermission(subject, flag, target, value, PLUGIN.getCause())
+                  .whenComplete((result, throwable) -> {
+                    if (result.successful()) {
+                      PLUGIN.getLogger().info(
+                          "{}: Set {} flag in wilderness to {}.",
+                          world, flag, value.toString()
+                      );
+                    } else {
+                      PLUGIN.getLogger().info(result.getResultType().toString());
+                    }
+                  });
+            }
+          });
     }
+
+    SkyClaimsTimings.WORLD_LOAD.stopTimingIfSync();
+  }
 }
