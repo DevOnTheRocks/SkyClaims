@@ -24,6 +24,7 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import io.github.nucleuspowered.nucleus.api.NucleusAPI;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.command.team.CommandDemote;
 import net.mohron.skyclaims.command.team.CommandInvite;
@@ -174,7 +175,9 @@ public class CommandIsland extends CommandBase {
             ));
         }
 
-        if (src.hasPermission(Permissions.COMMAND_HOME)) {
+        if (src.hasPermission(Permissions.COMMAND_HOME)
+            && PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled()
+            && NucleusAPI.getHomeService().isPresent()) {
             helpText.add(Text.of(
                 TextColors.AQUA, Text.builder(alias + "home").onClick(TextActions.runCommand("/" + alias + "home")),
                 TextColors.DARK_GRAY, " - ",
