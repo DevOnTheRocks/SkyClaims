@@ -54,7 +54,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
         .permission(Permissions.COMMAND_EXPAND)
         .description(Text.of(HELP_TEXT))
         .arguments(
-            GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER)),
+            GenericArguments.optionalWeak(Arguments.island(ISLAND, PrivilegeType.MANAGER)),
             Arguments.positiveInteger(BLOCKS)
         )
         .executor(new CommandExpand())

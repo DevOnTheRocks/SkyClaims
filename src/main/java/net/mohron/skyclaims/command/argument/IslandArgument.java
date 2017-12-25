@@ -59,8 +59,7 @@ public class IslandArgument extends CommandElement {
       throws ArgumentParseException {
     String arg = args.next().toLowerCase();
     if (SkyClaims.islands.isEmpty()) {
-      throw new ArgumentParseException(Text.of(TextColors.RED, "There are no valid islands!"), arg,
-          0);
+      throw args.createError(Text.of(TextColors.RED, "There are no valid islands!"));
     }
     try {
       UUID uuid = UUID.fromString(arg);
@@ -73,11 +72,8 @@ public class IslandArgument extends CommandElement {
         .filter(i -> i.getValue().getOwnerName().equalsIgnoreCase(arg))
         .map(Map.Entry::getKey)
         .collect(Collectors.toSet());
-    SkyClaims.getInstance().getLogger()
-        .info("Island Argument: arg={}, islands={}", arg, islands.size());
     if (islands.isEmpty()) {
-      throw new ArgumentParseException(
-          Text.of(TextColors.RED, "There are no valid islands found for ", arg, "!"), arg, 0);
+      throw args.createError(Text.of(TextColors.RED, "There are no valid islands found for ", arg, "!"));
     } else {
       return islands;
     }
