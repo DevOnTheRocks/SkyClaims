@@ -79,6 +79,7 @@ public class CommandIsland extends CommandBase {
     CommandSpec commandSpec = CommandSpec.builder()
         .description(Text.of(HELP_TEXT))
         .children(children)
+        .childArgumentParseExceptionFallback(false)
         .arguments(GenericArguments
             .optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
         .executor(new CommandIsland())

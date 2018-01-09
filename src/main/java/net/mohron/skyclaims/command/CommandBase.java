@@ -67,7 +67,8 @@ public abstract class CommandBase implements CommandExecutor {
           return execute((Player) src, islands.get(0), args);
         } else {
           throw new CommandException(
-              Text.of(TextColors.RED, "Multiple island support not yet implemented!"));
+              Text.of(TextColors.RED, "Multiple island support not yet implemented!")
+          );
         }
       }
     }

@@ -58,6 +58,7 @@ public class CommandAdmin extends CommandBase {
         .child(CommandReload.commandSpec, "reload")
         .child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
         .child(CommandTransfer.commandSpec, "transfer")
+        .childArgumentParseExceptionFallback(false)
         .arguments(GenericArguments
             .optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
         .executor(new CommandAdmin())

@@ -6,8 +6,10 @@
 - Added Nether portal fix
 
 # Beta 27.0 - SNAPSHOT
-**REQUIRED: SF build 2764+ & GP build 4.3.0.505+ OPTIONAL: Nucleus version 1.2.0+**
-- Update for breaking API change in Sponge Forge 1.12.2-2555-7.0.0-BETA-2764
+**REQUIRED: SF build 2796+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
+- Subcommands now provide useful errors
+- Updated for breaking API change in Sponge Forge 1.12.2-2555-7.0.0-BETA-2764
+- Fixed `/is expand` erroring when an island argument wasn't provided
 - Fixed `/is delete` requiring an island argument
 - Fixed `/is delete` not removing players from the island before deletion
 - Fixed wilderness flags applying to the default world when configured to use a different world
@@ -16,8 +18,8 @@
 
 # Beta 26.2 - S7.0 Hotfix
 **REQUIRED: SF build 2688+ & GP build 4.3.0.473+ OPTIONAL: Nucleus version 1.2.0+**
-- Fixed a bug with `is lock` & `is unlock` where the permission check returns incorrectly
-- Fixed a typo in the `is delete` help text
+- Fixed a bug with `/is lock` & `/is unlock` where the permission check returns incorrectly
+- Fixed a typo in the `/is delete` help text
 - Added a wilderness flag config setting to allows customizing the flags set automatically by SkyClaims
 
 # Beta 26.1 - S7.0

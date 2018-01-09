@@ -25,6 +25,7 @@ import static net.mohron.skyclaims.PluginInfo.GP_VERSION;
 import static net.mohron.skyclaims.PluginInfo.ID;
 import static net.mohron.skyclaims.PluginInfo.NAME;
 import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
+import static net.mohron.skyclaims.PluginInfo.SPONGE_API;
 import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 import com.google.common.collect.Maps;
@@ -89,6 +90,7 @@ import org.spongepowered.api.service.permission.PermissionService;
     description = DESCRIPTION,
     authors = AUTHORS,
     dependencies = {
+        @Dependency(id = "spongeapi", version = SPONGE_API),
         @Dependency(id = "griefprevention", version = GP_VERSION),
         @Dependency(id = "nucleus", version = NUCLEUS_VERSION, optional = true)
     })
