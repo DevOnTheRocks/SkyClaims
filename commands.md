@@ -6,8 +6,7 @@
 | `skyclaims`<br />`island`<br />`is` | Main command used to run other commands or display help. | `none` |
 | `is help` | Displays info on command usage, if player has permission to use a command. | `skyclaims.command.help` |
 | `is create [schematic]` | Used by a player to create an island. | `skyclaims.command.create`<br />_*supports [argument perms](#command-arguments)_ |
-| `is delete <island> [regen]` | Used to delete the specified player's island, accepts optional true/false to disable region regeneration. (Note: 
-**The island plot will be erased unless you choose to disable plot regen!**) | `skyclaims.command.delete` allows use of the command <br /> `skyclaims.admin.delete` allows deleting of other player's islands & use of the clear argument to delete an island without clearing |
+| `is delete <island> [regen]` | Used to delete the specified player's island, accepts optional true/false to disable region regeneration. (Note: **The island plot will be erased unless you choose to disable plot regen!**) | `skyclaims.command.delete` allows use of the command <br /> `skyclaims.admin.delete` allows deleting of other player's islands & use of the clear argument to delete an island without clearing |
 | `is demote <user>` | Used by a player to demote island members. | `skyclaims.command.demote` |
 | `is expand [blocks]` | Used by a player to expand their Island's size. | `skyclaims.command.expand` |
 | `is info [user]` | Displays information about your island or the designated player's island. | `skyclaims.command.info`<br />others: `skyclaims.admin.info` |
