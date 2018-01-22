@@ -5,14 +5,15 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
-# Beta 27.0 - SNAPSHOT
-**REQUIRED: SF build 2796+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
+# Beta 27.0
+**REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
 - Subcommands now provide useful errors
 - Updated for breaking API change in Sponge Forge 1.12.2-2555-7.0.0-BETA-2764
-- Fixed `/is expand` erroring when an island argument wasn't provided
+- Fixed `/is expand` erroring when an island argument was not provided
 - Fixed `/is delete` requiring an island argument
 - Fixed `/is delete` not removing players from the island before deletion
 - Fixed wilderness flags applying to the default world when configured to use a different world
+- Added `skyclaims.max-islands` option
 - Added confirmation dialogs to `/is delete`
 - Added configurable root command alias - the first alias is used for help text
 

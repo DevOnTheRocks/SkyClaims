@@ -23,7 +23,7 @@ This plugin is in Beta. Live support is available for the latest builds through 
     - [X] Kick existing players from an island
     - [X] Leave an island
     - [X] Transfer island ownership to another player
-    - [ ] Limit the number of islands a player may join
+    - [X] Limit the number of islands a player may join
 - [X] Change the biome of a block, chunk or entire island
 - [X] Limit entity spawning per island
 - [X] Automatic removal of inactive islands
@@ -34,7 +34,7 @@ This plugin is in Beta. Live support is available for the latest builds through 
 ## Dependencies
 
 - **Required:**
-   - [Sponge](https://www.spongepowered.org/downloads) - 1.12.2-2486-7.0.0-BETA-2688+
+   - [Sponge](https://www.spongepowered.org/downloads) - 1.12.2-2555-7.0.0-BETA-2800+
    - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.12.2-4.3.0.473+
    - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended
 - **Optional:**
