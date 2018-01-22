@@ -18,8 +18,10 @@
 
 package net.mohron.skyclaims.command.user;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import net.mohron.skyclaims.SkyClaims;
@@ -36,7 +38,6 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -48,7 +49,7 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 public class CommandList extends CommandBase {
 
   public static final String HELP_TEXT = "display a list of the current islands.";
-  private static final Text USER = Text.of("user");
+  private static final Text ISLAND = Text.of("island");
   private static final Text SORT = Text.of("sort");
 
   public static void register() {
@@ -56,7 +57,7 @@ public class CommandList extends CommandBase {
         .permission(Permissions.COMMAND_LIST)
         .description(Text.of(HELP_TEXT))
         .arguments(GenericArguments.firstParsing(
-            GenericArguments.optional(GenericArguments.user(USER)),
+            GenericArguments.optional(Arguments.island(ISLAND)),
             GenericArguments.optional(GenericArguments
                 .requiringPermission(Arguments.sort(SORT), Permissions.COMMAND_LIST_SORT))
         ))
@@ -79,15 +80,19 @@ public class CommandList extends CommandBase {
       return CommandResult.empty();
     }
     Player player = (src instanceof Player) ? (Player) src : null;
-    User user = args.<User>getOne(USER).orElse(null);
+    Collection<Island> islands = args.<UUID>getAll(ISLAND).stream()
+        .map(uuid -> SkyClaims.islands.get(uuid)).collect(Collectors.toList());
     Comparator<Island> sortType = args.<Comparator<Island>>getOne(SORT)
         .orElse(Comparator.comparing(Island::getSortableName));
 
     boolean showUnlocked = src.hasPermission(Permissions.COMMAND_LIST_UNLOCKED);
     boolean showAll = src.hasPermission(Permissions.COMMAND_LIST_ALL);
 
-    List<Text> listText = SkyClaims.islands.values().stream()
-        .filter(i -> user == null || i.isMember(user))
+    if (islands.isEmpty()) {
+      islands = SkyClaims.islands.values();
+    }
+
+    List<Text> listText = islands.stream()
         .filter(
             i -> player == null || i.isMember(player) || !i.isLocked() && showUnlocked || showAll)
         .sorted(sortType)

@@ -236,7 +236,7 @@ public class CommandIsland extends CommandBase {
       helpText.add(Text.of(
           TextColors.AQUA,
           Text.builder(alias + "list").onClick(TextActions.runCommand("/" + alias + "list")),
-          TextColors.GRAY, " [user]",
+          TextColors.GRAY, " [island]",
           TextColors.GRAY, Text.builder(" [sort]").onHover(TextActions.showText(getSortOptions())),
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandList.HELP_TEXT

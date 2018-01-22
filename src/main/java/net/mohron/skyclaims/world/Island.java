@@ -184,9 +184,9 @@ public class Island implements ContextSource {
     return false;
   }
 
-  public static int getIslandsOwned(UUID owner) {
-    return (int) SkyClaims.islands.entrySet().stream()
-        .filter(i -> i.getValue().getOwnerUniqueId().equals(owner))
+  public static int getTotalIslandsOwned(UUID owner) {
+    return (int) SkyClaims.islands.values().stream()
+        .filter(i -> i.getOwnerUniqueId().equals(owner))
         .count();
   }
 

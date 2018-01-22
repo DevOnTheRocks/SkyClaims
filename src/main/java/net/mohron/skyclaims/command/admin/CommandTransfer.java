@@ -63,7 +63,7 @@ public class CommandTransfer extends CommandBase {
     User user = args.<User>getOne(USER)
         .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Invalid user!")));
 
-    if (owner != null && Island.getIslandsOwned(owner.getUniqueId()) > 1) {
+    if (owner != null && Island.getTotalIslandsOwned(owner.getUniqueId()) > 1) {
       throw new CommandException(Text.of(
           TextColors.RED,
           "The owner supplied has multiple islands. Please go to the island you want to transfer."
