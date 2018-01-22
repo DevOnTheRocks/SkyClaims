@@ -1,6 +1,6 @@
 # Options
 Options are like configs but they are set using a permissions plugin and support custom values for players and/or groups.
-Options can also be defined in specific contexts (_server, world, claim, etc_) when supported by your permissions plugin.
+Options can also be defined in specific contexts (_server, world, claim, etc_) if supported by your permissions plugin.
 
 ## Available Options
 
@@ -14,6 +14,7 @@ Options can also be defined in specific contexts (_server, world, claim, etc_) w
 | `skyclaims.max-spawns.hostile` | The maximum number of hostile entities allowed to spawn on islands owned by the player.<br /> _0 to disable_ |
 | `skyclaims.max-spawns.passive` | The maximum number of passive entities allowed to spawn on islands owned by the player.<br /> _0 to disable_ |
 | `skyclaims.expiration` | The number of days an island must be inactive before it is removed if enabled.<br /> _0 to disable_ |
+| `skyclaims.max-islands` | The maximum number of islands a player may join.<br /> _0 to disable_ |
 
 ### Default Values
 Options may have their default values set in the SkyClaims config. If you intend to have the same options set for all players/groups, you only need to change the option values in the config.

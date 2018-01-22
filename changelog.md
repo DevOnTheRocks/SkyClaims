@@ -1,5 +1,17 @@
 # Change Log
 
+# Beta 27.0
+**REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
+- Subcommands now provide useful errors
+- Updated for breaking API change in Sponge Forge 1.12.2-2555-7.0.0-BETA-2764
+- Fixed `/is expand` erroring when an island argument was not provided
+- Fixed `/is delete` requiring an island argument
+- Fixed `/is delete` not removing players from the island before deletion
+- Fixed wilderness flags applying to the default world when configured to use a different world
+- Added `skyclaims.max-islands` option
+- Added confirmation dialogs to `/is delete`
+- Added configurable root command alias - the first alias is used for help text
+
 # Beta 26.2 Hotfix
 **Sponge API 5/6 - REQUIRES: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
 **Sponge API 7 - REQUIRES: SF build 2688+ & GP build 4.3.0.473+ OPTIONAL: Nucleus version 1.2.0+**
