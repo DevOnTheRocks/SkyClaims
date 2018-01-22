@@ -190,6 +190,12 @@ public class Island implements ContextSource {
         .count();
   }
 
+  public static int getTotalIslands(User user) {
+    return (int) SkyClaims.islands.values().stream()
+        .filter(i -> i.isMember(user))
+        .count();
+  }
+
   public UUID getUniqueId() {
     return id;
   }

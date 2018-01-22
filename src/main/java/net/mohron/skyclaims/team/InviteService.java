@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Options;
+import net.mohron.skyclaims.world.Island;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -77,13 +78,14 @@ public class InviteService {
 
   private List<Text> getIncomingInviteText(User user) {
     SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
+    boolean canJoin = Options.getMaxIslands(user.getUniqueId()) < 1 || Options.getMaxIslands(user.getUniqueId()) - Island.getTotalIslands(user) > 0;
     return invites.row(user).values().stream()
         .map(invite -> Text.of(
             TextColors.WHITE, "[",
             Text.builder("✓")
                 .color(TextColors.GREEN)
                 .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Accept")))
-                .onClick(TextActions.executeCallback(src -> invite.accept())),
+                .onClick(TextActions.executeCallback(acceptInvite(invite, canJoin))),
             TextColors.WHITE, "] [",
             Text.builder("✗")
                 .color(TextColors.RED)
@@ -101,6 +103,16 @@ public class InviteService {
                 )))
         ))
         .collect(Collectors.toList());
+  }
+
+  private Consumer<CommandSource> acceptInvite(Invite invite, boolean canJoin) {
+    return src -> {
+      if (canJoin) {
+        invite.accept();
+      } else {
+        src.sendMessage(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
+      }
+    };
   }
 
   private List<Text> getOutgoingInviteText(User user) {
@@ -162,10 +174,10 @@ public class InviteService {
         }
 
         int limit = Options.getMaxIslands(player.getUniqueId());
-        Text header = (limit < 1)
+        Text header = limit < 1
             ? null
-            : Text.of(TextColors.GRAY, "You may join up to ", TextColors.LIGHT_PURPLE, limit,
-                TextColors.GRAY, " islands.", Text.NEW_LINE);
+            : Text.of(TextColors.GRAY, "You currently have ", TextColors.LIGHT_PURPLE, Island.getTotalIslands(player), TextColors.GRAY, " of ",
+                TextColors.LIGHT_PURPLE, limit, TextColors.GRAY, " maximum island", limit > 1 ? "s" : Text.EMPTY, ".");
 
         PaginationList.builder()
             .title(title)

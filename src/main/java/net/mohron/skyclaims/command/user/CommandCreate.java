@@ -72,6 +72,11 @@ public class CommandCreate extends CommandBase.PlayerCommand {
     if (Island.hasIsland(player.getUniqueId())) {
       throw new CommandException(Text.of(TextColors.RED, "You already have an island!"));
     }
+    boolean canCreate = Options.getMaxIslands(player.getUniqueId()) < 1
+        || Options.getMaxIslands(player.getUniqueId()) - Island.getTotalIslands(player) > 0;
+    if (!canCreate) {
+      throw new CommandException(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
+    }
 
     Optional<String> schematic = args.getOne(SCHEMATIC);
     if (schematic.isPresent()) {
