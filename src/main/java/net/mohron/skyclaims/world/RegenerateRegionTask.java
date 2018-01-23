@@ -60,18 +60,14 @@ public class RegenerateRegionTask implements Runnable {
 
     Stopwatch sw = Stopwatch.createStarted();
 
-    for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX();
-        x += 16) {
-      for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ();
-          z += 16) {
+    for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
+      for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
         world.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
           chunk.loadChunk(false);
           // Teleport any players to world spawn
-          chunk.getEntities(e -> e instanceof Player)
-              .forEach(e -> e.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
+          chunk.getEntities(e -> e instanceof Player).forEach(e -> e.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
           // Clear the contents of an tile entity with an inventory
-          chunk.getTileEntities(e -> e instanceof TileEntityCarrier)
-              .forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
+          chunk.getTileEntities(e -> e instanceof TileEntityCarrier).forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
           for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
             for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
               for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
@@ -92,16 +88,13 @@ public class RegenerateRegionTask implements Runnable {
     sw.stop();
 
     PLUGIN.getLogger().info(String
-        .format("Finished clearing region (%s, %s) in %dms.", region.getX(), region.getZ(),
-            sw.elapsed(TimeUnit.MILLISECONDS)));
+        .format("Finished clearing region (%s, %s) in %dms.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.MILLISECONDS)));
 
     if (island != null) {
       if (commands) {
         // Run reset commands
         for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
-          PLUGIN.getGame().getCommandManager()
-              .process(PLUGIN.getGame().getServer().getConsole(),
-                  command.replace("@p", island.getOwnerName()));
+          PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
         }
       }
 

@@ -24,29 +24,18 @@ import co.aikar.timings.Timings;
 public class SkyClaimsTimings {
 
   // TASKS
-  public static final Timing GENERATE_ISLAND = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "onGenerateIsland");
-  public static final Timing CLEAR_ISLAND = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "onClearIsland");
-  public static final Timing ISLAND_CLEANUP = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "onIslandCleanupTask");
+  public static final Timing GENERATE_ISLAND = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onGenerateIsland");
+  public static final Timing CLEAR_ISLAND = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onClearIsland");
+  public static final Timing ISLAND_CLEANUP = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onIslandCleanupTask");
 
   // LISTENERS
-  public static final Timing CLIENT_JOIN = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "onClientJoin");
-  public static final Timing CREATE_ISLAND_ON_JOIN = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "createIslandOnJoin", CLIENT_JOIN);
-  public static final Timing DELIVER_INVITES = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "deliverInvites", CLIENT_JOIN);
-  public static final Timing ENTITY_SPAWN = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "EntitySpawn");
-  public static final Timing PLAYER_RESPAWN = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "onPlayerRespawn");
-  public static final Timing SCHEMATIC_HANDLER = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "onSelectSchematic");
-  public static final Timing WORLD_LOAD = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "onWorldLoad");
-  public static final Timing CLAIM_HANDLER = Timings
-      .of(SkyClaims.getInstance().getPluginContainer(), "onClaimEvent");
+  public static final Timing CLIENT_JOIN = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onClientJoin");
+  public static final Timing CREATE_ISLAND_ON_JOIN = Timings.of(SkyClaims.getInstance().getPluginContainer(), "createIslandOnJoin", CLIENT_JOIN);
+  public static final Timing DELIVER_INVITES = Timings.of(SkyClaims.getInstance().getPluginContainer(), "deliverInvites", CLIENT_JOIN);
+  public static final Timing ENTITY_SPAWN = Timings.of(SkyClaims.getInstance().getPluginContainer(), "EntitySpawn");
+  public static final Timing PLAYER_RESPAWN = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onPlayerRespawn");
+  public static final Timing SCHEMATIC_HANDLER = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onSelectSchematic");
+  public static final Timing WORLD_LOAD = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onWorldLoad");
+  public static final Timing CLAIM_HANDLER = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onClaimEvent");
 
 }

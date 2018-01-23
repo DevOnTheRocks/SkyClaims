@@ -97,9 +97,7 @@ public class Island implements ContextSource {
 
     // Run commands defined in config on creation
     for (String command : PLUGIN.getConfig().getMiscConfig().getCreateCommands()) {
-      PLUGIN.getGame().getCommandManager()
-          .process(PLUGIN.getGame().getServer().getConsole(),
-              command.replace("@p", owner.getName()));
+      PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
     }
 
     // Generate the island using the specified schematic
@@ -214,8 +212,7 @@ public class Island implements ContextSource {
 
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   private String getName(UUID uuid) {
-    Optional<User> player = PLUGIN.getGame().getServiceManager()
-        .provideUnchecked(UserStorageService.class).get(uuid);
+    Optional<User> player = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid);
     if (player.isPresent()) {
       return player.get().getName();
     } else {
@@ -236,13 +233,11 @@ public class Island implements ContextSource {
   }
 
   public Date getDateCreated() {
-    return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateCreated())
-        : Date.from(Instant.now());
+    return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateCreated()) : Date.from(Instant.now());
   }
 
   public Date getDateLastActive() {
-    return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateLastActive())
-        : Date.from(Instant.now());
+    return getClaim().isPresent() ? Date.from(getClaim().get().getData().getDateLastActive()) : Date.from(Instant.now());
   }
 
   public Text getName() {
@@ -274,14 +269,13 @@ public class Island implements ContextSource {
 
   public void setSpawn(Transform<World> transform) {
     if (contains(transform.getLocation())) {
-      Transform<World> spawn = new Transform<>(getWorld(), transform.getPosition(),
-          transform.getRotation());
+      Transform<World> spawn = new Transform<>(getWorld(), transform.getPosition(), transform.getRotation());
       if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 256) {
-        spawn.setPosition(
-            new Vector3d(spawn.getLocation().getX(),
-                PLUGIN.getConfig().getWorldConfig().getIslandHeight(),
-                spawn.getLocation().getZ()
-            ));
+        spawn.setPosition(new Vector3d(
+            spawn.getLocation().getX(),
+            PLUGIN.getConfig().getWorldConfig().getIslandHeight(),
+            spawn.getLocation().getZ()
+        ));
       }
       this.spawn = spawn;
       getClaim().ifPresent(claim -> claim.getData().setSpawnPos(spawn.getPosition().toInt()));
@@ -316,18 +310,15 @@ public class Island implements ContextSource {
     PLUGIN.getGriefPrevention().getWorldPlayerData(getWorld().getProperties(), owner)
         .ifPresent(data -> getClaim().ifPresent(claim -> {
           int spacing = (512 - width) / 2;
-          claim.resize(
-              new Vector3i(
-                  getRegion().getLesserBoundary().getX() + spacing,
-                  data.getMinClaimLevel(),
-                  getRegion().getLesserBoundary().getZ() + spacing
-              ),
-              new Vector3i(
-                  getRegion().getGreaterBoundary().getX() - spacing,
-                  data.getMaxClaimLevel(),
-                  getRegion().getGreaterBoundary().getZ() - spacing
-              )
-          );
+          claim.resize(new Vector3i(
+              getRegion().getLesserBoundary().getX() + spacing,
+              data.getMinClaimLevel(),
+              getRegion().getLesserBoundary().getZ() + spacing
+          ), new Vector3i(
+              getRegion().getGreaterBoundary().getX() - spacing,
+              data.getMaxClaimLevel(),
+              getRegion().getGreaterBoundary().getZ() - spacing
+          ));
         }));
     return getWidth() == width;
   }
@@ -474,10 +465,10 @@ public class Island implements ContextSource {
     getClaim().ifPresent(claim -> {
       ClaimResult result = claim.transferOwner(user.getUniqueId());
       if (result.getResultType() != ClaimResultType.SUCCESS) {
-        PLUGIN.getLogger().error(
-            String.format("Failed to transfer claim (%s) when transferring %s's island to %s.\n%s",
-                claim.getUniqueId(), getOwnerName(), user.getName(), result.getResultType()
-            ));
+        PLUGIN.getLogger().error(String.format(
+            "Failed to transfer claim (%s) when transferring %s's island to %s.\n%s",
+            claim.getUniqueId(), getOwnerName(), user.getName(), result.getResultType()
+        ));
       }
     });
     this.owner = user.getUniqueId();
@@ -498,20 +489,17 @@ public class Island implements ContextSource {
 
   public void clear() {
     RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
-    PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask)
-        .submit(PLUGIN);
+    PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
   }
 
   public void reset(String schematic, boolean runCommands) {
-    RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic,
-        runCommands);
-    PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask)
-        .submit(PLUGIN);
+    RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, runCommands);
+    PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
   }
 
   public void delete() {
     ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(getWorld());
-    getClaim().ifPresent(claim -> claimManager.deleteClaim(claim));
+    getClaim().ifPresent(claimManager::deleteClaim);
     SkyClaims.islands.remove(id);
     PLUGIN.getDatabase().removeIsland(this);
   }

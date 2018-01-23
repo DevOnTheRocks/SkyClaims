@@ -19,7 +19,6 @@
 package net.mohron.skyclaims.util;
 
 import java.util.function.Consumer;
-import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
@@ -33,19 +32,16 @@ import org.spongepowered.api.world.World;
 
 public class CommandUtil {
 
-  public static Consumer<CommandSource> createTeleportConsumer(CommandSource src,
-      Location<World> location) {
+  public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location) {
     return teleport -> {
       if (src instanceof Player) {
         Player player = (Player) src;
-        Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper()
-            .getSafeLocation(location).orElse(null);
+        Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
         if (safeLocation == null) {
           player.sendMessage(Text.of(
               TextColors.RED, "Location is not safe.", Text.NEW_LINE,
               Text.builder("Are you sure you want to teleport here?")
-                  .onClick(
-                      TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+                  .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
                   .color(TextColors.GREEN)
           ));
         } else {
@@ -57,8 +53,7 @@ public class CommandUtil {
 
   public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
     return teleport -> {
-      Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper()
-          .getSafeLocation(location).orElse(null);
+      Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
       if (safeLocation == null) {
         player.sendMessage(Text.of(
             TextColors.RED, "Location is not safe.", Text.NEW_LINE,
@@ -72,13 +67,11 @@ public class CommandUtil {
     };
   }
 
-  private static Consumer<CommandSource> createForceTeleportConsumer(Player player,
-      Location<World> location) {
+  private static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
     return teleport -> player.setLocation(location);
   }
 
-  public static Consumer<CommandSource> createCommandConsumer(CommandSource src, String command,
-      String arguments,
+  public static Consumer<CommandSource> createCommandConsumer(CommandSource src, String command, String arguments,
       Consumer<CommandSource> postConsumerTask) {
     return consumer -> {
       try {

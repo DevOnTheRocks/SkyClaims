@@ -119,9 +119,9 @@ public class SkyClaims {
   private Path configDir;
   @Inject
   @DefaultConfig(sharedRoot = false)
-  private ConfigurationLoader<CommentedConfigurationNode> configManager;
-  private ConfigManager pluginConfigManager;
-  private GlobalConfig defaultConfig;
+  private ConfigurationLoader<CommentedConfigurationNode> configLoader;
+  private ConfigManager configManager;
+  private GlobalConfig config;
 
   private IDatabase database;
 
@@ -144,9 +144,9 @@ public class SkyClaims {
   public void onPreInitialization(GamePreInitializationEvent event) {
     logger.info("{} {} is initializing...", NAME, VERSION);
 
-    defaultConfig = new GlobalConfig();
-    pluginConfigManager = new ConfigManager(configManager);
-    pluginConfigManager.save();
+    config = new GlobalConfig();
+    configManager = new ConfigManager(configLoader);
+    configManager.save();
 
     if (Sponge.getPluginManager().isLoaded("nucleus")) {
       Sponge.getEventManager().registerListeners(this, new NucleusIntegration());
@@ -175,8 +175,7 @@ public class SkyClaims {
         );
         enabled = false;
       } else {
-        logger.info("Successfully integrated with GriefPrevention {}!",
-            griefPrevention.getImplementationVersion());
+        logger.info("Successfully integrated with GriefPrevention {}!", griefPrevention.getImplementationVersion());
       }
     } else {
       logger.error("GriefPrevention Integration Failed! Disabling SkyClaims.");
@@ -193,10 +192,8 @@ public class SkyClaims {
     }
 
     permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
-    if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin()
-        .getId().equalsIgnoreCase("sponge")) {
-      logger.error(
-          "Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
+    if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
+      logger.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
       enabled = false;
       return;
     }
@@ -243,7 +240,7 @@ public class SkyClaims {
 
   public void reload() {
     // Load Plugin Config
-    pluginConfigManager.load();
+    configManager.load();
     // Load Schematics Directory
     SchematicArgument.load();
     // Load Database
@@ -293,7 +290,7 @@ public class SkyClaims {
   }
 
   private IDatabase initializeDatabase() {
-    String type = defaultConfig.getStorageConfig().getType();
+    String type = config.getStorageConfig().getType();
     if (type.equalsIgnoreCase("SQLite")) {
       return new SqliteDatabase();
     } else if (type.equalsIgnoreCase("MySQL")) {
@@ -307,17 +304,14 @@ public class SkyClaims {
     metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> islands.size()));
     metrics.addCustomChart(new Metrics.DrilldownPie("sponge_version", () -> {
       Map<String, Map<String, Integer>> map = new HashMap<>();
-      String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion()
-          .orElse("?").split("-")[0];
+      String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion().orElse("?").split("-")[0];
       Map<String, Integer> entry = new HashMap<>();
-      entry.put(Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion()
-          .orElse(null), 1);
+      entry.put(Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null), 1);
       map.put(api, entry);
       return map;
     }));
     metrics.addCustomChart(new Metrics.SimplePie("allocated_ram", () ->
-        String.format("%s GB",
-            Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0))
+        String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0))
     );
   }
 
@@ -346,15 +340,11 @@ public class SkyClaims {
   }
 
   public GlobalConfig getConfig() {
-    return this.defaultConfig;
+    return this.config;
   }
 
   public void setConfig(GlobalConfig config) {
-    this.defaultConfig = config;
-  }
-
-  public ConfigManager getConfigManager() {
-    return this.pluginConfigManager;
+    this.config = config;
   }
 
   public Path getConfigDir() {
