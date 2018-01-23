@@ -78,8 +78,7 @@ public class RegenerateRegionTask implements Runnable {
             }
           }
           // Remove any remaining entities.
-          chunk.getEntities()
-              .forEach(Entity::remove);
+          chunk.getEntities(e -> !(e instanceof Player)).forEach(Entity::remove);
           chunk.unloadChunk();
         });
       }
