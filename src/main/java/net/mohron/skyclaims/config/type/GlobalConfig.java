@@ -37,8 +37,6 @@ public class GlobalConfig {
   private ExpirationConfig expirationConfig = new ExpirationConfig();
   @Setting(value = "Misc")
   private MiscConfig miscConfig = new MiscConfig();
-  @Setting(value = "Options", comment = "The default values options use when not explicitly set.\ngithub.com/DevOnTheRocks/SkyClaims/wiki/Options")
-  private OptionsConfig optionsConfig = new OptionsConfig();
   @Setting(value = "Permission")
   private PermissionConfig permissionConfig = new PermissionConfig();
   @Setting(value = "Storage")
@@ -72,10 +70,6 @@ public class GlobalConfig {
 
   public MiscConfig getMiscConfig() {
     return miscConfig;
-  }
-
-  public OptionsConfig getOptionsConfig() {
-    return optionsConfig;
   }
 
   public PermissionConfig getPermissionConfig() {

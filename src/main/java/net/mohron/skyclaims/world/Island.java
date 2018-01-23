@@ -103,8 +103,7 @@ public class Island implements ContextSource {
     }
 
     // Generate the island using the specified schematic
-    GenerateIslandTask generateIsland = new GenerateIslandTask(owner.getUniqueId(), this,
-        schematic);
+    GenerateIslandTask generateIsland = new GenerateIslandTask(owner.getUniqueId(), this, schematic);
     PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
 
     save();
@@ -400,7 +399,7 @@ public class Island implements ContextSource {
   }
 
   public int getTotalMembers() {
-    return (!getClaim().isPresent()) ? 1 : new HashSet<>(getClaim().get().getUserTrusts()).size();
+    return !getClaim().isPresent() ? 1 : new HashSet<>(getClaim().get().getUserTrusts()).size();
   }
 
   public int getTotalEntities() {

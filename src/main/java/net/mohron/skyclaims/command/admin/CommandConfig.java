@@ -104,26 +104,6 @@ public class CommandConfig extends CommandBase {
         TextColors.YELLOW, "Spawn-Regions", TextColors.WHITE, " : ",
         TextColors.GRAY, config.getWorldConfig().getSpawnRegions()
     ));
-    configText.add(Text.of(
-        TextColors.BLUE, "Options", TextColors.WHITE, " | ",
-        TextColors.YELLOW, "default-schematic", TextColors.WHITE, " : ",
-        TextColors.GRAY, config.getOptionsConfig().getSchematic()
-    ));
-    configText.add(Text.of(
-        TextColors.BLUE, "Options", TextColors.WHITE, " | ",
-        TextColors.YELLOW, "default-biome", TextColors.WHITE, " : ",
-        TextColors.GRAY, config.getOptionsConfig().getBiome()
-    ));
-    configText.add(Text.of(
-        TextColors.BLUE, "Options", TextColors.WHITE, " | ",
-        TextColors.YELLOW, "min-size", TextColors.WHITE, " : ",
-        TextColors.GRAY, config.getOptionsConfig().getMinSize()
-    ));
-    configText.add(Text.of(
-        TextColors.BLUE, "Options", TextColors.WHITE, " | ",
-        TextColors.YELLOW, "max-size", TextColors.WHITE, " : ",
-        TextColors.GRAY, config.getOptionsConfig().getMaxSize()
-    ));
 
     PaginationList.builder()
         .title(Text.of(TextColors.AQUA, "SkyClaims Config"))

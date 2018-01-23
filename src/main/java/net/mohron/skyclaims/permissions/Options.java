@@ -29,8 +29,7 @@ import org.spongepowered.api.world.biome.BiomeType;
 public class Options {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-  private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance()
-      .getPermissionService();
+  private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
 
   // SkyClaims Options
   private static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
@@ -44,13 +43,11 @@ public class Options {
   private static final String MAX_ISLANDS = "skyclaims.max-islands";
 
   public static String getDefaultSchematic(UUID playerUniqueId) {
-    return getStringOption(playerUniqueId, DEFAULT_SCHEMATIC,
-        PLUGIN.getConfig().getOptionsConfig().getSchematic());
+    return getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "skyfactory");
   }
 
   public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {
-    String biomeOption = getStringOption(playerUniqueId, DEFAULT_BIOME,
-        PLUGIN.getConfig().getOptionsConfig().getBiome());
+    String biomeOption = getStringOption(playerUniqueId, DEFAULT_BIOME, "");
     if (StringUtils.isBlank(biomeOption)) {
       return Optional.empty();
     }
@@ -63,45 +60,37 @@ public class Options {
   }
 
   public static int getMinSize(UUID playerUniqueId) {
-    return getIntOption(playerUniqueId, MIN_SIZE,
-        PLUGIN.getConfig().getOptionsConfig().getMinSize(), 8, 256);
+    return getIntOption(playerUniqueId, MIN_SIZE, 48, 8, 256);
   }
 
   public static int getMaxSize(UUID playerUniqueId) {
-    return getIntOption(playerUniqueId, MAX_SIZE,
-        PLUGIN.getConfig().getOptionsConfig().getMaxSize(), 8, 256);
+    return getIntOption(playerUniqueId, MAX_SIZE, 64, 8, 256);
   }
 
   public static int getMaxSpawns(UUID playerUniqueId) {
-    return getIntOption(playerUniqueId, MAX_SPAWNS,
-        PLUGIN.getConfig().getEntityConfig().getMaxSpawns());
+    return getIntOption(playerUniqueId, MAX_SPAWNS, PLUGIN.getConfig().getEntityConfig().getMaxSpawns());
   }
 
   public static int getMaxHostileSpawns(UUID playerUniqueId) {
-    return getIntOption(playerUniqueId, MAX_HOSTILE,
-        PLUGIN.getConfig().getEntityConfig().getMaxHostile());
+    return getIntOption(playerUniqueId, MAX_HOSTILE, PLUGIN.getConfig().getEntityConfig().getMaxHostile());
   }
 
   public static int getMaxPassiveSpawns(UUID playerUniqueId) {
-    return getIntOption(playerUniqueId, MAX_PASSIVE,
-        PLUGIN.getConfig().getEntityConfig().getMaxPassive());
+    return getIntOption(playerUniqueId, MAX_PASSIVE, PLUGIN.getConfig().getEntityConfig().getMaxPassive());
   }
 
   public static int getExpiration(UUID playerUniqueId) {
-    return getIntOption(playerUniqueId, EXPIRATION,
-        PLUGIN.getConfig().getExpirationConfig().getThreshold());
+    return getIntOption(playerUniqueId, EXPIRATION, PLUGIN.getConfig().getExpirationConfig().getThreshold());
   }
 
   public static int getMaxIslands(UUID playerUniqueId) {
-    return getIntOption(playerUniqueId, MAX_ISLANDS,
-        PLUGIN.getConfig().getOptionsConfig().getMaxIslands());
+    return getIntOption(playerUniqueId, MAX_ISLANDS, 0);
   }
 
   private static String getStringOption(UUID uuid, String option, String defaultValue) {
-    return !PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent() ?
-        defaultValue :
-        PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option)
-            .orElse(defaultValue);
+    return !PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()
+        ? defaultValue
+        : PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(defaultValue);
   }
 
   private static int getIntOption(UUID uuid, String option, int defaultValue, int min, int max) {
@@ -113,8 +102,7 @@ public class Options {
     if (!PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()) {
       return defaultValue;
     }
-    String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get()
-        .getOption(option).orElse(String.valueOf(defaultValue));
+    String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(String.valueOf(defaultValue));
     try {
       return Integer.parseInt(value);
     } catch (NumberFormatException e) {
