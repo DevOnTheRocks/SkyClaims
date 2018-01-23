@@ -24,7 +24,6 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 import com.google.common.collect.Lists;
 import java.util.List;
 import net.mohron.skyclaims.PluginInfo;
-import net.mohron.skyclaims.command.admin.CommandConfig;
 import net.mohron.skyclaims.command.admin.CommandCreateSchematic;
 import net.mohron.skyclaims.command.admin.CommandReload;
 import net.mohron.skyclaims.command.admin.CommandTransfer;
@@ -54,7 +53,6 @@ public class CommandAdmin extends CommandBase {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_ADMIN)
         .description(Text.of(HELP_TEXT))
-        .child(CommandConfig.commandSpec, "config")
         .child(CommandReload.commandSpec, "reload")
         .child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
         .child(CommandTransfer.commandSpec, "transfer")
@@ -76,7 +74,6 @@ public class CommandAdmin extends CommandBase {
   }
 
   private static void registerSubCommands() {
-    CommandConfig.register();
     CommandCreateSchematic.register();
     CommandReload.register();
     CommandTransfer.register();
@@ -89,14 +86,6 @@ public class CommandAdmin extends CommandBase {
         ? config.getBaseAlias() + " admin "
         : config.getAdminAlias().get(0) + " ";
     boolean hasPerms = false;
-
-    if (src.hasPermission(Permissions.COMMAND_CONFIG)) {
-      helpText.add(Text.of(
-          TextColors.AQUA, Text.of(TextActions.runCommand("/" + alias + "config"), alias, "config"),
-          TextColors.DARK_GRAY, " - ",
-          TextColors.DARK_GREEN, CommandConfig.HELP_TEXT));
-      hasPerms = true;
-    }
 
     if (src.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
       helpText.add(Text.of(
