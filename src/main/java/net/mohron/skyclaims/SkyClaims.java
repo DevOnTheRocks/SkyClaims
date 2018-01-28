@@ -91,7 +91,7 @@ import java.util.concurrent.TimeUnit;
     description = DESCRIPTION,
     authors = AUTHORS,
     dependencies = {
-        @Dependency(id = "spongeapi"),
+        @Dependency(id = "spongeapi", version = "5.1.0"),
         @Dependency(id = "griefprevention", version = GP_VERSION),
         @Dependency(id = "nucleus", version = NUCLEUS_VERSION, optional = true)
     })
