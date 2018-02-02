@@ -57,16 +57,14 @@ public class CommandAdmin extends CommandBase {
         .child(CommandCreateSchematic.commandSpec, "createschematic", "cs")
         .child(CommandTransfer.commandSpec, "transfer")
         .childArgumentParseExceptionFallback(false)
-        .arguments(GenericArguments
-            .optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
+        .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
         .executor(new CommandAdmin())
         .build();
 
     try {
       registerSubCommands();
       CommandIsland.addSubCommand(commandSpec, "admin");
-      Sponge.getCommandManager()
-          .register(PLUGIN, commandSpec, PLUGIN.getConfig().getCommandConfig().getAdminAlias());
+      Sponge.getCommandManager().register(PLUGIN, commandSpec, PLUGIN.getConfig().getCommandConfig().getAdminAlias());
       PLUGIN.getLogger().debug("Registered command: CommandAdmin");
     } catch (UnsupportedOperationException e) {
       PLUGIN.getLogger().error("Failed to register command: CommandAdmin", e);

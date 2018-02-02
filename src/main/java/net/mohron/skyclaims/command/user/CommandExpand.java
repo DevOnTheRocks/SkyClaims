@@ -70,18 +70,15 @@ public class CommandExpand extends CommandBase.IslandCommand {
   }
 
   @Override
-  public CommandResult execute(Player player, Island island, CommandContext args)
-      throws CommandException {
+  public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
     int blocks = args.<Integer>getOne(BLOCKS).orElse(1);
 
     Claim claim = island.getClaim()
-        .orElseThrow(() -> new CommandException(
-            Text.of(TextColors.RED, "This command can only be used on claimed islands.")));
+        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "This command can only be used on claimed islands.")));
 
     // Check if the player is a Manager
     if (!island.isManager(player)) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "Only an island manager may use this command!"));
+      throw new CommandException(Text.of(TextColors.RED, "Only an island manager may use this command!"));
     }
 
     int width = claim.getWidth();
@@ -132,18 +129,15 @@ public class CommandExpand extends CommandBase.IslandCommand {
           .orElse(null);
 
       if (claim == null || playerData == null) {
-        src.sendMessage(Text.of(TextColors.RED, "An error occurred while attempting to expand ",
-            island.getName(), TextColors.RED, "!"));
-        PLUGIN.getLogger()
-            .error("Expansion Failed: {} - claim: {}, player-data: {}", island.getSortableName(),
-                claim != null, playerData != null);
+        src.sendMessage(Text.of(TextColors.RED, "An error occurred while attempting to expand ", island.getName(), TextColors.RED, "!"));
+        PLUGIN.getLogger().error("Expansion Failed: {} - claim: {}, player-data: {}", island.getSortableName(), claim != null, playerData != null);
         return;
       }
 
       int bal = playerData.getRemainingClaimBlocks();
-      int cost = (int) Math.pow(claim.getWidth() + blocks, 2) * (
-          GP.getClaimBlockSystem() == ClaimBlockSystem.VOLUME ? 256 : 1) - claim
-          .getClaimBlocks();
+      int cost = (int) Math.pow(claim.getWidth() + blocks, 2)
+          * (GP.getClaimBlockSystem() == ClaimBlockSystem.VOLUME ? 256 : 1)
+          - claim.getClaimBlocks();
 
       // Check if the Owner, has enough claim blocks to expand
       if (bal < cost) {
@@ -156,6 +150,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
             TextColors.LIGHT_PURPLE, blocks,
             TextColors.RED, "."
         ));
+        return;
       }
 
       // Use the Owner's claim blocks to expand the island

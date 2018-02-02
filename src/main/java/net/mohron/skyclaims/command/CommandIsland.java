@@ -80,14 +80,12 @@ public class CommandIsland extends CommandBase {
         .description(Text.of(HELP_TEXT))
         .children(children)
         .childArgumentParseExceptionFallback(false)
-        .arguments(GenericArguments
-            .optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
+        .arguments(GenericArguments.optionalWeak(GenericArguments.onlyOne(GenericArguments.literal(HELP, "help"))))
         .executor(new CommandIsland())
         .build();
 
     try {
-      Sponge.getCommandManager()
-          .register(PLUGIN, commandSpec, PLUGIN.getConfig().getCommandConfig().getBaseAlias());
+      Sponge.getCommandManager().register(PLUGIN, commandSpec, PLUGIN.getConfig().getCommandConfig().getBaseAlias());
       PLUGIN.getLogger().debug("Registered command: CommandIsland");
     } catch (UnsupportedOperationException e) {
       PLUGIN.getLogger().error("Failed to register command: CommandIsland", e);
