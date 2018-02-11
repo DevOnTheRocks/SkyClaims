@@ -62,7 +62,7 @@ public class BiomeArgument extends CommandElement {
     String arg = args.next().toLowerCase();
     if (BIOMES.containsKey(arg)) {
       BiomeType biomeType = BIOMES.get(arg);
-      if (!PLUGIN.getConfig().getPermissionConfig().isSeparateBiomePerms() || !hasPermission(source, getArgument(biomeType))) {
+      if (PLUGIN.getConfig().getPermissionConfig().isSeparateBiomePerms() && !hasPermission(source, getArgument(biomeType))) {
         throw args.createError(Text.of(TextColors.RED, "You do not have permission to use the supplied biome type."));
       }
       return biomeType;
