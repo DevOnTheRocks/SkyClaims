@@ -28,6 +28,7 @@ import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -62,11 +63,11 @@ public class CommandCreate extends ListSchematicCommand {
 
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
-    if (Island.hasIsland(player.getUniqueId())) {
+    if (IslandManager.hasIsland(player.getUniqueId())) {
       throw new CommandException(Text.of(TextColors.RED, "You already have an island!"));
     }
     boolean canCreate = Options.getMaxIslands(player.getUniqueId()) < 1
-        || Options.getMaxIslands(player.getUniqueId()) - Island.getTotalIslands(player) > 0;
+        || Options.getMaxIslands(player.getUniqueId()) - IslandManager.getTotalIslands(player) > 0;
     if (!canCreate) {
       throw new CommandException(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
     }
@@ -103,7 +104,7 @@ public class CommandCreate extends ListSchematicCommand {
     return src -> {
       if (src instanceof Player) {
         Player player = (Player) src;
-        if (Island.hasIsland(player.getUniqueId())) {
+        if (IslandManager.hasIsland(player.getUniqueId())) {
           player.sendMessage(Text.of(TextColors.RED, "You already have an island!"));
           return;
         }

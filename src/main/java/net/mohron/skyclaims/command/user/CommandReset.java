@@ -27,6 +27,7 @@ import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -65,7 +66,7 @@ public class CommandReset extends ListSchematicCommand {
 
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
-    Island island = Island.getByOwner(player.getUniqueId())
+    Island island = IslandManager.getByOwner(player.getUniqueId())
         .orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
     boolean keepInv = args.hasAny(KEEP_INV);
 

@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Options;
-import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -78,7 +78,7 @@ public class InviteService {
 
   private List<Text> getIncomingInviteText(User user) {
     SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
-    boolean canJoin = Options.getMaxIslands(user.getUniqueId()) < 1 || Options.getMaxIslands(user.getUniqueId()) - Island.getTotalIslands(user) > 0;
+    boolean canJoin = Options.getMaxIslands(user.getUniqueId()) < 1 || Options.getMaxIslands(user.getUniqueId()) - IslandManager.getTotalIslands(user) > 0;
     return invites.row(user).values().stream()
         .map(invite -> Text.of(
             TextColors.WHITE, "[",
@@ -176,7 +176,7 @@ public class InviteService {
         int limit = Options.getMaxIslands(player.getUniqueId());
         Text header = limit < 1
             ? null
-            : Text.of(TextColors.GRAY, "You currently have ", TextColors.LIGHT_PURPLE, Island.getTotalIslands(player), TextColors.GRAY, " of ",
+            : Text.of(TextColors.GRAY, "You currently have ", TextColors.LIGHT_PURPLE, IslandManager.getTotalIslands(player), TextColors.GRAY, " of ",
                 TextColors.LIGHT_PURPLE, limit, TextColors.GRAY, " maximum island", limit > 1 ? "s" : Text.EMPTY, ".");
 
         PaginationList.builder()

@@ -31,6 +31,7 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.Invite;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;
@@ -74,7 +75,7 @@ public class ClaimEventHandler {
         if (event instanceof DeleteClaimEvent.Abandon) {
           event.setMessage(Text.of(TextColors.RED, "You cannot abandon an island claim!"));
         } else {
-          Island.get(claim).ifPresent((Island island) -> {
+          IslandManager.get(claim).ifPresent((Island island) -> {
             event.setMessage(Text.of(TextColors.RED,
                 "A claim you are attempting to delete belongs to an island.\n", Text
                     .of(TextColors.AQUA, "Do you want to delete ", island.getOwnerName(),
@@ -119,11 +120,11 @@ public class ClaimEventHandler {
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
     if (claim.getWorld().equals(world) && !claim.isAdminClaim() && !claim.getParent().isPresent()) {
-      if (!Island.get(claim).isPresent()) {
+      if (!IslandManager.get(claim).isPresent()) {
         SkyClaimsTimings.CLAIM_HANDLER.abort();
         return;
       }
-      Island island = Island.get(claim).get();
+      Island island = IslandManager.get(claim).get();
       if (island.isLocked() && !island.isMember(player) && !player
           .hasPermission(Permissions.BYPASS_LOCK)) {
         event.setCancelled(true);
@@ -166,12 +167,12 @@ public class ClaimEventHandler {
         claim = parent;
       }
       // Ignore non-basic claims or claims without an island.
-      if (!claim.isBasicClaim() && !Island.get(claim).isPresent()) {
+      if (!claim.isBasicClaim() && !IslandManager.get(claim).isPresent()) {
         SkyClaimsTimings.CLAIM_HANDLER.abort();
         return;
       }
       // Send out invites
-      Island island = Island.get(claim).get();
+      Island island = IslandManager.get(claim).get();
       for (PrivilegeType type : PrivilegeType.values()) {
         if (type.getTrustType() == event.getTrustType()) {
           event.setCancelled(true);

@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -73,13 +73,13 @@ public class CommandList extends CommandBase {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    if (SkyClaims.islands.isEmpty()) {
+    if (IslandManager.ISLANDS.isEmpty()) {
       src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
       return CommandResult.empty();
     }
     Player player = (src instanceof Player) ? (Player) src : null;
     Collection<Island> islands = args.<UUID>getAll(ISLAND).stream()
-        .map(uuid -> SkyClaims.islands.get(uuid)).collect(Collectors.toList());
+        .map(uuid -> IslandManager.ISLANDS.get(uuid)).collect(Collectors.toList());
     Comparator<Island> sortType = args.<Comparator<Island>>getOne(SORT)
         .orElse(Comparator.comparing(Island::getSortableName));
 
@@ -87,7 +87,7 @@ public class CommandList extends CommandBase {
     boolean showAll = src.hasPermission(Permissions.COMMAND_LIST_ALL);
 
     if (islands.isEmpty()) {
-      islands = SkyClaims.islands.values();
+      islands = IslandManager.ISLANDS.values();
     }
 
     List<Text> listText = islands.stream()
