@@ -39,8 +39,10 @@ public class CommandUtil {
         Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
         if (safeLocation == null) {
           player.sendMessage(Text.of(
-              TextColors.RED, "Location is not safe.", Text.NEW_LINE,
-              Text.builder("Are you sure you want to teleport here?")
+              TextColors.RED, "Location is not safe. ",
+              TextColors.WHITE, "Are you sure you want to teleport here?", Text.NEW_LINE,
+              Text.builder("[YES]")
+                  .onHover(TextActions.showText(Text.of("Click to teleport")))
                   .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
                   .color(TextColors.GREEN)
           ));
@@ -56,10 +58,14 @@ public class CommandUtil {
       Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
       if (safeLocation == null) {
         player.sendMessage(Text.of(
-            TextColors.RED, "Location is not safe.", Text.NEW_LINE,
-            Text.builder("Are you sure you want to teleport here?")
-                .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+            TextColors.RED, "Location is not safe. ",
+            TextColors.WHITE, "Are you sure you want to teleport here?", Text.NEW_LINE,
+            TextColors.WHITE, "[",
+            Text.builder("YES")
                 .color(TextColors.GREEN)
+                .onHover(TextActions.showText(Text.of("Click to teleport")))
+                .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location))),
+            TextColors.WHITE, "]"
         ));
       } else {
         player.setLocation(safeLocation);
