@@ -67,15 +67,13 @@ public class CommandDemote extends CommandBase.IslandCommand {
     } else if (player.equals(user)) {
       throw new CommandException(Text.of(TextColors.RED, "You cannot demote yourself!"));
     } else if (!island.isOwner(player)) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "You do not have permission to demote players on this island!"));
+      throw new CommandException(Text.of(TextColors.RED, "You do not have permission to demote players on this island!"));
     } else {
       PrivilegeType type = island.getPrivilegeType(user);
       island.demote(user);
       player.sendMessage(Text.of(
-          type.format(user.getName()), TextColors.RED, " has been demoted from a ",
-          island.getPrivilegeType(user).toText(), TextColors.RED, " to a ", type.toText(),
-          TextColors.RED, "."
+          type.format(user.getName()), TextColors.RED, " has been demoted from a ", type.toText(),
+          TextColors.RED, " to a ", island.getPrivilegeType(user).toText(), TextColors.RED, "."
       ));
     }
 

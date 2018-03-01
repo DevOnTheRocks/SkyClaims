@@ -68,8 +68,7 @@ public class CommandPromote extends CommandBase.IslandCommand {
     } else if (player.equals(user)) {
       throw new CommandException(Text.of(TextColors.RED, "You cannot promote yourself!"));
     } else if (!island.isOwner(player)) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "You do not have permission to promote players on this island!"));
+      throw new CommandException(Text.of(TextColors.RED, "You do not have permission to promote players on this island!"));
     } else {
       PrivilegeType type = island.getPrivilegeType(user);
       if (type == PrivilegeType.MANAGER) {
@@ -81,15 +80,13 @@ public class CommandPromote extends CommandBase.IslandCommand {
             .build()
             .send();
         player.sendMessage(Text.of(
-            TextColors.GREEN, "Island ownership transfer request sent to ",
-            type.format(user.getName()), TextColors.GREEN, "."
+            TextColors.GREEN, "Island ownership transfer request sent to ", type.format(user.getName()), TextColors.GREEN, "."
         ));
       } else {
         island.promote(user);
         player.sendMessage(Text.of(
-            type.format(user.getName()), TextColors.GREEN, " has been promoted from a ",
-            island.getPrivilegeType(user).toText(), TextColors.GREEN, " to a ", type.toText(),
-            TextColors.GREEN, "."
+            type.format(user.getName()), TextColors.GREEN, " has been promoted from a ", type.toText(),
+            TextColors.GREEN, " to a ", island.getPrivilegeType(user).toText(), TextColors.GREEN, "."
         ));
       }
     }
