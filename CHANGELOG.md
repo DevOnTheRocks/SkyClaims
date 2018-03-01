@@ -5,11 +5,21 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
-# Beta 27.0 - SNAPSHOT
+
+# Beta 27.1
 **REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
+- Fixed `/is home` not using safe teleport
+- Fixed `/is promote` & `/is demote` success messages
+- Fixed `/is expand` using more claim blocks than the owner has available
+- Removed `/isa config`
+
+# Beta 27
+**REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
+- Fixed `/is expand` erroring when an island argument was not provided 
 - Fixed `/is delete` requiring an island argument
 - Fixed `/is delete` not removing players from the island before deletion
 - Fixed wilderness flags applying to the default world when configured to use a different world
+- Added `skyclaims.max-islands` option
 - Added confirmation dialogs to `/is delete`
 - Added configurable root command alias - the first alias is used for help text
 
