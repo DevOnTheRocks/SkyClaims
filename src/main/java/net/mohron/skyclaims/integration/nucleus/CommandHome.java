@@ -68,7 +68,7 @@ public class CommandHome extends CommandBase {
         .orElseThrow(() -> new CommandException(
             Text.of(TextColors.RED, "You must set a home before using this command!")));
 
-    player.setTransform(transform);
+    player.setTransformSafely(transform);
 
     return CommandResult.success();
   }
