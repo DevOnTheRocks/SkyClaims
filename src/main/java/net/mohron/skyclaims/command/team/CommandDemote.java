@@ -71,12 +71,12 @@ public class CommandDemote extends CommandBase.IslandCommand {
           Text.of(TextColors.RED, "You do not have permission to demote players on this island!"));
     } else {
       PrivilegeType type = island.getPrivilegeType(user);
+      island.demote(user);
       player.sendMessage(Text.of(
           type.format(user.getName()), TextColors.RED, " has been demoted from a ",
           island.getPrivilegeType(user).toText(), TextColors.RED, " to a ", type.toText(),
           TextColors.RED, "."
       ));
-      island.demote(user);
     }
 
     return CommandResult.success();
