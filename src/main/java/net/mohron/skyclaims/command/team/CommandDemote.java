@@ -37,44 +37,45 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public class CommandDemote extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to demote a player on an island.";
-    private static final Text USER = Text.of("user");
+  public static final String HELP_TEXT = "used to demote a player on an island.";
+  private static final Text USER = Text.of("user");
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_DEMOTE)
-            .arguments(GenericArguments.user(USER))
-            .description(Text.of(HELP_TEXT))
-            .executor(new CommandDemote())
-            .build();
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_DEMOTE)
+        .arguments(GenericArguments.user(USER))
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandDemote())
+        .build();
 
-        try {
-            CommandIsland.addSubCommand(commandSpec, "demote");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandDemote");
-        } catch (UnsupportedOperationException e) {
-            PLUGIN.getLogger().error("Failed to register command: CommandDemote", e);
-        }
+    try {
+      CommandIsland.addSubCommand(commandSpec, "demote");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandDemote");
+    } catch (UnsupportedOperationException e) {
+      PLUGIN.getLogger().error("Failed to register command: CommandDemote", e);
+    }
+  }
+
+  @Override
+  public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
+    User user = args.<User>getOne(USER).orElse(null);
+
+    if (user == null) {
+      throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
+    } else if (player.equals(user)) {
+      throw new CommandException(Text.of(TextColors.RED, "You cannot demote yourself!"));
+    } else if (!island.isOwner(player)) {
+      throw new CommandException(Text.of(TextColors.RED, "You do not have permission to demote players on this island!"));
+    } else {
+      PrivilegeType type = island.getPrivilegeType(user);
+      island.demote(user);
+      player.sendMessage(Text.of(
+          type.format(user.getName()), TextColors.RED, " has been demoted from a ",
+          island.getPrivilegeType(user).toText(), TextColors.RED, " to a ", type.toText(), TextColors.RED, "."
+      ));
     }
 
-    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
-        User user = args.<User>getOne(USER).orElse(null);
-
-        if (user == null) {
-            throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
-        } else if (player.equals(user)) {
-            throw new CommandException(Text.of(TextColors.RED, "You cannot demote yourself!"));
-        } else if (!island.isOwner(player)) {
-            throw new CommandException(Text.of(TextColors.RED, "You do not have permission to demote players on this island!"));
-        } else {
-            PrivilegeType type = island.getPrivilegeType(user);
-            player.sendMessage(Text.of(
-                type.format(user.getName()), TextColors.RED, " has been demoted from a ",
-                island.getPrivilegeType(user).toText(), TextColors.RED, " to a ", type.toText(), TextColors.RED, "."
-            ));
-            island.demote(user);
-        }
-
-        return CommandResult.success();
-    }
+    return CommandResult.success();
+  }
 }

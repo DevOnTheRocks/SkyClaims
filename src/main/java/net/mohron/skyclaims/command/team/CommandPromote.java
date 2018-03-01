@@ -38,57 +38,58 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public class CommandPromote extends CommandBase.IslandCommand {
 
-    public static final String HELP_TEXT = "used to promote a player on an island.";
-    private static final Text USER = Text.of("user");
+  public static final String HELP_TEXT = "used to promote a player on an island.";
+  private static final Text USER = Text.of("user");
 
-    public static void register() {
-        CommandSpec commandSpec = CommandSpec.builder()
-            .permission(Permissions.COMMAND_PROMOTE)
-            .arguments(GenericArguments.user(USER))
-            .description(Text.of(HELP_TEXT))
-            .executor(new CommandPromote())
-            .build();
+  public static void register() {
+    CommandSpec commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_PROMOTE)
+        .arguments(GenericArguments.user(USER))
+        .description(Text.of(HELP_TEXT))
+        .executor(new CommandPromote())
+        .build();
 
-        try {
-            CommandIsland.addSubCommand(commandSpec, "promote");
-            PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-            PLUGIN.getLogger().debug("Registered command: CommandPromote");
-        } catch (UnsupportedOperationException e) {
-            PLUGIN.getLogger().error("Failed to register command: CommandPromote", e);
-        }
+    try {
+      CommandIsland.addSubCommand(commandSpec, "promote");
+      PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
+      PLUGIN.getLogger().debug("Registered command: CommandPromote");
+    } catch (UnsupportedOperationException e) {
+      PLUGIN.getLogger().error("Failed to register command: CommandPromote", e);
+    }
+  }
+
+  @Override
+  public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
+    User user = args.<User>getOne(USER).orElse(null);
+
+    if (user == null) {
+      throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
+    } else if (player.equals(user)) {
+      throw new CommandException(Text.of(TextColors.RED, "You cannot promote yourself!"));
+    } else if (!island.isOwner(player)) {
+      throw new CommandException(Text.of(TextColors.RED, "You do not have permission to promote players on this island!"));
+    } else {
+      PrivilegeType type = island.getPrivilegeType(user);
+      if (type == PrivilegeType.MANAGER) {
+        Invite.builder()
+            .island(island)
+            .sender(player)
+            .receiver(user)
+            .privilegeType(type)
+            .build()
+            .send();
+        player.sendMessage(Text.of(
+            TextColors.GREEN, "Island ownership transfer request sent to ", type.format(user.getName()), TextColors.GREEN, "."
+        ));
+      } else {
+        island.promote(user);
+        player.sendMessage(Text.of(
+            type.format(user.getName()), TextColors.GREEN, " has been promoted from a ",
+            island.getPrivilegeType(user).toText(), TextColors.GREEN, " to a ", type.toText(), TextColors.GREEN, "."
+        ));
+      }
     }
 
-    @Override public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
-        User user = args.<User>getOne(USER).orElse(null);
-
-        if (user == null) {
-            throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
-        } else if (player.equals(user)) {
-            throw new CommandException(Text.of(TextColors.RED, "You cannot promote yourself!"));
-        } else if (!island.isOwner(player)) {
-            throw new CommandException(Text.of(TextColors.RED, "You do not have permission to promote players on this island!"));
-        } else {
-            PrivilegeType type = island.getPrivilegeType(user);
-            if (type == PrivilegeType.MANAGER) {
-                Invite.builder()
-                    .island(island)
-                    .sender(player)
-                    .receiver(user)
-                    .privilegeType(type)
-                    .build()
-                    .send();
-                player.sendMessage(Text.of(
-                    TextColors.GREEN, "Island ownership transfer request sent to ", type.format(user.getName()), TextColors.GREEN, "."
-                ));
-            } else {
-                player.sendMessage(Text.of(
-                    type.format(user.getName()), TextColors.GREEN, " has been promoted from a ",
-                    island.getPrivilegeType(user).toText(), TextColors.GREEN, " to a ", type.toText(), TextColors.GREEN, "."
-                ));
-                island.promote(user);
-            }
-        }
-
-        return CommandResult.success();
-    }
+    return CommandResult.success();
+  }
 }
