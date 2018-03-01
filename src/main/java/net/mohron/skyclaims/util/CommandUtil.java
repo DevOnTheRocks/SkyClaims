@@ -18,7 +18,7 @@
 
 package net.mohron.skyclaims.util;
 
-import net.mohron.skyclaims.SkyClaims;
+import java.util.function.Consumer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandSource;
@@ -30,60 +30,64 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.function.Consumer;
-
 public class CommandUtil {
 
-    public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location) {
-        return teleport -> {
-            if (src instanceof Player) {
-                Player player = (Player) src;
-                Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
-                if (safeLocation == null) {
-                    player.sendMessage(Text.of(
-                        TextColors.RED, "Location is not safe.", Text.NEW_LINE,
-                        Text.builder("Are you sure you want to teleport here?")
-                            .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-                            .color(TextColors.GREEN)
-                    ));
-                } else {
-                    player.setLocation(safeLocation);
-                }
-            }
-        };
-    }
+  public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location) {
+    return teleport -> {
+      if (src instanceof Player) {
+        Player player = (Player) src;
+        Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+        if (safeLocation == null) {
+          player.sendMessage(Text.of(
+              TextColors.RED, "Location is not safe. ",
+              TextColors.WHITE, "Are you sure you want to teleport here?", Text.NEW_LINE,
+              Text.builder("[YES]")
+                  .onHover(TextActions.showText(Text.of("Click to teleport")))
+                  .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
+                  .color(TextColors.GREEN)
+          ));
+        } else {
+          player.setLocation(safeLocation);
+        }
+      }
+    };
+  }
 
-    public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
-        return teleport -> {
-            Location<World> safeLocation = SkyClaims.getInstance().getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
-            if (safeLocation == null) {
-                player.sendMessage(Text.of(
-                    TextColors.RED, "Location is not safe.", Text.NEW_LINE,
-                    Text.builder("Are you sure you want to teleport here?")
-                        .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-                        .color(TextColors.GREEN)
-                ));
-            } else {
-                player.setLocation(safeLocation);
-            }
-        };
-    }
+  public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
+    return teleport -> {
+      Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+      if (safeLocation == null) {
+        player.sendMessage(Text.of(
+            TextColors.RED, "Location is not safe. ",
+            TextColors.WHITE, "Are you sure you want to teleport here?", Text.NEW_LINE,
+            TextColors.WHITE, "[",
+            Text.builder("YES")
+                .color(TextColors.GREEN)
+                .onHover(TextActions.showText(Text.of("Click to teleport")))
+                .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location))),
+            TextColors.WHITE, "]"
+        ));
+      } else {
+        player.setLocation(safeLocation);
+      }
+    };
+  }
 
-    private static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
-        return teleport -> player.setLocation(location);
-    }
+  private static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
+    return teleport -> player.setLocation(location);
+  }
 
-    public static Consumer<CommandSource> createCommandConsumer(CommandSource src, String command, String arguments,
-        Consumer<CommandSource> postConsumerTask) {
-        return consumer -> {
-            try {
-                Sponge.getCommandManager().get(command).get().getCallable().process(src, arguments);
-            } catch (CommandException e) {
-                src.sendMessage(e.getText());
-            }
-            if (postConsumerTask != null) {
-                postConsumerTask.accept(src);
-            }
-        };
-    }
+  public static Consumer<CommandSource> createCommandConsumer(CommandSource src, String command, String arguments,
+      Consumer<CommandSource> postConsumerTask) {
+    return consumer -> {
+      try {
+        Sponge.getCommandManager().get(command).get().getCallable().process(src, arguments);
+      } catch (CommandException e) {
+        src.sendMessage(e.getText());
+      }
+      if (postConsumerTask != null) {
+        postConsumerTask.accept(src);
+      }
+    };
+  }
 }
