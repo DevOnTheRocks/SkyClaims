@@ -1,5 +1,7 @@
 ## Supported Biome Types
 
+Starting with build 27.1 for Sponge API 7 only, modded biomes should be supported in addition to [Vanilla](#vanilla) biomes
+
 ### Vanilla
 ```
 beach

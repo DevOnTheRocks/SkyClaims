@@ -1,5 +1,15 @@
 # Change Log
 
+# Beta 27.1 
+**REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
+- Fixed `/is home` not using safe teleport 
+- Fixed `/is promote` & `/is demote` success messages 
+- Fixed `/is expand` using more claim blocks than the owner has available
+- Improved safe teleport failure messages
+- Reworked the biome argument to _theoretically_ support modded biomes
+- Removed `/isa config` 
+- Removed Options Config - **Use permissions options instead**
+
 # Beta 27.0
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
 - Subcommands now provide useful errors

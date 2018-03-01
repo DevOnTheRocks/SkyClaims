@@ -42,9 +42,8 @@
 | --------------- | ----------- | ---------- |
 | `isa`<br />`is admin` | Used to run admin commands or display admin help | `skyclaims.admin.base` |
 | `isa cs <name>`| Used to create a schematic to use with is create<br />(Use a Golden Axe as a selection tool) | `skyclaims.admin.schematic.create` |
-| `isa transfer [owner] <newowner>` | Transfer an island to another player | `skyclaims.admin.transfer` |
-| ~~`isa delete <player> [regen]`~~ replaced by `is delete` in B26.1 |  |  |
 | `isa reload` | Used to reload the config, schematics directory, & database  | `skyclaims.admin.reload` |
+| `is transfer [owner] <newowner>` | Transfer an island to another player | `skyclaims.admin.transfer` |
 
 ### Debug Commands
 \* _Available even when SkyClaims was disabled during the loading process by an error._
