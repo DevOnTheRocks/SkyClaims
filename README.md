@@ -30,7 +30,7 @@ This plugin is in Beta. Live support is available for the latest builds through 
 ## Dependencies
 
 - **Required:**
-   - [Sponge](https://www.spongepowered.org/downloads) - V+
+   - [Sponge](https://www.spongepowered.org/downloads) - 1.12.2-2555-7.0.0-BETA-2800+
    - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.12.2-4.3.0.509+
    - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended.
 - **Optional:**

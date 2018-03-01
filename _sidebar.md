@@ -7,4 +7,4 @@
   - [Biome Types](biome-types.md)
   - [Options](options.md)
   - [Schematics](schematics.md)
-  - [Permissions](https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-5/src/main/java/net/mohron/skyclaims/permissions/Permissions.java)
+  - [Permissions](https://github.com/DevOnTheRocks/SkyClaims/blob/sponge/api-7/src/main/java/net/mohron/skyclaims/permissions/Permissions.java)
