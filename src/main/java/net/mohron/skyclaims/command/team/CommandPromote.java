@@ -84,8 +84,8 @@ public class CommandPromote extends CommandBase.IslandCommand {
       } else {
         island.promote(user);
         player.sendMessage(Text.of(
-            type.format(user.getName()), TextColors.GREEN, " has been promoted from a ",
-            island.getPrivilegeType(user).toText(), TextColors.GREEN, " to a ", type.toText(), TextColors.GREEN, "."
+            type.format(user.getName()), TextColors.GREEN, " has been promoted from a ", type.toText(),
+            TextColors.GREEN, " to a ", island.getPrivilegeType(user).toText(), TextColors.GREEN, "."
         ));
       }
     }
