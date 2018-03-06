@@ -1,6 +1,6 @@
 ## Supported Biome Types
 
-Starting with build 27.1 for Sponge API 7 only, modded biomes should be supported in addition to [Vanilla](#vanilla) biomes
+Starting with build 27.1 for Sponge API 7 only, modded biomes should be supported in addition to [Vanilla](#vanilla) biomes.  The biome lists below are just for quick reference and may not be kept up to date.
 
 ### Vanilla
 ```
@@ -66,4 +66,78 @@ taiga_m
 taigahills
 the_end
 the_void
+```
+
+### Biomes O' Plenty
+```
+alps
+alpsfoothills
+bamboo_forest
+bayou
+bog
+boreal_forest
+brushland
+chaparral
+cherry_blossom_grove
+cold_desert
+coniferous_forest
+coral_reef
+corrupted_sands
+crag
+dead_forest
+dead_swamp
+eucalyptus_forest
+fen
+flower_field
+flower_island
+fungi_forest
+glacier
+grassland
+gravel_beach
+grove
+highland
+kelp_forest
+land_of_lakes
+lavender_fields
+lush_desert
+lush_swamp
+mangrove
+maple_woods
+marsh
+meadow
+moor
+mountain
+mountainfoothills
+mystic_grove
+oasis
+ominous_woods
+orchard
+origin_island
+outback
+overgrown_cliffs
+phantasmagoric_inferno
+polar_chasm
+prairie
+quagmire
+rainforest
+redwood_forest
+sacred_springs
+seasonal_forest
+shield
+shrubland
+snowy_coniferous_forest
+snowy_forest
+steppe
+temperate_rainforest
+tropical_island
+tropical_rainforest
+tundra
+undergarden
+visceral_heap
+volcanic_island
+wasteland
+wetland
+white_beach
+woodland
+xeric_shrubland
 ```
