@@ -144,7 +144,7 @@ public class CommandInfo extends CommandBase {
             TextColors.WHITE, "] "
         ) : Text.EMPTY;
 
-        Text delete = src.hasPermission(Permissions.COMMAND_DELETE) ? Text.of(
+        Text delete = src.hasPermission(Permissions.COMMAND_DELETE_OTHERS) ? Text.of(
             TextColors.WHITE, "[",
             TextColors.GOLD, Text.builder("Delete")
                 .onHover(TextActions.showText(Text.of("Click to delete this island")))

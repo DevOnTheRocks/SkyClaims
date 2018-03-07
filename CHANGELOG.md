@@ -5,6 +5,9 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
+# Beta 27.2 HOTFIX
+**REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
+- **IMPORTANT:** fixed a bug where `/is info` could be used to delete an island you don't have permission to delete
 
 # Beta 27.1
 **REQUIRED: SF build 2637+ & GP build 4.0.1.474+ OPTIONAL: Nucleus version 1.1.3+**
