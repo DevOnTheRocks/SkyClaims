@@ -271,14 +271,14 @@ public class Island implements ContextSource {
     if (contains(transform.getLocation())) {
       Transform<World> spawn = new Transform<>(getWorld(), transform.getPosition(), transform.getRotation());
       if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 256) {
-        spawn.setPosition(new Vector3d(
+       spawn = spawn.setPosition(new Vector3d(
             spawn.getLocation().getX(),
             PLUGIN.getConfig().getWorldConfig().getIslandHeight(),
             spawn.getLocation().getZ()
         ));
       }
       this.spawn = spawn;
-      getClaim().ifPresent(claim -> claim.getData().setSpawnPos(spawn.getPosition().toInt()));
+      getClaim().ifPresent(claim -> claim.getData().setSpawnPos(transform.getPosition().toInt()));
       save();
     }
   }
