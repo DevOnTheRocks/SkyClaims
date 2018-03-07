@@ -19,13 +19,13 @@
 package net.mohron.skyclaims.command.argument;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
+import org.apache.commons.lang3.text.StrBuilder;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
@@ -36,33 +36,35 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.world.biome.BiomeType;
-import org.spongepowered.api.world.biome.BiomeTypes;
 
 @NonnullByDefault
 public class BiomeArgument extends CommandElement {
 
-  public static final Map<String, BiomeType> BIOMES = Maps.newHashMap();
+  public static final List<BiomeType> BIOMES;
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
   static {
-    BIOMES.putAll(Sponge.getRegistry().getAllOf(BiomeType.class).stream().collect(Collectors.toMap(BiomeArgument::getArgument, b -> b)));
+    BIOMES = Lists.newArrayList(Sponge.getRegistry().getAllOf(BiomeType.class));
+    BIOMES.sort(Comparator.comparing(BiomeType::getId));
+    // Output to log
+    if (PLUGIN.getConfig().getMiscConfig().isLogBiomes()) {
+      StrBuilder biomeDebug = new StrBuilder("SkyClaims Biome Permissions:").appendNewLine().append("Biome Name | Biome ID | Biome Permission");
+      BIOMES.forEach(b -> biomeDebug.appendNewLine().append(b.getName()).append(" | ").append(b.getId()).append(" | ").append(getPermission(b)));
+      PLUGIN.getLogger().info(biomeDebug.build());
+    }
   }
 
   public BiomeArgument(@Nullable Text key) {
     super(key);
   }
 
-  private static String getArgument(BiomeType biomeType) {
-    return biomeType.getName().replaceAll(" ", "_").replaceAll("[+]", "_plus").toLowerCase();
-  }
-
   @Nullable
   @Override
-  protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
+  protected Object parseValue(CommandSource src, CommandArgs args) throws ArgumentParseException {
     String arg = args.next().toLowerCase();
-    if (BIOMES.containsKey(arg)) {
-      BiomeType biomeType = BIOMES.get(arg);
-      if (PLUGIN.getConfig().getPermissionConfig().isSeparateBiomePerms() && !hasPermission(source, getArgument(biomeType))) {
+    BiomeType biomeType = BIOMES.stream().filter(b -> b.getId().contains(arg)).findAny().orElse(null);
+    if (biomeType != null) {
+      if (PLUGIN.getConfig().getPermissionConfig().isSeparateBiomePerms() && !src.hasPermission(getPermission(biomeType))) {
         throw args.createError(Text.of(TextColors.RED, "You do not have permission to use the supplied biome type."));
       }
       return biomeType;
@@ -75,16 +77,17 @@ public class BiomeArgument extends CommandElement {
     try {
       String name = args.peek().toLowerCase();
       boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateBiomePerms();
-      return BIOMES.keySet().stream()
-          .filter(s -> s.startsWith(name))
-          .filter(s -> !checkPerms || hasPermission(src, s))
+      return BIOMES.stream()
+          .filter(b -> b.getId().startsWith(name) || b.getName().startsWith(name))
+          .filter(b -> !checkPerms || src.hasPermission(getPermission(b)))
+          .map(b -> b.getId().replace("minecraft:", ""))
           .collect(Collectors.toList());
     } catch (ArgumentParseException e) {
       return Lists.newArrayList();
     }
   }
 
-  private boolean hasPermission(CommandSource src, String biomeType) {
-    return src.hasPermission(Permissions.COMMAND_ARGUMENTS_BIOMES + "." + biomeType);
+  private static String getPermission(BiomeType biome) {
+    return String.format("%s.%s", Permissions.COMMAND_ARGUMENTS_BIOMES, biome.getId().replace(':', '.'));
   }
 }

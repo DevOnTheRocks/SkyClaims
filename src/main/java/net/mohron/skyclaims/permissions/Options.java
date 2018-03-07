@@ -51,8 +51,8 @@ public class Options {
     if (StringUtils.isBlank(biomeOption)) {
       return Optional.empty();
     }
-    for (BiomeType biome : BiomeArgument.BIOMES.values()) {
-      if (biome.getName().equalsIgnoreCase(biomeOption)) {
+    for (BiomeType biome : BiomeArgument.BIOMES) {
+      if (biome.getId().equalsIgnoreCase(biomeOption) || biome.getId().equalsIgnoreCase("minecraft:" + biomeOption)) {
         return Optional.of(biome);
       }
     }

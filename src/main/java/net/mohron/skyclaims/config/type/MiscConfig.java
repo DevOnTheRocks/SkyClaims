@@ -28,6 +28,8 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class MiscConfig {
 
+  @Setting(value = "Log-Biomes", comment = "Whether a list of biomes and their permissions should be logged.")
+  private boolean logBiomes = false;
   @Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.")
   private boolean islandOnJoin = false;
   @Setting(value = "List-Schematics", comment = "Whether players with access to multiple schematics see a list when not specifying a schematic.")
@@ -41,6 +43,10 @@ public class MiscConfig {
   @Setting(value = "Date-Format", comment = "The date format used throughout the plugin.\n" +
       "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html")
   private String dateFormat = "MMMM d, yyyy h:mm a";
+
+  public boolean isLogBiomes() {
+    return logBiomes;
+  }
 
   public boolean createIslandOnJoin() {
     return islandOnJoin;

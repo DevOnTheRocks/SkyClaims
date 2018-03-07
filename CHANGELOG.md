@@ -5,7 +5,16 @@
 - Added Void World Generation capabilities
 - Added Nether portal fix
 
-# Beta 27.1 
+
+# Beta 27.2
+**REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
+- **BREAKING CHANGES:**
+    - Biome argument permissions have changed to `skyclaims.arguments.biomes.modid.biomeid`
+    - Biome option changed to `modid.biomeid`
+- Fixed rare exception when duplicate modded biomes exist
+- Added biome log feature to generate a list of supported biomes
+
+# Beta 27.1
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
 - Fixed `/is home` not using safe teleport 
 - Fixed `/is promote` & `/is demote` success messages 

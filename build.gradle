@@ -68,11 +68,12 @@ blossom {
 }
 
 spongestart {
-    online 'false'
-    minecraft '1.12.2'
-    type 'bleeding'
-    spongeForge properties.spongeforge
-    forgeServerFolder 'run/API7/'
+    online "false"
+    minecraft "1.12.2"
+    type "bleeding"
+    spongeForge "${spongeforge}"
+    forge "${forge}"
+    forgeServerFolder "run/API7/"
 }
 
 signing {
