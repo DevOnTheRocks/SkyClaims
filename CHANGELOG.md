@@ -11,6 +11,7 @@
 - **BREAKING CHANGES:**
     - Biome argument permissions have changed to `skyclaims.arguments.biomes.modid.biomeid`
     - Biome option changed to `modid.biomeid`
+- **IMPORTANT:** fixed a bug where `/is info` could be used to delete an island you don't have permission to delete
 - Fixed rare exception when duplicate modded biomes exist
 - Added biome log feature to generate a list of supported biomes
 
