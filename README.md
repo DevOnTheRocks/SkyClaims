@@ -37,9 +37,11 @@ This plugin is in Beta. Live support is available for the latest builds through 
    - [Nucleus](https://nucleuspowered.org) - 1.2.0+
    <!-- - Economy Plugin - [Economy Lite](https://ore.spongepowered.org/Flibio/EconomyLite), [Total Economy](https://ore.spongepowered.org/Erigitic/Total-Economy), or any other Sponge Economy plugin of your choosing. -->
 
-## Additional Information
+## Downloads
 
-**Plugin releases are available on [Ore](https://ore.spongepowered.org/Mohron/SkyClaims/).**
+**Plugin releases are available on [Ore](https://ore.spongepowered.org/Mohron/SkyClaims/).** Make sure to download the file matching your server's SpongeAPI version: **S5** for API 5/6 and **S7** for API 7.
+
+## Additional Information
 
 **Bug reports and feature requests can be made on [GitHub](https://github.com/DevOnTheRocks/SkyClaims/issues).**
 
