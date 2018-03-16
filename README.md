@@ -39,7 +39,9 @@ This plugin is in Beta. Live support is available for the latest builds through 
 
 ## Downloads
 
-**Plugin releases are available on [Ore](https://ore.spongepowered.org/Mohron/SkyClaims/).** Make sure to download the file matching your server's SpongeAPI version: **S5** for API 5/6 and **S7** for API 7.
+**Plugin releases are available on [Ore](https://ore.spongepowered.org/Mohron/SkyClaims/).** 
+
+Make sure to download the file matching your server's SpongeAPI version: **S5** for API 5/6 and **S7** for API 7.
 
 ## Additional Information
 
