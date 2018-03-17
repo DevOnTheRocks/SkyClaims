@@ -28,14 +28,8 @@ public class CommandConfig {
 
   @Setting(value = "Base-Command-Alias", comment = "The alias to use as the base command.")
   private List<String> baseAlias = Lists.newArrayList("is", "island");
-  @Setting(value = "Admin-Command-Alias", comment = "The alias to use as the base admin command.")
-  private List<String> adminAlias = Lists.newArrayList("sc", "isa");
 
   public List<String> getBaseAlias() {
     return baseAlias.isEmpty() ? Lists.newArrayList("is") : baseAlias;
-  }
-
-  public List<String> getAdminAlias() {
-    return adminAlias.isEmpty() ? Lists.newArrayList("sc") : adminAlias;
   }
 }

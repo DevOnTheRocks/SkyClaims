@@ -32,8 +32,7 @@ public interface CommandRequirement extends CommandExecutor {
 
   interface RequiresIsland {
 
-    CommandResult execute(CommandSource src, Island island, CommandContext args)
-        throws CommandException;
+    CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException;
   }
 
   interface RequiresPlayer {
@@ -43,8 +42,7 @@ public interface CommandRequirement extends CommandExecutor {
 
   interface RequiresPlayerIsland {
 
-    CommandResult execute(Player player, Island island, CommandContext args)
-        throws CommandException;
+    CommandResult execute(Player player, Island island, CommandContext args) throws CommandException;
   }
 
 }

@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.BiomeArgument;
+import net.mohron.skyclaims.schematic.IslandSchematic;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.world.biome.BiomeType;
@@ -42,8 +43,14 @@ public class Options {
   private static final String EXPIRATION = "skyclaims.expiration";
   private static final String MAX_ISLANDS = "skyclaims.max-islands";
 
-  public static String getDefaultSchematic(UUID playerUniqueId) {
-    return getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "skyfactory");
+  public static Optional<IslandSchematic> getDefaultSchematic(UUID playerUniqueId) {
+    String name = getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "random");
+
+    if (name.equalsIgnoreCase("random")) {
+      return Optional.of(PLUGIN.getSchematicManager().getRandomSchematic());
+    } else {
+      return PLUGIN.getSchematicManager().getSchematics().stream().filter(s -> s.getName().equalsIgnoreCase(name)).findAny();
+    }
   }
 
   public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {

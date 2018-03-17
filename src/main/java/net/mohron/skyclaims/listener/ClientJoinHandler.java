@@ -38,8 +38,7 @@ public class ClientJoinHandler {
 
   @Listener
   public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
-    if (PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() && !Island
-        .hasIsland(player.getUniqueId())) {
+    if (PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() && !Island.hasIsland(player.getUniqueId())) {
       createIslandOnJoin(player);
     }
     deliverInvites(player);
@@ -51,13 +50,15 @@ public class ClientJoinHandler {
     Sponge.getScheduler().createTaskBuilder()
         .execute(src -> {
           try {
-            new Island(player, Options.getDefaultSchematic(player.getUniqueId()));
+            new Island(
+                player,
+                Options.getDefaultSchematic(player.getUniqueId())
+                    .orElseThrow(() -> new CreateIslandException(Text.of(TextColors.RED, "Unable to load default schematic!")))
+            );
             PLUGIN.getLogger().info("Automatically created an island for {}.", player.getName());
           } catch (CreateIslandException e) {
             // Oh well, we tried!
-            PLUGIN.getLogger()
-                .warn(String.format("Failed to create an island on join for %s.", player.getName()),
-                    e);
+            PLUGIN.getLogger().warn(String.format("Failed to create an island on join for %s.", player.getName()), e);
           }
         })
         .delayTicks(40)
@@ -78,8 +79,7 @@ public class ClientJoinHandler {
           TextColors.WHITE, "[",
           Text.builder("OPEN")
               .color(TextColors.GREEN)
-              .onClick(
-                  TextActions.executeCallback(PLUGIN.getInviteService().listIncomingInvites())),
+              .onClick(TextActions.executeCallback(PLUGIN.getInviteService().listIncomingInvites())),
           TextColors.WHITE, "]"
       ));
     }

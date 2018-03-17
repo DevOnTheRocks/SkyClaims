@@ -40,6 +40,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.permissions.Options;
+import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
@@ -76,7 +77,7 @@ public class Island implements ContextSource {
   private Transform<World> spawn;
   private boolean locked;
 
-  public Island(User owner, String schematic) throws CreateIslandException {
+  public Island(User owner, IslandSchematic schematic) throws CreateIslandException {
     this.id = UUID.randomUUID();
     this.context = new Context("island", this.id.toString());
     this.owner = owner.getUniqueId();
@@ -97,6 +98,10 @@ public class Island implements ContextSource {
 
     // Run commands defined in config on creation
     for (String command : PLUGIN.getConfig().getMiscConfig().getCreateCommands()) {
+      PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
+    }
+    // Run schematic commands
+    for (String command : schematic.getCommands()) {
       PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
     }
 
@@ -264,7 +269,7 @@ public class Island implements ContextSource {
   }
 
   public Transform<World> getSpawn() {
-    return spawn;
+    return spawn.setExtent(getWorld());
   }
 
   public void setSpawn(Transform<World> transform) {
@@ -492,7 +497,7 @@ public class Island implements ContextSource {
     PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
   }
 
-  public void reset(String schematic, boolean runCommands) {
+  public void reset(IslandSchematic schematic, boolean runCommands) {
     RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, runCommands);
     PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
   }

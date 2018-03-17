@@ -22,6 +22,7 @@ import com.google.common.base.Stopwatch;
 import java.util.concurrent.TimeUnit;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
+import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
@@ -35,7 +36,7 @@ public class RegenerateRegionTask implements Runnable {
 
   private Region region;
   private Island island;
-  private String schematic;
+  private IslandSchematic schematic;
   private boolean commands;
 
   public RegenerateRegionTask(Region region) {
@@ -44,7 +45,7 @@ public class RegenerateRegionTask implements Runnable {
     this.commands = false;
   }
 
-  public RegenerateRegionTask(Island island, String schematic, boolean commands) {
+  public RegenerateRegionTask(Island island, IslandSchematic schematic, boolean commands) {
     this.region = island.getRegion();
     this.island = island;
     this.schematic = schematic;
@@ -86,13 +87,15 @@ public class RegenerateRegionTask implements Runnable {
 
     sw.stop();
 
-    PLUGIN.getLogger().info(String
-        .format("Finished clearing region (%s, %s) in %dms.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.MILLISECONDS)));
+    PLUGIN.getLogger().info(String.format("Finished clearing region (%s, %s) in %dms.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.MILLISECONDS)));
 
     if (island != null) {
       if (commands) {
         // Run reset commands
         for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
+          PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+        }
+        for (String command : schematic.getCommands()) {
           PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
         }
       }

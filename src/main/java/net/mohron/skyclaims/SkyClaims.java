@@ -39,9 +39,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
-import net.mohron.skyclaims.command.CommandAdmin;
 import net.mohron.skyclaims.command.CommandIsland;
-import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.command.debug.CommandVersion;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -57,6 +55,7 @@ import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.listener.WorldLoadHandler;
 import net.mohron.skyclaims.metrics.Metrics;
+import net.mohron.skyclaims.schematic.SchematicManager;
 import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandCleanupTask;
@@ -126,6 +125,7 @@ public class SkyClaims {
   private IDatabase database;
 
   private InviteService inviteService;
+  private SchematicManager schematicManager;
 
   private boolean enabled = true;
 
@@ -200,6 +200,9 @@ public class SkyClaims {
 
     inviteService = new InviteService();
 
+    schematicManager = new SchematicManager(this);
+    schematicManager.load();
+
     registerListeners();
     registerTasks();
     registerCommands();
@@ -241,8 +244,8 @@ public class SkyClaims {
   public void reload() {
     // Load Plugin Config
     configManager.load();
-    // Load Schematics Directory
-    SchematicArgument.load();
+    // Load Schematics
+    schematicManager.load();
     // Load Database
     islands = database.loadData();
     // Reload Listeners
@@ -286,7 +289,6 @@ public class SkyClaims {
 
   private void registerCommands() {
     CommandIsland.register();
-    CommandAdmin.register();
   }
 
   private IDatabase initializeDatabase() {
@@ -329,6 +331,10 @@ public class SkyClaims {
 
   public InviteService getInviteService() {
     return inviteService;
+  }
+
+  public SchematicManager getSchematicManager() {
+    return schematicManager;
   }
 
   public Logger getLogger() {

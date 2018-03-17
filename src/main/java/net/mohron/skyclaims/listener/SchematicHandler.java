@@ -44,7 +44,7 @@ public class SchematicHandler {
   public void onInteract(InteractBlockEvent.Secondary.MainHand event, @Root Player player) {
     SkyClaimsTimings.SCHEMATIC_HANDLER.startTimingIfSync();
 
-    if (!player.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
+    if (!player.hasPermission(Permissions.COMMAND_SCHEMATIC_CREATE)) {
       SkyClaimsTimings.SCHEMATIC_HANDLER.abort();
       return;
     }
@@ -65,7 +65,7 @@ public class SchematicHandler {
   public void onInteract(InteractBlockEvent.Primary.MainHand event, @Root Player player) {
     SkyClaimsTimings.SCHEMATIC_HANDLER.startTimingIfSync();
 
-    if (!player.hasPermission(Permissions.COMMAND_CREATE_SCHEMATIC)) {
+    if (!player.hasPermission(Permissions.COMMAND_SCHEMATIC_CREATE)) {
       SkyClaimsTimings.SCHEMATIC_HANDLER.abort();
       return;
     }

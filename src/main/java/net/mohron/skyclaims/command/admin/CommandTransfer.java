@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.command.admin;
 
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
@@ -49,6 +50,7 @@ public class CommandTransfer extends CommandBase {
 
   public static void register() {
     try {
+      CommandIsland.addSubCommand(commandSpec, "transfer");
       PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
       PLUGIN.getLogger().debug("Registered command: CommandTransfer");
     } catch (UnsupportedOperationException e) {

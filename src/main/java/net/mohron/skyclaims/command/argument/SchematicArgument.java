@@ -19,14 +19,13 @@
 package net.mohron.skyclaims.command.argument;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import java.io.File;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.schematic.IslandSchematic;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.ArgumentParseException;
 import org.spongepowered.api.command.args.CommandArgs;
@@ -39,64 +38,38 @@ import org.spongepowered.api.util.annotation.NonnullByDefault;
 @NonnullByDefault
 public class SchematicArgument extends CommandElement {
 
-  public static final Map<String, String> SCHEMATICS = Maps.newHashMap();
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
-  static {
-    load();
-  }
 
   public SchematicArgument(@Nullable Text key) {
     super(key);
   }
 
-  @SuppressWarnings("ConstantConditions")
-  public static void load() {
-    SchematicArgument.SCHEMATICS.clear();
-    File schemDir = new File(PLUGIN.getConfigDir() + File.separator + "schematics");
-    try {
-      PLUGIN.getLogger().debug("Attempting to retrieve all schematics!");
-      for (File file : schemDir.listFiles()) {
-        PLUGIN.getLogger().debug("Found File: " + file);
-        String schem = file.getName();
-        if (schem.endsWith(".schematic")) {
-          SchematicArgument.SCHEMATICS
-              .put(schem.replace(".schematic", "").toLowerCase(), schem.replace(".schematic", ""));
-          PLUGIN.getLogger().debug("Added Schematic: " + schem);
-        }
-      }
-    } catch (NullPointerException e) {
-      PLUGIN.getLogger().error("Failed to read schematics directory!");
-    }
-  }
-
   @Nullable
   @Override
-  protected Object parseValue(CommandSource source, CommandArgs args)
-      throws ArgumentParseException {
+  protected IslandSchematic parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
     String schem = args.next().toLowerCase();
-    if (SCHEMATICS.isEmpty()) {
-      throw new ArgumentParseException(
-          Text.of(TextColors.RED, "There are no valid schematics available!"), schem, 0);
+    if (PLUGIN.getSchematicManager().getSchematics().isEmpty()) {
+      throw args.createError(Text.of(TextColors.RED, "There are no valid schematics available!"));
     }
-    if (SCHEMATICS.containsKey(schem)) {
-      if (!hasPermission(source, schem)) {
-        throw new ArgumentParseException(
-            Text.of(TextColors.RED, "You do not have permission to use the supplied schematic!"),
-            schem, 0);
+    Optional<IslandSchematic> schematic = PLUGIN.getSchematicManager().getSchematics().stream().filter(s -> s.getName().equalsIgnoreCase(schem)).findAny();
+    if (schematic.isPresent()) {
+      if (PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms() && !hasPermission(source, schem)) {
+        throw args.createError(Text.of(TextColors.RED, "You do not have permission to use the supplied schematic!"));
       }
-      return SCHEMATICS.get(schem);
+      return schematic.get();
     }
-    throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid Schematic!"), schem, 0);
+    throw args.createError(Text.of(TextColors.RED, "Invalid Schematic!"));
   }
 
   @Override
   public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
     try {
       String name = args.peek().toLowerCase();
-      return SCHEMATICS.keySet().stream()
-          .filter(s -> s.startsWith(name))
-          .filter(s -> hasPermission(src, s))
+      boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
+      return PLUGIN.getSchematicManager().getSchematics().stream()
+          .filter(s -> s.getName().startsWith(name))
+          .filter(s -> !checkPerms || hasPermission(src, s.getName()))
+          .map(IslandSchematic::getName)
           .collect(Collectors.toList());
     } catch (ArgumentParseException e) {
       return Lists.newArrayList();
@@ -104,8 +77,6 @@ public class SchematicArgument extends CommandElement {
   }
 
   private boolean hasPermission(CommandSource src, String name) {
-    boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
-    return !checkPerms || src
-        .hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + name.toLowerCase());
+    return src.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + name.toLowerCase());
   }
 } 

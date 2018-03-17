@@ -1,12 +1,25 @@
 # Change Log 
 
-# Upcoming/Unreleased Features, Changes & Bugfixes
-**REQUIRED: SF build 2764+ & GP build 4.3.0.505+ OPTIONAL: Nucleus version 1.2.0+**
-- Added Void World Generation capabilities
-- Added Nether portal fix
+# Planned Features, Changes & Bugfixes
+- Add Void World Generation capabilities (blocked by https://github.com/SpongePowered/SpongeCommon/issues/1506)
 
+# Beta 28.0 - SNAPSHOT
+**REQUIRED: SF build 2931+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.3.0+**
+- Added new schematic features:
+  - `/is schematic` - schematic parent & list command
+  - `/is schematic create <name>` - replaces `/isa createschematic <name>`
+  - `/is schematic delete <schematic>` - deletes a schematic
+  - `/is schematic command <schematic> <add|remove> <command>` - manages schematic commands
+  - `/is schematic info <schematic>` - displays detailed information about a schematic
+  - `/is schematic setname <schematic> [name]` - set an in-game name for a schematic that supports formatting code
+  - `/is schematic setbiome <schematic> [biome]` - set a default biome for a schematic that overrides the permission option
+  - `skyclaims.default-schematic` now defaults to _"random"_ which selects a random valid schematic
+- Removed `/isa` &`/is admin`
+  - `/is transfer` replaces `/isa transfer`
+  - `/is reload` replaces `/isa reload`
+  - `Admin-Command-Alias` config removed
 
-# Beta 27.2
+# Beta 27.2 HOTFIX
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
 - **BREAKING CHANGES:**
     - Biome argument permissions have changed to `skyclaims.arguments.biomes.modid.biomeid`

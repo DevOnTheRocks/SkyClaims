@@ -29,6 +29,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import net.mohron.skyclaims.PluginInfo;
+import net.mohron.skyclaims.command.admin.CommandReload;
+import net.mohron.skyclaims.command.admin.CommandTransfer;
+import net.mohron.skyclaims.command.schematic.CommandSchematic;
 import net.mohron.skyclaims.command.team.CommandDemote;
 import net.mohron.skyclaims.command.team.CommandInvite;
 import net.mohron.skyclaims.command.team.CommandKick;
@@ -112,10 +115,13 @@ public class CommandIsland extends CommandBase {
     CommandList.register();
     CommandLock.register();
     CommandPromote.register();
+    CommandReload.register();
     CommandReset.register();
+    CommandSchematic.register();
     CommandSetBiome.register();
     CommandSetSpawn.register();
     CommandSpawn.register();
+    CommandTransfer.register();
     CommandUnlock.register();
   }
 
@@ -153,7 +159,7 @@ public class CommandIsland extends CommandBase {
           TextColors.AQUA, Text.builder(alias + "expand")
               .onClick(TextActions.suggestCommand("/" + alias + "expand ")),
           TextColors.GRAY, " [island]",
-          TextColors.GRAY, " <blocks>",
+          TextColors.GOLD, " <blocks>",
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandExpand.HELP_TEXT
       ));
@@ -262,6 +268,13 @@ public class CommandIsland extends CommandBase {
       ));
     }
 
+    if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, Text.of(TextActions.runCommand("/" + alias + "reload"), alias, "reload"),
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandReload.HELP_TEXT));
+    }
+
     if (src.hasPermission(Permissions.COMMAND_RESET)) {
       helpText.add(Text.of(
           TextColors.AQUA,
@@ -272,6 +285,14 @@ public class CommandIsland extends CommandBase {
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandReset.HELP_TEXT
       ));
+    }
+
+    if (src.hasPermission(Permissions.COMMAND_SCHEMATIC)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, alias, "schematic",
+          TextColors.GRAY, " [list|command|create|delete|info|setbiome|setname]",
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandSchematic.HELP_TEXT));
     }
 
     if (src.hasPermission(Permissions.COMMAND_SET_BIOME)) {
@@ -311,6 +332,15 @@ public class CommandIsland extends CommandBase {
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandSpawn.HELP_TEXT
       ));
+    }
+
+    if (src.hasPermission(Permissions.COMMAND_TRANSFER)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, alias, "transfer",
+          TextColors.GRAY, " [owner]",
+          TextColors.GOLD, " <player>",
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandTransfer.HELP_TEXT));
     }
 
     if (src.hasPermission(Permissions.COMMAND_LOCK)) {

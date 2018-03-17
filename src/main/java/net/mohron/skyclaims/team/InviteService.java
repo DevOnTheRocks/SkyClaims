@@ -49,7 +49,7 @@ public class InviteService {
   }
 
   private enum Type {
-    INCOMING, OUTGOING;
+    INCOMING, OUTGOING
   }
 
   void addInvite(Invite invite) {

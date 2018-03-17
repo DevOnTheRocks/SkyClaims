@@ -50,8 +50,6 @@ public class Permissions {
   // Admin Permissions
   // Commands
   public static final String COMMAND_ADMIN = "skyclaims.admin.base";
-  public static final String COMMAND_CONFIG = "skyclaims.admin.config";
-  public static final String COMMAND_CREATE_SCHEMATIC = "skyclaims.admin.schematic.create";
   public static final String COMMAND_DELETE_OTHERS = "skyclaims.admin.delete";
   public static final String COMMAND_EXPAND_OTHERS = "skyclaims.admin.expand";
   public static final String COMMAND_LIST_ALL = "skyclaims.admin.list";
@@ -59,11 +57,18 @@ public class Permissions {
   public static final String COMMAND_RELOAD = "skyclaims.admin.reload";
   public static final String COMMAND_RESET_KEEP_INV = "skyclaims.admin.reset.keepinv";
   public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";
-  public static final String COMMAND_SETUP = "skyclaims.admin.setup";
   public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
   public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
   public static final String COMMAND_TRANSFER = "skyclaims.admin.transfer";
   public static final String COMMAND_VERSION = "skyclaims.admin.version";
+  // Schematics
+  public static final String COMMAND_SCHEMATIC = "skyclaims.admin.schematic.base";
+  public static final String COMMAND_SCHEMATIC_CREATE = "skyclaims.admin.schematic.create";
+  public static final String COMMAND_SCHEMATIC_DELETE = "skyclaims.admin.schematic.delete";
+  public static final String COMMAND_SCHEMATIC_INFO = "skyclaims.admin.schematic.info";
+  public static final String COMMAND_SCHEMATIC_COMMAND = "skyclaims.admin.schematic.command";
+  public static final String COMMAND_SCHEMATIC_SET_BIOME = "skyclaims.admin.schematic.setbiome";
+  public static final String COMMAND_SCHEMATIC_SET_NAME = "skyclaims.admin.schematic.setname";
   // Bypass/Exemptions
   public static final String EXEMPT_KICK = "skyclaims.admin.kick.exempt";
   public static final String BYPASS_LOCK = "skyclaims.admin.lock.bypass";
