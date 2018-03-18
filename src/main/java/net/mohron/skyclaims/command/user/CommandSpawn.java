@@ -32,9 +32,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandSpawn extends CommandBase.PlayerCommand {
 
   public static final String HELP_TEXT = "teleport to an island's spawn point.";
@@ -64,10 +62,8 @@ public class CommandSpawn extends CommandBase.PlayerCommand {
         .orElseThrow(() -> new CommandException(
             Text.of(TextColors.RED, user.getName(), " must have an Island to use this command!")));
 
-    if (island.isLocked() && !island.isMember(player) && !player
-        .hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
-      throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(),
-          "'s island to use this command!"));
+    if (island.isLocked() && !island.isMember(player) && !player.hasPermission(Permissions.COMMAND_SPAWN_OTHERS)) {
+      throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(), "'s island to use this command!"));
     }
 
     PLUGIN.getGame().getScheduler().createTaskBuilder()

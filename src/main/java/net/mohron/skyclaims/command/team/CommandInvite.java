@@ -34,9 +34,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandInvite extends CommandBase.IslandCommand {
 
   public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";

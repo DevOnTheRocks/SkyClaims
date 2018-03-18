@@ -34,10 +34,8 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.world.biome.BiomeType;
 
-@NonnullByDefault
 public class CommandSetBiome extends CommandBase.PlayerCommand {
 
   public static final String HELP_TEXT = "set the biome of a block, chunk or island.";
@@ -67,11 +65,9 @@ public class CommandSetBiome extends CommandBase.PlayerCommand {
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     BiomeType biome = args.<BiomeType>getOne(BIOME)
-        .orElseThrow(
-            () -> new CommandException(Text.of("You must supply a biome to use this command")));
+        .orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
     Island island = Island.get(player.getLocation())
-        .orElseThrow(
-            () -> new CommandException(Text.of("You must be on an island to use this command")));
+        .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
 
     if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS)) {
       throw new CommandPermissionException(

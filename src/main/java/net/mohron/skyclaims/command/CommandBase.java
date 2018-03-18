@@ -40,9 +40,7 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public abstract class CommandBase implements CommandExecutor {
 
   protected static final SkyClaims PLUGIN = SkyClaims.getInstance();
