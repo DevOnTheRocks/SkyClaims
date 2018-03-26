@@ -78,8 +78,14 @@ public class CommandSchematicCreate extends CommandBase.PlayerCommand {
         .paletteType(BlockPaletteTypes.LOCAL)
         .build();
 
-    if (PLUGIN.getSchematicManager().create(schematic)) {
-      player.sendMessage(Text.of(TextColors.GREEN, "Successfully created schematic."));
+    if (PLUGIN.getSchematicManager().create(schematic, name)) {
+      player.sendMessage(Text.of(TextColors.GREEN, "Successfully created ", TextColors.WHITE, name, TextColors.GREEN, "."));
+      if (PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms()){
+        player.sendMessage(Text.of(
+            TextColors.GREEN, "Use ", TextColors.GRAY, Permissions.COMMAND_ARGUMENTS_SCHEMATICS, ".", name,
+            TextColors.GREEN, " to give permission to use."
+        ));
+      }
       return CommandResult.success();
     } else {
       throw new CommandException(Text.of(TextColors.RED, "Error saving schematic!"));

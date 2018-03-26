@@ -44,7 +44,7 @@ public class CommandSchematicCommand extends CommandBase {
   }
 
   public static CommandSpec commandSpec = CommandSpec.builder()
-      .permission(Permissions.COMMAND_SCHEMATIC_SET_NAME)
+      .permission(Permissions.COMMAND_SCHEMATIC_COMMAND)
       .description(Text.of(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),

@@ -90,14 +90,12 @@ public class CommandDelete extends CommandBase.IslandCommand {
             Text.builder("YES")
                 .color(TextColors.GREEN)
                 .onHover(TextActions.showText(Text.of("Click to delete")))
-                .onClick(
-                    TextActions.executeCallback(deleteIsland(island, clear))),
+                .onClick(TextActions.executeCallback(deleteIsland(island, clear))),
             TextColors.WHITE, "] [",
             Text.builder("NO")
                 .color(TextColors.RED)
-                .onHover(TextActions.showText(Text.of("Click to delete")))
-                .onClick(TextActions
-                    .executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
+                .onHover(TextActions.showText(Text.of("Click to cancel")))
+                .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
             TextColors.WHITE, "]"
         ));
       }

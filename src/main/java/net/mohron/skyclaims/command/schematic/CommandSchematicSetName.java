@@ -66,7 +66,7 @@ public class CommandSchematicSetName extends CommandBase {
     schematic.setText(text);
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
-      src.sendMessage(Text.of(TextColors.GREEN, "Successfully updated schematic."));
+      src.sendMessage(Text.of(TextColors.GREEN, "Successfully updated schematic name to ", TextColors.WHITE, text, TextColors.GREEN, "."));
       return CommandResult.success();
     } else {
       throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));

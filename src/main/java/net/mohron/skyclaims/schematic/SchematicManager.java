@@ -58,9 +58,7 @@ public class SchematicManager {
     return schematics.get(r);
   }
 
-  public boolean create(Schematic schematic) {
-    final String name = schematic.getMetadata().getName().toLowerCase();
-
+  public boolean create(Schematic schematic, String name) {
     try {
       DataContainer schematicData = DataTranslators.SCHEMATIC.translate(schematic);
       DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(new File(directory, String.format("%s.schematic", name)))), schematicData);
@@ -115,8 +113,7 @@ public class SchematicManager {
   public boolean save(IslandSchematic schematic) {
     try {
       DataContainer schematicData = DataTranslators.SCHEMATIC.translate(schematic.getSchematic());
-      DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(new File(directory, schematic.getName()))), schematicData);
-      // schematics.add(schematic); TODO: is this even needed now?
+      DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(new File(directory, schematic.getFileName()))), schematicData);
     } catch (Exception e) {
       plugin.getLogger().error("Error saving schematic: ", schematic.getName());
       return false;

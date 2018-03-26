@@ -171,7 +171,7 @@ public abstract class CommandBase implements CommandExecutor {
       boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
 
       List<Text> schematics = PLUGIN.getSchematicManager().getSchematics().stream()
-          .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName().toLowerCase()))
+          .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName()))
           .map(mapper)
           .collect(Collectors.toList());
 

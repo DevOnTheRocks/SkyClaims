@@ -198,9 +198,7 @@ public class SkyClaims {
     }
 
     inviteService = new InviteService();
-
     schematicManager = new SchematicManager(this);
-    schematicManager.load();
 
     registerListeners();
     registerTasks();
@@ -214,6 +212,7 @@ public class SkyClaims {
     }
 
     database = initializeDatabase();
+    schematicManager.load();
 
     IslandManager.ISLANDS = database.loadData();
     logger.info("{} islands loaded.", IslandManager.ISLANDS.size());

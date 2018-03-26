@@ -25,6 +25,7 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.schematic.IslandSchematic;
+import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -66,25 +67,25 @@ public class CommandSchematicInfo extends CommandBase {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
         .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
 
-    getPaginationList(schematic, Category.DETAILS).sendTo(src);
+    getPaginationList(schematic, Category.DETAILS, src).sendTo(src);
 
     return CommandResult.success();
   }
 
-  private PaginationList getPaginationList(IslandSchematic schematic, Category category) {
+  private PaginationList getPaginationList(IslandSchematic schematic, Category category, CommandSource src) {
     Text title = Text.of(
         schematic.getText(), TextColors.AQUA, " : ",
         category == Category.DETAILS ? TextColors.AQUA : TextColors.GRAY, "[",
         Text.builder("Details")
             .color(category == Category.DETAILS ? TextColors.GREEN : TextColors.GRAY)
             .onHover(TextActions.showText(Text.of("Click here to show create commands")))
-            .onClick(TextActions.executeCallback(src -> getPaginationList(schematic, Category.DETAILS).sendTo(src))),
+            .onClick(TextActions.executeCallback(s -> getPaginationList(schematic, Category.DETAILS, s).sendTo(s))),
         category == Category.DETAILS ? TextColors.AQUA : TextColors.GRAY, "] ",
         category == Category.COMMANDS ? TextColors.AQUA : TextColors.GRAY, "[",
         Text.builder("Commands")
             .color(category == Category.COMMANDS ? TextColors.GREEN : TextColors.GRAY)
             .onHover(TextActions.showText(Text.of("Click here to show commands")))
-            .onClick(TextActions.executeCallback(src -> getPaginationList(schematic, Category.COMMANDS).sendTo(src))),
+            .onClick(TextActions.executeCallback(s -> getPaginationList(schematic, Category.COMMANDS, s).sendTo(s))),
         category == Category.COMMANDS ? TextColors.AQUA : TextColors.GRAY, "] "
     );
 
@@ -94,7 +95,7 @@ public class CommandSchematicInfo extends CommandBase {
         contents = getDetails(schematic);
         break;
       case COMMANDS:
-        contents = getCommands(schematic);
+        contents = getCommands(schematic, src.hasPermission(Permissions.COMMAND_SCHEMATIC_COMMAND));
         break;
     }
 
@@ -110,21 +111,24 @@ public class CommandSchematicInfo extends CommandBase {
     contents.add(Text.of(TextColors.YELLOW, "Author", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getAuthor()));
     contents.add(Text.of(TextColors.YELLOW, "Date", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getDate()));
     contents.add(Text.of(TextColors.YELLOW, "Filename", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getName()));
+    contents.add(Text.of(TextColors.YELLOW, "Biome", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getBiomeType().map(CatalogType::getName).orElse("none")));
     return contents;
   }
 
-  private List<Text> getCommands(IslandSchematic schematic) {
+  private List<Text> getCommands(IslandSchematic schematic, boolean canEdit) {
     List<Text> contents = schematic.getCommands().stream()
-        .map(s -> Text.of(deleteCommandButton(schematic, s), "/", s))
+        .map(s -> Text.of(canEdit ? deleteCommandButton(schematic, s) : Text.EMPTY, "/", s))
         .collect(Collectors.toList());
     if (contents.isEmpty()) {
       contents.add(Text.of(TextColors.RED, "No commands set"));
     }
-    contents.add(
-        Text.of(TextColors.WHITE, "[", TextColors.GREEN, "+", TextColors.WHITE, "]", TextColors.GREEN, " Add new command").toBuilder()
-            .onHover(TextActions.showText(Text.of("Click to add")))
-            .onClick(TextActions.suggestCommand("/is schematic command " + schematic.getName() + " add "))
-            .build());
+    if (canEdit) {
+      contents.add(
+          Text.of(TextColors.WHITE, "[", TextColors.GREEN, "+", TextColors.WHITE, "]", TextColors.GREEN, " Add new command").toBuilder()
+              .onHover(TextActions.showText(Text.of("Click to add")))
+              .onClick(TextActions.suggestCommand("/is schematic command " + schematic.getName() + " add "))
+              .build());
+    }
     return contents;
   }
 

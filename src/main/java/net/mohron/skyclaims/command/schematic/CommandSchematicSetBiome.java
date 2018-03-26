@@ -43,7 +43,7 @@ public class CommandSchematicSetBiome extends CommandBase {
       .description(Text.of(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
-          GenericArguments.optional(GenericArguments.catalogedElement(BIOME, BiomeType.class))
+          GenericArguments.optional(Arguments.biome(BIOME))
       )
       .executor(new CommandSchematicSetBiome())
       .build();
@@ -66,7 +66,10 @@ public class CommandSchematicSetBiome extends CommandBase {
     schematic.setBiomeType(biome);
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
-      src.sendMessage(Text.of(TextColors.GREEN, "Successfully updated schematic."));
+      src.sendMessage(Text.of(
+          TextColors.GREEN, "Successfully updated schematic biome to ",
+          TextColors.WHITE, biome != null ? biome.getName() : "none", TextColors.GREEN, "."
+      ));
       return CommandResult.success();
     } else {
       throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));
