@@ -63,10 +63,12 @@ public class Permissions {
   public static final String COMMAND_VERSION = "skyclaims.admin.version";
   // Schematics
   public static final String COMMAND_SCHEMATIC = "skyclaims.admin.schematic.base";
+  public static final String COMMAND_SCHEMATIC_COMMAND = "skyclaims.admin.schematic.command";
   public static final String COMMAND_SCHEMATIC_CREATE = "skyclaims.admin.schematic.create";
   public static final String COMMAND_SCHEMATIC_DELETE = "skyclaims.admin.schematic.delete";
   public static final String COMMAND_SCHEMATIC_INFO = "skyclaims.admin.schematic.info";
-  public static final String COMMAND_SCHEMATIC_COMMAND = "skyclaims.admin.schematic.command";
+  public static final String COMMAND_SCHEMATIC_LIST = "skyclaims.admin.schematic.list.base";
+  public static final String COMMAND_SCHEMATIC_LIST_ALL = "skyclaims.admin.schematic.list.all";
   public static final String COMMAND_SCHEMATIC_SET_BIOME = "skyclaims.admin.schematic.setbiome";
   public static final String COMMAND_SCHEMATIC_SET_NAME = "skyclaims.admin.schematic.setname";
   // Bypass/Exemptions

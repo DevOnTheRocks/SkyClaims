@@ -29,12 +29,11 @@ import static net.mohron.skyclaims.PluginInfo.SPONGE_API;
 import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import me.ryanhamshire.griefprevention.GriefPrevention;
@@ -59,6 +58,7 @@ import net.mohron.skyclaims.schematic.SchematicManager;
 import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandCleanupTask;
+import net.mohron.skyclaims.world.IslandManager;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.slf4j.Logger;
@@ -81,6 +81,8 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 @Plugin(
     id = ID,
@@ -95,8 +97,6 @@ import org.spongepowered.api.service.permission.PermissionService;
     })
 public class SkyClaims {
 
-  public static Map<UUID, Island> islands = Maps.newHashMap();
-  private static Set<Island> saveQueue = Sets.newHashSet();
   private static SkyClaims instance;
   private GriefPreventionApi griefPrevention;
   private PermissionService permissionService;
@@ -124,6 +124,7 @@ public class SkyClaims {
 
   private IDatabase database;
 
+  private Map<UUID, IslandManager> islandManagers = Maps.newHashMap();
   private InviteService inviteService;
   private SchematicManager schematicManager;
 
@@ -164,14 +165,12 @@ public class SkyClaims {
     if (griefPrevention != null) {
       if (griefPrevention.getApiVersion() < GP_API_VERSION) {
         logger.error(
-            "GriefPrevention API version {} is unsupported! Please update to API version {}+.",
-            griefPrevention.getApiVersion(), GP_API_VERSION
+            "GriefPrevention API version {} is unsupported! Please update to API version {}+.", griefPrevention.getApiVersion(), GP_API_VERSION
         );
         enabled = false;
       } else if (Version.of(griefPrevention.getImplementationVersion()).compareTo(GP_VERSION) < 0) {
         logger.error(
-            "GriefPrevention version {} is unsupported! Please update to version {}+.",
-            griefPrevention.getImplementationVersion(), GP_VERSION
+            "GriefPrevention version {} is unsupported! Please update to version {}+.", griefPrevention.getImplementationVersion(), GP_VERSION
         );
         enabled = false;
       } else {
@@ -199,9 +198,7 @@ public class SkyClaims {
     }
 
     inviteService = new InviteService();
-
     schematicManager = new SchematicManager(this);
-    schematicManager.load();
 
     registerListeners();
     registerTasks();
@@ -215,12 +212,13 @@ public class SkyClaims {
     }
 
     database = initializeDatabase();
+    schematicManager.load();
 
-    islands = database.loadData();
-    logger.info("{} islands loaded.", islands.size());
-    if (!saveQueue.isEmpty()) {
-      logger.info("Saving {} claims that were malformed.", saveQueue.size());
-      database.saveData(saveQueue);
+    IslandManager.ISLANDS = database.loadData();
+    logger.info("{} islands loaded.", IslandManager.ISLANDS.size());
+    if (!IslandManager.saveQueue.isEmpty()) {
+      logger.info("Saving {} claims that were malformed.", IslandManager.saveQueue.size());
+      database.saveData(IslandManager.saveQueue);
     }
 
     addCustomMetrics();
@@ -247,7 +245,7 @@ public class SkyClaims {
     // Load Schematics
     schematicManager.load();
     // Load Database
-    islands = database.loadData();
+    IslandManager.ISLANDS = database.loadData();
     // Reload Listeners
     Sponge.getEventManager().unregisterPluginListeners(this);
     registerListeners();
@@ -276,7 +274,7 @@ public class SkyClaims {
     if (getConfig().getExpirationConfig().isEnabled()) {
       Sponge.getScheduler().createTaskBuilder()
           .name(cleanup)
-          .execute(new IslandCleanupTask(islands.values()))
+          .execute(new IslandCleanupTask(IslandManager.ISLANDS.values()))
           .interval(getConfig().getExpirationConfig().getInterval(), TimeUnit.MINUTES)
           .async()
           .submit(this);
@@ -303,7 +301,7 @@ public class SkyClaims {
   }
 
   private void addCustomMetrics() {
-    metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> islands.size()));
+    metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> IslandManager.ISLANDS.size()));
     metrics.addCustomChart(new Metrics.DrilldownPie("sponge_version", () -> {
       Map<String, Map<String, Integer>> map = new HashMap<>();
       String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion().orElse("?").split("-")[0];
@@ -361,7 +359,15 @@ public class SkyClaims {
     return database;
   }
 
+  public Optional<IslandManager> getIslandManager(World world) {
+    return getIslandManager(world.getProperties());
+  }
+
+  public Optional<IslandManager> getIslandManager(WorldProperties world) {
+    return Optional.ofNullable(islandManagers.get(world.getUniqueId()));
+  }
+
   public void queueForSaving(Island island) {
-    saveQueue.add(island);
+    IslandManager.saveQueue.add(island);
   }
 }

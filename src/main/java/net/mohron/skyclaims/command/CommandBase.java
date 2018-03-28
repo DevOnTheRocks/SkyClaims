@@ -29,6 +29,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -58,13 +59,13 @@ public abstract class CommandBase implements CommandExecutor {
       if (!args.hasAny(ISLAND)) {
         return execute(
             (Player) src,
-            Island.get(((Player) src).getLocation())
+            IslandManager.get(((Player) src).getLocation())
                 .orElseThrow(() -> new CommandException(
                     Text.of(TextColors.RED, "You must be on an island to use this command!"))),
             args);
       } else {
         List<Island> islands = Lists.newArrayList();
-        args.<UUID>getAll(ISLAND).forEach(i -> Island.get(i).ifPresent(islands::add));
+        args.<UUID>getAll(ISLAND).forEach(i -> IslandManager.get(i).ifPresent(islands::add));
         if (islands.size() == 1) {
           return execute((Player) src, islands.get(0), args);
         } else {
@@ -106,8 +107,8 @@ public abstract class CommandBase implements CommandExecutor {
       }
       if (!args.hasAny(ISLAND)) {
         if (src instanceof Player) {
-          Island island = Island.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
-              TextColors.RED, "You must either provide an island argument or be on an island to use this command!"
+          Island island = IslandManager.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
+                  TextColors.RED, "You must either provide an island argument or be on an island to use this command!"
           )));
           checkPerms(src, island);
           return execute(src, island, args);
@@ -116,7 +117,7 @@ public abstract class CommandBase implements CommandExecutor {
         }
       } else {
         List<Island> islands = Lists.newArrayList();
-        args.<UUID>getAll(ISLAND).forEach(i -> Island.get(i).ifPresent(islands::add));
+        args.<UUID>getAll(ISLAND).forEach(i -> IslandManager.get(i).ifPresent(islands::add));
         if (islands.size() == 1) {
           checkPerms(src, islands.get(0));
           return execute(src, islands.get(0), args);
@@ -139,7 +140,7 @@ public abstract class CommandBase implements CommandExecutor {
 
     private CommandResult lockIslands(CommandSource src, Collection<UUID> islandsIds) {
       ArrayList<Island> islands = Lists.newArrayList();
-      islandsIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+      islandsIds.forEach(i -> IslandManager.get(i).ifPresent(islands::add));
       islands.forEach(island -> {
         island.setLocked(lock);
         src.sendMessage(Text.of(
@@ -152,9 +153,9 @@ public abstract class CommandBase implements CommandExecutor {
     }
 
     private CommandResult lockAll(CommandSource src) {
-      SkyClaims.islands.values().forEach(i -> i.setLocked(lock));
+      IslandManager.ISLANDS.values().forEach(i -> i.setLocked(lock));
       src.sendMessage(Text.of(
-          TextColors.DARK_PURPLE, SkyClaims.islands.size(),
+          TextColors.DARK_PURPLE, IslandManager.ISLANDS.size(),
           TextColors.GREEN, " islands have been ",
           lock ? "locked" : "unlocked", "!"
       ));
@@ -170,7 +171,7 @@ public abstract class CommandBase implements CommandExecutor {
       boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
 
       List<Text> schematics = PLUGIN.getSchematicManager().getSchematics().stream()
-          .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName().toLowerCase()))
+          .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName()))
           .map(mapper)
           .collect(Collectors.toList());
 

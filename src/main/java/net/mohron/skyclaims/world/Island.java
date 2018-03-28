@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -137,65 +136,9 @@ public class Island implements ContextSource {
         this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
         PLUGIN.queueForSaving(this);
       } catch (CreateIslandException e) {
-        PLUGIN.getLogger().error(
-            String.format("Failed to create claim while loading %s (%s).", getName().toPlain(), id),
-            e);
+        PLUGIN.getLogger().error(String.format("Failed to create claim while loading %s (%s).", getName().toPlain(), id), e);
       }
     }
-  }
-
-  public static Optional<Island> get(UUID islandUniqueId) {
-    return Optional.ofNullable(SkyClaims.islands.get(islandUniqueId));
-  }
-
-  public static Optional<Island> get(Location<World> location) {
-    return SkyClaims.islands.entrySet().stream()
-        .filter(i -> i.getValue().contains(location))
-        .map(Map.Entry::getValue)
-        .findFirst();
-  }
-
-  public static Optional<Island> get(Claim claim) {
-    for (Island island : SkyClaims.islands.values()) {
-      if (island.getClaim().isPresent() && island.getClaim().get().equals(claim)) {
-        return Optional.of(island);
-      }
-    }
-    return Optional.empty();
-  }
-
-  @Deprecated
-  public static Optional<Island> getByOwner(UUID owner) {
-    for (Island island : SkyClaims.islands.values()) {
-      if (island.getOwnerUniqueId().equals(owner)) {
-        return Optional.of(island);
-      }
-    }
-    return Optional.empty();
-  }
-
-  public static boolean hasIsland(UUID owner) {
-    if (SkyClaims.islands.isEmpty()) {
-      return false;
-    }
-    for (Island island : SkyClaims.islands.values()) {
-      if (island.getOwnerUniqueId().equals(owner)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public static int getTotalIslandsOwned(UUID owner) {
-    return (int) SkyClaims.islands.values().stream()
-        .filter(i -> i.getOwnerUniqueId().equals(owner))
-        .count();
-  }
-
-  public static int getTotalIslands(User user) {
-    return (int) SkyClaims.islands.values().stream()
-        .filter(i -> i.isMember(user))
-        .count();
   }
 
   public UUID getUniqueId() {
@@ -276,7 +219,7 @@ public class Island implements ContextSource {
     if (contains(transform.getLocation())) {
       Transform<World> spawn = new Transform<>(getWorld(), transform.getPosition(), transform.getRotation());
       if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 256) {
-       spawn = spawn.setPosition(new Vector3d(
+        spawn = spawn.setPosition(new Vector3d(
             spawn.getLocation().getX(),
             PLUGIN.getConfig().getWorldConfig().getIslandHeight(),
             spawn.getLocation().getZ()
@@ -488,7 +431,7 @@ public class Island implements ContextSource {
   }
 
   private void save() {
-    SkyClaims.islands.put(id, this);
+    IslandManager.ISLANDS.put(id, this);
     PLUGIN.getDatabase().saveIsland(this);
   }
 
@@ -505,7 +448,7 @@ public class Island implements ContextSource {
   public void delete() {
     ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(getWorld());
     getClaim().ifPresent(claimManager::deleteClaim);
-    SkyClaims.islands.remove(id);
+    IslandManager.ISLANDS.remove(id);
     PLUGIN.getDatabase().removeIsland(this);
   }
 }
