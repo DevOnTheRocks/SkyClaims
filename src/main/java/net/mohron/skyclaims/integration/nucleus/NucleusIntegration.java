@@ -50,9 +50,7 @@ public class NucleusIntegration {
     if (Version.of(metaService.semanticVersion()).compareTo(PluginInfo.NUCLEUS_VERSION) >= 0) {
       PLUGIN.getLogger().info("Successfully integrated with Nucleus {}!", metaService.version());
     } else {
-      PLUGIN.getLogger()
-          .info("Found Nucleus {}. SkyClaims requires Nucleus {}+... disabling integration.",
-              metaService.semanticVersion(), PluginInfo.NUCLEUS_VERSION);
+      PLUGIN.getLogger().info("Found Nucleus {}. SkyClaims requires Nucleus {}+.", metaService.semanticVersion(), PluginInfo.NUCLEUS_VERSION);
       Sponge.getEventManager().unregisterListeners(this);
     }
   }
@@ -65,14 +63,13 @@ public class NucleusIntegration {
     //afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
   }
 
-  @Listener
+  @Listener(order = Order.EARLY)
   public void onReload(GameReloadEvent event) {
     initHomeSupport();
   }
 
   private void initHomeSupport() {
-    if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled()
-        && NucleusAPI.getHomeService().isPresent()) {
+    if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled() && NucleusAPI.getHomeService().isPresent()) {
       homeService = NucleusAPI.getHomeService().get();
       CommandHome.register();
       CommandSetHome.register();
