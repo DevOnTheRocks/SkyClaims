@@ -33,21 +33,24 @@ public class CommandSchematic extends CommandBase {
 
   public static final String HELP_TEXT = "used to manage island schematics";
 
-  public static CommandSpec commandSpec = CommandSpec.builder()
-      .permission(Permissions.COMMAND_SCHEMATIC)
-      .description(Text.of(HELP_TEXT))
-      .child(CommandSchematicCommand.commandSpec, "command")
-      .child(CommandSchematicCreate.commandSpec, "create")
-      .child(CommandSchematicDelete.commandSpec, "delete")
-      .child(CommandSchematicInfo.commandSpec, "info")
-      .child(CommandSchematicList.commandSpec, "list")
-      .child(CommandSchematicSetBiome.commandSpec, "setbiome")
-      .child(CommandSchematicSetName.commandSpec, "setname")
-      .childArgumentParseExceptionFallback(false)
-      .executor(new CommandSchematicList())
-      .build();
+  public static CommandSpec commandSpec;
 
   public static void register() {
+    commandSpec = CommandSpec.builder()
+        .permission(Permissions.COMMAND_SCHEMATIC)
+        .description(Text.of(HELP_TEXT))
+        .child(CommandSchematicCommand.commandSpec, "command")
+        .child(CommandSchematicCreate.commandSpec, "create")
+        .child(CommandSchematicDelete.commandSpec, "delete")
+        .child(CommandSchematicInfo.commandSpec, "info")
+        .child(CommandSchematicList.commandSpec, "list")
+        .child(CommandSchematicSetBiome.commandSpec, "setbiome")
+        .child(CommandSchematicSetHeight.commandSpec, "setheight")
+        .child(CommandSchematicSetName.commandSpec, "setname")
+        .childArgumentParseExceptionFallback(false)
+        .executor(new CommandSchematicList())
+        .build();
+
     try {
       registerSubCommands();
       CommandIsland.addSubCommand(commandSpec, "schematic");
@@ -65,6 +68,7 @@ public class CommandSchematic extends CommandBase {
     CommandSchematicInfo.register();
     CommandSchematicList.register();
     CommandSchematicSetBiome.register();
+    CommandSchematicSetHeight.register();
     CommandSchematicSetName.register();
   }
 

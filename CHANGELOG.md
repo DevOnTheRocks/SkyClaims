@@ -11,13 +11,15 @@
   - `/is schematic delete <schematic>` - deletes a schematic
   - `/is schematic command <schematic> <add|remove> <command>` - manages schematic commands
   - `/is schematic info <schematic>` - displays detailed information about a schematic
-  - `/is schematic setname <schematic> [name]` - set an in-game name for a schematic that supports formatting code
   - `/is schematic setbiome <schematic> [biome]` - set a default biome for a schematic that overrides the permission option
+  - `/is schematic setheight <schematic> [height]` - set the generation height of a schematic
+  - `/is schematic setname <schematic> [name]` - set an in-game name for a schematic that supports formatting code
   - `skyclaims.default-schematic` now defaults to _"random"_ which selects a random valid schematic
 - Removed `/isa` &`/is admin`
   - `/is transfer` replaces `/isa transfer`
   - `/is reload` replaces `/isa reload`
   - `Admin-Command-Alias` config removed
+- Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
 
 # Beta 27.2 HOTFIX
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**

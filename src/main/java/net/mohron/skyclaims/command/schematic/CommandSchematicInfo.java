@@ -78,7 +78,7 @@ public class CommandSchematicInfo extends CommandBase {
         category == Category.DETAILS ? TextColors.AQUA : TextColors.GRAY, "[",
         Text.builder("Details")
             .color(category == Category.DETAILS ? TextColors.GREEN : TextColors.GRAY)
-            .onHover(TextActions.showText(Text.of("Click here to show create commands")))
+            .onHover(TextActions.showText(Text.of("Click here to show details")))
             .onClick(TextActions.executeCallback(s -> getPaginationList(schematic, Category.DETAILS, s).sendTo(s))),
         category == Category.DETAILS ? TextColors.AQUA : TextColors.GRAY, "] ",
         category == Category.COMMANDS ? TextColors.AQUA : TextColors.GRAY, "[",
@@ -112,6 +112,7 @@ public class CommandSchematicInfo extends CommandBase {
     contents.add(Text.of(TextColors.YELLOW, "Date", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getDate()));
     contents.add(Text.of(TextColors.YELLOW, "Filename", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getName()));
     contents.add(Text.of(TextColors.YELLOW, "Biome", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getBiomeType().map(CatalogType::getName).orElse("none")));
+    contents.add(Text.of(TextColors.YELLOW, "Height", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, schematic.getHeight().map(Text::of).orElse(Text.of("none"))));
     return contents;
   }
 

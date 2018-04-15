@@ -66,10 +66,11 @@ public class GenerateIslandTask implements Runnable {
       }
     }
 
+    int height = schematic.getHeight().orElse(PLUGIN.getConfig().getWorldConfig().getIslandHeight());
     Location<World> spawn = new Location<>(
         island.getWorld(),
         centerBlock.getX(),
-        centerBlock.getY() + volume.getBlockSize().getY() - 1,
+        height + volume.getRelativeBlockView().getBlockMax().getY() - volume.getBlockMax().getY() - 1,
         centerBlock.getZ()
     );
     island.setSpawn(new Transform<>(spawn.getExtent(), spawn.getPosition()));

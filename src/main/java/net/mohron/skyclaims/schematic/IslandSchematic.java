@@ -34,8 +34,9 @@ import org.spongepowered.api.world.schematic.Schematic;
 public class IslandSchematic {
 
   public final static DataQuery BIOME_TYPE = DataQuery.of("SkyClaims", "BiomeType");
-  public final static DataQuery TEXT = DataQuery.of("SkyClaims", "Text");
   public final static DataQuery COMMANDS = DataQuery.of("SkyClaims", "Command");
+  public final static DataQuery HEIGHT = DataQuery.of("SkyClaims", "Height");
+  public final static DataQuery TEXT = DataQuery.of("SkyClaims", "Text");
 
   private final Schematic schematic;
   private final String name;
@@ -79,7 +80,29 @@ public class IslandSchematic {
   }
 
   public void setBiomeType(BiomeType type) {
-    schematic.getMetadata().set(BIOME_TYPE, type.getId());
+    setMetadata(BIOME_TYPE, type.getId());
+  }
+
+  public List<String> getCommands() {
+    return schematic.getMetadata().getStringList(COMMANDS).orElse(Lists.newArrayList());
+  }
+
+  public void setCommands(List<String> commands) {
+    setMetadata(COMMANDS, commands);
+  }
+
+  public Optional<Integer> getHeight(){
+    Integer height;
+    try {
+      height = Math.max(0, Math.min(255, Integer.parseInt(schematic.getMetadata().getString(HEIGHT).orElse(""))));
+    } catch (Exception ignored) {
+      height = null;
+    }
+    return Optional.ofNullable(height);
+  }
+
+  public void setHeight(Integer height) {
+    setMetadata(HEIGHT, height);
   }
 
   public Text getText() {
@@ -88,14 +111,14 @@ public class IslandSchematic {
   }
 
   public void setText(Text text) {
-    schematic.getMetadata().set(TEXT, TextSerializers.FORMATTING_CODE.serialize(text));
+    setMetadata(TEXT, TextSerializers.FORMATTING_CODE.serialize(text));
   }
 
-  public List<String> getCommands() {
-    return schematic.getMetadata().getStringList(COMMANDS).orElse(Lists.newArrayList());
-  }
-
-  public void setCommands(List<String> commands) {
-    schematic.getMetadata().set(COMMANDS, commands);
+  private void setMetadata(DataQuery path, Object value) {
+    if (value != null){
+      schematic.getMetadata().set(path, value);
+    } else {
+      schematic.getMetadata().remove(path);
+    }
   }
 }
