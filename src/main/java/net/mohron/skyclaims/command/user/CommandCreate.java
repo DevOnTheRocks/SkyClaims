@@ -98,6 +98,10 @@ public class CommandCreate extends CommandBase.PlayerCommand {
 
     try {
       new Island(player, schematic);
+      if (PLUGIN.getConfig().getMiscConfig().isClearOnTeleports()) {
+        player.getEnderChestInventory().clear();
+        player.getInventory().clear();
+      }
       return CommandResult.success();
     } catch (CreateIslandException e) {
       throw new CommandException(

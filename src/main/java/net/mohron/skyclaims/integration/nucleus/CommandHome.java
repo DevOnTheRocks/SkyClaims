@@ -70,6 +70,10 @@ public class CommandHome extends CommandBase {
 
     player.setTransformSafely(transform);
 
+    if (PLUGIN.getConfig().getMiscConfig().isClearOnTeleports()) {
+      player.getEnderChestInventory().clear();
+      player.getInventory().clear();
+    }
     return CommandResult.success();
   }
 

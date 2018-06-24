@@ -32,6 +32,8 @@ public class MiscConfig {
   private boolean logBiomes = false;
   @Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.")
   private boolean islandOnJoin = false;
+  @Setting(value = "Clear-on-Teleports", comment = "Whether players inventory gets cleared on 'is tp', 'is home' and 'is create' commands, to prevent resource sharing")
+  private boolean clearOnTeleports = false;
   @Setting(value = "List-Schematics", comment = "Whether players with access to multiple schematics see a list when not specifying a schematic.")
   private boolean listSchematics = true;
   @Setting(value = "Teleport-on-Creation", comment = "Automatically teleport the owner to their island on creation.")
@@ -50,6 +52,10 @@ public class MiscConfig {
 
   public boolean createIslandOnJoin() {
     return islandOnJoin;
+  }
+
+  public boolean isClearOnTeleports() {
+    return clearOnTeleports;
   }
 
   public boolean isListSchematics() {
