@@ -31,16 +31,22 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.Invite;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.World;
+import java.util.Optional;
 
 public class ClaimEventHandler {
 
@@ -110,6 +116,21 @@ public class ClaimEventHandler {
     event.setCancelled(true);
 
     SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
+  }
+
+  @Listener
+  public void onClaimBorderEvent(BorderClaimEvent e, @First Player player) {
+    for (String itemName : PLUGIN.getConfig().getMiscConfig().getClearItems()){
+      Optional<ItemType> item = Sponge.getRegistry().getType(ItemType.class, itemName);
+      if(item.isPresent()) {
+        ItemType type = item.get();
+        if (player.getInventory().contains(type)) {
+          ItemStack dirt = ItemStack.builder().itemType(type).build();
+          player.getInventory().query(QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of(dirt)).poll();
+        }
+      }
+    }
+
   }
 
   @Listener

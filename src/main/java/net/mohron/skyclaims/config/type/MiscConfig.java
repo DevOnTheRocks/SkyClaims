@@ -32,8 +32,6 @@ public class MiscConfig {
   private boolean logBiomes = false;
   @Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.")
   private boolean islandOnJoin = false;
-  @Setting(value = "Clear-on-Teleports", comment = "Whether players inventory gets cleared on 'is tp', 'is home' and 'is create' commands, to prevent resource sharing")
-  private boolean clearOnTeleports = false;
   @Setting(value = "List-Schematics", comment = "Whether players with access to multiple schematics see a list when not specifying a schematic.")
   private boolean listSchematics = true;
   @Setting(value = "Teleport-on-Creation", comment = "Automatically teleport the owner to their island on creation.")
@@ -42,6 +40,8 @@ public class MiscConfig {
   private List<String> createCommands = new ArrayList<>();
   @Setting(value = "Reset-Commands", comment = "Commands to run on island resets only. Use @p in place of the player's name.")
   private List<String> resetCommands = new ArrayList<>();
+  @Setting(value = "Clear-Items", comment = "Items to be removed from players inventories when going on or off an island / claim")
+  private List<String> clearItems = new ArrayList<>();
   @Setting(value = "Date-Format", comment = "The date format used throughout the plugin.\n" +
       "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html")
   private String dateFormat = "MMMM d, yyyy h:mm a";
@@ -52,10 +52,6 @@ public class MiscConfig {
 
   public boolean createIslandOnJoin() {
     return islandOnJoin;
-  }
-
-  public boolean isClearOnTeleports() {
-    return clearOnTeleports;
   }
 
   public boolean isListSchematics() {
@@ -72,6 +68,10 @@ public class MiscConfig {
 
   public List<String> getResetCommands() {
     return resetCommands;
+  }
+
+  public List<String> getClearItems() {
+    return clearItems;
   }
 
   public SimpleDateFormat getDateFormat() {
