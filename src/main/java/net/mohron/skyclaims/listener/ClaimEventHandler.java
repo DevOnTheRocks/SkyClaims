@@ -125,8 +125,8 @@ public class ClaimEventHandler {
       if(item.isPresent()) {
         ItemType type = item.get();
         if (player.getInventory().contains(type)) {
-          ItemStack dirt = ItemStack.builder().itemType(type).build();
-          player.getInventory().query(QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of(dirt)).poll();
+          ItemStack stack = ItemStack.builder().itemType(type).build();
+          player.getInventory().query(QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of(stack)).poll();
         }
       }
     }
