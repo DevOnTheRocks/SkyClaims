@@ -69,6 +69,7 @@ public class CommandSpawn extends CommandBase.PlayerCommand {
       throw new CommandException(Text.of(TextColors.RED, "You must be trusted on ", user.getName(),
           "'s island to use this command!"));
     }
+
     PLUGIN.getGame().getScheduler().createTaskBuilder()
         .execute(CommandUtil.createTeleportConsumer(player, island.getSpawn().getLocation()))
         .submit(PLUGIN);
