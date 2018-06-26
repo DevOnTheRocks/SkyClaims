@@ -15,7 +15,8 @@
   - `/is schematic setbiome <schematic> [biome]` - set a default biome for a schematic that overrides the permission option
   - `/is schematic setheight <schematic> [height]` - set the generation height of a schematic
   - `/is schematic setname <schematic> [name]` - set an in-game name for a schematic that supports formatting code
-  - `skyclaims.default-schematic` now defaults to _"random"_ which selects a random valid schematic
+  - `skyclaims.default-schematic` now defaults to empty which will list valid schematics
+  - Removed `Misc-List-Schematics` config
 - Removed `/isa` &`/is admin`
   - `/is transfer` replaces `/isa transfer`
   - `/is reload` replaces `/isa reload`

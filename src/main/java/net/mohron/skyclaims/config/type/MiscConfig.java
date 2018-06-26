@@ -30,10 +30,9 @@ public class MiscConfig {
 
   @Setting(value = "Log-Biomes", comment = "Whether a list of biomes and their permissions should be logged.")
   private boolean logBiomes = false;
-  @Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.")
+  @Setting(value = "Island-on-Join", comment = "Automatically create an island for a player on join.\n" +
+      "Requires a valid default schematic to be set (skyclaims.default-schematic)")
   private boolean islandOnJoin = false;
-  @Setting(value = "List-Schematics", comment = "Whether players with access to multiple schematics see a list when not specifying a schematic.")
-  private boolean listSchematics = true;
   @Setting(value = "Teleport-on-Creation", comment = "Automatically teleport the owner to their island on creation.")
   private boolean teleportOnCreate = true;
   @Setting(value = "Create-Commands", comment = "Commands to run on island creation and reset. Use @p in place of the player's name.")
@@ -50,10 +49,6 @@ public class MiscConfig {
 
   public boolean createIslandOnJoin() {
     return islandOnJoin;
-  }
-
-  public boolean isListSchematics() {
-    return listSchematics;
   }
 
   public boolean isTeleportOnCreate() {

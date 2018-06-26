@@ -73,15 +73,15 @@ public class CommandCreate extends ListSchematicCommand {
     }
 
     Optional<IslandSchematic> schematic = args.getOne(SCHEMATIC);
+    Optional<IslandSchematic> defaultSchematic = Options.getDefaultSchematic(player.getUniqueId());
     if (schematic.isPresent()) {
       return createIsland(player, schematic.get());
-    } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics() && PLUGIN.getSchematicManager().getSchematics().size() > 1) {
+    } else if (!defaultSchematic.isPresent()) {
       return listSchematics(player, s -> s.getText().toBuilder().onClick(TextActions.executeCallback(createIsland(s))).build());
     } else {
       return createIsland(
           player,
-          Options.getDefaultSchematic(player.getUniqueId())
-              .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load default schematic!")))
+          defaultSchematic.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load default schematic!")))
       );
     }
   }

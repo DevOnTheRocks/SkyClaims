@@ -71,15 +71,15 @@ public class CommandReset extends ListSchematicCommand {
     boolean keepInv = args.hasAny(KEEP_INV);
 
     Optional<IslandSchematic> schematic = args.getOne(SCHEMATIC);
+    Optional<IslandSchematic> defaultSchematic = Options.getDefaultSchematic(player.getUniqueId());
     if (schematic.isPresent()) {
       getConfirmation(island, schematic.get(), keepInv).accept(player);
-    } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics() && PLUGIN.getSchematicManager().getSchematics().size() > 1) {
+    } else if (!defaultSchematic.isPresent()) {
       listSchematics(player, s -> s.getText().toBuilder().onClick(TextActions.executeCallback(getConfirmation(island, s, keepInv))).build());
     } else {
       getConfirmation(
           island,
-          Options.getDefaultSchematic(player.getUniqueId())
-              .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load default schematic!"))),
+          defaultSchematic.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load default schematic!"))),
           keepInv
       ).accept(player);
     }

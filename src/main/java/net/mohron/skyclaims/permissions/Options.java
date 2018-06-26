@@ -45,7 +45,7 @@ public class Options {
   private static final String MAX_TEAMMATES = "skyclaims.max-teammates";
 
   public static Optional<IslandSchematic> getDefaultSchematic(UUID playerUniqueId) {
-    String name = getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "random");
+    String name = getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "");
 
     if (name.equalsIgnoreCase("random")) {
       return Optional.of(PLUGIN.getSchematicManager().getRandomSchematic());
