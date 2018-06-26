@@ -48,8 +48,7 @@ public class ClaimEventHandler {
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
   @Listener
-  public void onClaimCreate(CreateClaimEvent event, @Root Player player,
-      @Getter(value = "getClaim") Claim claim) {
+  public void onClaimCreate(CreateClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
@@ -70,16 +69,14 @@ public class ClaimEventHandler {
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
     for (Claim claim : event.getClaims()) {
-      if (claim.getWorld().equals(world) && !claim.isAdminClaim() && !claim.getParent()
-          .isPresent()) {
+      if (claim.getWorld().equals(world) && !claim.isAdminClaim() && !claim.getParent().isPresent()) {
         if (event instanceof DeleteClaimEvent.Abandon) {
           event.setMessage(Text.of(TextColors.RED, "You cannot abandon an island claim!"));
         } else {
           IslandManager.get(claim).ifPresent((Island island) -> {
             event.setMessage(Text.of(TextColors.RED,
-                "A claim you are attempting to delete belongs to an island.\n", Text
-                    .of(TextColors.AQUA, "Do you want to delete ", island.getOwnerName(),
-                        "'s island?").toBuilder()
+                "A claim you are attempting to delete belongs to an island.\n",
+                Text.of(TextColors.AQUA, "Do you want to delete ", island.getOwnerName(), "'s island?").toBuilder()
                     .onHover(TextActions.showText(Text.of("Click here to delete.")))
                     .onClick(TextActions.executeCallback(src -> island.delete()))
             ));
@@ -93,8 +90,7 @@ public class ClaimEventHandler {
   }
 
   @Listener
-  public void onClaimChanged(ChangeClaimEvent event, @Root Player player,
-      @Getter(value = "getClaim") Claim claim) {
+  public void onClaimChanged(ChangeClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
@@ -114,8 +110,7 @@ public class ClaimEventHandler {
   }
 
   @Listener
-  public void onClaimBorder(BorderClaimEvent event, @Root Player player,
-      @Getter(value = "getClaim") Claim claim) {
+  public void onClaimBorder(BorderClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
@@ -138,8 +133,7 @@ public class ClaimEventHandler {
   }
 
   @Listener
-  public void onClaimTrust(UserTrustClaimEvent event, @Root Player player,
-      @Getter(value = "getClaim") Claim claim) {
+  public void onClaimTrust(UserTrustClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
     if (PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getDisabledTrustTypes()

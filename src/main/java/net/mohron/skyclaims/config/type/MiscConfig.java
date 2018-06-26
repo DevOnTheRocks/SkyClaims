@@ -67,7 +67,7 @@ public class MiscConfig {
     try {
       return new SimpleDateFormat(dateFormat);
     } catch (IllegalArgumentException e) {
-      SkyClaims.getInstance().getLogger().info("Invalid Date Format: {}", dateFormat);
+      SkyClaims.getInstance().getLogger().error("Invalid Date Format: {}", dateFormat);
       return new SimpleDateFormat("MMMM d, yyyy h:mm a");
     }
   }

@@ -39,8 +39,12 @@ repositories {
         url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
     }
     maven {
-        name "LuckPerms"
-        url "https://repo.lucko.me/"
+        name = "LuckPerms"
+        url = "https://repo.lucko.me/"
+    }
+    maven {
+        name = "bStats"
+        url ="http://repo.bstats.org/content/repositories/releases/"
     }
 }
 
@@ -68,12 +72,12 @@ blossom {
 }
 
 spongestart {
-    online "false"
-    minecraft "1.12.2"
-    type "bleeding"
-    spongeForge "${spongeforge}"
-    forge "${forge}"
-    forgeServerFolder "run/API7/"
+    online = "false"
+    minecraft = "1.12.2"
+    type = "bleeding"
+    spongeForge = "${spongeforge}"
+    forge = "${forge}"
+    forgeServerFolder = "run/API7/"
 }
 
 signing {
