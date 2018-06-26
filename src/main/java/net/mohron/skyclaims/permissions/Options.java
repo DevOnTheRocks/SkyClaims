@@ -42,6 +42,7 @@ public class Options {
   private static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
   private static final String EXPIRATION = "skyclaims.expiration";
   private static final String MAX_ISLANDS = "skyclaims.max-islands";
+  private static final String MAX_TEAMMATES = "skyclaims.max-teammates";
 
   public static Optional<IslandSchematic> getDefaultSchematic(UUID playerUniqueId) {
     String name = getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "random");
@@ -92,6 +93,10 @@ public class Options {
 
   public static int getMaxIslands(UUID playerUniqueId) {
     return getIntOption(playerUniqueId, MAX_ISLANDS, 0);
+  }
+
+  public static int getMaxTeammates(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, MAX_TEAMMATES, 0);
   }
 
   private static String getStringOption(UUID uuid, String option, String defaultValue) {

@@ -20,6 +20,7 @@ package net.mohron.skyclaims.command.team;
 
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
+import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.Invite;
 import net.mohron.skyclaims.team.PrivilegeType;
@@ -48,8 +49,7 @@ public class CommandInvite extends CommandBase.IslandCommand {
         .arguments(GenericArguments.optional(GenericArguments.firstParsing(
             GenericArguments.seq(
                 GenericArguments.user(USER),
-                GenericArguments
-                    .optional(PrivilegeType.getCommandArgument(PRIVILEGE), PrivilegeType.MEMBER)
+                GenericArguments.optional(PrivilegeType.getCommandArgument(PRIVILEGE), PrivilegeType.MEMBER)
             ),
             GenericArguments.literal(LIST, "list")
         )))
@@ -67,15 +67,13 @@ public class CommandInvite extends CommandBase.IslandCommand {
   }
 
   @Override
-  public CommandResult execute(Player player, Island island, CommandContext args)
-      throws CommandException {
+  public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
     User user = args.<User>getOne(USER).orElse(null);
     PrivilegeType type = args.<PrivilegeType>getOne(PRIVILEGE).orElse(PrivilegeType.MEMBER);
+    int maxTeammates = Options.getMaxTeammates(island.getOwnerUniqueId());
 
     if (type == PrivilegeType.NONE) {
-      throw new CommandException(
-          Text.of(TextStyles.ITALIC, "What kind of invite is ", TextStyles.RESET, type.toText(),
-              TextStyles.ITALIC, "?"));
+      throw new CommandException(Text.of(TextStyles.ITALIC, "What kind of invite is ", TextStyles.RESET, type.toText(), TextStyles.ITALIC, "?"));
     }
 
     if (user == null || args.hasAny(LIST)) {
@@ -88,13 +86,14 @@ public class CommandInvite extends CommandBase.IslandCommand {
           island.getPrivilegeType(user).toText(),
           TextColors.RED, " on ", island.getName(), TextColors.RED, "!"
       ));
-    } else if (!island.isOwner(player) || island.getPrivilegeType(player).ordinal() >= type
-        .ordinal()) {
+    } else if (!island.isOwner(player) || island.getPrivilegeType(player).ordinal() >= type.ordinal()) {
       throw new CommandException(Text.of(
           TextColors.RED, "You do not have permission to send ",
           type == PrivilegeType.OWNER ? "an " : "a ",
           type.toText(), TextColors.RED, " invite for ", island.getName(), TextColors.RED, "!"
       ));
+    } else if (maxTeammates > 0 && island.getTotalMembers() >= maxTeammates) {
+      throw new CommandException(Text.of(island.getName(), TextColors.RED, " has reached its maximum team size (", maxTeammates, ")!"));
     } else {
       Invite.builder()
           .island(island)
@@ -103,9 +102,7 @@ public class CommandInvite extends CommandBase.IslandCommand {
           .privilegeType(type)
           .build()
           .send();
-      player.sendMessage(
-          Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()),
-              TextColors.GREEN, "."));
+      player.sendMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
     }
 
     return CommandResult.success();

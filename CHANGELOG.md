@@ -3,8 +3,9 @@
 # Planned Features, Changes & Bugfixes
 - Add Void World Generation capabilities (blocked by https://github.com/SpongePowered/SpongeCommon/issues/1506)
 
-# Beta 28.0 - SNAPSHOT
-**REQUIRED: SF build 2931+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.3.0+**
+# Beta 28
+**REQUIRED: Sponge API 7.1 (SF 3201+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**<br/>
+**OPTIONAL: Nucleus 1.4.0-S7.0+**
 - Added new schematic features:
   - `/is schematic` - schematic parent & list command
   - `/is schematic create <name>` - replaces `/isa createschematic <name>`
@@ -19,7 +20,9 @@
   - `/is transfer` replaces `/isa transfer`
   - `/is reload` replaces `/isa reload`
   - `Admin-Command-Alias` config removed
+- Added `skyclaims.max-teammates` option to limit the number of players per island
 - Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
+- Fixed Nucleus Integration commands not registering after a reload
 
 # Beta 27.2 HOTFIX
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
