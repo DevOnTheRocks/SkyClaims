@@ -78,14 +78,13 @@ public class InviteService {
 
   private List<Text> getIncomingInviteText(User user) {
     SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
-    boolean canJoin = Options.getMaxIslands(user.getUniqueId()) < 1 || Options.getMaxIslands(user.getUniqueId()) - IslandManager.getTotalIslands(user) > 0;
     return invites.row(user).values().stream()
         .map(invite -> Text.of(
             TextColors.WHITE, "[",
             Text.builder("✓")
                 .color(TextColors.GREEN)
                 .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Accept")))
-                .onClick(TextActions.executeCallback(acceptInvite(invite, canJoin))),
+                .onClick(TextActions.executeCallback(acceptInvite(invite))),
             TextColors.WHITE, "] [",
             Text.builder("✗")
                 .color(TextColors.RED)
@@ -105,12 +104,18 @@ public class InviteService {
         .collect(Collectors.toList());
   }
 
-  private Consumer<CommandSource> acceptInvite(Invite invite, boolean canJoin) {
+  private Consumer<CommandSource> acceptInvite(Invite invite) {
     return src -> {
-      if (canJoin) {
-        invite.accept();
-      } else {
+      int maxIslands = Options.getMaxIslands(invite.getReceiver().getUniqueId());
+      int maxTeammates = Options.getMaxTeammates(invite.getIsland().getOwnerUniqueId());
+
+      // Check if the receiver can accept this invite
+      if (maxIslands > 0 && maxIslands - IslandManager.getTotalIslands(invite.getReceiver()) < 1) {
         src.sendMessage(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
+      } else if (maxTeammates > 0 && invite.getIsland().getTotalMembers() >= maxTeammates) {
+        src.sendMessage(Text.of(invite.getIsland().getName(), TextColors.RED, " has reached its maximum team size!"));
+      } else {
+        invite.accept();
       }
     };
   }
