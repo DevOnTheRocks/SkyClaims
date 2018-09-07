@@ -31,6 +31,7 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -53,22 +54,28 @@ import net.mohron.skyclaims.listener.EntitySpawnHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.listener.WorldLoadHandler;
-import net.mohron.skyclaims.metrics.Metrics;
 import net.mohron.skyclaims.schematic.SchematicManager;
 import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandCleanupTask;
 import net.mohron.skyclaims.world.IslandManager;
+import net.mohron.skyclaims.world.gen.VoidWorldGeneratorModifier;
+import net.mohron.skyclaims.world.region.Region;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.bstats.sponge.Metrics;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.filter.Getter;
+import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
@@ -76,12 +83,16 @@ import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.event.world.ConstructWorldPropertiesEvent;
+import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 @Plugin(
@@ -127,8 +138,10 @@ public class SkyClaims {
   private Map<UUID, IslandManager> islandManagers = Maps.newHashMap();
   private InviteService inviteService;
   private SchematicManager schematicManager;
+  private WorldGeneratorModifier voidGenModifier = new VoidWorldGeneratorModifier();
 
   private boolean enabled = true;
+  private boolean setupSpawn = false;
 
   private static final String cleanup = "skyclaims.island.cleanup";
 
@@ -203,6 +216,47 @@ public class SkyClaims {
     registerListeners();
     registerTasks();
     registerCommands();
+  }
+
+  @Listener
+  public void onGameRegistry(GameRegistryEvent.Register<WorldGeneratorModifier> event) {
+    event.register(voidGenModifier);
+  }
+
+  @Listener
+  public void onConstructWorldProperties(ConstructWorldPropertiesEvent event, @Getter(value = "getWorldProperties") WorldProperties properties) {
+    if (!properties.isInitialized() && config.getWorldConfig().getVoidDimensions().contains(properties.getWorldName())) {
+      Collection<WorldGeneratorModifier> modifiers = properties.getGeneratorModifiers();
+      modifiers.add(voidGenModifier);
+      properties.setGeneratorModifiers(modifiers);
+      logger.info("{} set to use SkyClaims' Enhanced Void World Generation Modifier.", properties.getWorldName());
+    }
+    if (!properties.isInitialized() && properties.getWorldName().equalsIgnoreCase(config.getWorldConfig().getWorldName())) {
+      setupSpawn = true;
+    }
+  }
+
+  @Listener(order = Order.LATE)
+  public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World world) {
+    if (!enabled || !griefPrevention.isEnabled(world) || !world.equals(config.getWorldConfig().getWorld())) {
+      return;
+    }
+
+    if (setupSpawn && !config.getWorldConfig().isSeparateSpawn()) {
+      Location<World> spawn = new Region(0, 0).getCenter();
+      int size = 4;
+      for (int x = -size; x <= size; x++) {
+        for (int z = -size; z <= size; z++) {
+          spawn.add(x, -1, z).setBlock(BlockState.builder().blockType(BlockTypes.BEDROCK).build());
+          if (Math.abs(x) == size || Math.abs(z) == size) {
+            spawn.add(x, 1, z).setBlock(BlockState.builder().blockType(BlockTypes.FENCE).build());
+          }
+          world.getProperties().setSpawnPosition(spawn.getPosition().toInt());
+          world.getProperties().setGameRule("spawnRadius", "0");
+        }
+      }
+      logger.info("Spawn area created.");
+    }
   }
 
   @Listener

@@ -58,12 +58,9 @@ public class CommandLeave extends CommandBase.IslandCommand {
       throws CommandException {
 
     if (island.isOwner(player)) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "You must transfer island ownership before leaving."));
+      throw new CommandException(Text.of(TextColors.RED, "You must transfer island ownership before leaving."));
     } else if (!island.isMember(player)) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "You are not a member of ", island.getName(), TextColors.RED,
-              "!"));
+      throw new CommandException(Text.of(TextColors.RED, "You are not a member of ", island.getName(), TextColors.RED, "!"));
     }
 
     player.sendMessage(Text.of(
@@ -92,9 +89,7 @@ public class CommandLeave extends CommandBase.IslandCommand {
       }
 
       island.removeMember(player);
-      player.sendMessage(
-          Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED,
-              "!"));
+      player.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
     };
   }
 }
