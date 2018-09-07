@@ -430,6 +430,13 @@ public class Island implements ContextSource {
     setWidth(getWidth() + blocks * 2);
   }
 
+  public void shrink(int blocks) {
+    if (blocks < 1) {
+      return;
+    }
+    setWidth(getWidth() - blocks * 2);
+  }
+
   private void save() {
     IslandManager.ISLANDS.put(id, this);
     PLUGIN.getDatabase().saveIsland(this);

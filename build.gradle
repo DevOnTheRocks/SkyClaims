@@ -5,7 +5,7 @@ plugins {
     id "ninja.miserable.blossom" version "1.0.1"
     id "com.github.johnrengelman.shadow" version "2.0.1"
     id "org.spongepowered.plugin" version "0.8.1"
-    id "com.qixalite.spongestart2" version "3.0.1"
+    id "com.qixalite.spongestart2" version "3.2.0"
 }
 
 group = "net.mohron.skyclaims"
@@ -77,7 +77,7 @@ spongestart {
     type = "bleeding"
     spongeForge = "${spongeforge}"
     forge = "${forge}"
-    forgeServerFolder = "run/API7/"
+    forgeServerFolder = "${projectDir}/run/API7"
 }
 
 signing {

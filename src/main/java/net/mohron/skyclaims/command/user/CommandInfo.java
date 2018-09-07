@@ -192,10 +192,24 @@ public class CommandInfo extends CommandBase {
         TextColors.WHITE, "] "
     ) : Text.EMPTY;
 
-    return (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty())
-        ? Text.EMPTY : Text.of(
+    Text shrink = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
+        TextColors.WHITE, "[",
+        TextColors.GOLD, Text.builder("Shrink")
+            .onHover(TextActions.showText(Text.of("Click to shrink this island's width by ", TextColors.LIGHT_PURPLE, 2)))
+            .onClick(TextActions.executeCallback(consumer -> {
+              island.shrink(1);
+              src.sendMessage(Text.of(
+                  island.getOwnerName(), "'s island has been shrunk to ",
+                  TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x", TextColors.LIGHT_PURPLE, island.getWidth(),
+                  TextColors.RESET, "!"
+              ));
+            })),
+        TextColors.WHITE, "] "
+    ) : Text.EMPTY;
+
+    return (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty() && shrink.isEmpty()) ? Text.EMPTY : Text.of(
         TextColors.GOLD, "Admin", TextColors.WHITE, " : ",
-        teleport, transfer, delete, expand, Text.NEW_LINE
+        teleport, transfer, delete, expand, shrink, Text.NEW_LINE
     );
   }
 
