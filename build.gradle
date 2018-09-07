@@ -5,7 +5,7 @@ plugins {
     id "ninja.miserable.blossom" version "1.0.1"
     id "com.github.johnrengelman.shadow" version "2.0.1"
     id "org.spongepowered.plugin" version "0.8.1"
-    id "com.qixalite.spongestart2" version "3.2.0"
+    id "com.qixalite.spongestart2" version "3.2.3"
 }
 
 group = "net.mohron.skyclaims"
@@ -52,15 +52,17 @@ dependencies {
     compile("org.spongepowered:spongeapi:${spongeapi}")
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
+    compile("org.bstats:bstats-sponge:1.2")
     runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
     //compile fileTree(dir: "libs", include: "*.jar")
 }
 
 shadowJar {
     dependencies {
-        include(dependency("me.ryanhamshire:griefprevention:${griefprevention}:api"))
-        include(dependency("io.github.nucleuspowered:nucleus-api:${nucleus}"))
+        include(dependency("org.bstats:bstats-sponge:1.2"))
     }
+
+    relocate "org.bstats.sponge", "net.mohron.skyclaims.metrics"
 }
 
 blossom {
@@ -74,7 +76,6 @@ blossom {
 spongestart {
     online = "false"
     minecraft = "1.12.2"
-    type = "bleeding"
     spongeForge = "${spongeforge}"
     forge = "${forge}"
     forgeServerFolder = "${projectDir}/run/API7"
