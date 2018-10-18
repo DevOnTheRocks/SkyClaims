@@ -4,7 +4,7 @@ If you have use WorldEdit before, you are likely already familiar with schematic
  **_SkyClaims only supports Sponge schematics (see below), not WorldEdit Schematics!_**
 
 ## Creating a Schematic
-To create a sponge schematic using SkyClaims, you must have permission to use [`/isa cs`](Commands).
+To create a sponge schematic using SkyClaims, you must have permission to use [`/isa cs`](commands).
  A player with permission to create schematics can use a **Golden Axe** to select an area to later be saved as a schematic (right-click/left-click opposite corners).
  Once the proper area has been selected, **stand in the location that you want players to spawn** on a newly created island.
  Standing at the spawn point, use `isa cs <name>` to automatically save the schematic to the SkyClaims schematic folder making it ready for use.
