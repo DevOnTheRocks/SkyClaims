@@ -15,5 +15,5 @@ Commands such as `/is create` & `/is reset` will list all available schematics (
 Players may use this to choose a specific schematic if they have permission to use it.
 
 A default schematic can be used when the list feature is disabled.
-The schematic defined using the [option](Options) is then used when no schematic is supplied.
+The schematic defined using the [option](options) is then used when no schematic is supplied.
 A schematic argument permission is not checked when the default is used.
