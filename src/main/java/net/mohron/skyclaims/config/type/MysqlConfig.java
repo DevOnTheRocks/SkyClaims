@@ -28,7 +28,7 @@ public class MysqlConfig {
   private String databaseName;
   @Setting("Location")
   private String location;
-  @Setting("Table-Prefix")
+  @Setting("Table-Prefix (not implemented)")
   private String tablePrefix;
   @Setting("Username")
   private String username;
