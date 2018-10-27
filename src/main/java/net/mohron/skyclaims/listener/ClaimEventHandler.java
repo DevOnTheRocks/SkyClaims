@@ -27,21 +27,30 @@ import me.ryanhamshire.griefprevention.api.event.TrustClaimEvent;
 import me.ryanhamshire.griefprevention.api.event.UserTrustClaimEvent;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
+import net.mohron.skyclaims.config.type.MiscConfig.ClearItemsType;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.Invite;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.World;
+import java.util.Optional;
 
 public class ClaimEventHandler {
 
@@ -120,12 +129,28 @@ public class ClaimEventHandler {
         return;
       }
       Island island = IslandManager.get(claim).get();
-      if (island.isLocked() && !island.isMember(player) && !player
-          .hasPermission(Permissions.BYPASS_LOCK)) {
+      if (island.isLocked() && !island.isMember(player) && !player.hasPermission(Permissions.BYPASS_LOCK)) {
         event.setCancelled(true);
-        event.setMessage(
-            Text.of(TextColors.RED, "You do not have permission to enter ", island.getName(),
-                TextColors.RED, "!"));
+        event.setMessage(Text.of(
+            TextColors.RED, "You do not have permission to enter ", island.getName(), TextColors.RED, "!"
+        ));
+      }
+    }
+
+    // Clears configured items when entering/leaving an island
+    if (PLUGIN.getConfig().getMiscConfig().getClearItemsType() == ClearItemsType.BLACKLIST) {
+      // If set to blacklist, remove all matching items
+      for (ItemType item : PLUGIN.getConfig().getMiscConfig().getClearItems()) {
+        ItemStack stack = ItemStack.builder().itemType(item).build();
+        player.getInventory().query(QueryOperationTypes.ITEM_STACK_IGNORE_QUANTITY.of(stack)).poll();
+      }
+    } else {
+      // If set to whitelist, remove all non-matching items
+      for (Inventory slot : player.getInventory().slots()) {
+        if (slot.peek().isPresent()
+            && !PLUGIN.getConfig().getMiscConfig().getClearItems().contains(slot.peek().get().getType())) {
+          slot.poll();
+        }
       }
     }
 

@@ -21,12 +21,17 @@ package net.mohron.skyclaims.config.type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.mohron.skyclaims.SkyClaims;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 
 @ConfigSerializable
 public class MiscConfig {
+
+  public enum ClearItemsType {BLACKLIST, WHITELIST}
 
   @Setting(value = "Log-Biomes", comment = "Whether a list of biomes and their permissions should be logged.")
   private boolean logBiomes = false;
@@ -39,6 +44,10 @@ public class MiscConfig {
   private List<String> createCommands = new ArrayList<>();
   @Setting(value = "Reset-Commands", comment = "Commands to run on island resets only. Use @p in place of the player's name.")
   private List<String> resetCommands = new ArrayList<>();
+  @Setting(value = "Clear-Items", comment = "Items to be removed from players inventories when going on or off an island / claim")
+  private List<ItemType> clearItems = new ArrayList<>();
+  @Setting(value = "Clear-Items-Type", comment = "Sets whether the Clear-Items list should be treated as a blacklist or whitelist.")
+  private ClearItemsType clearItemsType = ClearItemsType.BLACKLIST;
   @Setting(value = "Date-Format", comment = "The date format used throughout the plugin.\n" +
       "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html")
   private String dateFormat = "MMMM d, yyyy h:mm a";
@@ -61,6 +70,14 @@ public class MiscConfig {
 
   public List<String> getResetCommands() {
     return resetCommands;
+  }
+
+  public List<ItemType> getClearItems() {
+    return clearItems;
+  }
+
+  public ClearItemsType getClearItemsType() {
+    return clearItemsType;
   }
 
   public SimpleDateFormat getDateFormat() {
