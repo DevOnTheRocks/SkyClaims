@@ -49,11 +49,9 @@ public class MysqlDatabase extends Database {
       Class.forName("com.mysql.jdbc.Driver");
       getConnection();
     } catch (ClassNotFoundException e) {
-      SkyClaims.getInstance().getLogger().error("Unable to load MySQL JDBC driver!");
-      e.printStackTrace();
+      SkyClaims.getInstance().getLogger().error("Unable to load MySQL JDBC driver!", e);
     } catch (SQLException e) {
-      SkyClaims.getInstance().getLogger().error("Unable to connect to the database!");
-      e.printStackTrace();
+      SkyClaims.getInstance().getLogger().error("Unable to connect to the database:", e);
     }
 
     createTable();

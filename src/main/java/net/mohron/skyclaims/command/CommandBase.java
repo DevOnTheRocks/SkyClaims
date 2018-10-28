@@ -46,7 +46,7 @@ public abstract class CommandBase implements CommandExecutor {
 
   protected static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-  public static abstract class IslandCommand extends CommandBase implements CommandRequirement.RequiresPlayerIsland {
+  public abstract static class IslandCommand extends CommandBase implements CommandRequirement.RequiresPlayerIsland {
 
     protected static final Text ISLAND = Text.of("island");
 
@@ -77,7 +77,7 @@ public abstract class CommandBase implements CommandExecutor {
     }
   }
 
-  public static abstract class PlayerCommand extends CommandBase implements CommandRequirement.RequiresPlayer {
+  public abstract static class PlayerCommand extends CommandBase implements CommandRequirement.RequiresPlayer {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -89,7 +89,7 @@ public abstract class CommandBase implements CommandExecutor {
     }
   }
 
-  public static abstract class LockCommand extends CommandBase implements CommandRequirement.RequiresIsland {
+  public abstract static class LockCommand extends CommandBase implements CommandRequirement.RequiresIsland {
 
     private boolean lock;
 
@@ -163,7 +163,7 @@ public abstract class CommandBase implements CommandExecutor {
     }
   }
 
-  public static abstract class ListSchematicCommand extends PlayerCommand implements CommandRequirement.RequiresPlayer {
+  public abstract static class ListSchematicCommand extends PlayerCommand implements CommandRequirement.RequiresPlayer {
 
     protected static final Text SCHEMATIC = Text.of("schematic");
 

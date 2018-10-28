@@ -57,8 +57,7 @@ public abstract class Database implements IDatabase {
       // Create the islands table (execute statement)
       statement.executeUpdate(table);
     } catch (SQLException e) {
-      e.printStackTrace();
-      SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database");
+      SkyClaims.getInstance().getLogger().error("Unable to create SkyClaims database", e);
     }
   }
 
@@ -67,11 +66,11 @@ public abstract class Database implements IDatabase {
    *
    * @return Returns a new DataStore generated from the database data
    */
-  public HashMap<UUID, Island> loadData() {
+  public Map<UUID, Island> loadData() {
     HashMap<UUID, Island> islands = Maps.newHashMap();
 
-    try (Statement statement = getConnection().createStatement()) {
-      ResultSet results = statement.executeQuery("SELECT * FROM islands");
+    try (Statement statement = getConnection().createStatement();
+        ResultSet results = statement.executeQuery("SELECT * FROM islands")) {
 
       while (results.next()) {
         UUID islandId = UUID.fromString(results.getString("island"));
@@ -89,12 +88,10 @@ public abstract class Database implements IDatabase {
       }
       return islands;
     } catch (SQLException e) {
-      e.printStackTrace();
-      SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
+      SkyClaims.getInstance().getLogger().error("Unable to read from the database.", e);
     }
 
-    SkyClaims.getInstance().getLogger()
-        .info("Loaded SkyClaims MySQL Data. Count: {}", islands.size());
+    SkyClaims.getInstance().getLogger().info("Loaded SkyClaims MySQL Data. Count: {}", islands.size());
     return islands;
   }
 
@@ -139,8 +136,7 @@ public abstract class Database implements IDatabase {
 
       statement.execute();
     } catch (SQLException e) {
-      SkyClaims.getInstance().getLogger()
-          .error("Error inserting Island into the database: {}", e.getMessage());
+      SkyClaims.getInstance().getLogger().error("Error inserting Island into the database:", e);
     }
   }
 
@@ -157,8 +153,7 @@ public abstract class Database implements IDatabase {
 
       statement.execute();
     } catch (SQLException e) {
-      SkyClaims.getInstance().getLogger()
-          .error("Error removing Island from the database: {}", e.getMessage());
+      SkyClaims.getInstance().getLogger().error("Error removing Island from the database:", e);
     }
   }
 
@@ -171,10 +166,11 @@ public abstract class Database implements IDatabase {
     int total = 0;
 
     String sql = "SELECT * FROM islands LIMIT 1";
-    try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-      return statement.executeQuery().getMetaData().getColumnCount();
+    try (PreparedStatement statement = getConnection().prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()) {
+      return rs.getMetaData().getColumnCount();
     } catch (SQLException e) {
-      e.printStackTrace();
+      SkyClaims.getInstance().getLogger().error("Unable to get database column count:", e);
     }
 
     return total;

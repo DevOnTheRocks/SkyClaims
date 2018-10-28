@@ -21,7 +21,10 @@ package net.mohron.skyclaims.command.argument;
 import net.mohron.skyclaims.team.PrivilegeType;
 import org.spongepowered.api.text.Text;
 
-public class Arguments {
+public final class Arguments {
+
+  private Arguments() {
+  }
 
   public static BiomeArgument biome(Text key) {
     return new BiomeArgument(key);

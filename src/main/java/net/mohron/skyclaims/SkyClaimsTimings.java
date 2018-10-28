@@ -21,7 +21,10 @@ package net.mohron.skyclaims;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
-public class SkyClaimsTimings {
+public final class SkyClaimsTimings {
+
+  private SkyClaimsTimings(){
+  }
 
   // TASKS
   public static final Timing GENERATE_ISLAND = Timings.of(SkyClaims.getInstance().getPluginContainer(), "onGenerateIsland");

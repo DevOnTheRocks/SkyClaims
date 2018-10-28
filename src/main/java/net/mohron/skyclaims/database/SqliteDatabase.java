@@ -30,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.StorageConfig;
@@ -50,11 +51,10 @@ public class SqliteDatabase extends Database {
           String.format("jdbc:sqlite:%s%sskyclaims.db", config.getLocation(), File.separator));
       SkyClaims.getInstance().getLogger().info("Successfully connected to SkyClaims SQLite DB.");
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      SkyClaims.getInstance().getLogger().error("Unable to load the JDBC driver");
+      SkyClaims.getInstance().getLogger().error("Unable to load the JDBC driver:", e);
       return;
     } catch (SQLException e) {
-      e.printStackTrace();
+      SkyClaims.getInstance().getLogger().error("Unable to connect to SkyClaims SQLite DB:", e);
       return;
     }
 
@@ -102,9 +102,7 @@ public class SqliteDatabase extends Database {
         saveData(islands);
         SkyClaims.getInstance().getLogger().info("Repopulated islands table, migration complete.");
       } catch (SQLException e) {
-        e.printStackTrace();
-        SkyClaims.getInstance().getLogger()
-            .error("Unable to drop islands table, check the console");
+        SkyClaims.getInstance().getLogger().error("Unable to drop islands table, check the console:", e);
       }
     }
 
@@ -114,17 +112,13 @@ public class SqliteDatabase extends Database {
    * Creates a file backup of the existing database in the configured directory
    */
   public void backup() {
-    File inputFile = new File(
-        String.format("%s%sskyclaims.db", config.getLocation(), File.separator));
-    File outputFile = new File(
-        String.format("%s%sskyclaims_backup.db", config.getLocation(), File.separator));
+    File inputFile = new File(String.format("%s%sskyclaims.db", config.getLocation(), File.separator));
+    File outputFile = new File(String.format("%s%sskyclaims_backup.db", config.getLocation(), File.separator));
 
     try {
       Files.copy(inputFile, outputFile);
     } catch (IOException e) {
-      e.printStackTrace();
-      SkyClaims.getInstance().getLogger()
-          .error("Error occurred while backing up legacy SQLite DB.");
+      SkyClaims.getInstance().getLogger().error("Error occurred while backing up legacy SQLite DB:", e);
     }
   }
 
@@ -134,11 +128,11 @@ public class SqliteDatabase extends Database {
    * @return Returns a new DataStore generated from the database data
    */
   @Override
-  public HashMap<UUID, Island> loadData() {
+  public Map<UUID, Island> loadData() {
     HashMap<UUID, Island> islands = Maps.newHashMap();
 
-    try (Statement statement = getConnection().createStatement()) {
-      ResultSet results = statement.executeQuery("SELECT * FROM islands");
+    try (Statement statement = getConnection().createStatement();
+        ResultSet results = statement.executeQuery("SELECT * FROM islands")) {
       UUID claimId;
       while (results.next()) {
         if (results.getString("claim").length() != 36) {
@@ -160,12 +154,10 @@ public class SqliteDatabase extends Database {
         islands.put(islandId, island);
       }
     } catch (SQLException e) {
-      e.printStackTrace();
-      SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
+      SkyClaims.getInstance().getLogger().error("Unable to read from the database:", e);
     }
 
-    SkyClaims.getInstance().getLogger()
-        .info("Loaded SkyClaims SQLite Data. Count: {}", islands.size());
+    SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Data. Count: {}", islands.size());
     return islands;
   }
 
@@ -177,9 +169,8 @@ public class SqliteDatabase extends Database {
   private HashMap<UUID, Island> loadLegacyData() {
     HashMap<UUID, Island> islands = Maps.newHashMap();
 
-    try (Statement statement = getConnection().createStatement()) {
-      ResultSet results = statement.executeQuery("SELECT * FROM islands");
-
+    try (Statement statement = getConnection().createStatement();
+        ResultSet results = statement.executeQuery("SELECT * FROM islands")) {
       while (results.next()) {
         UUID ownerId = UUID.fromString(results.getString("owner"));
         UUID claimId = UUID.fromString(results.getString("id"));
@@ -194,12 +185,10 @@ public class SqliteDatabase extends Database {
         islands.put(id, island);
       }
     } catch (SQLException e) {
-      e.printStackTrace();
-      SkyClaims.getInstance().getLogger().error("Unable to read from the database.");
+      SkyClaims.getInstance().getLogger().error("Unable to read from the database:", e);
     }
 
-    SkyClaims.getInstance().getLogger()
-        .info("Loaded SkyClaims SQLite Legacy Data. Count: {}", islands.size());
+    SkyClaims.getInstance().getLogger().info("Loaded SkyClaims SQLite Legacy Data. Count: {}", islands.size());
     return islands;
   }
 }

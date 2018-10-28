@@ -143,7 +143,7 @@ public class SkyClaims {
   private boolean enabled = true;
   private boolean setupSpawn = false;
 
-  private static final String cleanup = "skyclaims.island.cleanup";
+  private static final String ISLAND_CLEANUP = "skyclaims.island.cleanup";
 
   public static SkyClaims getInstance() {
     return instance;
@@ -178,12 +178,14 @@ public class SkyClaims {
     if (griefPrevention != null) {
       if (griefPrevention.getApiVersion() < GP_API_VERSION) {
         logger.error(
-            "GriefPrevention API version {} is unsupported! Please update to API version {}+.", griefPrevention.getApiVersion(), GP_API_VERSION
+            "GriefPrevention API version {} is unsupported! Please update to API version {}+.",
+            griefPrevention.getApiVersion(), GP_API_VERSION
         );
         enabled = false;
       } else if (Version.of(griefPrevention.getImplementationVersion()).compareTo(GP_VERSION) < 0) {
         logger.error(
-            "GriefPrevention version {} is unsupported! Please update to version {}+.", griefPrevention.getImplementationVersion(), GP_VERSION
+            "GriefPrevention version {} is unsupported! Please update to version {}+.",
+            griefPrevention.getImplementationVersion(), GP_VERSION
         );
         enabled = false;
       } else {
@@ -204,7 +206,8 @@ public class SkyClaims {
     }
 
     permissionService = Sponge.getServiceManager().provideUnchecked(PermissionService.class);
-    if (Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
+    if (!Sponge.getServiceManager().getRegistration(PermissionService.class).isPresent()
+        || Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin().getId().equalsIgnoreCase("sponge")) {
       logger.error("Unable to initialize plugin. SkyClaims requires a permissions plugin. Disabling SkyClaims.");
       enabled = false;
       return;
@@ -224,14 +227,17 @@ public class SkyClaims {
   }
 
   @Listener
-  public void onConstructWorldProperties(ConstructWorldPropertiesEvent event, @Getter(value = "getWorldProperties") WorldProperties properties) {
-    if (!properties.isInitialized() && config.getWorldConfig().getVoidDimensions().contains(properties.getWorldName())) {
+  public void onConstructWorldProperties(ConstructWorldPropertiesEvent event,
+      @Getter(value = "getWorldProperties") WorldProperties properties) {
+    if (!properties.isInitialized() && config.getWorldConfig().getVoidDimensions()
+        .contains(properties.getWorldName())) {
       Collection<WorldGeneratorModifier> modifiers = properties.getGeneratorModifiers();
       modifiers.add(voidGenModifier);
       properties.setGeneratorModifiers(modifiers);
       logger.info("{} set to use SkyClaims' Enhanced Void World Generation Modifier.", properties.getWorldName());
     }
-    if (!properties.isInitialized() && properties.getWorldName().equalsIgnoreCase(config.getWorldConfig().getWorldName())) {
+    if (!properties.isInitialized() && properties.getWorldName()
+        .equalsIgnoreCase(config.getWorldConfig().getWorldName())) {
       setupSpawn = true;
     }
   }
@@ -304,7 +310,7 @@ public class SkyClaims {
     Sponge.getEventManager().unregisterPluginListeners(this);
     registerListeners();
     // Reload Tasks
-    Sponge.getScheduler().getTasksByName(cleanup).forEach(Task::cancel);
+    Sponge.getScheduler().getTasksByName(ISLAND_CLEANUP).forEach(Task::cancel);
     registerTasks();
     // Reload Commands
     Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
@@ -327,7 +333,7 @@ public class SkyClaims {
   private void registerTasks() {
     if (getConfig().getExpirationConfig().isEnabled()) {
       Sponge.getScheduler().createTaskBuilder()
-          .name(cleanup)
+          .name(ISLAND_CLEANUP)
           .execute(new IslandCleanupTask(IslandManager.ISLANDS.values()))
           .interval(getConfig().getExpirationConfig().getInterval(), TimeUnit.MINUTES)
           .async()

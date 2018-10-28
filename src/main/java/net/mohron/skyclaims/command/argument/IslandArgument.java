@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
@@ -64,7 +65,8 @@ public class IslandArgument extends CommandElement {
       if (IslandManager.ISLANDS.containsKey(uuid)) {
         return Sets.newHashSet(uuid);
       }
-    } catch (IllegalArgumentException ignored) {
+    } catch (IllegalArgumentException e) {
+      SkyClaims.getInstance().getLogger().error("Error parsing Island argument:" , e);
     }
     Set<UUID> islands = IslandManager.ISLANDS.entrySet().stream()
         .filter(i -> i.getValue().getOwnerName().equalsIgnoreCase(arg))

@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.world.gen;
 
+import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.world.DimensionTypes;
@@ -64,7 +65,7 @@ public class VoidWorldGeneratorModifier implements WorldGeneratorModifier {
     try {
       worldGenerator.getGenerationPopulators().remove(Class.forName("net.minecraft.world.gen.MapGenCavesHell"));
     } catch (ClassNotFoundException e) {
-      e.printStackTrace();
+      SkyClaims.getInstance().getLogger().error("Error modifying nether generation:", e);
     }
     biomeSettings.getPopulators().remove(PopulatorTypes.NETHER_FIRE);
     biomeSettings.getPopulators().remove(PopulatorTypes.GLOWSTONE);

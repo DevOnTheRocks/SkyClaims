@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.world.biome.BiomeType;
 
-public class Options {
+public final class Options {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
   private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
@@ -44,13 +44,17 @@ public class Options {
   private static final String MAX_ISLANDS = "skyclaims.max-islands";
   private static final String MAX_TEAMMATES = "skyclaims.max-teammates";
 
+  private Options() {
+  }
+
   public static Optional<IslandSchematic> getDefaultSchematic(UUID playerUniqueId) {
     String name = getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "");
 
     if (name.equalsIgnoreCase("random")) {
       return Optional.of(PLUGIN.getSchematicManager().getRandomSchematic());
     } else {
-      return PLUGIN.getSchematicManager().getSchematics().stream().filter(s -> s.getName().equalsIgnoreCase(name)).findAny();
+      return PLUGIN.getSchematicManager().getSchematics().stream().filter(s -> s.getName().equalsIgnoreCase(name))
+          .findAny();
     }
   }
 
@@ -114,7 +118,8 @@ public class Options {
     if (!PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()) {
       return defaultValue;
     }
-    String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(String.valueOf(defaultValue));
+    String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option)
+        .orElse(String.valueOf(defaultValue));
     try {
       return Integer.parseInt(value);
     } catch (NumberFormatException e) {

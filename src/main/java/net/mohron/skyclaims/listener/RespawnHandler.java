@@ -17,10 +17,10 @@
  */
 package net.mohron.skyclaims.listener;
 
+import java.util.Comparator;
 import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
@@ -36,10 +36,13 @@ public class RespawnHandler {
       return;
     }
 
-    IslandManager.getByOwner(player.getUniqueId())
+    // Send the player to the closest island to their death point that they're a member of
+    IslandManager.get(player).stream()
+        .min(Comparator.comparing(i -> i.getSpawn().getPosition().distance(event.getFromTransform().getPosition())))
         .ifPresent(island -> Sponge.getGame().getTeleportHelper()
             .getSafeLocation(island.getSpawn().getLocation())
             .ifPresent(spawn -> event.setToTransform(island.getSpawn().setLocation(spawn))));
+
     SkyClaimsTimings.PLAYER_RESPAWN.stopTimingIfSync();
   }
 }

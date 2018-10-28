@@ -20,10 +20,12 @@ package net.mohron.skyclaims.world;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.world.Location;
@@ -52,6 +54,12 @@ public class IslandManager {
       }
     }
     return Optional.empty();
+  }
+
+  public static List<Island> get(User user) {
+    return ISLANDS.values().stream()
+        .filter(i -> i.isMember(user))
+        .collect(Collectors.toList());
   }
 
   @Deprecated

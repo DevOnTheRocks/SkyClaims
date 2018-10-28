@@ -38,12 +38,16 @@ import org.spongepowered.api.world.schematic.Schematic;
 
 public class SchematicManager {
 
+  private static final String SCHEMATIC_FILE_EXT = ".schematic";
+
   private final SkyClaims plugin;
+  private final Random random;
   private final List<IslandSchematic> schematics;
   private final File directory;
 
   public SchematicManager(SkyClaims plugin) {
     this.plugin = plugin;
+    this.random = new Random();
     this.schematics = Lists.newArrayList();
     this.directory = new File(plugin.getConfigDir() + File.separator + "schematics");
   }
@@ -53,7 +57,6 @@ public class SchematicManager {
   }
 
   public IslandSchematic getRandomSchematic() {
-    Random random = new Random();
     int r = random.nextInt(schematics.size());
     return schematics.get(r);
   }
@@ -61,7 +64,9 @@ public class SchematicManager {
   public boolean create(Schematic schematic, String name) {
     try {
       DataContainer schematicData = DataTranslators.SCHEMATIC.translate(schematic);
-      DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(new File(directory, String.format("%s.schematic", name)))), schematicData);
+      DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(
+          new File(directory, String.format("%s.schematic", name))
+      )), schematicData);
       plugin.getSchematicManager().getSchematics().add(new IslandSchematic(schematic, name));
       return true;
     } catch (Exception e) {
@@ -89,14 +94,13 @@ public class SchematicManager {
       //noinspection ConstantConditions - exception will be caught
       for (File file : directory.listFiles()) {
         final String fileName = file.getName();
-        if (fileName.endsWith(".schematic")) {
+        if (fileName.endsWith(SCHEMATIC_FILE_EXT)) {
           try {
             DataContainer schematicData = DataFormats.NBT.readFrom(new GZIPInputStream(new FileInputStream(file)));
             Schematic schematic = DataTranslators.SCHEMATIC.translate(schematicData);
-            schematics.add(new IslandSchematic(schematic, fileName.replace(".schematic", "").toLowerCase()));
+            schematics.add(new IslandSchematic(schematic, fileName.replace(SCHEMATIC_FILE_EXT, "").toLowerCase()));
           } catch (Exception e) {
-            plugin.getLogger().error("Error loading schematic: {}", fileName);
-            e.printStackTrace();
+            plugin.getLogger().error("Error loading schematic: {}\n{}", fileName, e.getStackTrace());
             continue;
           }
           plugin.getLogger().debug("Successfully loaded schematic: {}.", fileName);
@@ -113,7 +117,9 @@ public class SchematicManager {
   public boolean save(IslandSchematic schematic) {
     try {
       DataContainer schematicData = DataTranslators.SCHEMATIC.translate(schematic.getSchematic());
-      DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(new File(directory, schematic.getFileName()))), schematicData);
+      DataFormats.NBT.writeTo(new GZIPOutputStream(new FileOutputStream(
+          new File(directory, schematic.getFileName())
+      )), schematicData);
     } catch (Exception e) {
       plugin.getLogger().error("Error saving schematic: ", schematic.getName());
       return false;
@@ -122,7 +128,7 @@ public class SchematicManager {
   }
 
   private void unpackDefaultSchematics() {
-    String[] schematics = {"gardenofglass", "grass", "sand", "skyexchange", "skyfactory", "snow", "wood"};
+    String[] defaultSchematics = {"gardenofglass", "grass", "sand", "skyexchange", "skyfactory", "snow", "wood"};
     if (!directory.exists() || !directory.isDirectory()) {
       try {
         boolean success = directory.mkdir();
@@ -130,22 +136,22 @@ public class SchematicManager {
           throw new IOException();
         }
       } catch (SecurityException | IOException e) {
-        plugin.getLogger().error(String.format("Failed to create schematics directory.\r\n %s", e.getMessage()));
+        plugin.getLogger().error(String.format("Failed to create schematics directory.%n %s", e.getMessage()));
       }
     }
     try {
       //noinspection ConstantConditions - schemDir.list() is being checked for null
       if (directory.list() == null || directory.list().length < 1) {
-        for (String name : schematics) {
+        for (String name : defaultSchematics) {
           File schematic = Paths.get(String.format("%s%s%s.schematic", directory.toPath(), File.separator, name)).toFile();
           //noinspection ConstantConditions - Resource will always be included
           Resources.asByteSource(this.getClass().getClassLoader()
-              .getResource(name + ".schematic"))
+              .getResource(name + SCHEMATIC_FILE_EXT))
               .copyTo(com.google.common.io.Files.asByteSink(schematic));
         }
       }
     } catch (SecurityException | IOException e) {
-      plugin.getLogger().error(String.format("Failed to create default schematic.\r\n %s", e.getMessage()));
+      plugin.getLogger().error(String.format("Failed to create default schematic.%n %s", e.getMessage()));
     }
   }
 }
