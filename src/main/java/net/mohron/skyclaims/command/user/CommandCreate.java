@@ -93,7 +93,12 @@ public class CommandCreate extends ListSchematicCommand {
     ));
 
     try {
-      new Island(player, schematic);
+      Island island = new Island(player, schematic);
+      clearIslandMemberInventories(
+          island,
+          PLUGIN.getConfig().getInventoryConfig().getPlayerInventory().isCreate(),
+          PLUGIN.getConfig().getInventoryConfig().getEnderchest().isCreate()
+      );
       return CommandResult.success();
     } catch (CreateIslandException e) {
       throw new CommandException(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));

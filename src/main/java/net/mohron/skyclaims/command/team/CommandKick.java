@@ -88,6 +88,11 @@ public class CommandKick extends CommandBase.IslandCommand {
         p.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
       }
     });
+    clearMemberInventory(
+        player,
+        PLUGIN.getConfig().getInventoryConfig().getPlayerInventory().isKick(),
+        PLUGIN.getConfig().getInventoryConfig().getEnderchest().isKick()
+    );
     island.removeMember(user);
 
     player.sendMessage(Text.of(

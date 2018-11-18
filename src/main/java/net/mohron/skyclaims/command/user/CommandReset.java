@@ -113,9 +113,13 @@ public class CommandReset extends ListSchematicCommand {
 
   private Consumer<CommandSource> resetIsland(Player player, Island island, IslandSchematic schematic, boolean keepInv) {
     return src -> {
+      // The keep inv argument will override the configured behavior
       if (!keepInv) {
-        player.getEnderChestInventory().clear();
-        player.getInventory().clear();
+        clearIslandMemberInventories(
+            island,
+            PLUGIN.getConfig().getInventoryConfig().getPlayerInventory().isReset(),
+            PLUGIN.getConfig().getInventoryConfig().getEnderchest().isReset()
+        );
       }
 
       // Teleport any players located in the island's region to spawn

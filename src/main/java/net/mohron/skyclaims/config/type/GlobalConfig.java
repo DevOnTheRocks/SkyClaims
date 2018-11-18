@@ -43,6 +43,8 @@ public class GlobalConfig {
   private StorageConfig storageConfig = new StorageConfig();
   @Setting(value = "World")
   private WorldConfig worldConfig = new WorldConfig();
+  @Setting(value = "Inventory")
+  private InventoryConfig inventoryConfig = new InventoryConfig();
 
   public GlobalConfig() {
     version = ConfigManager.CONFIG_VERSION;
@@ -82,5 +84,9 @@ public class GlobalConfig {
 
   public WorldConfig getWorldConfig() {
     return worldConfig;
+  }
+
+  public InventoryConfig getInventoryConfig() {
+    return inventoryConfig;
   }
 }

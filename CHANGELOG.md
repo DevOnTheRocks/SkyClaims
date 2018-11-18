@@ -22,6 +22,9 @@
   - `/is reload` replaces `/isa reload`
   - `Admin-Command-Alias` config removed
 - Added `skyclaims.max-teammates` option to limit the number of players per island
+- Added fine-grained clear inventory control:
+  - Added new inventory config options (player inventory & enderchest options)
+  - Added `skyclaims.admin.keepinv` permission to bypass clear inventory
 - Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
 - Fixed Nucleus Integration commands not registering after a reload
 

@@ -76,5 +76,6 @@ public class Permissions {
   public static final String EXEMPT_KICK = "skyclaims.admin.kick.exempt";
   public static final String BYPASS_LOCK = "skyclaims.admin.lock.bypass";
   public static final String BYPASS_TRUST = "skyclaims.admin.trust.bypass";
+  public static final String KEEP_INV = "skyclaims.admin.keepinv";
 
 }

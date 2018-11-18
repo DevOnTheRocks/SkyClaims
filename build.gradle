@@ -6,6 +6,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "2.0.1"
     id "org.spongepowered.plugin" version "0.8.1"
     id "com.qixalite.spongestart2" version "3.2.3"
+    id "io.franzbecker.gradle-lombok" version "1.14"
     id "org.sonarqube" version "2.6"
 }
 
@@ -47,6 +48,7 @@ repositories {
         name = "bStats"
         url ="http://repo.bstats.org/content/repositories/releases/"
     }
+
 }
 
 dependencies {
@@ -56,6 +58,11 @@ dependencies {
     compile("org.bstats:bstats-sponge:1.2")
     runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
     //compile fileTree(dir: "libs", include: "*.jar")
+}
+
+lombok {
+    version = '1.18.4'
+    sha256 = ""
 }
 
 shadowJar {

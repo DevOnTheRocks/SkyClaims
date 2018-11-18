@@ -22,10 +22,12 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.config.type.InventoryConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.Island;
@@ -37,7 +39,9 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.pagination.PaginationList;
+import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
@@ -182,6 +186,42 @@ public abstract class CommandBase implements CommandExecutor {
           .sendTo(player);
 
       return CommandResult.empty();
+    }
+  }
+
+  protected void clearIslandMemberInventories(Island island, boolean player, boolean enderchest) {
+    if (!player && !enderchest) {
+      return;
+    }
+
+    InventoryConfig config = PLUGIN.getConfig().getInventoryConfig();
+    UserStorageService uss = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class);
+
+    List<String> uuids = config.isAllMembers()
+        ? island.getMembers()
+        : Lists.newArrayList(island.getOwnerUniqueId().toString());
+    List<User> members = uuids.stream()
+        .map(s -> uss.get(UUID.fromString(s)))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
+
+    // Clear each member's inventory, if enabled
+    for (User user : members) {
+      clearMemberInventory(user, player, enderchest);
+    }
+  }
+
+  protected void clearMemberInventory(User member, boolean player, boolean enderchest) {
+    // Check if the player is exempt from having their inventory cleared
+    if (member.hasPermission(Permissions.KEEP_INV)) {
+      return;
+    }
+    if (player) {
+      member.getInventory().clear();
+    }
+    if (enderchest) {
+      member.getEnderChestInventory().clear();
     }
   }
 }
