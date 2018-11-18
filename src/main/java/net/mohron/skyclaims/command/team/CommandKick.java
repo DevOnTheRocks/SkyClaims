@@ -69,8 +69,11 @@ public class CommandKick extends CommandBase.IslandCommand {
           PrivilegeType.NONE.format(user.getName()), TextColors.RED, " is not a member of ",
           island.getName(), TextColors.RED, "!"
       ));
-    } else if (island.getPrivilegeType(player).ordinal() >= island.getPrivilegeType(user)
-        .ordinal()) {
+    } else if (user.hasPermission(Permissions.EXEMPT_KICK)) {
+      throw new CommandException(Text.of(
+          island.getPrivilegeType(user).format(user.getName()), TextColors.RED, " is exempt from being kicked!")
+      );
+    } else if (island.getPrivilegeType(player).ordinal() >= island.getPrivilegeType(user).ordinal()) {
       throw new CommandException(Text.of(
           TextColors.RED, "You do not have permission to kick ",
           island.getPrivilegeType(user).format(user.getName()),
@@ -80,11 +83,9 @@ public class CommandKick extends CommandBase.IslandCommand {
 
     PrivilegeType type = island.getPrivilegeType(user);
     user.getPlayer().ifPresent(p -> {
-      if (island.getPlayers().contains(p) && !p.hasPermission(Permissions.EXEMPT_KICK)) {
+      if (island.getPlayers().contains(p)) {
         p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
-        p.sendMessage(
-            Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED,
-                "!"));
+        p.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
       }
     });
     island.removeMember(user);
