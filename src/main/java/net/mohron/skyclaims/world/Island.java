@@ -392,9 +392,9 @@ public class Island implements ContextSource {
   }
 
   public Collection<Entity> getPassiveEntities() {
-    return getWorld().getEntities(
-        e -> contains(e.getLocation()) && e instanceof Animal || e instanceof Aquatic
-            || e instanceof Ambient);
+    return getWorld().getEntities(e -> contains(
+            e.getLocation()) && e instanceof Animal || e instanceof Aquatic || e instanceof Ambient
+    );
   }
 
   public Collection<Entity> getItemEntities() {

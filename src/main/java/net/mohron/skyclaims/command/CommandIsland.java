@@ -39,6 +39,7 @@ import net.mohron.skyclaims.command.team.CommandLeave;
 import net.mohron.skyclaims.command.team.CommandPromote;
 import net.mohron.skyclaims.command.user.CommandCreate;
 import net.mohron.skyclaims.command.user.CommandDelete;
+import net.mohron.skyclaims.command.user.CommandEntityInfo;
 import net.mohron.skyclaims.command.user.CommandExpand;
 import net.mohron.skyclaims.command.user.CommandInfo;
 import net.mohron.skyclaims.command.user.CommandList;
@@ -104,6 +105,7 @@ public class CommandIsland extends CommandBase {
   private static void registerSubCommands() {
     CommandCreate.register();
     CommandDelete.register();
+    CommandEntityInfo.register();
     CommandDemote.register();
     CommandExpand.register();
     CommandInfo.register();
@@ -149,6 +151,15 @@ public class CommandIsland extends CommandBase {
           TextColors.GRAY, " [schematic]",
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandCreate.HELP_TEXT
+      ));
+    }
+
+    if (src.hasPermission(Permissions.COMMAND_ENTITY_INFO)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, Text.builder(alias + "entity").onClick(TextActions.runCommand("/" + alias + "entity")),
+          TextColors.GRAY, " [island]",
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandEntityInfo.HELP_TEXT
       ));
     }
 
