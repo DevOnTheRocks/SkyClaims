@@ -22,9 +22,10 @@ import com.google.common.base.Stopwatch;
 import java.util.concurrent.TimeUnit;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
+import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.region.Region;
-import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
@@ -55,25 +56,29 @@ public class RegenerateRegionTask implements Runnable {
   @Override
   public void run() {
     SkyClaimsTimings.CLEAR_ISLAND.startTimingIfSync();
-    World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+    WorldConfig config = PLUGIN.getConfig().getWorldConfig();
+    World world = config.getWorld();
 
     PLUGIN.getLogger().info("Begin clearing region ({}, {})", region.getX(), region.getZ());
 
     Stopwatch sw = Stopwatch.createStarted();
+
+    final BlockState[] blocks = FlatWorldUtil.getBlocksSafely(config.getPresetCode());
 
     for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
       for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
         world.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
           chunk.loadChunk(false);
           // Teleport any players to world spawn
-          chunk.getEntities(e -> e instanceof Player).forEach(e -> e.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
+          chunk.getEntities(e -> e instanceof Player).forEach(e -> e.setLocationSafely(config.getSpawn()));
           // Clear the contents of an tile entity with an inventory
           chunk.getTileEntities(e -> e instanceof TileEntityCarrier).forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
           for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
             for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
               for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
-                if (chunk.getBlockType(bx, by, bz) != BlockTypes.AIR) {
-                  chunk.getLocation(bx, by, bz).setBlock(BlockTypes.AIR.getDefaultState());
+                BlockState block = blocks[by];
+                if (chunk.getBlockType(bx, by, bz) != block.getType()) {
+                  chunk.getLocation(bx, by, bz).setBlock(block);
                 }
               }
             }
