@@ -41,9 +41,8 @@ public class IslandManager {
   }
 
   public static Optional<Island> get(Location<World> location) {
-    return ISLANDS.entrySet().stream()
-        .filter(i -> i.getValue().contains(location))
-        .map(Map.Entry::getValue)
+    return ISLANDS.values().stream()
+        .filter(island -> island.contains(location))
         .findFirst();
   }
 

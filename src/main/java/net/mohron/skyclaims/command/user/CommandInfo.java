@@ -178,16 +178,19 @@ public class CommandInfo extends CommandBase {
     Text expand = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
         TextColors.WHITE, "[",
         TextColors.GOLD, Text.builder("Expand")
-            .onHover(TextActions.showText(
-                Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2)))
+            .onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2)))
             .onClick(TextActions.executeCallback(consumer -> {
-              island.expand(1);
-              src.sendMessage(Text.of(
-                  island.getOwnerName(), "'s island has been expanded to ",
-                  TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x",
-                  TextColors.LIGHT_PURPLE, island.getWidth(),
-                  TextColors.RESET, "!"
-              ));
+              if (island.getWidth() < 512) {
+                island.expand(1);
+                src.sendMessage(Text.of(
+                    island.getOwnerName(), "'s island has been expanded to ",
+                    TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x",
+                    TextColors.LIGHT_PURPLE, island.getWidth(),
+                    TextColors.RESET, "!"
+                ));
+              } else {
+                src.sendMessage(Text.of(island.getOwnerName(), TextColors.RED, "'s island cannot be expanded further!"));
+              }
             })),
         TextColors.WHITE, "] "
     ) : Text.EMPTY;
