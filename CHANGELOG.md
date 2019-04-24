@@ -3,7 +3,7 @@
 # Planned Features, Changes & Bugfixes
 - Add Void World Generation capabilities (blocked by https://github.com/SpongePowered/SpongeCommon/issues/1506)
 
-# Beta 28
+# Beta 28 - SNAPSHOT
 **REQUIRED: Sponge API 7.1 (SF 3201+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**<br/>
 **OPTIONAL: Nucleus 1.4.0-S7.0+**
 - Added new schematic features:
@@ -25,8 +25,15 @@
 - Added fine-grained clear inventory control:
   - Added new inventory config options (player inventory & enderchest options)
   - Added `skyclaims.admin.keepinv` permission to bypass clear inventory
+- Added `/is entity` command for detailed entity information
+- Added support for flat world preset codes (_block IDs portion only_) for region generation
+  - See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details
+- `skyclaims.admin.reset.keepinv` is now `skyclaims.admin.reset.keepinv.argument`
+  - `skyclaims.admin.reset.keepinv.argument` gives you access to specify the keep inv argument when using `/is reset`
+  - `skyclaims.admin.reset.keepinv.default` sets the default behavior when the `/is reset [keepinv]` argument is not provided
 - Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
 - Fixed Nucleus Integration commands not registering after a reload
+- Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region
 
 # Beta 27.2 HOTFIX
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**

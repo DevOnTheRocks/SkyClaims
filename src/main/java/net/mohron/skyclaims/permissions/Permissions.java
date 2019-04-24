@@ -50,14 +50,14 @@ public class Permissions {
 
   // Admin Permissions
   // Commands
-  public static final String COMMAND_ADMIN = "skyclaims.admin.base";
   public static final String COMMAND_DELETE_OTHERS = "skyclaims.admin.delete";
   public static final String COMMAND_EXPAND_OTHERS = "skyclaims.admin.expand";
   public static final String COMMAND_ENTITY_CLEAR = "skyclaims.admin.entity.clear";
   public static final String COMMAND_LIST_ALL = "skyclaims.admin.list";
   public static final String COMMAND_LOCK_OTHERS = "skyclaims.admin.lock.others";
   public static final String COMMAND_RELOAD = "skyclaims.admin.reload";
-  public static final String COMMAND_RESET_KEEP_INV = "skyclaims.admin.reset.keepinv";
+  public static final String COMMAND_RESET_KEEP_INV_ARG = "skyclaims.admin.reset.keepinv.argument";
+  public static final String COMMAND_RESET_KEEP_INV_DEFAULT = "skyclaims.admin.reset.keepinv.default";
   public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";
   public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
   public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";

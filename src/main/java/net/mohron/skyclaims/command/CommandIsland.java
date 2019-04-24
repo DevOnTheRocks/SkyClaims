@@ -290,7 +290,7 @@ public class CommandIsland extends CommandBase {
           Text.builder(alias + "reset").onClick(TextActions.suggestCommand("/" + alias + "reset")),
           TextColors.GRAY, " [schematic]",
           TextColors.GRAY,
-          src.hasPermission(Permissions.COMMAND_RESET_KEEP_INV) ? " [keepinv]" : Text.EMPTY,
+          src.hasPermission(Permissions.COMMAND_RESET_KEEP_INV_ARG) ? " [keepinv]" : Text.EMPTY,
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandReset.HELP_TEXT
       ));

@@ -63,7 +63,7 @@ import net.mohron.skyclaims.world.gen.VoidWorldGeneratorModifier;
 import net.mohron.skyclaims.world.region.Region;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.bstats.sponge.Metrics;
+import org.bstats.sponge.Metrics2;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform;
@@ -122,7 +122,7 @@ public class SkyClaims {
   private Game game;
 
   @Inject
-  private Metrics metrics;
+  private Metrics2 metrics;
 
   @Inject
   @ConfigDir(sharedRoot = false)
@@ -361,8 +361,8 @@ public class SkyClaims {
   }
 
   private void addCustomMetrics() {
-    metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> IslandManager.ISLANDS.size()));
-    metrics.addCustomChart(new Metrics.DrilldownPie("sponge_version", () -> {
+    metrics.addCustomChart(new Metrics2.SingleLineChart("islands", () -> IslandManager.ISLANDS.size()));
+    metrics.addCustomChart(new Metrics2.DrilldownPie("sponge_version", () -> {
       Map<String, Map<String, Integer>> map = new HashMap<>();
       String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion().orElse("?").split("-")[0];
       Map<String, Integer> entry = new HashMap<>();
@@ -370,7 +370,7 @@ public class SkyClaims {
       map.put(api, entry);
       return map;
     }));
-    metrics.addCustomChart(new Metrics.SimplePie("allocated_ram", () ->
+    metrics.addCustomChart(new Metrics2.SimplePie("allocated_ram", () ->
         String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0))
     );
   }

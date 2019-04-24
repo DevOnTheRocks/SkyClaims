@@ -50,7 +50,7 @@ public class CommandReset extends ListSchematicCommand {
         .description(Text.of(HELP_TEXT))
         .arguments(
             GenericArguments.optional(Arguments.schematic(SCHEMATIC)),
-            GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(KEEP_INV), Permissions.COMMAND_RESET_KEEP_INV))
+            GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(KEEP_INV), Permissions.COMMAND_RESET_KEEP_INV_ARG))
         )
         .executor(new CommandReset())
         .build();
@@ -68,7 +68,7 @@ public class CommandReset extends ListSchematicCommand {
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     Island island = IslandManager.getByOwner(player.getUniqueId())
         .orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
-    boolean keepInv = args.hasAny(KEEP_INV);
+    boolean keepInv = args.<Boolean>getOne(KEEP_INV).orElse(player.hasPermission(Permissions.COMMAND_RESET_KEEP_INV_DEFAULT));
 
     Optional<IslandSchematic> schematic = args.getOne(SCHEMATIC);
     Optional<IslandSchematic> defaultSchematic = Options.getDefaultSchematic(player.getUniqueId());
