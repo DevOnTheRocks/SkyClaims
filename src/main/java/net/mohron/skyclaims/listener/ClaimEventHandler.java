@@ -62,7 +62,7 @@ public class ClaimEventHandler {
       return;
     }
 
-    event.setMessage(Text.of(TextColors.RED, "You cannot create a basic claim in this dimension!"));
+    event.setMessage(Text.of(TextColors.RED, "You cannot create a player claim in this dimension!"));
     event.setCancelled(true);
 
     SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
@@ -78,14 +78,12 @@ public class ClaimEventHandler {
         if (event instanceof DeleteClaimEvent.Abandon) {
           event.setMessage(Text.of(TextColors.RED, "You cannot abandon an island claim!"));
         } else {
-          IslandManager.get(claim).ifPresent((Island island) -> {
-            event.setMessage(Text.of(TextColors.RED,
-                "A claim you are attempting to delete belongs to an island.\n",
-                Text.of(TextColors.AQUA, "Do you want to delete ", island.getOwnerName(), "'s island?").toBuilder()
-                    .onHover(TextActions.showText(Text.of("Click here to delete.")))
-                    .onClick(TextActions.executeCallback(src -> island.delete()))
-            ));
-          });
+          IslandManager.get(claim).ifPresent((Island island) -> event.setMessage(Text.of(
+              TextColors.RED, "A claim you are attempting to delete belongs to an island.", Text.NEW_LINE,
+              Text.of(TextColors.AQUA, "Do you want to delete ", island.getOwnerName(), "'s island?").toBuilder()
+                  .onHover(TextActions.showText(Text.of("Click here to delete.")))
+                  .onClick(TextActions.executeCallback(src -> island.delete()))
+          )));
         }
         event.setCancelled(true);
       }
@@ -99,7 +97,7 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-    if (!claim.getWorld().equals(world) || claim.isAdminClaim() || claim.getParent().isPresent()) {
+    if (!claim.getWorld().equals(world) || !IslandManager.get(claim).isPresent()) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
@@ -115,22 +113,40 @@ public class ClaimEventHandler {
   }
 
   @Listener
+  public void onClaimResized(ChangeClaimEvent.Resize event, @Getter(value = "getClaim") Claim claim) {
+    SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
+    World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+
+    if (!claim.getWorld().equals(world) || !IslandManager.get(claim).isPresent()) {
+      SkyClaimsTimings.CLAIM_HANDLER.abort();
+      return;
+    }
+
+    if (event.getResizedClaim().getWidth() >= 512) {
+      event.setMessage(Text.of(
+          TextColors.RED, "An island claim can not be expanded beyond ",
+          TextColors.LIGHT_PURPLE, 512, TextColors.RED, " x ", TextColors.LIGHT_PURPLE, 512, TextColors.RED, "!"
+      ));
+      event.setCancelled(true);
+    }
+
+    SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
+  }
+
+  @Listener
   public void onClaimBorder(BorderClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-    if (claim.getWorld().equals(world) && !claim.isAdminClaim() && !claim.getParent().isPresent()) {
-      if (!IslandManager.get(claim).isPresent()) {
-        SkyClaimsTimings.CLAIM_HANDLER.abort();
-        return;
-      }
-      Island island = IslandManager.get(claim).get();
-      if (island.isLocked() && !island.isMember(player) && !player.hasPermission(Permissions.BYPASS_LOCK)) {
-        event.setCancelled(true);
-        event.setMessage(Text.of(
-            TextColors.RED, "You do not have permission to enter ", island.getName(), TextColors.RED, "!"
-        ));
-      }
+    if (!claim.getWorld().equals(world) || !IslandManager.get(claim).isPresent()) {
+      SkyClaimsTimings.CLAIM_HANDLER.abort();
+      return;
+    }
+
+    Island island = IslandManager.get(claim).get();
+    if (island.isLocked() && !island.isMember(player) && !player.hasPermission(Permissions.BYPASS_LOCK)) {
+      event.setCancelled(true);
+      event.setMessage(Text.of(TextColors.RED, "You do not have permission to enter ", island.getName(), TextColors.RED, "!"));
     }
 
     // Clears configured items when entering/leaving an island
@@ -143,8 +159,7 @@ public class ClaimEventHandler {
     } else {
       // If set to whitelist, remove all non-matching items
       for (Inventory slot : player.getInventory().slots()) {
-        if (slot.peek().isPresent()
-            && !PLUGIN.getConfig().getMiscConfig().getClearItems().contains(slot.peek().get().getType())) {
+        if (slot.peek().isPresent() && !PLUGIN.getConfig().getMiscConfig().getClearItems().contains(slot.peek().get().getType())) {
           slot.poll();
         }
       }
@@ -157,11 +172,9 @@ public class ClaimEventHandler {
   public void onClaimTrust(UserTrustClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
-    if (PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getDisabledTrustTypes()
-        .contains(event.getTrustType())) {
+    if (PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getDisabledTrustTypes().contains(event.getTrustType())) {
       event.setCancelled(true);
-      event.setMessage(Text.of(TextColors.RED, "The use of ", TextColors.GOLD, event.getTrustType(),
-          TextColors.RED, " has been disabled!"));
+      event.setMessage(Text.of(TextColors.RED, "The use of ", TextColors.GOLD, event.getTrustType(), TextColors.RED, " has been disabled!"));
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
@@ -192,8 +205,7 @@ public class ClaimEventHandler {
         if (type.getTrustType() == event.getTrustType()) {
           event.setCancelled(true);
           event.getUsers().forEach(uuid ->
-              PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class)
-                  .get(uuid).ifPresent(user -> {
+              PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).ifPresent(user -> {
                 if (event instanceof TrustClaimEvent.Add && island.getPrivilegeType(user) != type) {
                   Invite.builder()
                       .island(island)
@@ -202,16 +214,12 @@ public class ClaimEventHandler {
                       .privilegeType(type)
                       .build()
                       .send();
-                  event.setMessage(Text.of(
-                      TextColors.GREEN, "Island invite sent to ", type.format(user.getName()),
-                      TextColors.GREEN, "."
-                  ));
+                  event.setMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
                 }
                 if (event instanceof TrustClaimEvent.Remove) {
                   event.setMessage(Text.of(
                       TextColors.RED, "Use ",
-                      Text.builder("/is kick").color(TextColors.AQUA).style(TextStyles.ITALIC)
-                          .onClick(TextActions.suggestCommand("/is kick ")),
+                      Text.builder("/is kick").color(TextColors.AQUA).style(TextStyles.ITALIC).onClick(TextActions.suggestCommand("/is kick ")),
                       " to remove a player from this island.")
                   );
                 }

@@ -93,8 +93,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
 
     player.sendMessage(Text.of(
         TextColors.GRAY, "It will cost ", TextColors.LIGHT_PURPLE,
-        (int) Math.pow(width + blocks, 2) * (GP.getClaimBlockSystem() == ClaimBlockSystem.VOLUME
-            ? 256 : 1) - claim.getClaimBlocks(),
+        (int) Math.pow(width + blocks, 2) * (GP.getClaimBlockSystem() == ClaimBlockSystem.VOLUME ? 256 : 1) - claim.getClaimBlocks(),
         TextColors.GRAY, " claim blocks to expand ", island.getName(), TextColors.GRAY, " by ",
         TextColors.LIGHT_PURPLE, blocks, TextColors.GRAY, "."
     ));
