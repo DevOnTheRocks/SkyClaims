@@ -4,17 +4,17 @@
 - Add Void World Generation capabilities (blocked by https://github.com/SpongePowered/SpongeCommon/issues/1506)
 
 # Beta 28 - SNAPSHOT
-**REQUIRED: Sponge API 7.1 (SF 3201+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**<br/>
-**OPTIONAL: Nucleus 1.4.0-S7.0+**
+**REQUIRED: Sponge API 7.1 (SF 3201+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
+**OPTIONAL: Nucleus 1.9.0-S7.1+**
 - Added new schematic features:
   - `/is schematic` - schematic parent & list command
   - `/is schematic create <name>` - replaces `/isa createschematic <name>`
   - `/is schematic delete <schematic>` - deletes a schematic
   - `/is schematic command <schematic> <add|remove> <command>` - manages schematic commands
   - `/is schematic info <schematic>` - displays detailed information about a schematic
-  - `/is schematic setbiome <schematic> [biome]` - set a default biome for a schematic that overrides the permission option
-  - `/is schematic setheight <schematic> [height]` - set the generation height of a schematic
-  - `/is schematic setname <schematic> [name]` - set an in-game name for a schematic that supports formatting code
+  - `/is schematic setbiome <schematic> <biome>` - set a default biome for a schematic that overrides the permission option
+  - `/is schematic setheight <schematic> <height>` - set the generation height of a schematic
+  - `/is schematic setname <schematic> <name>` - set an in-game name for a schematic that supports formatting code
   - `skyclaims.default-schematic` now defaults to empty which will list valid schematics
   - Removed `Misc-List-Schematics` config
 - Removed `/isa` &`/is admin`
@@ -22,11 +22,21 @@
   - `/is reload` replaces `/isa reload`
   - `Admin-Command-Alias` config removed
 - Added `skyclaims.max-teammates` option to limit the number of players per island
-- Added fine-grained clear inventory control:
-  - Added new inventory config options (player inventory & enderchest options)
-  - Added `skyclaims.admin.keepinv` permission to bypass clear inventory
+- Added fine-grained keep/clear inventory control:
+  - Player inventory keep inventory permissions:
+    - `skyclaims.keepinv.player.create`
+    -  `skyclaims.keepinv.player.delete`
+    -  `skyclaims.keepinv.player.kick`
+    -  `skyclaims.keepinv.player.leave`
+    -  `skyclaims.keepinv.player.reset`
+  - EnderChest inventory keep inventory permissions:    
+    - `skyclaims.keepinv.enderchest.create`
+    - `skyclaims.keepinv.enderchest.delete`
+    - `skyclaims.keepinv.enderchest.kick`
+    - `skyclaims.keepinv.enderchest.leave`
+    - `skyclaims.keepinv.enderchest.reset`
 - Added `/is entity` command for detailed entity information
-- Added support for flat world preset codes (_block IDs portion only_) for region generation
+- Added support for flat world preset codes (_block ID portion only_) for region generation
   - See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details
 - `skyclaims.admin.reset.keepinv` is now `skyclaims.admin.reset.keepinv.argument`
   - `skyclaims.admin.reset.keepinv.argument` gives you access to specify the keep inv argument when using `/is reset`
@@ -34,6 +44,7 @@
 - Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
 - Fixed Nucleus Integration commands not registering after a reload
 - Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region
+- Updated bStats to 1.4
 
 # Beta 27.2 HOTFIX
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**

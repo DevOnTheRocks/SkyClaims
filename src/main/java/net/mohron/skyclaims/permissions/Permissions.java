@@ -42,6 +42,18 @@ public class Permissions {
   public static final String COMMAND_SET_SPAWN = "skyclaims.command.setspawn";
   public static final String COMMAND_SET_BIOME = "skyclaims.command.setbiome";
 
+  // Keep Inventory
+  public static final String KEEP_INV_PLAYER_CREATE = "skyclaims.keepinv.player.create";
+  public static final String KEEP_INV_PLAYER_DELETE = "skyclaims.keepinv.player.delete";
+  public static final String KEEP_INV_PLAYER_KICK = "skyclaims.keepinv.player.kick";
+  public static final String KEEP_INV_PLAYER_LEAVE = "skyclaims.keepinv.player.leave";
+  public static final String KEEP_INV_PLAYER_RESET = "skyclaims.keepinv.player.reset";
+  public static final String KEEP_INV_ENDERCHEST_CREATE = "skyclaims.keepinv.enderchest.create";
+  public static final String KEEP_INV_ENDERCHEST_DELETE = "skyclaims.keepinv.enderchest.delete";
+  public static final String KEEP_INV_ENDERCHEST_KICK = "skyclaims.keepinv.enderchest.kick";
+  public static final String KEEP_INV_ENDERCHEST_LEAVE = "skyclaims.keepinv.enderchest.leave";
+  public static final String KEEP_INV_ENDERCHEST_RESET = "skyclaims.keepinv.enderchest.reset";
+
   // Command Arguments
   public static final String COMMAND_ARGUMENTS_SCHEMATICS = "skyclaims.arguments.schematics";
   public static final String COMMAND_ARGUMENTS_BIOMES = "skyclaims.arguments.biomes";
@@ -56,8 +68,7 @@ public class Permissions {
   public static final String COMMAND_LIST_ALL = "skyclaims.admin.list";
   public static final String COMMAND_LOCK_OTHERS = "skyclaims.admin.lock.others";
   public static final String COMMAND_RELOAD = "skyclaims.admin.reload";
-  public static final String COMMAND_RESET_KEEP_INV_ARG = "skyclaims.admin.reset.keepinv.argument";
-  public static final String COMMAND_RESET_KEEP_INV_DEFAULT = "skyclaims.admin.reset.keepinv.default";
+  public static final String COMMAND_RESET_KEEP_INV = "skyclaims.admin.reset.keepinv";
   public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";
   public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
   public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
@@ -78,6 +89,5 @@ public class Permissions {
   public static final String EXEMPT_KICK = "skyclaims.admin.kick.exempt";
   public static final String BYPASS_LOCK = "skyclaims.admin.lock.bypass";
   public static final String BYPASS_TRUST = "skyclaims.admin.trust.bypass";
-  public static final String KEEP_INV = "skyclaims.admin.keepinv";
 
 }

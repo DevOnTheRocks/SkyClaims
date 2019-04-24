@@ -50,7 +50,7 @@ public class CommandReset extends ListSchematicCommand {
         .description(Text.of(HELP_TEXT))
         .arguments(
             GenericArguments.optional(Arguments.schematic(SCHEMATIC)),
-            GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(KEEP_INV), Permissions.COMMAND_RESET_KEEP_INV_ARG))
+            GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(KEEP_INV), Permissions.COMMAND_RESET_KEEP_INV))
         )
         .executor(new CommandReset())
         .build();
@@ -68,7 +68,7 @@ public class CommandReset extends ListSchematicCommand {
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     Island island = IslandManager.getByOwner(player.getUniqueId())
         .orElseThrow(() -> new CommandException(Text.of("You must have an island to run this command!")));
-    boolean keepInv = args.<Boolean>getOne(KEEP_INV).orElse(player.hasPermission(Permissions.COMMAND_RESET_KEEP_INV_DEFAULT));
+    boolean keepInv = args.<Boolean>getOne(KEEP_INV).orElse(false);
 
     Optional<IslandSchematic> schematic = args.getOne(SCHEMATIC);
     Optional<IslandSchematic> defaultSchematic = Options.getDefaultSchematic(player.getUniqueId());
@@ -115,11 +115,7 @@ public class CommandReset extends ListSchematicCommand {
     return src -> {
       // The keep inv argument will override the configured behavior
       if (!keepInv) {
-        clearIslandMemberInventories(
-            island,
-            PLUGIN.getConfig().getInventoryConfig().getPlayerInventory().isReset(),
-            PLUGIN.getConfig().getInventoryConfig().getEnderchest().isReset()
-        );
+        clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_RESET, Permissions.KEEP_INV_ENDERCHEST_RESET);
       }
 
       // Teleport any players located in the island's region to spawn

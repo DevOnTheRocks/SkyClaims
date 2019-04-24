@@ -88,11 +88,7 @@ public class CommandLeave extends CommandBase.IslandCommand {
         player.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
       }
 
-      clearMemberInventory(
-          player,
-          PLUGIN.getConfig().getInventoryConfig().getPlayerInventory().isLeave(),
-          PLUGIN.getConfig().getInventoryConfig().getEnderchest().isLeave()
-      );
+      clearMemberInventory(player, Permissions.KEEP_INV_PLAYER_LEAVE, Permissions.KEEP_INV_ENDERCHEST_LEAVE);
 
       island.removeMember(player);
       player.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));

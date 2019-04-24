@@ -107,11 +107,7 @@ public class CommandDelete extends CommandBase.IslandCommand {
       if (clear) {
         island.clear();
       }
-      clearIslandMemberInventories(
-          island,
-          PLUGIN.getConfig().getInventoryConfig().getPlayerInventory().isDelete(),
-          PLUGIN.getConfig().getInventoryConfig().getEnderchest().isDelete()
-      );
+      clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_DELETE, Permissions.KEEP_INV_ENDERCHEST_DELETE);
       island.getPlayers().forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
       island.delete();
 

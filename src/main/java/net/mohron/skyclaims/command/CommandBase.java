@@ -27,7 +27,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.config.type.InventoryConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.Island;
@@ -57,15 +56,14 @@ public abstract class CommandBase implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (!(src instanceof Player)) {
-        throw new CommandException(
-            Text.of(TextColors.RED, "This command can only be used by a player!"));
+        throw new CommandException(Text.of(TextColors.RED, "This command can only be used by a player!"));
       }
       if (!args.hasAny(ISLAND)) {
         return execute(
             (Player) src,
-            IslandManager.get(((Player) src).getLocation())
-                .orElseThrow(() -> new CommandException(
-                    Text.of(TextColors.RED, "You must be on an island to use this command!"))),
+            IslandManager.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
+                TextColors.RED, "You must be on an island to use this command!")
+            )),
             args);
       } else {
         List<Island> islands = Lists.newArrayList();
@@ -73,9 +71,7 @@ public abstract class CommandBase implements CommandExecutor {
         if (islands.size() == 1) {
           return execute((Player) src, islands.get(0), args);
         } else {
-          throw new CommandException(
-              Text.of(TextColors.RED, "Multiple island support not yet implemented!")
-          );
+          throw new CommandException(Text.of(TextColors.RED, "Multiple island support not yet implemented!"));
         }
       }
     }
@@ -88,8 +84,7 @@ public abstract class CommandBase implements CommandExecutor {
       if (src instanceof Player) {
         return execute((Player) src, args);
       }
-      throw new CommandException(
-          Text.of(TextColors.RED, "This command can only be used by a player!"));
+      throw new CommandException(Text.of(TextColors.RED, "This command can only be used by a player!"));
     }
   }
 
@@ -112,7 +107,7 @@ public abstract class CommandBase implements CommandExecutor {
       if (!args.hasAny(ISLAND)) {
         if (src instanceof Player) {
           Island island = IslandManager.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
-                  TextColors.RED, "You must either provide an island argument or be on an island to use this command!"
+              TextColors.RED, "You must either provide an island argument or be on an island to use this command!"
           )));
           checkPerms(src, island);
           return execute(src, island, args);
@@ -189,38 +184,29 @@ public abstract class CommandBase implements CommandExecutor {
     }
   }
 
-  protected void clearIslandMemberInventories(Island island, boolean player, boolean enderchest) {
-    if (!player && !enderchest) {
-      return;
-    }
-
-    InventoryConfig config = PLUGIN.getConfig().getInventoryConfig();
+  protected void clearIslandMemberInventories(Island island, String keepPlayerInventory, String keepEnderChestInventory) {
     UserStorageService uss = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class);
 
-    List<String> uuids = config.isAllMembers()
-        ? island.getMembers()
-        : Lists.newArrayList(island.getOwnerUniqueId().toString());
-    List<User> members = uuids.stream()
+    List<User> members = island.getMembers().stream()
         .map(s -> uss.get(UUID.fromString(s)))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .collect(Collectors.toList());
 
+    // Clear the owner's inventory, if enabled
+    uss.get(island.getOwnerUniqueId()).ifPresent(o -> clearMemberInventory(o, keepPlayerInventory, keepEnderChestInventory));
     // Clear each member's inventory, if enabled
     for (User user : members) {
-      clearMemberInventory(user, player, enderchest);
+      clearMemberInventory(user, keepPlayerInventory, keepEnderChestInventory);
     }
   }
 
-  protected void clearMemberInventory(User member, boolean player, boolean enderchest) {
+  protected void clearMemberInventory(User member, String keepPlayerInventory, String keepEnderChestInventory) {
     // Check if the player is exempt from having their inventory cleared
-    if (member.hasPermission(Permissions.KEEP_INV)) {
-      return;
-    }
-    if (player) {
+    if (!member.hasPermission(keepPlayerInventory)) {
       member.getInventory().clear();
     }
-    if (enderchest) {
+    if (!member.hasPermission(keepEnderChestInventory)) {
       member.getEnderChestInventory().clear();
     }
   }
