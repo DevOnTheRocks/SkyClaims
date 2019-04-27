@@ -59,10 +59,11 @@ public class RegenerateRegionTask implements Runnable {
     WorldConfig config = PLUGIN.getConfig().getWorldConfig();
     World world = config.getWorld();
 
-    PLUGIN.getLogger().info("Begin clearing region ({}, {})", region.getX(), region.getZ());
+    PLUGIN.getLogger().info("Begin regenerating region ({}, {})", region.getX(), region.getZ());
 
     Stopwatch sw = Stopwatch.createStarted();
 
+    PLUGIN.getLogger().info("Using preset code '{}' to regenerate region.", config.getPresetCode());
     final BlockState[] blocks = FlatWorldUtil.getBlocksSafely(config.getPresetCode());
 
     for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
@@ -92,16 +93,18 @@ public class RegenerateRegionTask implements Runnable {
 
     sw.stop();
 
-    PLUGIN.getLogger().info(String.format("Finished clearing region (%s, %s) in %dms.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.MILLISECONDS)));
+    PLUGIN.getLogger().info("Finished regenerating region ({}, {}) in {}ms.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.MILLISECONDS));
 
     if (island != null) {
       if (commands) {
         // Run reset commands
         for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
-          PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+          PLUGIN.getGame().getCommandManager()
+              .process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
         }
         for (String command : schematic.getCommands()) {
-          PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
+          PLUGIN.getGame().getCommandManager()
+              .process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
         }
       }
 

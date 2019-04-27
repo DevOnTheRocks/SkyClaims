@@ -204,9 +204,11 @@ public abstract class CommandBase implements CommandExecutor {
   protected void clearMemberInventory(User member, String keepPlayerInventory, String keepEnderChestInventory) {
     // Check if the player is exempt from having their inventory cleared
     if (!member.hasPermission(keepPlayerInventory)) {
+      PLUGIN.getLogger().debug("Clearing {}'s player inventory.", member.getName());
       member.getInventory().clear();
     }
     if (!member.hasPermission(keepEnderChestInventory)) {
+      PLUGIN.getLogger().debug("Clearing {}'s ender chest inventory.", member.getName());
       member.getEnderChestInventory().clear();
     }
   }

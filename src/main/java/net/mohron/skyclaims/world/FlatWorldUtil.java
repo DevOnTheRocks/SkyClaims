@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.world;
 
 import java.util.Arrays;
+import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.SkyClaimsException;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
@@ -29,12 +30,13 @@ import org.spongepowered.api.text.Text;
 
 public final class FlatWorldUtil {
 
-  private static BlockState[] voidWorld;
+  private static final BlockState[] voidWorld = new BlockState[256];
+
+  static {
+    Arrays.fill(voidWorld, BlockTypes.AIR.getDefaultState());
+  }
 
   private FlatWorldUtil() {
-    BlockState[] blocks = new BlockState[256];
-    Arrays.fill(blocks, BlockTypes.AIR.getDefaultState());
-    voidWorld = blocks;
   }
 
   public static BlockState[] getBlocks(String code) throws SkyClaimsException {
@@ -85,6 +87,7 @@ public final class FlatWorldUtil {
     try {
       return getBlocks(code);
     } catch (SkyClaimsException e) {
+      SkyClaims.getInstance().getLogger().error(e.getMessage(), e);
       return voidWorld;
     }
   }

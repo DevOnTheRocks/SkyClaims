@@ -82,9 +82,6 @@ blossom {
 spongestart {
     online = "false"
     minecraft = "1.12.2"
-    spongeForge = "${spongeforge}"
-    forge = "${forge}"
-    forgeServerFolder = "${projectDir}/run/API7"
 }
 
 signing {

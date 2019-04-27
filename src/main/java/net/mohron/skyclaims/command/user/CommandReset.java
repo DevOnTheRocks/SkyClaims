@@ -92,7 +92,8 @@ public class CommandReset extends ListSchematicCommand {
       if (src instanceof Player) {
         Player player = (Player) src;
         player.sendMessage(Text.of(
-            "Are you sure you want to reset your island", !keepInv ? " and inventory" : Text.EMPTY,
+            "Are you sure you want to reset your island",
+            !keepInv ? " and inventory" : Text.EMPTY,
             "? This cannot be undone!", Text.NEW_LINE,
             TextColors.GOLD, "Do you want to continue?", Text.NEW_LINE,
             TextColors.WHITE, "[",
@@ -113,7 +114,7 @@ public class CommandReset extends ListSchematicCommand {
 
   private Consumer<CommandSource> resetIsland(Player player, Island island, IslandSchematic schematic, boolean keepInv) {
     return src -> {
-      // The keep inv argument will override the configured behavior
+      // The keep inv argument will skip individual permission checks.
       if (!keepInv) {
         clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_RESET, Permissions.KEEP_INV_ENDERCHEST_RESET);
       }
