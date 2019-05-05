@@ -42,7 +42,8 @@ public class WorldConfig {
   private int islandHeight = 72;
   @Setting(value = "Spawn-Regions", comment = "The height & width of regions to reserve for spawn (min 1). Default: 1")
   private int spawnRegions = 1;
-  @Setting(value = "Preset-Code", comment = "A flat world preset code to use when regenerating a region. Only the block ID list is used. See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details.")
+  @Setting(value = "Preset-Code", comment = "A flat world preset code to use when regenerating a region. Only the block ID list is used.\n"
+      + "See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details.")
   private String presetCode = "";
 
   public String getWorldName() {

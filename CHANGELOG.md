@@ -4,7 +4,7 @@
 - Add Void World Generation capabilities (blocked by https://github.com/SpongePowered/SpongeCommon/issues/1506)
 
 # Beta 28 - SNAPSHOT
-**REQUIRED: Sponge API 7.1 (SF 3201+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
+**REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
 **OPTIONAL: Nucleus 1.9.0-S7.1+**
 - Added new schematic features:
   - `/is schematic` - schematic parent & list command

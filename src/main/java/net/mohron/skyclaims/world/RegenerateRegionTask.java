@@ -19,16 +19,18 @@
 package net.mohron.skyclaims.world;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.region.Region;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.scheduler.SpongeExecutorService;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 public class RegenerateRegionTask implements Runnable {
@@ -55,9 +57,7 @@ public class RegenerateRegionTask implements Runnable {
 
   @Override
   public void run() {
-    SkyClaimsTimings.CLEAR_ISLAND.startTimingIfSync();
     WorldConfig config = PLUGIN.getConfig().getWorldConfig();
-    World world = config.getWorld();
 
     PLUGIN.getLogger().info("Begin regenerating region ({}, {})", region.getX(), region.getZ());
 
@@ -66,34 +66,12 @@ public class RegenerateRegionTask implements Runnable {
     PLUGIN.getLogger().info("Using preset code '{}' to regenerate region.", config.getPresetCode());
     final BlockState[] blocks = FlatWorldUtil.getBlocksSafely(config.getPresetCode());
 
-    for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
-      for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
-        world.getChunkAtBlock(x, 0, z).ifPresent(chunk -> {
-          chunk.loadChunk(false);
-          // Teleport any players to world spawn
-          chunk.getEntities(e -> e instanceof Player).forEach(e -> e.setLocationSafely(config.getSpawn()));
-          // Clear the contents of an tile entity with an inventory
-          chunk.getTileEntities(e -> e instanceof TileEntityCarrier).forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
-          for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
-            for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
-              for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
-                BlockState block = blocks[by];
-                if (chunk.getBlockType(bx, by, bz) != block.getType()) {
-                  chunk.getLocation(bx, by, bz).setBlock(block);
-                }
-              }
-            }
-          }
-          // Remove any remaining entities.
-          chunk.getEntities(e -> !(e instanceof Player)).forEach(Entity::remove);
-          chunk.unloadChunk();
-        });
-      }
-    }
+    regenerateChunks(blocks, config.getSpawn());
 
     sw.stop();
 
-    PLUGIN.getLogger().info("Finished regenerating region ({}, {}) in {}ms.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.MILLISECONDS));
+    PLUGIN.getLogger().info("Finished regenerating region ({}, {}) in {}s.", region.getX(), region.getZ(),
+        sw.elapsed(TimeUnit.SECONDS));
 
     if (island != null) {
       if (commands) {
@@ -114,6 +92,24 @@ public class RegenerateRegionTask implements Runnable {
           .submit(PLUGIN);
     }
 
-    SkyClaimsTimings.CLEAR_ISLAND.stopTimingIfSync();
+  }
+
+  private void regenerateChunks(BlockState[] blocks, Location<World> spawn) {
+    SpongeExecutorService executor = Sponge.getScheduler().createSyncExecutor(PLUGIN);
+    int progress = 0;
+    for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
+      List<CompletableFuture<Void>> tasks = Lists.newArrayList();
+      for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
+        tasks
+            .add(CompletableFuture.runAsync(new RegenerateChunkTask(island.getWorld(), x, z, blocks, spawn), executor));
+      }
+      try {
+        CompletableFuture.allOf(tasks.toArray(new CompletableFuture[32])).join();
+        PLUGIN.getLogger().info("Regenerating region {}, {} {}% complete", region.getX(), region.getZ(),
+            Math.round(++progress / 32f * 100));
+      } catch (RuntimeException e) {
+        PLUGIN.getLogger().error("Could not regenerate chunk.", e);
+      }
+    }
   }
 }
