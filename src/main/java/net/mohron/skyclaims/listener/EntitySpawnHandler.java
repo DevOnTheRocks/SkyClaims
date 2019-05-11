@@ -62,8 +62,7 @@ public class EntitySpawnHandler {
         if (limit > 0 && hostile >= limit) {
           return false;
         }
-      } else if (entity instanceof Animal || entity instanceof Aquatic
-          || entity instanceof Ambient) {
+      } else if (entity instanceof Animal || entity instanceof Aquatic || entity instanceof Ambient) {
         limit = Options.getMaxPassiveSpawns(island.getOwnerUniqueId());
         if (limit > 0 && passive >= limit) {
           return false;

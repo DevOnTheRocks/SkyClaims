@@ -23,13 +23,16 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -75,23 +78,16 @@ public class RegenerateRegionTask implements Runnable {
 
     if (island != null) {
       if (commands) {
-        // Run reset commands
-        for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
-          PLUGIN.getGame().getCommandManager()
-              .process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
-        }
-        for (String command : schematic.getCommands()) {
-          PLUGIN.getGame().getCommandManager()
-              .process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", island.getOwnerName()));
-        }
+        Sponge.getScheduler().createTaskBuilder()
+            .execute(processCommands())
+            .submit(PLUGIN);
       }
 
-      PLUGIN.getGame().getScheduler().createTaskBuilder()
-          .delayTicks(1)
+      Sponge.getScheduler().createTaskBuilder()
+          .delay(1, TimeUnit.SECONDS)
           .execute(new GenerateIslandTask(island.getOwnerUniqueId(), island, schematic))
           .submit(PLUGIN);
     }
-
   }
 
   private void regenerateChunks(BlockState[] blocks, Location<World> spawn) {
@@ -111,5 +107,18 @@ public class RegenerateRegionTask implements Runnable {
         PLUGIN.getLogger().error("Could not regenerate chunk.", e);
       }
     }
+  }
+
+  private Consumer<Task> processCommands() {
+    return task -> {
+      final CommandSource console = Sponge.getServer().getConsole();
+      // Run reset commands
+      for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
+        Sponge.getCommandManager().process(console, command.replace("@p", island.getOwnerName()));
+      }
+      for (String command : schematic.getCommands()) {
+        Sponge.getCommandManager().process(console, command.replace("@p", island.getOwnerName()));
+      }
+    };
   }
 }

@@ -46,9 +46,8 @@ repositories {
     }
     maven {
         name = "bStats"
-        url ="http://repo.bstats.org/content/repositories/releases/"
+        url = "http://repo.bstats.org/content/repositories/releases/"
     }
-
 }
 
 dependencies {

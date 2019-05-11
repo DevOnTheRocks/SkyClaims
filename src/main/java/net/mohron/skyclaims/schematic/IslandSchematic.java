@@ -33,10 +33,10 @@ import org.spongepowered.api.world.schematic.Schematic;
 
 public class IslandSchematic {
 
-  public final static DataQuery BIOME_TYPE = DataQuery.of("SkyClaims", "BiomeType");
-  public final static DataQuery COMMANDS = DataQuery.of("SkyClaims", "Command");
-  public final static DataQuery HEIGHT = DataQuery.of("SkyClaims", "Height");
-  public final static DataQuery TEXT = DataQuery.of("SkyClaims", "Text");
+  private static final DataQuery BIOME_TYPE = DataQuery.of("SkyClaims", "BiomeType");
+  private static final DataQuery COMMANDS = DataQuery.of("SkyClaims", "Command");
+  private static final DataQuery HEIGHT = DataQuery.of("SkyClaims", "Height");
+  private static final DataQuery TEXT = DataQuery.of("SkyClaims", "Text");
 
   private final Schematic schematic;
   private final String name;
