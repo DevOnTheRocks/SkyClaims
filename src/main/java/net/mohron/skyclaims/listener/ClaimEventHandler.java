@@ -36,7 +36,7 @@ import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;
-import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -53,7 +53,7 @@ public class ClaimEventHandler {
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
   @Listener
-  public void onClaimCreate(CreateClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
+  public void onClaimCreate(CreateClaimEvent event, @First Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
@@ -69,7 +69,7 @@ public class ClaimEventHandler {
   }
 
   @Listener
-  public void onClaimDelete(DeleteClaimEvent event, @Root Player player) {
+  public void onClaimDelete(DeleteClaimEvent event, @First Player player) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
@@ -93,7 +93,7 @@ public class ClaimEventHandler {
   }
 
   @Listener
-  public void onClaimChanged(ChangeClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
+  public void onClaimChanged(ChangeClaimEvent event, @First Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
@@ -134,7 +134,7 @@ public class ClaimEventHandler {
   }
 
   @Listener
-  public void onClaimBorder(BorderClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
+  public void onClaimBorder(BorderClaimEvent event, @First Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
@@ -169,7 +169,7 @@ public class ClaimEventHandler {
   }
 
   @Listener
-  public void onClaimTrust(UserTrustClaimEvent event, @Root Player player, @Getter(value = "getClaim") Claim claim) {
+  public void onClaimTrust(UserTrustClaimEvent event, @First Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
     if (PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getDisabledTrustTypes().contains(event.getTrustType())) {

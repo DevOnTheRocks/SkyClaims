@@ -38,6 +38,8 @@ public class MiscConfig {
   private boolean islandOnJoin = false;
   @Setting(value = "Teleport-on-Creation", comment = "Automatically teleport the owner to their island on creation.")
   private boolean teleportOnCreate = true;
+  @Setting(value = "Text-Schematic-List", comment = "Enable to use a text based schematic list instead of a chest UI.")
+  private boolean textSchematicList = false;
   @Setting(value = "Create-Commands", comment = "Commands to run on island creation and reset. Use @p in place of the player's name.")
   private List<String> createCommands = new ArrayList<>();
   @Setting(value = "Reset-Commands", comment = "Commands to run on island resets only. Use @p in place of the player's name.")
@@ -54,12 +56,16 @@ public class MiscConfig {
     return logBiomes;
   }
 
-  public boolean createIslandOnJoin() {
+  public boolean isCreateIslandOnJoin() {
     return islandOnJoin;
   }
 
   public boolean isTeleportOnCreate() {
     return teleportOnCreate;
+  }
+
+  public boolean isTextSchematicList() {
+    return textSchematicList;
   }
 
   public List<String> getCreateCommands() {

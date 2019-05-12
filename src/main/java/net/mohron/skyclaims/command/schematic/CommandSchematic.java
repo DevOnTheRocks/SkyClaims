@@ -46,6 +46,7 @@ public class CommandSchematic extends CommandBase {
         .child(CommandSchematicList.commandSpec, "list")
         .child(CommandSchematicSetBiome.commandSpec, "setbiome")
         .child(CommandSchematicSetHeight.commandSpec, "setheight")
+        .child(CommandSchematicSetIcon.commandSpec, "seticon")
         .child(CommandSchematicSetName.commandSpec, "setname")
         .childArgumentParseExceptionFallback(false)
         .executor(new CommandSchematicList())
@@ -69,6 +70,7 @@ public class CommandSchematic extends CommandBase {
     CommandSchematicList.register();
     CommandSchematicSetBiome.register();
     CommandSchematicSetHeight.register();
+    CommandSchematicSetIcon.register();
     CommandSchematicSetName.register();
   }
 

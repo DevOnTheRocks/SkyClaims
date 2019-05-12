@@ -8,6 +8,7 @@
 **REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
 **OPTIONAL: Nucleus 1.9.0-S7.1+**
 - Added new schematic features:
+  - `/is create` & `/is reset` now feature a chest UI when more than 1 schematic is available
   - `/is schematic` - schematic parent & list command
   - `/is schematic create <name>` - replaces `/isa createschematic <name>`
   - `/is schematic delete <schematic>` - deletes a schematic
@@ -18,6 +19,7 @@
   - `/is schematic setname <schematic> <name>` - set an in-game name for a schematic that supports formatting code
   - `skyclaims.default-schematic` now defaults to empty which will list valid schematics
   - Removed `Misc-List-Schematics` config
+  - Added `Misc > Text-Schematic-List` config to disable new chest UI
 - Removed `/isa` &`/is admin`
   - `/is transfer` replaces `/isa transfer`
   - `/is reload` replaces `/isa reload`
@@ -39,12 +41,10 @@
 - Added `/is entity` command for detailed entity information
 - Added support for flat world preset codes (_block ID portion only_) for region generation
   - See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details
-- `skyclaims.admin.reset.keepinv` is now `skyclaims.admin.reset.keepinv.argument`
-  - `skyclaims.admin.reset.keepinv.argument` gives you access to specify the keep inv argument when using `/is reset`
-  - `skyclaims.admin.reset.keepinv.default` sets the default behavior when the `/is reset [keepinv]` argument is not provided
 - Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
 - Fixed Nucleus Integration commands not registering after a reload
 - Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region
+- Fixed a bug where `/is lock` would not prevent entry to a locked island
 - Updated bStats to 1.4
 
 # Beta 27.2 HOTFIX

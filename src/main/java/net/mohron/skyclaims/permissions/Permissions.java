@@ -84,10 +84,10 @@ public class Permissions {
   public static final String COMMAND_SCHEMATIC_LIST_ALL = "skyclaims.admin.schematic.list.all";
   public static final String COMMAND_SCHEMATIC_SET_BIOME = "skyclaims.admin.schematic.setbiome";
   public static final String COMMAND_SCHEMATIC_SET_HEIGHT = "skyclaims.admin.schematic.setheight";
+  public static final String COMMAND_SCHEMATIC_SET_ICON = "skyclaims.admin.schematic.seticon";
   public static final String COMMAND_SCHEMATIC_SET_NAME = "skyclaims.admin.schematic.setname";
   // Bypass/Exemptions
   public static final String EXEMPT_KICK = "skyclaims.admin.kick.exempt";
   public static final String BYPASS_LOCK = "skyclaims.admin.lock.bypass";
   public static final String BYPASS_TRUST = "skyclaims.admin.trust.bypass";
-
 }

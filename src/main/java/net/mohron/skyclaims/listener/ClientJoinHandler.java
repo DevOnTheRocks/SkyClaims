@@ -39,7 +39,7 @@ public class ClientJoinHandler {
 
   @Listener
   public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
-    if (PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() && !IslandManager.hasIsland(player.getUniqueId())) {
+    if (PLUGIN.getConfig().getMiscConfig().isCreateIslandOnJoin() && !IslandManager.hasIsland(player.getUniqueId())) {
       createIslandOnJoin(player);
     }
     deliverInvites(player);

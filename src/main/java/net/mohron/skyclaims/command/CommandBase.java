@@ -24,11 +24,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.schematic.IslandSchematic;
+import net.mohron.skyclaims.schematic.SchematicUI;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
@@ -42,6 +44,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
@@ -106,9 +109,9 @@ public abstract class CommandBase implements CommandExecutor {
       }
       if (!args.hasAny(ISLAND)) {
         if (src instanceof Player) {
-          Island island = IslandManager.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
-              TextColors.RED, "You must either provide an island argument or be on an island to use this command!"
-          )));
+          Island island = IslandManager.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(
+              Text.of(TextColors.RED, "You must provide an island argument or be on an island to use this command!")
+          ));
           checkPerms(src, island);
           return execute(src, island, args);
         } else {
@@ -166,25 +169,34 @@ public abstract class CommandBase implements CommandExecutor {
 
     protected static final Text SCHEMATIC = Text.of("schematic");
 
-    protected CommandResult listSchematics(Player player, Function<IslandSchematic, Text> mapper) {
+    protected CommandResult listSchematics(Player player, Function<IslandSchematic, Consumer<CommandSource>> mapper) {
       boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
 
-      List<Text> schematics = PLUGIN.getSchematicManager().getSchematics().stream()
+      List<IslandSchematic> schematics = PLUGIN.getSchematicManager().getSchematics().stream()
           .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName()))
-          .map(mapper)
           .collect(Collectors.toList());
 
-      PaginationList.builder()
-          .title(Text.of(TextColors.AQUA, "Starter Islands"))
-          .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-          .contents(schematics)
-          .sendTo(player);
+      if (PLUGIN.getConfig().getMiscConfig().isTextSchematicList()) {
 
+        List<Text> schematicText = schematics.stream()
+            .map(s -> s.getText().toBuilder().onClick(TextActions.executeCallback(mapper.apply(s))).build())
+            .collect(Collectors.toList());
+
+        PaginationList.builder()
+            .title(Text.of(TextColors.AQUA, "Schematics"))
+            .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+            .contents(schematicText)
+            .sendTo(player);
+
+        return CommandResult.empty();
+      }
+
+      player.openInventory(SchematicUI.of(schematics, mapper));
       return CommandResult.empty();
     }
   }
 
-  protected void clearIslandMemberInventories(Island island, String keepPlayerInventory, String keepEnderChestInventory) {
+  protected void clearIslandMemberInventories(Island island, String keepPlayerInv, String keepEnderChestInv) {
     UserStorageService uss = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class);
 
     List<User> members = island.getMembers().stream()
@@ -194,20 +206,20 @@ public abstract class CommandBase implements CommandExecutor {
         .collect(Collectors.toList());
 
     // Clear the owner's inventory, if enabled
-    uss.get(island.getOwnerUniqueId()).ifPresent(o -> clearMemberInventory(o, keepPlayerInventory, keepEnderChestInventory));
+    uss.get(island.getOwnerUniqueId()).ifPresent(o -> clearMemberInventory(o, keepPlayerInv, keepEnderChestInv));
     // Clear each member's inventory, if enabled
     for (User user : members) {
-      clearMemberInventory(user, keepPlayerInventory, keepEnderChestInventory);
+      clearMemberInventory(user, keepPlayerInv, keepEnderChestInv);
     }
   }
 
-  protected void clearMemberInventory(User member, String keepPlayerInventory, String keepEnderChestInventory) {
+  protected void clearMemberInventory(User member, String keepPlayerInv, String keepEnderChestInv) {
     // Check if the player is exempt from having their inventory cleared
-    if (!member.hasPermission(keepPlayerInventory)) {
+    if (!member.hasPermission(keepPlayerInv)) {
       PLUGIN.getLogger().debug("Clearing {}'s player inventory.", member.getName());
       member.getInventory().clear();
     }
-    if (!member.hasPermission(keepEnderChestInventory)) {
+    if (!member.hasPermission(keepEnderChestInv)) {
       PLUGIN.getLogger().debug("Clearing {}'s ender chest inventory.", member.getName());
       member.getEnderChestInventory().clear();
     }

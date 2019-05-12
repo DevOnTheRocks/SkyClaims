@@ -37,7 +37,6 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 public class CommandCreate extends ListSchematicCommand {
@@ -77,7 +76,7 @@ public class CommandCreate extends ListSchematicCommand {
     if (schematic.isPresent()) {
       return createIsland(player, schematic.get());
     } else if (!defaultSchematic.isPresent()) {
-      return listSchematics(player, s -> s.getText().toBuilder().onClick(TextActions.executeCallback(createIsland(s))).build());
+      return listSchematics(player, this::createIsland);
     } else {
       return createIsland(
           player,

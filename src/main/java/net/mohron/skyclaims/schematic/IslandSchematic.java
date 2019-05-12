@@ -26,6 +26,8 @@ import java.util.Optional;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.biome.BiomeType;
@@ -36,6 +38,7 @@ public class IslandSchematic {
   private static final DataQuery BIOME_TYPE = DataQuery.of("SkyClaims", "BiomeType");
   private static final DataQuery COMMANDS = DataQuery.of("SkyClaims", "Command");
   private static final DataQuery HEIGHT = DataQuery.of("SkyClaims", "Height");
+  private static final DataQuery ICON = DataQuery.of("SkyClaims", "Icon");
   private static final DataQuery TEXT = DataQuery.of("SkyClaims", "Text");
 
   private final Schematic schematic;
@@ -93,9 +96,9 @@ public class IslandSchematic {
 
   public Optional<Integer> getHeight(){
     Integer height;
-    try {
-      height = Math.max(0, Math.min(255, Integer.parseInt(schematic.getMetadata().getString(HEIGHT).orElse(""))));
-    } catch (Exception ignored) {
+    if (schematic.getMetadata().getInt(HEIGHT).isPresent()){
+      height = Math.max(0, Math.min(255, schematic.getMetadata().getInt(HEIGHT).get()));
+    } else  {
       height = null;
     }
     return Optional.ofNullable(height);
@@ -108,6 +111,15 @@ public class IslandSchematic {
   public Text getText() {
     String rawText = schematic.getMetadata().getString(TEXT).orElse(getName());
     return TextSerializers.FORMATTING_CODE.deserialize(rawText);
+  }
+
+  public ItemType getIcon() {
+    String type = schematic.getMetadata().getString(ICON).orElse("");
+    return Sponge.getRegistry().getType(ItemType.class, type).orElse(ItemTypes.NONE);
+  }
+
+  public void setIcon(ItemType icon) {
+    setMetadata(ICON, icon);
   }
 
   public void setText(Text text) {

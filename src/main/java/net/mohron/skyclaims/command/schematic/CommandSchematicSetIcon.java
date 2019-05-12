@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.command.schematic;
 
+import java.util.Optional;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -28,45 +29,67 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
-public class CommandSchematicSetName extends CommandBase {
+public class CommandSchematicSetIcon extends CommandBase {
 
-  public static final String HELP_TEXT = "used to set the name for a schematic";
+  public static final String HELP_TEXT = "used to set the menu icon for a schematic";
   private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text NAME = Text.of("name");
+  private static final Text ICON = Text.of("icon");
 
-  public static CommandSpec commandSpec = CommandSpec.builder()
-      .permission(Permissions.COMMAND_SCHEMATIC_SET_NAME)
+  public static final CommandSpec commandSpec = CommandSpec.builder()
+      .permission(Permissions.COMMAND_SCHEMATIC_SET_ICON)
       .description(Text.of(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
-          GenericArguments.optional(GenericArguments.text(NAME, TextSerializers.FORMATTING_CODE, true))
+          GenericArguments.optional(GenericArguments.catalogedElement(ICON, ItemType.class))
       )
-      .executor(new CommandSchematicSetName())
+      .executor(new CommandSchematicSetIcon())
       .build();
 
   public static void register() {
     try {
       PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-      PLUGIN.getLogger().debug("Registered command: CommandSchematicSetName");
+      PLUGIN.getLogger().debug("Registered command: CommandSchematicSetIcon");
     } catch (UnsupportedOperationException e) {
-      PLUGIN.getLogger().error("Failed to register command: CommandSchematicSetName", e);
+      PLUGIN.getLogger().error("Failed to register command: CommandSchematicSetIcon", e);
     }
   }
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
-    Text text = args.<Text>getOne(NAME).orElse(Text.of(schematic.getName()));
+        .orElseThrow(
+            () -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
+    Optional<ItemType> icon = args.getOne(ICON);
 
-    schematic.setText(text);
+    if (icon.isPresent() || (src instanceof Player
+        && ((Player) src).getItemInHand(HandTypes.MAIN_HAND).isPresent()
+        && !((Player) src).getItemInHand(HandTypes.MAIN_HAND).get().isEmpty())) {
+      ItemType itemType = icon.orElse(((Player) src).getItemInHand(HandTypes.MAIN_HAND).get().getType());
+      schematic.setIcon(itemType);
+      ItemStackSnapshot snapshot = ItemStack.of(itemType).createSnapshot();
+      src.sendMessage(Text.of(
+          TextColors.GREEN, "Successfully updated schematic icon to ",
+          snapshot.get(Keys.DISPLAY_NAME).orElse(Text.of(itemType.getTranslation())).toBuilder()
+              .color(TextColors.WHITE)
+              .onHover(TextActions.showItem(snapshot)),
+          TextColors.GREEN, "."
+      ));
+    } else {
+      schematic.setIcon(null);
+      src.sendMessage(Text.of(TextColors.GREEN, "Successfully removed schematic icon."));
+    }
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
-      src.sendMessage(Text.of(TextColors.GREEN, "Successfully updated schematic name to ", TextColors.WHITE, text, TextColors.GREEN, "."));
       return CommandResult.success();
     } else {
       throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));

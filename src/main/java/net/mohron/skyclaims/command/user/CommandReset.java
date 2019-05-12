@@ -75,7 +75,7 @@ public class CommandReset extends ListSchematicCommand {
     if (schematic.isPresent()) {
       getConfirmation(island, schematic.get(), keepInv).accept(player);
     } else if (!defaultSchematic.isPresent()) {
-      listSchematics(player, s -> s.getText().toBuilder().onClick(TextActions.executeCallback(getConfirmation(island, s, keepInv))).build());
+      return listSchematics(player, s -> getConfirmation(island, s, keepInv));
     } else {
       getConfirmation(
           island,
