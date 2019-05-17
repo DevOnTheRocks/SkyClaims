@@ -41,9 +41,12 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
-public class ClaimUtil {
+public final class ClaimUtil {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+
+  private ClaimUtil() {
+  }
 
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   public static Claim createIslandClaim(@Nonnull UUID ownerUniqueId, @Nonnull Region region)
@@ -69,19 +72,26 @@ public class ClaimUtil {
           );
           break;
         case OVERLAPPING_CLAIM:
-          for (Claim claim1 : claimResult.getClaims()) {
-            claimManager.deleteClaim(claim1);
+          for (Claim overlappedClaim : claimResult.getClaims()) {
+            ClaimResult delete = claimManager.deleteClaim(overlappedClaim);
+            if (!delete.successful()) {
+              PLUGIN.getLogger().error("{}: {}", delete.getResultType(), delete.getMessage());
+              throw new CreateIslandException(Text.of(
+                  TextColors.RED, "Failed to delete overlapping claim: ", overlappedClaim.getUniqueId()
+              ));
+            }
+            PLUGIN.getLogger().info(
+                "Removed claim overlapping {}'s island (Owner: {}, ID: {}).",
+                getName(ownerUniqueId),
+                overlappedClaim.getOwnerName().toPlain(),
+                overlappedClaim.getUniqueId()
+            );
           }
-          PLUGIN.getLogger().info(
-              "Removing claim overlapping {}'s island (Owner: {}, ID: {}).",
-              getName(ownerUniqueId),
-              claimResult.getClaim().get().getOwnerName().toPlain(),
-              claimResult.getClaim().get().getUniqueId()
-          );
           break;
         default:
-          throw new CreateIslandException(
-              Text.of(TextColors.RED, "Failed to create claim: ", claimResult.getResultType()));
+          throw new CreateIslandException(Text.of(
+              TextColors.RED, "Failed to create claim: ", claimResult.getResultType()
+          ));
       }
     } while (claim == null);
 
@@ -93,15 +103,15 @@ public class ClaimUtil {
     int initialSpacing = 256 - Options.getMinSize(ownerUniqueId);
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
     checkNotNull(world, "Error Creating Claim: World (%s) is null", world.getName());
-    checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded",
-        world.getName());
+    checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded", world.getName());
     checkNotNull(ownerUniqueId, "Error Creating Claim: Owner is null");
     checkNotNull(region, "Error Creating Claim: Region is null");
 
     PlayerData playerData = PLUGIN.getGriefPrevention()
         .getWorldPlayerData(world.getProperties(), ownerUniqueId)
-        .orElseThrow(() -> new CreateIslandException(
-            Text.of(TextColors.RED, "Unable to load GriefPrevention player data!")));
+        .orElseThrow(() -> new CreateIslandException(Text.of(
+            TextColors.RED, "Unable to load GriefPrevention player data!"
+        )));
 
     return Claim.builder()
         .type(ClaimType.TOWN)

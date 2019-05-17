@@ -45,6 +45,7 @@
 - Fixed Nucleus Integration commands not registering after a reload
 - Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region
 - Fixed a bug where `/is lock` would not prevent entry to a locked island
+- Fixed a bug when removing overlapping claims during `/is create`
 - Updated bStats to 1.4
 
 # Beta 27.2 HOTFIX

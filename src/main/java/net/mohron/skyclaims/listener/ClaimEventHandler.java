@@ -74,7 +74,7 @@ public class ClaimEventHandler {
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
     for (Claim claim : event.getClaims()) {
-      if (claim.getWorld().equals(world) && !claim.isAdminClaim() && !claim.getParent().isPresent()) {
+      if (claim.getWorld().equals(world) && IslandManager.get(claim).isPresent()) {
         if (event instanceof DeleteClaimEvent.Abandon) {
           event.setMessage(Text.of(TextColors.RED, "You cannot abandon an island claim!"));
         } else {
