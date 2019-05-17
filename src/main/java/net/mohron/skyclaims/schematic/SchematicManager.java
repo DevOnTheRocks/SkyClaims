@@ -100,7 +100,7 @@ public class SchematicManager {
             Schematic schematic = DataTranslators.SCHEMATIC.translate(schematicData);
             schematics.add(new IslandSchematic(schematic, fileName.replace(SCHEMATIC_FILE_EXT, "").toLowerCase()));
           } catch (Exception e) {
-            plugin.getLogger().error("Error loading schematic: {}\n{}", fileName, e.getStackTrace());
+            plugin.getLogger().error("Error loading schematic: " + fileName, e);
             continue;
           }
           plugin.getLogger().debug("Successfully loaded schematic: {}.", fileName);
