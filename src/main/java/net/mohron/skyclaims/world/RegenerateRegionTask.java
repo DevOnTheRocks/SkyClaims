@@ -67,7 +67,10 @@ public class RegenerateRegionTask implements Runnable {
     Stopwatch sw = Stopwatch.createStarted();
 
     PLUGIN.getLogger().info("Using preset code '{}' to regenerate region.", config.getPresetCode());
-    final BlockState[] blocks = FlatWorldUtil.getBlocksSafely(config.getPresetCode());
+    String preset = schematic != null && schematic.getPreset().isPresent()
+        ? schematic.getPreset().get()
+        : config.getPresetCode();
+    final BlockState[] blocks = FlatWorldUtil.getBlocksSafely(preset);
 
     regenerateChunks(blocks, config.getSpawn());
 

@@ -40,6 +40,7 @@ public class IslandSchematic {
   private static final DataQuery HEIGHT = DataQuery.of("SkyClaims", "Height");
   private static final DataQuery ICON = DataQuery.of("SkyClaims", "Icon");
   private static final DataQuery TEXT = DataQuery.of("SkyClaims", "Text");
+  private static final DataQuery PRESET = DataQuery.of("SkyClaims", "Preset");
 
   private final Schematic schematic;
   private final String name;
@@ -113,6 +114,10 @@ public class IslandSchematic {
     return TextSerializers.FORMATTING_CODE.deserialize(rawText);
   }
 
+  public void setText(Text text) {
+    setMetadata(TEXT, TextSerializers.FORMATTING_CODE.serialize(text));
+  }
+
   public ItemType getIcon() {
     String type = schematic.getMetadata().getString(ICON).orElse("");
     return Sponge.getRegistry().getType(ItemType.class, type).orElse(ItemTypes.NONE);
@@ -122,8 +127,12 @@ public class IslandSchematic {
     setMetadata(ICON, icon);
   }
 
-  public void setText(Text text) {
-    setMetadata(TEXT, TextSerializers.FORMATTING_CODE.serialize(text));
+  public void setPreset(String preset) {
+    setMetadata(PRESET, preset);
+  }
+
+  public Optional<String> getPreset() {
+    return schematic.getMetadata().getString(PRESET);
   }
 
   private void setMetadata(DataQuery path, Object value) {

@@ -48,6 +48,7 @@ public class CommandSchematic extends CommandBase {
         .child(CommandSchematicSetHeight.commandSpec, "setheight")
         .child(CommandSchematicSetIcon.commandSpec, "seticon")
         .child(CommandSchematicSetName.commandSpec, "setname")
+        .child(CommandSchematicSetPreset.commandSpec, "setpreset")
         .childArgumentParseExceptionFallback(false)
         .executor(new CommandSchematicList())
         .build();

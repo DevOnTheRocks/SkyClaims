@@ -30,30 +30,29 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
-public class CommandSchematicSetName extends CommandBase {
+public class CommandSchematicSetPreset extends CommandBase {
 
-  public static final String HELP_TEXT = "used to set the name for a schematic";
+  public static final String HELP_TEXT = "used to set the flat world preset for a schematic";
   private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text NAME = Text.of("name");
+  private static final Text PRESET = Text.of("preset");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
-      .permission(Permissions.COMMAND_SCHEMATIC_SET_NAME)
+      .permission(Permissions.COMMAND_SCHEMATIC_SET_PRESET)
       .description(Text.of(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
-          GenericArguments.optional(GenericArguments.text(NAME, TextSerializers.FORMATTING_CODE, true))
+          GenericArguments.optional(GenericArguments.string(PRESET))
       )
-      .executor(new CommandSchematicSetName())
+      .executor(new CommandSchematicSetPreset())
       .build();
 
   public static void register() {
     try {
       PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
-      PLUGIN.getLogger().debug("Registered command: CommandSchematicSetName");
+      PLUGIN.getLogger().debug("Registered command: CommandSchematicSetPreset");
     } catch (UnsupportedOperationException e) {
-      PLUGIN.getLogger().error("Failed to register command: CommandSchematicSetName", e);
+      PLUGIN.getLogger().error("Failed to register command: CommandSchematicSetPreset", e);
     }
   }
 
@@ -61,14 +60,19 @@ public class CommandSchematicSetName extends CommandBase {
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
         .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
-    Text text = args.<Text>getOne(NAME).orElse(Text.of(schematic.getName()));
+    String preset = args.<String>getOne(PRESET).orElse(null);
 
-    schematic.setText(text);
+    schematic.setPreset(preset);
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
-      src.sendMessage(Text.of(
-          TextColors.GREEN, "Successfully updated schematic name to ", TextColors.WHITE, text, TextColors.GREEN, "."
-      ));
+      if (preset != null) {
+        src.sendMessage(Text.of(
+            TextColors.GREEN, "Successfully updated schematic preset to ",
+            TextColors.WHITE, preset, TextColors.GREEN, "."
+        ));
+      } else {
+        src.sendMessage(Text.of(TextColors.GREEN, "Successfully removed schematic preset."));
+      }
       return CommandResult.success();
     } else {
       throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));

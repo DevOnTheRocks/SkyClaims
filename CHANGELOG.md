@@ -17,6 +17,8 @@
   - `/is schematic setbiome <schematic> <biome>` - set a default biome for a schematic that overrides the permission option
   - `/is schematic setheight <schematic> <height>` - set the generation height of a schematic
   - `/is schematic setname <schematic> <name>` - set an in-game name for a schematic that supports formatting code
+  - `/is schematic seticon <schematic> <icon>` - set an icon for a schematic to be used by the chest GUI
+  - `/is schematic setpreset <schematic> <preset>` - set a flat world preset for a schematic _*see flat world preset support_
   - `skyclaims.default-schematic` now defaults to empty which will list valid schematics
   - Removed `Misc-List-Schematics` config
   - Added `Misc > Text-Schematic-List` config to disable new chest UI

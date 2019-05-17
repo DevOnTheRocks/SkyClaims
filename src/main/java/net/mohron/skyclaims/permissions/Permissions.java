@@ -86,6 +86,7 @@ public class Permissions {
   public static final String COMMAND_SCHEMATIC_SET_HEIGHT = "skyclaims.admin.schematic.setheight";
   public static final String COMMAND_SCHEMATIC_SET_ICON = "skyclaims.admin.schematic.seticon";
   public static final String COMMAND_SCHEMATIC_SET_NAME = "skyclaims.admin.schematic.setname";
+  public static final String COMMAND_SCHEMATIC_SET_PRESET = "skyclaims.admin.schematic.setpreset";
   // Bypass/Exemptions
   public static final String EXEMPT_KICK = "skyclaims.admin.kick.exempt";
   public static final String BYPASS_LOCK = "skyclaims.admin.lock.bypass";
