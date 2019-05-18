@@ -99,8 +99,9 @@ public class RegenerateRegionTask implements Runnable {
     for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
       List<CompletableFuture<Void>> tasks = Lists.newArrayList();
       for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
-        tasks
-            .add(CompletableFuture.runAsync(new RegenerateChunkTask(island.getWorld(), x, z, blocks, spawn), executor));
+        tasks.add(CompletableFuture.runAsync(
+            new RegenerateChunkTask(island.getWorld(), x, z, blocks, spawn), executor)
+        );
       }
       try {
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[32])).join();

@@ -34,6 +34,7 @@ import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
@@ -57,7 +58,7 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-    if (!claim.getWorld().equals(world) || claim.isAdminClaim() || claim.getParent().isPresent()) {
+    if (!claim.getWorld().equals(world) || isSkyClaims(event) || claim.isAdminClaim() || claim.getParent().isPresent()) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
@@ -72,6 +73,11 @@ public class ClaimEventHandler {
   public void onClaimDelete(DeleteClaimEvent event, @First Player player) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+
+    if (isSkyClaims(event)) {
+      SkyClaimsTimings.CLAIM_HANDLER.abort();
+      return;
+    }
 
     for (Claim claim : event.getClaims()) {
       if (claim.getWorld().equals(world) && IslandManager.get(claim).isPresent()) {
@@ -97,7 +103,7 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-    if (!claim.getWorld().equals(world) || !IslandManager.get(claim).isPresent()) {
+    if (!claim.getWorld().equals(world) || isSkyClaims(event) || !IslandManager.get(claim).isPresent()) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
@@ -194,8 +200,8 @@ public class ClaimEventHandler {
         }
         claim = parent;
       }
-      // Ignore non-basic claims or claims without an island.
-      if (!claim.isBasicClaim() && !IslandManager.get(claim).isPresent()) {
+      // Ignore claims without an island.
+      if (!IslandManager.get(claim).isPresent() || isSkyClaims(event)) {
         SkyClaimsTimings.CLAIM_HANDLER.abort();
         return;
       }
@@ -229,5 +235,9 @@ public class ClaimEventHandler {
     }
 
     SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
+  }
+
+  private boolean isSkyClaims(Event event) {
+    return event.getCause().contains(PLUGIN.getPluginContainer());
   }
 }
