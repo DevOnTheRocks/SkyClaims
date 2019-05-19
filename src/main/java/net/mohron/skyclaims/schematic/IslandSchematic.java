@@ -27,7 +27,6 @@ import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.biome.BiomeType;
@@ -118,9 +117,9 @@ public class IslandSchematic {
     setMetadata(TEXT, TextSerializers.FORMATTING_CODE.serialize(text));
   }
 
-  public ItemType getIcon() {
+  public Optional<ItemType> getIcon() {
     String type = schematic.getMetadata().getString(ICON).orElse("");
-    return Sponge.getRegistry().getType(ItemType.class, type).orElse(ItemTypes.NONE);
+    return Sponge.getRegistry().getType(ItemType.class, type);
   }
 
   public void setIcon(ItemType icon) {

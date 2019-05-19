@@ -178,59 +178,64 @@ public class ClaimEventHandler {
   public void onClaimTrust(UserTrustClaimEvent event, @First Player player, @Getter(value = "getClaim") Claim claim) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
-    if (PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getDisabledTrustTypes().contains(event.getTrustType())) {
-      event.setCancelled(true);
-      event.setMessage(Text.of(TextColors.RED, "The use of ", TextColors.GOLD, event.getTrustType(), TextColors.RED, " has been disabled!"));
+    if (isSkyClaims(event) || player.hasPermission(Permissions.BYPASS_TRUST)) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
-    if (player.hasPermission(Permissions.BYPASS_TRUST)) {
+    if (PLUGIN.getConfig().getIntegrationConfig().getGriefPrevention().getDisabledTrustTypes().contains(event.getTrustType())) {
+      event.setCancelled(true);
+      event.setMessage(Text.of(
+          TextColors.RED, "The use of ", TextColors.GOLD, event.getTrustType(), TextColors.RED, " has been disabled!"
+      ));
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
-    if (claim.getWorld().equals(world)) {
-      // Get The top level claim
-      if (claim.isSubdivision()) {
-        Claim parent = claim;
-        while (parent.getParent().isPresent()) {
-          parent = parent.getParent().get();
-        }
-        claim = parent;
+    if (!claim.getWorld().equals(world)) {
+      SkyClaimsTimings.CLAIM_HANDLER.abort();
+      return;
+    }
+
+    // Get The top level claim
+    if (claim.isSubdivision()) {
+      Claim parent = claim;
+      while (parent.getParent().isPresent()) {
+        parent = parent.getParent().get();
       }
-      // Ignore claims without an island.
-      if (!IslandManager.get(claim).isPresent() || isSkyClaims(event)) {
-        SkyClaimsTimings.CLAIM_HANDLER.abort();
-        return;
-      }
-      // Send out invites
-      Island island = IslandManager.get(claim).get();
-      for (PrivilegeType type : PrivilegeType.values()) {
-        if (type.getTrustType() == event.getTrustType()) {
-          event.setCancelled(true);
-          event.getUsers().forEach(uuid ->
-              PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).ifPresent(user -> {
-                if (event instanceof TrustClaimEvent.Add && island.getPrivilegeType(user) != type) {
-                  Invite.builder()
-                      .island(island)
-                      .sender(player)
-                      .receiver(user)
-                      .privilegeType(type)
-                      .build()
-                      .send();
-                  event.setMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
-                }
-                if (event instanceof TrustClaimEvent.Remove) {
-                  event.setMessage(Text.of(
-                      TextColors.RED, "Use ",
-                      Text.builder("/is kick").color(TextColors.AQUA).style(TextStyles.ITALIC).onClick(TextActions.suggestCommand("/is kick ")),
-                      " to remove a player from this island.")
-                  );
-                }
-              }));
-        }
+      claim = parent;
+    }
+    // Ignore claims without an island.
+    if (!IslandManager.get(claim).isPresent()) {
+      SkyClaimsTimings.CLAIM_HANDLER.abort();
+      return;
+    }
+    // Send out invites
+    Island island = IslandManager.get(claim).get();
+    for (PrivilegeType type : PrivilegeType.values()) {
+      if (type.getTrustType() == event.getTrustType()) {
+        event.setCancelled(true);
+        event.getUsers().forEach(uuid ->
+            PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid).ifPresent(user -> {
+              if (event instanceof TrustClaimEvent.Add && island.getPrivilegeType(user) != type) {
+                Invite.builder()
+                    .island(island)
+                    .sender(player)
+                    .receiver(user)
+                    .privilegeType(type)
+                    .build()
+                    .send();
+                event.setMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
+              }
+              if (event instanceof TrustClaimEvent.Remove) {
+                event.setMessage(Text.of(
+                    TextColors.RED, "Use ",
+                    Text.builder("/is kick").color(TextColors.AQUA).style(TextStyles.ITALIC).onClick(TextActions.suggestCommand("/is kick ")),
+                    " to remove a player from this island.")
+                );
+              }
+            }));
       }
     }
 

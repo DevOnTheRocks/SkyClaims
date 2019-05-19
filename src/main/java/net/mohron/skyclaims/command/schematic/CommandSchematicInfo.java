@@ -32,6 +32,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.service.pagination.PaginationList;
+import org.spongepowered.api.text.LiteralText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -41,12 +42,13 @@ public class CommandSchematicInfo extends CommandBase {
 
   public static final String HELP_TEXT = "used to view detailed schematic info";
   private static final Text SCHEMATIC = Text.of("schematic");
+  private static final LiteralText NONE = Text.of("none");
 
   private enum Category {
     DETAILS, COMMANDS, RESET_COMMANDS
   }
 
-  public static CommandSpec commandSpec = CommandSpec.builder()
+  public static final CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_INFO)
       .description(Text.of(HELP_TEXT))
       .arguments(Arguments.schematic(SCHEMATIC))
@@ -112,9 +114,9 @@ public class CommandSchematicInfo extends CommandBase {
     contents.add(Text.of(TextColors.YELLOW, "Date", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getDate()));
     contents.add(Text.of(TextColors.YELLOW, "Filename", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getName()));
     contents.add(Text.of(TextColors.YELLOW, "Biome", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getBiomeType().map(CatalogType::getName).orElse("none")));
-    contents.add(Text.of(TextColors.YELLOW, "Height", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, schematic.getHeight().map(Text::of).orElse(Text.of("none"))));
-    contents.add(Text.of(TextColors.YELLOW, "Icon", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getIcon().getName()));
-    contents.add(Text.of(TextColors.YELLOW, "Preset", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getPreset().map(Text::of).orElse(Text.of("none"))));
+    contents.add(Text.of(TextColors.YELLOW, "Height", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, schematic.getHeight().map(Text::of).orElse(NONE)));
+    contents.add(Text.of(TextColors.YELLOW, "Icon", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getIcon().map(i -> Text.of(i).toText()).orElse(NONE)));
+    contents.add(Text.of(TextColors.YELLOW, "Preset", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getPreset().map(Text::of).orElse(NONE)));
     return contents;
   }
 

@@ -50,10 +50,13 @@ public final class Options {
   public static Optional<IslandSchematic> getDefaultSchematic(UUID playerUniqueId) {
     String name = getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "");
 
-    if (name.equalsIgnoreCase("random")) {
+    if(PLUGIN.getSchematicManager().getSchematics().size() == 1) {
+      return Optional.of(PLUGIN.getSchematicManager().getSchematics().get(0));
+    } else if (name.equalsIgnoreCase("random")) {
       return Optional.of(PLUGIN.getSchematicManager().getRandomSchematic());
     } else {
-      return PLUGIN.getSchematicManager().getSchematics().stream().filter(s -> s.getName().equalsIgnoreCase(name))
+      return PLUGIN.getSchematicManager().getSchematics().stream()
+          .filter(s -> s.getName().equalsIgnoreCase(name))
           .findAny();
     }
   }

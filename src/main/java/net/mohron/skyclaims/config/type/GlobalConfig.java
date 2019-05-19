@@ -29,6 +29,8 @@ public class GlobalConfig {
   private int version;
   @Setting(value = "Command")
   private CommandConfig commandConfig = new CommandConfig();
+  @Setting(value = "Economy")
+  private EconomyConfig economyConfig = new EconomyConfig();
   @Setting(value = "Entity")
   private EntityConfig entityConfig = new EntityConfig();
   @Setting(value = "Integration")
@@ -54,6 +56,10 @@ public class GlobalConfig {
 
   public CommandConfig getCommandConfig() {
     return commandConfig;
+  }
+
+  public EconomyConfig getEconomyConfig() {
+    return economyConfig;
   }
 
   public EntityConfig getEntityConfig() {

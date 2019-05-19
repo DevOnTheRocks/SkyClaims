@@ -9,6 +9,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -38,7 +39,7 @@ public final class SchematicUI {
     for (int i = 0; i < schematics.size(); i++) {
       IslandSchematic schematic = schematics.get(i);
       ItemStack itemStack = ItemStack.builder()
-          .itemType(schematic.getIcon())
+          .itemType(schematic.getIcon().orElse(ItemTypes.GOLDEN_SHOVEL))
           .add(Keys.DISPLAY_NAME, schematic.getText())
           .quantity(1)
           .build();
