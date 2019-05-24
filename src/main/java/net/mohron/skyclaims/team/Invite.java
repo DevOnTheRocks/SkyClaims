@@ -27,12 +27,15 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 public class Invite {
+
+  public static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
   private final Island island;
   private final User sender;
@@ -46,7 +49,7 @@ public class Invite {
     this.receiver = receiver;
     this.privilegeType = privilegeType;
     this.sent = Instant.now();
-    SkyClaims.getInstance().getInviteService().addInvite(this);
+    PLUGIN.getInviteService().addInvite(this);
   }
 
   public Island getIsland() {
@@ -82,7 +85,7 @@ public class Invite {
             .color(TextColors.GREEN)
             .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Click to accept")))
             .onClick(TextActions.executeCallback(src -> {
-              if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
+              if (PLUGIN.getInviteService().inviteExists(this)) {
                 src.sendMessage(Text.of(
                     TextColors.GREEN, "You are now a ", privilegeType.toText(), TextColors.GREEN,
                     " on ", island.getName(), TextColors.GREEN,
@@ -96,7 +99,7 @@ public class Invite {
             .color(TextColors.RED)
             .onHover(TextActions.showText(Text.of(TextColors.RED, "Click to deny")))
             .onClick(TextActions.executeCallback(src -> {
-              if (SkyClaims.getInstance().getInviteService().inviteExists(this)) {
+              if (PLUGIN.getInviteService().inviteExists(this)) {
                 src.sendMessage(Text.of(
                     TextColors.GREEN, "You have denied ",
                     island.getPrivilegeType(sender).format(sender.getName()),
@@ -110,12 +113,14 @@ public class Invite {
   }
 
   public void accept() {
+    Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
     island.addMember(receiver, privilegeType);
-    SkyClaims.getInstance().getInviteService().removeInvite(this);
+    Sponge.getCauseStackManager().popCause();
+    PLUGIN.getInviteService().removeInvite(this);
   }
 
   public void deny() {
-    SkyClaims.getInstance().getInviteService().removeInvite(this);
+    PLUGIN.getInviteService().removeInvite(this);
   }
 
   public static Invite.Builder builder() {

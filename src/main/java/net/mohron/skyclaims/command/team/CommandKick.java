@@ -89,7 +89,7 @@ public class CommandKick extends CommandBase.IslandCommand {
       }
     });
 
-    clearMemberInventory(player, Permissions.KEEP_INV_PLAYER_KICK, Permissions.KEEP_INV_ENDERCHEST_KICK);
+    clearMemberInventory(user, Permissions.KEEP_INV_PLAYER_KICK, Permissions.KEEP_INV_ENDERCHEST_KICK);
     island.removeMember(user);
 
     player.sendMessage(Text.of(

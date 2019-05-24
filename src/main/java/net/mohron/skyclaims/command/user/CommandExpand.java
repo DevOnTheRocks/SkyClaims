@@ -89,11 +89,10 @@ public class CommandExpand extends CommandBase.IslandCommand {
       throw new CommandException(Text.of(TextColors.RED, "Only an island manager may use this command!"));
     }
 
-    int width = claim.getWidth();
     int maxSize = Options.getMaxSize(island.getOwnerUniqueId()) * 2;
 
     // Check if expanding would exceed the max size
-    if (width >= maxSize || width + blocks * 2 > maxSize) {
+    if (exceedsMaxSize(island, claim, blocks)) {
       throw new CommandException(Text.of(
           TextColors.RED, "You cannot expand ", island.getName(), TextColors.RED, " greater than ",
           TextColors.LIGHT_PURPLE, maxSize, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, maxSize,
@@ -129,9 +128,20 @@ public class CommandExpand extends CommandBase.IslandCommand {
 
   private Consumer<CommandSource> expandIsland(Island island, Claim claim, int blocks) {
     return src -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+
+      if (exceedsMaxSize(island, claim, blocks)) {
+        int maxSize = Options.getMaxSize(island.getOwnerUniqueId()) * 2;
+        src.sendMessage(Text.of(
+            TextColors.RED, "You cannot expand ", island.getName(), TextColors.RED, " greater than ",
+            TextColors.LIGHT_PURPLE, maxSize, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, maxSize,
+            TextColors.RED, "."
+        ));
+        return;
+      }
       int cost = getCost(blocks, claim);
 
-      // Check if the Owner, has enough claim blocks to expand
+      // Attempt to charge the required currency to the island owner.
       if (charge(island, cost)) {
         island.expand(blocks);
         src.sendMessage(Text.of(
@@ -143,12 +153,19 @@ public class CommandExpand extends CommandBase.IslandCommand {
         ));
       } else {
         src.sendMessage(Text.of(
-            TextColors.RED, "You do not have the required currency to expand your island by ",
+            TextColors.RED, "You do not have the required currency (",
+            TextColors.LIGHT_PURPLE, cost,
+            TextColors.RED, ") to expand your island by ",
             TextColors.LIGHT_PURPLE, blocks,
             TextColors.RED, "."
         ));
       }
+      Sponge.getCauseStackManager().popCause();
     };
+  }
+
+  private boolean exceedsMaxSize(Island island, Claim claim, int blocks) {
+    return claim.getWidth() + blocks * 2 > Options.getMaxSize(island.getOwnerUniqueId()) * 2;
   }
 
   private int getCost(int blocks, Claim claim) {
@@ -164,6 +181,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
       Optional<UniqueAccount> account = economyService.get().getOrCreateAccount(island.getOwnerUniqueId());
       Currency currency = config.getCurrency().orElse(economyService.get().getDefaultCurrency());
       if (account.isPresent()) {
+        // Charge the player's currency account
         TransactionResult transaction = account.get().withdraw(
             currency,
             BigDecimal.valueOf(cost),
@@ -178,9 +196,12 @@ public class CommandExpand extends CommandBase.IslandCommand {
       // Use GP claim blocks by manipulating the player's bonus claim block balance
       Optional<PlayerData> data = GP.getWorldPlayerData(island.getWorld().getProperties(), island.getOwnerUniqueId());
       if (data.isPresent()) {
-        // Use the Owner's claim blocks to expand the island
-        data.get().setBonusClaimBlocks(data.get().getBonusClaimBlocks() - cost);
-        return true;
+        if (data.get().getRemainingClaimBlocks() >= cost) {
+          // Use the Owner's claim blocks to expand the island
+          data.get().setBonusClaimBlocks(data.get().getBonusClaimBlocks() - cost);
+          return true;
+        }
+        return false;
       } else {
         PLUGIN.getLogger().error("Could not load GP player data for {}.", island.getOwnerName());
         return false;
