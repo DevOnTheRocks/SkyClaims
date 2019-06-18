@@ -18,6 +18,7 @@
 
 package net.mohron.skyclaims.world;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -41,18 +42,21 @@ public class RegenerateRegionTask implements Runnable {
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
   private Region region;
+  private World world;
   private Island island;
   private IslandSchematic schematic;
   private boolean commands;
 
-  public RegenerateRegionTask(Region region) {
+  public RegenerateRegionTask(Region region, World world) {
     this.region = region;
+    this.world = world;
     this.island = null;
     this.commands = false;
   }
 
   public RegenerateRegionTask(Island island, IslandSchematic schematic, boolean commands) {
     this.region = island.getRegion();
+    this.world = island.getWorld();
     this.island = island;
     this.schematic = schematic;
     this.commands = commands;
@@ -66,18 +70,16 @@ public class RegenerateRegionTask implements Runnable {
 
     Stopwatch sw = Stopwatch.createStarted();
 
-    PLUGIN.getLogger().info("Using preset code '{}' to regenerate region.", config.getPresetCode());
     String preset = schematic != null && schematic.getPreset().isPresent()
         ? schematic.getPreset().get()
         : config.getPresetCode();
-    final BlockState[] blocks = FlatWorldUtil.getBlocksSafely(preset);
+    PLUGIN.getLogger().info("Using preset code '{}' to regenerate region.", preset);
 
-    regenerateChunks(blocks, config.getSpawn());
+    regenerateChunks(preset, config.getSpawn());
 
     sw.stop();
 
-    PLUGIN.getLogger().info("Finished regenerating region ({}, {}) in {}s.", region.getX(), region.getZ(),
-        sw.elapsed(TimeUnit.SECONDS));
+    PLUGIN.getLogger().info("Finished regenerating region ({}, {}) in {}s.", region.getX(), region.getZ(), sw.elapsed(TimeUnit.SECONDS));
 
     if (island != null) {
       if (commands) {
@@ -93,20 +95,19 @@ public class RegenerateRegionTask implements Runnable {
     }
   }
 
-  private void regenerateChunks(BlockState[] blocks, Location<World> spawn) {
+  private void regenerateChunks(String preset, Location<World> spawn) {
     SpongeExecutorService executor = Sponge.getScheduler().createSyncExecutor(PLUGIN);
+    BlockState[] blocks = FlatWorldUtil.getBlocksSafely(preset);
     int progress = 0;
     for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
       List<CompletableFuture<Void>> tasks = Lists.newArrayList();
       for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
-        tasks.add(CompletableFuture.runAsync(
-            new RegenerateChunkTask(island.getWorld(), x, z, blocks, spawn), executor)
-        );
+        Vector3i position = Sponge.getServer().getChunkLayout().forceToChunk(x,0, z);
+        tasks.add(CompletableFuture.runAsync(new RegenerateChunkTask(world, position, blocks, spawn), executor));
       }
       try {
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[32])).join();
-        PLUGIN.getLogger().info("Regenerating region {}, {} {}% complete", region.getX(), region.getZ(),
-            Math.round(++progress / 32f * 100));
+        PLUGIN.getLogger().info("Regenerating region {}, {} {}% complete", region.getX(), region.getZ(), Math.round(++progress / 32f * 100));
       } catch (RuntimeException e) {
         PLUGIN.getLogger().error("Could not regenerate chunk.", e);
       }

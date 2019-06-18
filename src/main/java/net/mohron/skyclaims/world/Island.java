@@ -443,7 +443,7 @@ public class Island implements ContextSource {
   }
 
   public void clear() {
-    RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
+    RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion(), spawn.getExtent());
     PLUGIN.getGame().getScheduler().createTaskBuilder().async().execute(regenerateRegionTask).submit(PLUGIN);
   }
 

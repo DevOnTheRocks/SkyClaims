@@ -19,12 +19,13 @@
 package net.mohron.skyclaims.schematic;
 
 import com.google.common.collect.Lists;
-import com.google.common.io.Resources;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
@@ -121,14 +122,14 @@ public class SchematicManager {
           new File(directory, schematic.getFileName())
       )), schematicData);
     } catch (Exception e) {
-      plugin.getLogger().error("Error saving schematic: ", schematic.getName());
+      plugin.getLogger().error("Error saving schematic: " + schematic.getName(), e);
       return false;
     }
     return true;
   }
 
   private void unpackDefaultSchematics() {
-    String[] defaultSchematics = {"gardenofglass", "grass", "sand", "skyexchange", "skyfactory", "snow", "wood"};
+    String[] defaultSchematics = {"grass", "sand", "skyfactory", "skyfactory4", "snow", "stoneblock2", "wood"};
     if (!directory.exists() || !directory.isDirectory()) {
       try {
         boolean success = directory.mkdir();
@@ -136,22 +137,23 @@ public class SchematicManager {
           throw new IOException();
         }
       } catch (SecurityException | IOException e) {
-        plugin.getLogger().error(String.format("Failed to create schematics directory.%n %s", e.getMessage()));
+        plugin.getLogger().error("Failed to create schematics directory.", e);
       }
     }
     try {
-      //noinspection ConstantConditions - schemDir.list() is being checked for null
-      if (directory.list() == null || directory.list().length < 1) {
+      String[] list = directory.list();
+      ClassLoader classLoader = getClass().getClassLoader();
+      if (classLoader != null && (list == null || list.length == 0)) {
         for (String name : defaultSchematics) {
-          File schematic = Paths.get(String.format("%s%s%s.schematic", directory.toPath(), File.separator, name)).toFile();
-          //noinspection ConstantConditions - Resource will always be included
-          Resources.asByteSource(this.getClass().getClassLoader()
-              .getResource(name + SCHEMATIC_FILE_EXT))
-              .copyTo(com.google.common.io.Files.asByteSink(schematic));
+          InputStream schematic = classLoader.getResourceAsStream(name + SCHEMATIC_FILE_EXT);
+          Path target = Paths.get(String.format("%s%s%s.schematic", directory.toPath(), File.separator, name));
+          if (schematic != null) {
+            Files.copy(schematic, target);
+          }
         }
       }
     } catch (SecurityException | IOException e) {
-      plugin.getLogger().error(String.format("Failed to create default schematic.%n %s", e.getMessage()));
+      plugin.getLogger().error("Failed to create default schematic.", e);
     }
   }
 }

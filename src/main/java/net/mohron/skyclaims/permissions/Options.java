@@ -25,6 +25,7 @@ import net.mohron.skyclaims.command.argument.BiomeArgument;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.world.biome.BiomeType;
 
 public final class Options {
@@ -107,9 +108,10 @@ public final class Options {
   }
 
   private static String getStringOption(UUID uuid, String option, String defaultValue) {
-    return !PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()
+    Optional<Subject> subject = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString());
+    return !subject.isPresent()
         ? defaultValue
-        : PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(defaultValue);
+        : subject.get().getOption(option).orElse(defaultValue);
   }
 
   private static int getIntOption(UUID uuid, String option, int defaultValue, int min, int max) {
@@ -118,11 +120,11 @@ public final class Options {
   }
 
   private static int getIntOption(UUID uuid, String option, int defaultValue) {
-    if (!PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()) {
+    Optional<Subject> subject = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString());
+    if (!subject.isPresent()) {
       return defaultValue;
     }
-    String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option)
-        .orElse(String.valueOf(defaultValue));
+    String value = subject.get().getOption(option).orElse(String.valueOf(defaultValue));
     try {
       return Integer.parseInt(value);
     } catch (NumberFormatException e) {

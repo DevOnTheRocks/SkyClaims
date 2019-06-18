@@ -43,6 +43,12 @@
 - Added `/is entity` command for detailed entity information
 - Added support for flat world preset codes (_block ID portion only_) for region generation
   - See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details
+- Added new schematics:
+  - Stoneblock 2
+  - SkyFactory 4
+- Removed outdated schematics:
+  - Garden of Glass
+  - SkyExchange
 - Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
 - Fixed Nucleus Integration commands not registering after a reload
 - Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region

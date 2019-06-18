@@ -1,8 +1,8 @@
 package net.mohron.skyclaims.world;
 
+import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.entity.Entity;
@@ -17,15 +17,13 @@ public class RegenerateChunkTask implements Runnable {
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
   private final World world;
-  private final int x;
-  private final int z;
+  private final Vector3i position;
   private final BlockState[] blocks;
   private final Location<World> spawn;
 
-  public RegenerateChunkTask(World world, int x, int z, BlockState[] blocks, Location<World> spawn) {
+  public RegenerateChunkTask(World world, Vector3i position, BlockState[] blocks, Location<World> spawn) {
     this.world = world;
-    this.x = x;
-    this.z = z;
+    this.position = position;
     this.blocks = blocks;
     this.spawn = spawn;
   }
@@ -35,19 +33,19 @@ public class RegenerateChunkTask implements Runnable {
   public void run() {
     SkyClaimsTimings.CLEAR_ISLAND.startTimingIfSync();
 
-    final Chunk chunk = world.loadChunk(Sponge.getServer().getChunkLayout().forceToChunk(x, 0, z), false)
-        .orElse(null);
+    final Chunk chunk = world.loadChunk(position, true).orElse(null);
 
     if (chunk == null) {
-      PLUGIN.getLogger().error("Failed to load chunk at block {}, 0, {}", x, z);
+      PLUGIN.getLogger().error("Failed to load chunk {}", position.toString());
       return;
     }
 
-    PLUGIN.getLogger().debug("Began regenerating chunk ({}, {})", x, z);
+    PLUGIN.getLogger().debug("Began regenerating chunk {}", position.toString());
     // Teleport any players to world spawn
     chunk.getEntities(e -> e instanceof Player).forEach(e -> e.setLocationSafely(spawn));
     // Clear the contents of an tile entity with an inventory
     chunk.getTileEntities(e -> e instanceof TileEntityCarrier).forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
+    // Set the blocks
     for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
       for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
         for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
@@ -60,7 +58,7 @@ public class RegenerateChunkTask implements Runnable {
     // Remove any remaining entities.
     chunk.getEntities(e -> !(e instanceof Player)).forEach(Entity::remove);
     chunk.unloadChunk();
-    PLUGIN.getLogger().debug("Finished regenerating chunk ({}, {})", x, z);
+    PLUGIN.getLogger().debug("Finished regenerating chunk {}", position.toString());
 
     SkyClaimsTimings.CLEAR_ISLAND.stopTimingIfSync();
   }
