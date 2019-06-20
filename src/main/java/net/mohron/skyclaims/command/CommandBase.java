@@ -169,15 +169,22 @@ public abstract class CommandBase implements CommandExecutor {
 
     protected static final Text SCHEMATIC = Text.of("schematic");
 
-    protected CommandResult listSchematics(Player player, Function<IslandSchematic, Consumer<CommandSource>> mapper) {
+    protected CommandResult listSchematics(Player player, Function<IslandSchematic, Consumer<CommandSource>> mapper) throws CommandException {
       boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
 
       List<IslandSchematic> schematics = PLUGIN.getSchematicManager().getSchematics().stream()
           .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName()))
           .collect(Collectors.toList());
 
-      if (PLUGIN.getConfig().getMiscConfig().isTextSchematicList()) {
+      if (schematics.isEmpty()) {
+        throw new CommandException(Text.of(TextColors.RED, "You have no schematics available!"));
+      }
+      if (schematics.size() == 1) {
+        mapper.apply(schematics.get(0));
+        return CommandResult.empty();
+      }
 
+      if (PLUGIN.getConfig().getMiscConfig().isTextSchematicList()) {
         List<Text> schematicText = schematics.stream()
             .map(s -> s.getText().toBuilder().onClick(TextActions.executeCallback(mapper.apply(s))).build())
             .collect(Collectors.toList());

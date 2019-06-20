@@ -77,11 +77,7 @@ public class CommandReset extends ListSchematicCommand {
     } else if (!defaultSchematic.isPresent()) {
       return listSchematics(player, s -> getConfirmation(island, s, keepInv));
     } else {
-      getConfirmation(
-          island,
-          defaultSchematic.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load default schematic!"))),
-          keepInv
-      ).accept(player);
+      getConfirmation(island, defaultSchematic.get(), keepInv).accept(player);
     }
 
     return CommandResult.empty();

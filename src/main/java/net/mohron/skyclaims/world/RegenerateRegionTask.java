@@ -47,19 +47,27 @@ public class RegenerateRegionTask implements Runnable {
   private IslandSchematic schematic;
   private boolean commands;
 
-  public RegenerateRegionTask(Region region, World world) {
+  private RegenerateRegionTask(Region region, World world) {
     this.region = region;
     this.world = world;
     this.island = null;
     this.commands = false;
   }
 
-  public RegenerateRegionTask(Island island, IslandSchematic schematic, boolean commands) {
+  private RegenerateRegionTask(Island island, IslandSchematic schematic, boolean commands) {
     this.region = island.getRegion();
     this.world = island.getWorld();
     this.island = island;
     this.schematic = schematic;
     this.commands = commands;
+  }
+
+  public static RegenerateRegionTask regen(Island island, IslandSchematic schematic, boolean commands) {
+    return new RegenerateRegionTask(island, schematic, commands);
+  }
+
+  public static RegenerateRegionTask clear(Region region, World world) {
+    return new RegenerateRegionTask(region, world);
   }
 
   @Override

@@ -78,10 +78,7 @@ public class CommandCreate extends ListSchematicCommand {
     } else if (!defaultSchematic.isPresent()) {
       return listSchematics(player, this::createIsland);
     } else {
-      return createIsland(
-          player,
-          defaultSchematic.orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Unable to load default schematic!")))
-      );
+      return createIsland(player, defaultSchematic.get());
     }
   }
 
