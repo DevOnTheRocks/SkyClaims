@@ -45,6 +45,7 @@ import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
@@ -453,9 +454,11 @@ public class Island implements ContextSource {
   }
 
   public void delete() {
+    Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
     ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(getWorld());
     getClaim().ifPresent(claimManager::deleteClaim);
     IslandManager.ISLANDS.remove(id);
     PLUGIN.getDatabase().removeIsland(this);
+    Sponge.getCauseStackManager().popCause();
   }
 }

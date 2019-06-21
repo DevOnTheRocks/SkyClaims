@@ -26,6 +26,7 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -105,6 +106,7 @@ public class CommandDelete extends CommandBase.IslandCommand {
 
   private Consumer<CommandSource> deleteIsland(Island island, boolean clear) {
     return src -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
       if (!IslandManager.ISLANDS.containsKey(island.getUniqueId())) {
         src.sendMessage(Text.of(island.getName(), TextColors.RED, " has already been deleted!"));
         return;
@@ -117,6 +119,7 @@ public class CommandDelete extends CommandBase.IslandCommand {
       island.delete();
 
       src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
+      Sponge.getCauseStackManager().popCause();
     };
   }
 }

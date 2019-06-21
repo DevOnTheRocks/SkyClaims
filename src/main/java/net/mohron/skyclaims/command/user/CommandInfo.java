@@ -160,12 +160,9 @@ public class CommandInfo extends CommandBase {
                   TextColors.WHITE, "[",
                   Text.builder("YES").color(TextColors.GREEN)
                       .onClick(TextActions.executeCallback(s -> {
-                        Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
                         island.clear();
                         island.delete();
-                        src.sendMessage(
-                            Text.of(island.getOwnerName(), "'s island has been deleted!"));
-                        Sponge.getCauseStackManager().popCause();
+                        src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
                       })),
                   TextColors.WHITE, "] [",
                   Text.builder("NO")
