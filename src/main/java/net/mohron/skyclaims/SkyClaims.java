@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 import me.ryanhamshire.griefprevention.GriefPrevention;
 import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandIsland;
+import net.mohron.skyclaims.command.debug.CommandPlayerInfo;
 import net.mohron.skyclaims.command.debug.CommandVersion;
 import net.mohron.skyclaims.config.ConfigManager;
 import net.mohron.skyclaims.config.type.GlobalConfig;
@@ -227,10 +228,8 @@ public class SkyClaims {
   }
 
   @Listener
-  public void onConstructWorldProperties(ConstructWorldPropertiesEvent event,
-      @Getter(value = "getWorldProperties") WorldProperties properties) {
-    if (!properties.isInitialized() && config.getWorldConfig().getVoidDimensions()
-        .contains(properties.getWorldName())) {
+  public void onConstructWorldProperties(ConstructWorldPropertiesEvent event, @Getter(value = "getWorldProperties") WorldProperties properties) {
+    if (!properties.isInitialized() && config.getWorldConfig().getVoidDimensions().contains(properties.getWorldName())) {
       Collection<WorldGeneratorModifier> modifiers = properties.getGeneratorModifiers();
       modifiers.add(voidGenModifier);
       properties.setGeneratorModifiers(modifiers);
@@ -343,6 +342,7 @@ public class SkyClaims {
 
   private void registerDebugCommands() {
     CommandVersion.register();
+    CommandPlayerInfo.register();
   }
 
   private void registerCommands() {

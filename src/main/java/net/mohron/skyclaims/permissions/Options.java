@@ -34,16 +34,16 @@ public final class Options {
   private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
 
   // SkyClaims Options
-  private static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
-  private static final String DEFAULT_BIOME = "skyclaims.default-biome";
-  private static final String MIN_SIZE = "skyclaims.min-size";
-  private static final String MAX_SIZE = "skyclaims.max-size";
-  private static final String MAX_SPAWNS = "skyclaims.max-spawns";
-  private static final String MAX_HOSTILE = "skyclaims.max-spawns.hostile";
-  private static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
-  private static final String EXPIRATION = "skyclaims.expiration";
-  private static final String MAX_ISLANDS = "skyclaims.max-islands";
-  private static final String MAX_TEAMMATES = "skyclaims.max-teammates";
+  public static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
+  public static final String DEFAULT_BIOME = "skyclaims.default-biome";
+  public static final String MIN_SIZE = "skyclaims.min-size";
+  public static final String MAX_SIZE = "skyclaims.max-size";
+  public static final String MAX_SPAWNS = "skyclaims.max-spawns";
+  public static final String MAX_HOSTILE = "skyclaims.max-spawns.hostile";
+  public static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
+  public static final String EXPIRATION = "skyclaims.expiration";
+  public static final String MAX_ISLANDS = "skyclaims.max-islands";
+  public static final String MAX_TEAMMATES = "skyclaims.max-teammates";
 
   private Options() {
   }

@@ -1,4 +1,4 @@
-# SkyClaims [![Build Status](https://img.shields.io/teamcity/https/ci.devonthe.rocks/s/SkyClaims_Build.svg)](https://ci.devonthe.rocks/viewType.html?buildTypeId=SkyClaims_Build&guest=1) [![Releases](https://img.shields.io/github/downloads/DevOnTheRocks/SkyClaims/total.svg)](https://github.com/DevOnTheRocks/SkyClaims/releases) ![Discord](https://img.shields.io/discord/265190931072942080.svg)
+# SkyClaims [![Releases](https://img.shields.io/github/downloads/DevOnTheRocks/SkyClaims/total.svg)](https://github.com/DevOnTheRocks/SkyClaims/releases) ![Discord](https://img.shields.io/discord/265190931072942080.svg)
 
 <img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/united_states.png" title="en-US" height="20"> <b>English</b> 
 | <a href="https://devontherocks.github.io/SkyClaims/#/zh-cn/"><img src="https://github.com/DevOnTheRocks/SkyClaims/wiki/images/china.png" title="zh-CN" height="20"> Chinese</a>
@@ -27,19 +27,19 @@ This plugin is in Beta. Live support is available for the latest builds through 
 - [X] Change the biome of a block, chunk or entire island
 - [X] Limit entity spawning per island
 - [X] Automatic removal of inactive islands
+- [X] Island messaging via GP's `/townchat`/`/tc` for chatting within your island
+- [X] Economy support for schematics & island expansion
 - [ ] Configurable island layouts (linear & spiral planned)
-- [ ] Island messaging channel for chatting within your island
-- [ ] Economy support for schematics & island expansion
 
 ## Dependencies
 
 - **Required:**
    - [Sponge](https://www.spongepowered.org/downloads) - 1.12.2-2555-7.0.0-BETA-2800+
-   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.12.2-4.3.0.473+
+   - [Grief Prevention](https://forums.spongepowered.org/t/griefprevention-official-thread/1123) - 1.12.2-4.3.0.622+
    - Permission Plugin - [LuckPerms](https://forums.spongepowered.org/t/luckperms-an-advanced-permissions-plugin/14274) is highly recommended
 - **Optional:**
-   - [Nucleus](https://nucleuspowered.org) - 1.2.0+
-   <!-- - Economy Plugin - [Economy Lite](https://ore.spongepowered.org/Flibio/EconomyLite), [Total Economy](https://ore.spongepowered.org/Erigitic/Total-Economy), or any other Sponge Economy plugin of your choosing. -->
+   - [Nucleus](https://nucleuspowered.org) - 1.9.0-S7.1+
+   - Economy Plugin - [Economy Lite](https://ore.spongepowered.org/Flibio/EconomyLite), [Total Economy](https://ore.spongepowered.org/Erigitic/Total-Economy), or any other Sponge Economy plugin of your choosing.
 
 ## Additional Information
 

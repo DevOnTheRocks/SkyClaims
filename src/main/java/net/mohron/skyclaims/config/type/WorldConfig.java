@@ -20,6 +20,7 @@ package net.mohron.skyclaims.config.type;
 
 import com.google.common.collect.Lists;
 import java.util.List;
+import java.util.Optional;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
@@ -51,7 +52,13 @@ public class WorldConfig {
   }
 
   public World getWorld() {
-    return SkyClaims.getInstance().getGame().getServer().getWorld(worldName).orElse(WorldUtil.getDefaultWorld());
+    final Optional<World> world = SkyClaims.getInstance().getGame().getServer().getWorld(worldName);
+    if (world.isPresent()) {
+      return world.get();
+    } else {
+      SkyClaims.getInstance().getLogger().warn("Unable to locate world {}.", worldName);
+      return WorldUtil.getDefaultWorld();
+    }
   }
 
   public Location<World> getSpawn() {

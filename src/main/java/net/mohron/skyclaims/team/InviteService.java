@@ -156,16 +156,12 @@ public class InviteService {
             TextColors.AQUA, (type == Type.INCOMING) ? "[" : Text.EMPTY,
             Text.builder("Incoming")
                 .color((type == Type.INCOMING) ? TextColors.GREEN : TextColors.GRAY)
-                .onHover(TextActions.showText(
-                    Text.of("Click here to show ", TextColors.GREEN, "incoming", TextColors.RESET,
-                        " invites")))
+                .onHover(TextActions.showText(Text.of("Click here to show ", TextColors.GREEN, "incoming", TextColors.RESET, " invites")))
                 .onClick(TextActions.executeCallback(listIncomingInvites())),
             TextColors.AQUA, (type == Type.INCOMING) ? "] " : " [",
             Text.builder("Outgoing")
                 .color((type == Type.OUTGOING) ? TextColors.YELLOW : TextColors.GRAY)
-                .onHover(TextActions.showText(
-                    Text.of("Click here to show ", TextColors.YELLOW, "outgoing", TextColors.RESET,
-                        " invites")))
+                .onHover(TextActions.showText(Text.of("Click here to show ", TextColors.YELLOW, "outgoing", TextColors.RESET, " invites")))
                 .onClick(TextActions.executeCallback(listOutgoingInvites())),
             TextColors.AQUA, (type == Type.OUTGOING) ? "]" : Text.EMPTY
         );
@@ -179,14 +175,18 @@ public class InviteService {
         }
 
         int limit = Options.getMaxIslands(player.getUniqueId());
-        Text header = limit < 1
-            ? null
-            : Text.of(TextColors.GRAY, "You currently have ", TextColors.LIGHT_PURPLE, IslandManager.getTotalIslands(player), TextColors.GRAY, " of ",
-                TextColors.LIGHT_PURPLE, limit, TextColors.GRAY, " maximum island", limit > 1 ? "s" : Text.EMPTY, ".");
+        Text header = Text.of(
+            TextColors.GRAY, "You currently have ",
+            TextColors.LIGHT_PURPLE, IslandManager.getTotalIslands(player),
+            TextColors.GRAY, " of ",
+            TextColors.LIGHT_PURPLE, limit, 
+            TextColors.GRAY, " maximum island",
+            limit > 1 ? "s" : Text.EMPTY, "."
+        );
 
         PaginationList.builder()
             .title(title)
-            .header(header)
+            .header(limit < 1 ? null : header)
             .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
             .contents(contents)
             .sendTo(player);

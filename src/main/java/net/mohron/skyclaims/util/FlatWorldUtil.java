@@ -16,7 +16,7 @@
  * along with SkyClaims.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.mohron.skyclaims.world;
+package net.mohron.skyclaims.util;
 
 import java.util.Arrays;
 import net.mohron.skyclaims.SkyClaims;

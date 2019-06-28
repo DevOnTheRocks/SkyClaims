@@ -65,8 +65,8 @@ public class CommandCreate extends ListSchematicCommand {
     if (IslandManager.hasIsland(player.getUniqueId())) {
       throw new CommandException(Text.of(TextColors.RED, "You already have an island!"));
     }
-    boolean canCreate = Options.getMaxIslands(player.getUniqueId()) < 1
-        || Options.getMaxIslands(player.getUniqueId()) - IslandManager.getTotalIslands(player) > 0;
+    int maxIslands = Options.getMaxIslands(player.getUniqueId());
+    boolean canCreate = maxIslands < 1 || maxIslands - IslandManager.getTotalIslands(player) > 0;
     if (!canCreate) {
       throw new CommandException(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
     }

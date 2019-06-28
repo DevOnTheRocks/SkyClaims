@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.schematic.IslandSchematic;
+import net.mohron.skyclaims.util.FlatWorldUtil;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;

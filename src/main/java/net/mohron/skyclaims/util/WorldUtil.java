@@ -18,6 +18,8 @@
 
 package net.mohron.skyclaims.util;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.region.Region;
@@ -31,7 +33,11 @@ public class WorldUtil {
 
   public static World getDefaultWorld() {
     String defaultWorldName = PLUGIN.getGame().getServer().getDefaultWorldName();
-    return PLUGIN.getGame().getServer().getWorld(defaultWorldName).get();
+    final Optional<World> world = PLUGIN.getGame().getServer().getWorld(defaultWorldName);
+    if (world.isPresent()) {
+      return world.get();
+    }
+    throw new NoSuchElementException("Failed to locate default world '" + defaultWorldName + "'!");
   }
 
   public static void setBlockBiome(Location<World> location, BiomeType biomeType) {

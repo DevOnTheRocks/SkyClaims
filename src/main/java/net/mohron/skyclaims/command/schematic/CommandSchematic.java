@@ -73,6 +73,7 @@ public class CommandSchematic extends CommandBase {
     CommandSchematicSetHeight.register();
     CommandSchematicSetIcon.register();
     CommandSchematicSetName.register();
+    CommandSchematicSetPreset.register();
   }
 
   @Override

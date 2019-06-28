@@ -96,9 +96,9 @@ public class IslandSchematic {
 
   public Optional<Integer> getHeight(){
     Integer height;
-    if (schematic.getMetadata().getInt(HEIGHT).isPresent()){
+    if (schematic.getMetadata().getInt(HEIGHT).isPresent()) {
       height = Math.max(0, Math.min(255, schematic.getMetadata().getInt(HEIGHT).get()));
-    } else  {
+    } else {
       height = null;
     }
     return Optional.ofNullable(height);
@@ -135,7 +135,7 @@ public class IslandSchematic {
   }
 
   private void setMetadata(DataQuery path, Object value) {
-    if (value != null){
+    if (value != null) {
       schematic.getMetadata().set(path, value);
     } else {
       schematic.getMetadata().remove(path);

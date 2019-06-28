@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
@@ -118,7 +119,6 @@ public class Island implements ContextSource {
     this.owner = owner;
     this.spawn = new Transform<>(PLUGIN.getConfig().getWorldConfig().getWorld(), spawnLocation);
     this.locked = locked;
-    this.claim = claimId;
 
     ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(spawn.getExtent());
     Claim claim = claimManager.getClaimByUUID(claimId).orElse(null);
@@ -146,6 +146,7 @@ public class Island implements ContextSource {
     return id;
   }
 
+  @Nonnull
   @Override
   public Context getContext() {
     return this.context;

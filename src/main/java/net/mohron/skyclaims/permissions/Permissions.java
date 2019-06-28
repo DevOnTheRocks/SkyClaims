@@ -74,6 +74,7 @@ public class Permissions {
   public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
   public static final String COMMAND_TRANSFER = "skyclaims.admin.transfer";
   public static final String COMMAND_VERSION = "skyclaims.admin.version";
+  public static final String COMMAND_PLAYER_INFO = "skyclaims.admin.playerinfo";
   // Schematics
   public static final String COMMAND_SCHEMATIC = "skyclaims.admin.schematic.base";
   public static final String COMMAND_SCHEMATIC_COMMAND = "skyclaims.admin.schematic.command";
