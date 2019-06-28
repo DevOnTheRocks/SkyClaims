@@ -104,18 +104,26 @@ public class InviteService {
         .collect(Collectors.toList());
   }
 
-  private Consumer<CommandSource> acceptInvite(Invite invite) {
+  Consumer<CommandSource> acceptInvite(Invite invite) {
     return src -> {
       int maxIslands = Options.getMaxIslands(invite.getReceiver().getUniqueId());
       int maxTeammates = Options.getMaxTeammates(invite.getIsland().getOwnerUniqueId());
 
       // Check if the receiver can accept this invite
-      if (maxIslands > 0 && maxIslands - IslandManager.getTotalIslands(invite.getReceiver()) < 1) {
+      if (!inviteExists(invite)) {
+        src.sendMessage(Text.of(TextColors.RED, "This invite has expired!"));
+      } else if (maxIslands > 0 && maxIslands - IslandManager.getTotalIslands(invite.getReceiver()) < 1) {
         src.sendMessage(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
       } else if (maxTeammates > 0 && invite.getIsland().getTotalMembers() >= maxTeammates) {
         src.sendMessage(Text.of(invite.getIsland().getName(), TextColors.RED, " has reached its maximum team size!"));
       } else {
         invite.accept();
+        src.sendMessage(Text.of(
+            TextColors.GREEN, "You are now a ",
+            invite.getPrivilegeType().toText(),
+            TextColors.GREEN, " on ",
+            invite.getIsland().getName(), TextColors.GREEN, "!"
+        ));
       }
     };
   }
@@ -170,8 +178,7 @@ public class InviteService {
             ? PLUGIN.getInviteService().getIncomingInviteText(player)
             : PLUGIN.getInviteService().getOutgoingInviteText(player);
         if (contents.isEmpty()) {
-          contents = ImmutableList.of(Text
-              .of(TextColors.RED, "You have no ", type.toString().toLowerCase(), " invites!"));
+          contents = ImmutableList.of(Text.of(TextColors.RED, "You have no ", type.toString().toLowerCase(), " invites!"));
         }
 
         int limit = Options.getMaxIslands(player.getUniqueId());

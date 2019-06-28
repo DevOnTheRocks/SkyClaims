@@ -84,16 +84,7 @@ public class Invite {
         Text.builder("ACCEPT")
             .color(TextColors.GREEN)
             .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Click to accept")))
-            .onClick(TextActions.executeCallback(src -> {
-              if (PLUGIN.getInviteService().inviteExists(this)) {
-                src.sendMessage(Text.of(
-                    TextColors.GREEN, "You are now a ", privilegeType.toText(), TextColors.GREEN,
-                    " on ", island.getName(), TextColors.GREEN,
-                    "!"
-                ));
-                this.accept();
-              }
-            })),
+            .onClick(TextActions.executeCallback(PLUGIN.getInviteService().acceptInvite(this))),
         TextColors.WHITE, "] [",
         Text.builder("DENY")
             .color(TextColors.RED)
@@ -112,14 +103,14 @@ public class Invite {
     )));
   }
 
-  public void accept() {
+  void accept() {
     Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
     island.addMember(receiver, privilegeType);
     Sponge.getCauseStackManager().popCause();
     PLUGIN.getInviteService().removeInvite(this);
   }
 
-  public void deny() {
+  void deny() {
     PLUGIN.getInviteService().removeInvite(this);
   }
 
