@@ -259,6 +259,7 @@ public class Island implements ContextSource {
     }
     PLUGIN.getGriefPrevention().getWorldPlayerData(getWorld().getProperties(), owner)
         .ifPresent(data -> getClaim().ifPresent(claim -> {
+          Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
           int spacing = (512 - width) / 2;
           claim.resize(new Vector3i(
               getRegion().getLesserBoundary().getX() + spacing,
@@ -269,6 +270,7 @@ public class Island implements ContextSource {
               data.getMaxClaimLevel(),
               getRegion().getGreaterBoundary().getZ() - spacing
           ));
+          Sponge.getCauseStackManager().popCause();
         }));
     return getWidth() == width;
   }
@@ -278,20 +280,29 @@ public class Island implements ContextSource {
       case OWNER:
         UUID existingOwner = owner;
         transfer(user);
-        getClaim().ifPresent(c -> c.addUserTrust(existingOwner, TrustType.MANAGER));
+        getClaim().ifPresent(c -> {
+          Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+          c.addUserTrust(existingOwner, TrustType.MANAGER);
+          Sponge.getCauseStackManager().popCause();
+        });
         break;
       case MANAGER:
       case MEMBER:
-        getClaim().ifPresent(c -> c.addUserTrust(user.getUniqueId(), type.getTrustType()));
+        getClaim().ifPresent(c -> {
+          Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+          c.addUserTrust(user.getUniqueId(), type.getTrustType());
+          Sponge.getCauseStackManager().popCause();
+        });
         break;
       case NONE:
-        getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), type.getTrustType()));
+        removeMember(user);
         break;
     }
   }
 
   public void promote(User user) {
     getClaim().ifPresent(c -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
       if (c.isUserTrusted(user, TrustType.BUILDER)) {
         c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
         c.addUserTrust(user.getUniqueId(), TrustType.MANAGER);
@@ -301,20 +312,27 @@ public class Island implements ContextSource {
         transfer(user);
         c.addUserTrust(existingOwner, TrustType.MANAGER);
       }
+      Sponge.getCauseStackManager().popCause();
     });
   }
 
   public void demote(User user) {
     getClaim().ifPresent(c -> {
       if (c.isUserTrusted(user, TrustType.MANAGER)) {
+        Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
         c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
         c.addUserTrust(user.getUniqueId(), TrustType.BUILDER);
+        Sponge.getCauseStackManager().popCause();
       }
     });
   }
 
   public void removeMember(User user) {
-    getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), TrustType.NONE));
+    getClaim().ifPresent(c -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+      c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
+      Sponge.getCauseStackManager().popCause();
+    });
   }
 
   public List<String> getMembers() {
@@ -395,7 +413,7 @@ public class Island implements ContextSource {
 
   public Collection<Entity> getPassiveEntities() {
     return getWorld().getEntities(e -> contains(
-            e.getLocation()) && e instanceof Animal || e instanceof Aquatic || e instanceof Ambient
+        e.getLocation()) && e instanceof Animal || e instanceof Aquatic || e instanceof Ambient
     );
   }
 
@@ -413,6 +431,7 @@ public class Island implements ContextSource {
 
   public void transfer(User user) {
     getClaim().ifPresent(claim -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
       ClaimResult result = claim.transferOwner(user.getUniqueId());
       if (result.getResultType() != ClaimResultType.SUCCESS) {
         PLUGIN.getLogger().error(String.format(
@@ -420,6 +439,7 @@ public class Island implements ContextSource {
             claim.getUniqueId(), getOwnerName(), user.getName(), result.getResultType()
         ));
       }
+      Sponge.getCauseStackManager().popCause();
     });
     this.owner = user.getUniqueId();
     save();
