@@ -46,6 +46,8 @@ public class WorldConfig {
   @Setting(value = "Preset-Code", comment = "A flat world preset code to use when regenerating a region. Only the block ID list is used.\n"
       + "See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details.")
   private String presetCode = "";
+  @Setting(value = "Regen-On-Create", comment = "If enabled, SkyClaims will regen the target region before an island is created.")
+  private boolean regenOnCreate = false;
 
   public String getWorldName() {
     return worldName;
@@ -85,5 +87,9 @@ public class WorldConfig {
 
   public String getPresetCode() {
     return presetCode;
+  }
+
+  public boolean isRegenOnCreate() {
+    return regenOnCreate;
   }
 }

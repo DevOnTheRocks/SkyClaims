@@ -56,8 +56,7 @@ public class CommandList extends CommandBase {
         .description(Text.of(HELP_TEXT))
         .arguments(GenericArguments.firstParsing(
             GenericArguments.optional(Arguments.island(ISLAND)),
-            GenericArguments.optional(GenericArguments
-                .requiringPermission(Arguments.sort(SORT), Permissions.COMMAND_LIST_SORT))
+            GenericArguments.optional(GenericArguments.requiringPermission(Arguments.sort(SORT), Permissions.COMMAND_LIST_SORT))
         ))
         .executor(new CommandList())
         .build();
@@ -91,17 +90,14 @@ public class CommandList extends CommandBase {
     }
 
     List<Text> listText = islands.stream()
-        .filter(
-            i -> player == null || i.isMember(player) || !i.isLocked() && showUnlocked || showAll)
+        .filter(i -> player == null || i.isMember(player) || !i.isLocked() && showUnlocked || showAll)
         .sorted(sortType)
         .map(island -> Text.of(
             getAccess(island, src),
             island.getName().toBuilder()
                 .onHover(TextActions.showText(Text.of("Click here to view island info")))
                 .onClick(TextActions.executeCallback(
-                    CommandUtil
-                        .createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(),
-                            createReturnConsumer())
+                    CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer())
                 )),
             getCoords(island, src)
         ))
@@ -148,14 +144,12 @@ public class CommandList extends CommandBase {
     }
 
     hover = hover.concat(Text.of(island.getName(), TextColors.WHITE, " is ",
-        island.isLocked() ? Text.of(TextColors.RED, "Locked")
-            : Text.of(TextColors.GREEN, "Unlocked")
+        island.isLocked() ? Text.of(TextColors.RED, "Locked") : Text.of(TextColors.GREEN, "Unlocked")
     ));
 
     return Text.of(
         TextColors.WHITE, " [",
-        access.toBuilder().onHover(TextActions.showText(hover))
-            .onClick(TextActions.executeCallback(toggleLock(island))),
+        access.toBuilder().onHover(TextActions.showText(hover)).onClick(TextActions.executeCallback(toggleLock(island))),
         TextColors.WHITE, "] "
     );
   }
@@ -187,8 +181,7 @@ public class CommandList extends CommandBase {
         .hasPermission(Permissions.COMMAND_SPAWN_OTHERS)
         ? coords.toBuilder()
         .onHover(TextActions.showText(Text.of("Click here to teleport to this island")))
-        .onClick(TextActions.executeCallback(
-            CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
+        .onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
         .build()
         : coords;
   }

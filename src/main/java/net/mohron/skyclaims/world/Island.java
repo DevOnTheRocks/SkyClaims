@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
@@ -57,6 +58,7 @@ import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.context.ContextSource;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -108,7 +110,14 @@ public class Island implements ContextSource {
 
     // Generate the island using the specified schematic
     GenerateIslandTask generateIsland = new GenerateIslandTask(owner.getUniqueId(), this, schematic);
-    PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
+    SpongeExecutorService syncExecutor = Sponge.getScheduler().createSyncExecutor(PLUGIN);
+    if (PLUGIN.getConfig().getWorldConfig().isRegenOnCreate()) {
+      CompletableFuture
+          .runAsync(RegenerateRegionTask.clear(region, getWorld()), Sponge.getScheduler().createAsyncExecutor(PLUGIN))
+          .thenRunAsync(generateIsland, syncExecutor);
+    } else {
+      CompletableFuture.runAsync(generateIsland, syncExecutor);
+    }
 
     save();
   }
@@ -465,7 +474,7 @@ public class Island implements ContextSource {
   }
 
   public void clear() {
-    RegenerateRegionTask regenerateRegionTask = RegenerateRegionTask.clear(getRegion(), spawn.getExtent());
+    RegenerateRegionTask regenerateRegionTask = RegenerateRegionTask.clear(getRegion(), getWorld());
     PLUGIN.getGame().getScheduler().createTaskBuilder().async().execute(regenerateRegionTask).submit(PLUGIN);
   }
 

@@ -83,6 +83,11 @@ public class CommandCreate extends ListSchematicCommand {
   }
 
   private CommandResult createIsland(Player player, IslandSchematic schematic) throws CommandException {
+    if (IslandManager.hasIsland(player.getUniqueId())) {
+      player.sendMessage(Text.of(TextColors.RED, "You already have an island!"));
+      return CommandResult.empty();
+    }
+
     player.sendMessage(Text.of(
         TextColors.GREEN, "Your island is being created.",
         PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
@@ -105,12 +110,15 @@ public class CommandCreate extends ListSchematicCommand {
           player.sendMessage(Text.of(TextColors.RED, "You already have an island!"));
           return;
         }
+
+        player.sendMessage(Text.of(
+            TextColors.GREEN, "Your island is being created.",
+            PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
+        ));
+
         try {
-          player.sendMessage(Text.of(
-              TextColors.GREEN, "Your island is being created.",
-              PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
-          ));
-          new Island(player, schematic);
+          Island island = new Island(player, schematic);
+          clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_CREATE, Permissions.KEEP_INV_ENDERCHEST_CREATE);
         } catch (CreateIslandException e) {
           player.sendMessage(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
         }
