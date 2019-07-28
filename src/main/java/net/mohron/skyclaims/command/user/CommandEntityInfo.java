@@ -41,6 +41,7 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.format.TextStyles;
 
 public class CommandEntityInfo extends IslandCommand {
 
@@ -124,6 +125,7 @@ public class CommandEntityInfo extends IslandCommand {
 
       PaginationList.builder()
           .title(Text.of(TextColors.AQUA, "Island Entity Info"))
+          .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
           .header(getMenuText(island, category))
           .contents(info)
           .sendTo(src);

@@ -47,10 +47,15 @@
 - Added new schematics:
   - Stoneblock 2
   - SkyFactory 4
+- Added `World > Regen-On-Create` config option
+- Reworked `/is list [island] [sort type] [sort order]`
+  - Sort order has been separated from sort type
+  - **Sort Types**: NAME, CREATED, ONLINE, ACTIVE, MEMBERS, SIZE, ENTITIES
+  - **Sort Orders**: ASC, DESC
+  - Added `Misc >  Primary-List-Sort` config option - sets a sort type that gets applied before the one provided from the command argument
 - Removed outdated schematics:
   - Garden of Glass
   - SkyExchange
-- Added `World > Regen-On-Create` config option
 - Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
 - Fixed Nucleus Integration commands not registering after a reload
 - Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region

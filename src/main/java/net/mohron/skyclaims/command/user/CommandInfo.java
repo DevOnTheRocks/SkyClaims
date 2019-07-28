@@ -229,10 +229,10 @@ public class CommandInfo extends CommandBase {
   private static Text getMembers(Island island) {
     List<Text> members = Lists.newArrayList();
     members.add(PrivilegeType.OWNER.format(island.getOwnerName()));
-    for (String manager : island.getManagers()) {
+    for (String manager : island.getManagerNames()) {
       members.add(PrivilegeType.MANAGER.format(manager));
     }
-    for (String member : island.getMembers()) {
+    for (String member : island.getMemberNames()) {
       members.add(PrivilegeType.MEMBER.format(member));
     }
     return Text.joinWith(Text.of(TextColors.GRAY, ", "), members);

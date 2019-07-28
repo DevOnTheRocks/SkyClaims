@@ -21,12 +21,14 @@ package net.mohron.skyclaims.world;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -344,7 +346,20 @@ public class Island implements ContextSource {
     });
   }
 
-  public List<String> getMembers() {
+  public Collection<User> getMembers() {
+    Set<User> users = Sets.newHashSet();
+    UserStorageService uss = Sponge.getServiceManager().provideUnchecked(UserStorageService.class);
+    uss.get(owner).ifPresent(users::add);
+    if(getClaim().isPresent()) {
+      for (UUID uuid : getClaim().get().getUserTrusts()) {
+        uss.get(uuid).ifPresent(users::add);
+      }
+    }
+
+    return users;
+  }
+
+  public List<String> getMemberNames() {
     List<String> members = Lists.newArrayList();
     if (!getClaim().isPresent()) {
       return members;
@@ -355,7 +370,7 @@ public class Island implements ContextSource {
     return members;
   }
 
-  public List<String> getManagers() {
+  public List<String> getManagerNames() {
     List<String> members = Lists.newArrayList();
     if (!getClaim().isPresent()) {
       return members;

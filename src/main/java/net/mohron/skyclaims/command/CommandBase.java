@@ -22,7 +22,6 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -206,16 +205,10 @@ public abstract class CommandBase implements CommandExecutor {
   protected void clearIslandMemberInventories(Island island, String keepPlayerInv, String keepEnderChestInv) {
     UserStorageService uss = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class);
 
-    List<User> members = island.getMembers().stream()
-        .map(s -> uss.get(UUID.fromString(s)))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toList());
-
     // Clear the owner's inventory, if enabled
     uss.get(island.getOwnerUniqueId()).ifPresent(o -> clearMemberInventory(o, keepPlayerInv, keepEnderChestInv));
     // Clear each member's inventory, if enabled
-    for (User user : members) {
+    for (User user : island.getMembers()) {
       clearMemberInventory(user, keepPlayerInv, keepEnderChestInv);
     }
   }

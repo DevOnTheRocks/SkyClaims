@@ -22,15 +22,18 @@ import static net.mohron.skyclaims.PluginInfo.NAME;
 import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.command.admin.CommandReload;
 import net.mohron.skyclaims.command.admin.CommandTransfer;
+import net.mohron.skyclaims.command.argument.IslandSortType;
 import net.mohron.skyclaims.command.schematic.CommandSchematic;
 import net.mohron.skyclaims.command.team.CommandDemote;
 import net.mohron.skyclaims.command.team.CommandInvite;
@@ -52,6 +55,7 @@ import net.mohron.skyclaims.command.user.CommandUnlock;
 import net.mohron.skyclaims.integration.nucleus.CommandHome;
 import net.mohron.skyclaims.integration.nucleus.CommandSetHome;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.team.PrivilegeType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -220,7 +224,8 @@ public class CommandIsland extends CommandBase {
           TextColors.AQUA,
           Text.builder(alias + "invite").onClick(TextActions.runCommand("/" + alias + "invite")),
           TextColors.GRAY, " [user]",
-          TextColors.GRAY, " [privilege]",
+          TextColors.GRAY, Text.builder(" [privilege]")
+              .onHover(TextActions.showText(getTextFromEnum(PrivilegeType.class))),
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandInvite.HELP_TEXT
       ));
@@ -250,7 +255,10 @@ public class CommandIsland extends CommandBase {
           TextColors.AQUA,
           Text.builder(alias + "list").onClick(TextActions.runCommand("/" + alias + "list")),
           TextColors.GRAY, " [island]",
-          TextColors.GRAY, Text.builder(" [sort]").onHover(TextActions.showText(getSortOptions())),
+          TextColors.GRAY, Text.builder(" [sort type]")
+              .onHover(TextActions.showText(getTextFromEnum(IslandSortType.class))),
+          TextColors.GRAY, Text.builder(" [sort order]")
+              .onHover(TextActions.showText(getTextFromEnum(IslandSortType.Order.class))),
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandList.HELP_TEXT
       ));
@@ -299,7 +307,8 @@ public class CommandIsland extends CommandBase {
     if (src.hasPermission(Permissions.COMMAND_SCHEMATIC)) {
       helpText.add(Text.of(
           TextColors.AQUA, alias, "schematic",
-          TextColors.GRAY, " [list|command|create|delete|info|setbiome|setname]",
+          TextColors.GRAY, Text.builder(" [sub command]")
+              .onHover(TextActions.showText(Text.of("list, command, create, delete, info, setbiome, sethieght, seticon, setname, setpreset"))),
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandSchematic.HELP_TEXT));
     }
@@ -381,15 +390,16 @@ public class CommandIsland extends CommandBase {
     return CommandResult.success();
   }
 
-  private Text getSortOptions() {
-    return Text.of(
-        TextColors.GREEN, "ascending ", TextColors.RED, "descending", Text.NEW_LINE,
-        TextColors.GREEN, "newest ", TextColors.RED, "oldest", Text.NEW_LINE,
-        TextColors.GREEN, "active ", TextColors.RED, "inactive", Text.NEW_LINE,
-        TextColors.GREEN, "team+ ", TextColors.RED, "team-", Text.NEW_LINE,
-        TextColors.GREEN, "largest ", TextColors.RED, "smallest", Text.NEW_LINE,
-        TextColors.GREEN, "entities+ ", TextColors.RED, "entities-", Text.NEW_LINE,
-        TextColors.GREEN, "tile+ ", TextColors.RED, "tile-", Text.NEW_LINE
-    );
+  private Text getTextFromEnum(Class e) {
+    Text.Builder builder = Text.builder();
+    Iterator it = Iterators.forArray(e.getEnumConstants());
+    while (it.hasNext()) {
+      builder.append(Text.of(it.next()));
+      if (it.hasNext()) {
+        builder.append(Text.of(", "));
+      }
+    }
+
+    return builder.build();
   }
 }

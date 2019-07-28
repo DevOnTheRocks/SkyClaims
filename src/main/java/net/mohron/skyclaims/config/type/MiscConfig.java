@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.command.argument.IslandSortType;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.spongepowered.api.item.ItemType;
@@ -51,6 +52,8 @@ public class MiscConfig {
   @Setting(value = "Date-Format", comment = "The date format used throughout the plugin.\n" +
       "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html")
   private String dateFormat = "MMMM d, yyyy h:mm a";
+  @Setting(value = "Primary-List-Sort", comment = "If set, SkyClaims will sort islands in the list command by this before applying the sort argument.")
+  private IslandSortType primaryListSort = IslandSortType.NONE;
 
   public boolean isLogBiomes() {
     return logBiomes;
@@ -91,5 +94,9 @@ public class MiscConfig {
       SkyClaims.getInstance().getLogger().error("Invalid Date Format: {}", dateFormat);
       return new SimpleDateFormat("MMMM d, yyyy h:mm a");
     }
+  }
+
+  public IslandSortType getPrimaryListSort() {
+    return primaryListSort;
   }
 }

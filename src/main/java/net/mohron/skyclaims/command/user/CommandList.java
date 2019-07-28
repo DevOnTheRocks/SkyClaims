@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Arguments;
+import net.mohron.skyclaims.command.argument.IslandSortType;
+import net.mohron.skyclaims.command.argument.IslandSortType.Order;
+import net.mohron.skyclaims.config.type.MiscConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
@@ -48,16 +51,18 @@ public class CommandList extends CommandBase {
 
   public static final String HELP_TEXT = "display a list of the current islands.";
   private static final Text ISLAND = Text.of("island");
-  private static final Text SORT = Text.of("sort");
+  private static final Text SORT_TYPE = Text.of("sort type");
+  private static final Text SORT_ORDER = Text.of("sort order");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_LIST)
         .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.firstParsing(
-            GenericArguments.optional(Arguments.island(ISLAND)),
-            GenericArguments.optional(GenericArguments.requiringPermission(Arguments.sort(SORT), Permissions.COMMAND_LIST_SORT))
-        ))
+        .arguments(
+            GenericArguments.optionalWeak(Arguments.island(ISLAND)),
+            GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.enumValue(SORT_TYPE, IslandSortType.class), Permissions.COMMAND_LIST_SORT)),
+            GenericArguments.optional(GenericArguments.enumValue(SORT_ORDER, Order.class))
+        )
         .executor(new CommandList())
         .build();
 
@@ -70,6 +75,7 @@ public class CommandList extends CommandBase {
     }
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (IslandManager.ISLANDS.isEmpty()) {
@@ -79,8 +85,18 @@ public class CommandList extends CommandBase {
     Player player = (src instanceof Player) ? (Player) src : null;
     Collection<Island> islands = args.<UUID>getAll(ISLAND).stream()
         .map(uuid -> IslandManager.ISLANDS.get(uuid)).collect(Collectors.toList());
-    Comparator<Island> sortType = args.<Comparator<Island>>getOne(SORT)
-        .orElse(Comparator.comparing(Island::getSortableName));
+
+    MiscConfig config = PLUGIN.getConfig().getMiscConfig();
+    IslandSortType primaryListSort = config.getPrimaryListSort();
+    IslandSortType sortType = args.<IslandSortType>getOne(SORT_TYPE).orElse(primaryListSort);
+    Order order = args.<Order>getOne(SORT_ORDER).orElse(sortType.getOrder());
+    Comparator<Island> sortFunction;
+    if (primaryListSort != IslandSortType.NONE) {
+      sortFunction = Comparator.comparing(primaryListSort.getSortFunction(), primaryListSort.getOrder().getComparator())
+          .thenComparing(sortType.getSortFunction(), order.getComparator());
+    } else {
+      sortFunction = Comparator.comparing(sortType.getSortFunction());
+    }
 
     boolean showUnlocked = src.hasPermission(Permissions.COMMAND_LIST_UNLOCKED);
     boolean showAll = src.hasPermission(Permissions.COMMAND_LIST_ALL);
@@ -91,7 +107,7 @@ public class CommandList extends CommandBase {
 
     List<Text> listText = islands.stream()
         .filter(i -> player == null || i.isMember(player) || !i.isLocked() && showUnlocked || showAll)
-        .sorted(sortType)
+        .sorted(sortFunction)
         .map(island -> Text.of(
             getAccess(island, src),
             island.getName().toBuilder()

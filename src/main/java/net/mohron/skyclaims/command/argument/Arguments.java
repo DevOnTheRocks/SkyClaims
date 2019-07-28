@@ -46,10 +46,6 @@ public final class Arguments {
     return new SchematicArgument(key);
   }
 
-  public static SortArgument sort(Text key) {
-    return new SortArgument(key);
-  }
-
   public static TargetArgument target(Text key) {
     return new TargetArgument(key);
   }
