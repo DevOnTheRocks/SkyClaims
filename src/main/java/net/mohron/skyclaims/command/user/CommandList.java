@@ -107,7 +107,7 @@ public class CommandList extends CommandBase {
       src.sendMessage(Text.of(TextColors.RED, "There are no islands to display!"));
     } else if (src instanceof Player) {
       PaginationList.builder()
-          .title(Text.of(TextColors.AQUA, "Island List"))
+          .title(Text.of(TextColors.AQUA, "Island List", TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, listText.size(), TextColors.GRAY, ")"))
           .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
           .contents(listText)
           .sendTo(src);
