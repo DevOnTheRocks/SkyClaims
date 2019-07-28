@@ -41,6 +41,7 @@ public class Permissions {
   public static final String COMMAND_SET_HOME = "skyclaims.command.sethome";
   public static final String COMMAND_SET_SPAWN = "skyclaims.command.setspawn";
   public static final String COMMAND_SET_BIOME = "skyclaims.command.setbiome";
+  public static final String COMMAND_SET_NAME = "skyclaims.command.setname";
 
   // Keep Inventory
   public static final String KEEP_INV_PLAYER_CREATE = "skyclaims.keepinv.player.create";
@@ -72,6 +73,7 @@ public class Permissions {
   public static final String COMMAND_SET_BIOME_OTHERS = "skyclaims.admin.setbiome";
   public static final String COMMAND_SPAWN_OTHERS = "skyclaims.admin.spawn";
   public static final String COMMAND_SET_SPAWN_OTHERS = "skyclaims.admin.setspawn";
+  public static final String COMMAND_SET_NAME_OTHERS = "skyclaims.admin.setname";
   public static final String COMMAND_TRANSFER = "skyclaims.admin.transfer";
   public static final String COMMAND_VERSION = "skyclaims.admin.version";
   public static final String COMMAND_PLAYER_INFO = "skyclaims.admin.playerinfo";

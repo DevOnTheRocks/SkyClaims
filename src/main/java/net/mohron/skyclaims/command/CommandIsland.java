@@ -30,7 +30,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.command.admin.CommandReload;
 import net.mohron.skyclaims.command.admin.CommandTransfer;
 import net.mohron.skyclaims.command.argument.IslandSortType;
@@ -49,6 +48,7 @@ import net.mohron.skyclaims.command.user.CommandList;
 import net.mohron.skyclaims.command.user.CommandLock;
 import net.mohron.skyclaims.command.user.CommandReset;
 import net.mohron.skyclaims.command.user.CommandSetBiome;
+import net.mohron.skyclaims.command.user.CommandSetName;
 import net.mohron.skyclaims.command.user.CommandSetSpawn;
 import net.mohron.skyclaims.command.user.CommandSpawn;
 import net.mohron.skyclaims.command.user.CommandUnlock;
@@ -73,8 +73,7 @@ import org.spongepowered.api.text.format.TextStyles;
 
 public class CommandIsland extends CommandBase {
 
-  private static final String HELP_TEXT = String
-      .format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
+  private static final String HELP_TEXT = "use to run SkyClaim's subcommands or display command help info.";
 
   private static final Text HELP = Text.of("help");
   private static final Map<List<String>, CommandCallable> children = Maps.newHashMap();
@@ -123,6 +122,7 @@ public class CommandIsland extends CommandBase {
     CommandReset.register();
     CommandSchematic.register();
     CommandSetBiome.register();
+    CommandSetName.register();
     CommandSetSpawn.register();
     CommandSpawn.register();
     CommandTransfer.register();
@@ -321,6 +321,16 @@ public class CommandIsland extends CommandBase {
           TextColors.GRAY, " [target]",
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandSetBiome.HELP_TEXT
+      ));
+    }
+
+    if (src.hasPermission(Permissions.COMMAND_SET_NAME)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, Text.builder(alias + "setname")
+              .onClick(TextActions.suggestCommand("/" + alias + "setname ")),
+          TextColors.GRAY, " [name]",
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandSetName.HELP_TEXT
       ));
     }
 

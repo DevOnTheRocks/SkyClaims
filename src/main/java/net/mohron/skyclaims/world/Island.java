@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
@@ -205,6 +206,14 @@ public class Island implements ContextSource {
     return (getClaim().isPresent() && getClaim().get().getName().isPresent())
         ? getClaim().get().getName().get()
         : Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
+  }
+
+  public void setName(@Nullable Text name) {
+    getClaim().ifPresent(claim -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+      claim.getData().setName(name);
+      Sponge.getCauseStackManager().popCause();
+    });
   }
 
   public String getSortableName() {

@@ -41,7 +41,8 @@
     - `skyclaims.keepinv.enderchest.leave`
     - `skyclaims.keepinv.enderchest.reset`
 - Added `/is entity` command for detailed entity information
-- Added `/scplayerinfo` command for debugging permission options 
+- Added `/is setname [name]` command
+- Added `/scplayerinfo` command for debugging permission options
 - Added support for flat world preset codes (_block ID portion only_) for region generation
   - See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details
 - Added new schematics:
