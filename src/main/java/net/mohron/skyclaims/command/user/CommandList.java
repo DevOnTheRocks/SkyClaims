@@ -91,11 +91,18 @@ public class CommandList extends CommandBase {
     IslandSortType sortType = args.<IslandSortType>getOne(SORT_TYPE).orElse(primaryListSort);
     Order order = args.<Order>getOne(SORT_ORDER).orElse(sortType.getOrder());
     Comparator<Island> sortFunction;
-    if (primaryListSort != IslandSortType.NONE) {
+    Text sortText;
+    if (primaryListSort != IslandSortType.NONE && sortType != primaryListSort) {
       sortFunction = Comparator.comparing(primaryListSort.getSortFunction(), primaryListSort.getOrder().getComparator())
           .thenComparing(sortType.getSortFunction(), order.getComparator());
+      sortText = Text.of(
+          TextColors.GRAY, primaryListSort.name(), primaryListSort.getOrder().toText(),
+          TextColors.AQUA, ", ",
+          TextColors.GRAY, sortType.name(), order.toText()
+      );
     } else {
       sortFunction = Comparator.comparing(sortType.getSortFunction());
+      sortText = Text.of(TextColors.GRAY, sortType.name(), order.toText());
     }
 
     boolean showUnlocked = src.hasPermission(Permissions.COMMAND_LIST_UNLOCKED);
@@ -123,7 +130,7 @@ public class CommandList extends CommandBase {
       src.sendMessage(Text.of(TextColors.RED, "There are no islands to display!"));
     } else if (src instanceof Player) {
       PaginationList.builder()
-          .title(Text.of(TextColors.AQUA, "Island List", TextColors.GRAY, " (", TextColors.LIGHT_PURPLE, listText.size(), TextColors.GRAY, ")"))
+          .title(Text.of(TextColors.AQUA, "Island List | ", TextColors.LIGHT_PURPLE, listText.size(), TextColors.AQUA, " | ", sortText))
           .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
           .contents(listText)
           .sendTo(src);
