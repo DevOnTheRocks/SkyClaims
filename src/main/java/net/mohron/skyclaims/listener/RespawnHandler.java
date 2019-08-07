@@ -17,31 +17,39 @@
  */
 package net.mohron.skyclaims.listener;
 
-import java.util.Comparator;
+import java.util.Optional;
+import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
+import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
+import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.world.World;
 
 public class RespawnHandler {
+
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
   @Listener
   public void onPlayerRespawn(RespawnPlayerEvent event, @Root Player player) {
     SkyClaimsTimings.PLAYER_RESPAWN.startTimingIfSync();
-    if (event.isBedSpawn() || !IslandManager.hasIsland(player.getUniqueId())) {
+    World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+
+    if (!event.isDeath() || !world.equals(event.getFromTransform().getExtent())) {
       SkyClaimsTimings.PLAYER_RESPAWN.abort();
       return;
     }
 
-    // Send the player to the closest island to their death point that they're a member of
-    IslandManager.get(player).stream()
-        .min(Comparator.comparing(i -> i.getSpawn().getPosition().distance(event.getFromTransform().getPosition())))
-        .ifPresent(island -> Sponge.getGame().getTeleportHelper()
-            .getSafeLocation(island.getSpawn().getLocation())
-            .ifPresent(spawn -> event.setToTransform(island.getSpawn().setLocation(spawn))));
+    final Optional<Island> island = IslandManager.get(event.getFromTransform());
+    if (island.isPresent() && island.get().isMember(player)) {
+      Sponge.getTeleportHelper()
+          .getSafeLocation(island.get().getSpawn().getLocation())
+          .ifPresent(spawn -> event.setToTransform(island.get().getSpawn().setLocation(spawn)));
+    }
 
     SkyClaimsTimings.PLAYER_RESPAWN.stopTimingIfSync();
   }

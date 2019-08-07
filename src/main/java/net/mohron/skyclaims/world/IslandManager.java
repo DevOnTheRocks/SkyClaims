@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
+import net.mohron.skyclaims.world.region.Region;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -41,9 +43,17 @@ public class IslandManager {
   }
 
   public static Optional<Island> get(Location<World> location) {
+    return get(Region.get(location));
+  }
+
+  public static Optional<Island> get(Transform<World> transform) {
+    return get(Region.get(transform.getLocation()));
+  }
+
+  public static Optional<Island> get(Region region) {
     return ISLANDS.values().stream()
-        .filter(island -> island.contains(location))
-        .findFirst();
+        .filter(i -> i.getRegion().equals(region))
+        .findAny();
   }
 
   public static Optional<Island> get(Claim claim) {
