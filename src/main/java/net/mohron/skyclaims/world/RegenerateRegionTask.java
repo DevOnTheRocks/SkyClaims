@@ -128,10 +128,14 @@ public class RegenerateRegionTask implements Runnable {
       final CommandSource console = Sponge.getServer().getConsole();
       // Run reset commands
       for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
-        Sponge.getCommandManager().process(console, command.replace("@p", island.getOwnerName()));
+        command = command.replace("@p", island.getOwnerName());
+        Sponge.getCommandManager().process(console, command);
+        PLUGIN.getLogger().debug("Ran reset command: {}", command);
       }
       for (String command : schematic.getCommands()) {
-        Sponge.getCommandManager().process(console, command.replace("@p", island.getOwnerName()));
+        command = command.replace("@p", island.getOwnerName());
+        Sponge.getCommandManager().process(console, command);
+        PLUGIN.getLogger().debug("Ran schematic command: {}", command);
       }
     };
   }
