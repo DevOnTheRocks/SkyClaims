@@ -25,15 +25,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
+import net.mohron.skyclaims.SkyClaims;
+import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.region.Region;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 public class IslandManager {
+
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
   public static Map<UUID, Island> ISLANDS = Maps.newHashMap();
   public static Set<Island> saveQueue = Sets.newHashSet();
@@ -107,5 +115,24 @@ public class IslandManager {
 
   public Map<UUID, Island> getIslands() {
     return ISLANDS;
+  }
+
+  public static Consumer<Task> processCommands(String playerName, @Nullable IslandSchematic schematic) {
+    return task -> {
+      // Run island commands defined in config
+      for (String command : PLUGIN.getConfig().getMiscConfig().getIslandCommands()) {
+        command = command.replace("@p", playerName);
+        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
+        PLUGIN.getLogger().debug("Ran island command: {}", command);
+      }
+      // Run schematic commands
+      if (schematic != null) {
+        for (String command : schematic.getCommands()) {
+          command = command.replace("@p", playerName);
+          Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
+          PLUGIN.getLogger().debug("Ran schematic command: {}", command);
+        }
+      }
+    };
   }
 }

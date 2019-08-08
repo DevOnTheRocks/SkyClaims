@@ -31,7 +31,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,7 +62,6 @@ import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.context.ContextSource;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -105,7 +103,7 @@ public class Island implements ContextSource {
     this.claim = claim.getUniqueId();
 
     Sponge.getScheduler().createTaskBuilder()
-        .execute(processCommands(owner, schematic))
+        .execute(IslandManager.processCommands(owner.getName(), schematic))
         .submit(PLUGIN);
 
     // Generate the island using the specified schematic
@@ -120,23 +118,6 @@ public class Island implements ContextSource {
     }
 
     save();
-  }
-
-  private Consumer<Task> processCommands(User owner, IslandSchematic schematic) {
-    return task -> {
-      // Run commands defined in config on creation
-      for (String command : PLUGIN.getConfig().getMiscConfig().getCreateCommands()) {
-        command = command.replace("@p", owner.getName());
-        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
-        PLUGIN.getLogger().debug("Ran create command: {}", command);
-      }
-      // Run schematic commands
-      for (String command : schematic.getCommands()) {
-        command = command.replace("@p", owner.getName());
-        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
-        PLUGIN.getLogger().debug("Ran schematic command: {}", command);
-      }
-    };
   }
 
   public Island(UUID id, UUID owner, UUID claimId, Vector3d spawnLocation, boolean locked) {

@@ -25,6 +25,7 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.spongepowered.api.Sponge;
@@ -107,6 +108,9 @@ public class Invite {
     Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
     island.addMember(receiver, privilegeType);
     Sponge.getCauseStackManager().popCause();
+    Sponge.getScheduler().createTaskBuilder()
+        .execute(IslandManager.processCommands(receiver.getName(), null))
+        .submit(PLUGIN);
     PLUGIN.getInviteService().removeInvite(this);
   }
 

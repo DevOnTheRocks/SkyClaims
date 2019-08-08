@@ -24,7 +24,6 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.WorldConfig;
 import net.mohron.skyclaims.schematic.IslandSchematic;
@@ -32,9 +31,8 @@ import net.mohron.skyclaims.util.FlatWorldUtil;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -92,9 +90,11 @@ public class RegenerateRegionTask implements Runnable {
 
     if (island != null) {
       if (commands) {
-        Sponge.getScheduler().createTaskBuilder()
-            .execute(processCommands())
-            .submit(PLUGIN);
+        for (User member : island.getMembers()) {
+          Sponge.getScheduler().createTaskBuilder()
+              .execute(IslandManager.processCommands(member.getName(), schematic))
+              .submit(PLUGIN);
+        }
       }
 
       Sponge.getScheduler().createTaskBuilder()
@@ -111,7 +111,7 @@ public class RegenerateRegionTask implements Runnable {
     for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
       List<CompletableFuture<Void>> tasks = Lists.newArrayListWithCapacity(32);
       for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
-        Vector3i position = Sponge.getServer().getChunkLayout().forceToChunk(x,0, z);
+        Vector3i position = Sponge.getServer().getChunkLayout().forceToChunk(x, 0, z);
         tasks.add(CompletableFuture.runAsync(new RegenerateChunkTask(world, position, blocks, spawn), executor));
       }
       try {
@@ -121,22 +121,5 @@ public class RegenerateRegionTask implements Runnable {
         PLUGIN.getLogger().error("Could not regenerate chunk.", e);
       }
     }
-  }
-
-  private Consumer<Task> processCommands() {
-    return task -> {
-      final CommandSource console = Sponge.getServer().getConsole();
-      // Run reset commands
-      for (String command : PLUGIN.getConfig().getMiscConfig().getResetCommands()) {
-        command = command.replace("@p", island.getOwnerName());
-        Sponge.getCommandManager().process(console, command);
-        PLUGIN.getLogger().debug("Ran reset command: {}", command);
-      }
-      for (String command : schematic.getCommands()) {
-        command = command.replace("@p", island.getOwnerName());
-        Sponge.getCommandManager().process(console, command);
-        PLUGIN.getLogger().debug("Ran schematic command: {}", command);
-      }
-    };
   }
 }

@@ -41,10 +41,8 @@ public class MiscConfig {
   private boolean teleportOnCreate = true;
   @Setting(value = "Text-Schematic-List", comment = "Enable to use a text based schematic list instead of a chest UI.")
   private boolean textSchematicList = false;
-  @Setting(value = "Create-Commands", comment = "Commands to run on island creation and reset. Use @p in place of the player's name.")
-  private List<String> createCommands = new ArrayList<>();
-  @Setting(value = "Reset-Commands", comment = "Commands to run on island resets only. Use @p in place of the player's name.")
-  private List<String> resetCommands = new ArrayList<>();
+  @Setting(value = "Island-Commands", comment = "Commands to run on island creation, join or reset. Use @p in place of the player's name.")
+  private List<String> islandCommands = new ArrayList<>();
   @Setting(value = "Clear-Items", comment = "Items to be removed from players inventories when going on or off an island / claim")
   private List<ItemType> clearItems = new ArrayList<>();
   @Setting(value = "Clear-Items-Type", comment = "Sets whether the Clear-Items list should be treated as a blacklist or whitelist.")
@@ -71,12 +69,8 @@ public class MiscConfig {
     return textSchematicList;
   }
 
-  public List<String> getCreateCommands() {
-    return createCommands;
-  }
-
-  public List<String> getResetCommands() {
-    return resetCommands;
+  public List<String> getIslandCommands() {
+    return islandCommands;
   }
 
   public List<ItemType> getClearItems() {

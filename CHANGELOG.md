@@ -54,6 +54,9 @@
   - **Sort Types**: NAME, CREATED, ONLINE, ACTIVE, MEMBERS, SIZE, ENTITIES
   - **Sort Orders**: ASC, DESC
   - Added `Misc >  Primary-List-Sort` config option - sets a sort type that gets applied before the one provided from the command argument
+- Added `Misc > Island-Commands` config option
+  - Commands trigger on island creation, join, and reset
+  - Removed `Misc > Create-Commands` & `Misc > Reset-Commands`
 - Removed outdated schematics:
   - Garden of Glass
   - SkyExchange
