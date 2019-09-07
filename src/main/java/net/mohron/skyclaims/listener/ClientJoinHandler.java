@@ -43,6 +43,7 @@ public class ClientJoinHandler {
       createIslandOnJoin(player);
     }
     deliverInvites(player);
+    checkIslandSize(player);
   }
 
   private void createIslandOnJoin(Player player) {
@@ -86,5 +87,17 @@ public class ClientJoinHandler {
     }
 
     SkyClaimsTimings.DELIVER_INVITES.stopTimingIfSync();
+  }
+
+  private void checkIslandSize(Player player) {
+    IslandManager.getByOwner(player.getUniqueId()).ifPresent(island -> {
+      final int width = island.getWidth();
+      int minWidth = Options.getMinSize(player.getUniqueId()) * 2;
+
+      if (width < minWidth) {
+        PLUGIN.getLogger().info("{} will be expanded from {} to {}.", island.getName().toPlain(), width, minWidth);
+        island.setWidth(minWidth);
+      }
+    });
   }
 }

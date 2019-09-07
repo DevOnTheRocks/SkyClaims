@@ -1,9 +1,6 @@
 # Change Log 
 
-# Planned Features, Changes & Bugfixes
-- Add Void World Generation capabilities (blocked by https://github.com/SpongePowered/SpongeCommon/issues/1506)
-
-# Beta 28 - SNAPSHOT
+# Beta 28
 ### NOTE: Sponge Forge `1.12.2-2825-7.1.6-RC3697` adds entity and biome support for schematics
 **REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
 **OPTIONAL: Nucleus 1.9.0-S7.1+**
@@ -18,7 +15,7 @@
   - `/is schematic setheight <schematic> <height>` - set the generation height of a schematic
   - `/is schematic setname <schematic> <name>` - set an in-game name for a schematic that supports formatting code
   - `/is schematic seticon <schematic> <icon>` - set an icon for a schematic to be used by the chest GUI
-  - `/is schematic setpreset <schematic> <preset>` - set a flat world preset for a schematic _*see flat world preset support_
+  - `/is schematic setpreset <schematic> <preset>` - set a flat world preset for a schematic *_see flat world preset support_
   - `skyclaims.default-schematic` now defaults to empty which will list valid schematics
   - Removed `Misc-List-Schematics` config
   - Added `Misc > Text-Schematic-List` config to disable new chest UI
@@ -60,6 +57,7 @@
 - Removed outdated schematics:
   - Garden of Glass
   - SkyExchange
+- Added island `min-size` check when an island owner logs in and if necessary, the island will be expanded
 - Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
 - Fixed Nucleus Integration commands not registering after a reload
 - Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region

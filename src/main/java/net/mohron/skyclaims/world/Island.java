@@ -268,7 +268,7 @@ public class Island implements ContextSource {
     return getClaim().isPresent() ? getClaim().get().getWidth() : 512;
   }
 
-  private boolean setWidth(int width) {
+  public boolean setWidth(int width) {
     if (width < 0 || width > 512) {
       return false;
     }
