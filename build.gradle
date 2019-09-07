@@ -3,9 +3,11 @@ plugins {
     id "idea"
     id "signing"
     id "ninja.miserable.blossom" version "1.0.1"
-    id "com.github.johnrengelman.shadow" version "2.0.1"
-    id "org.spongepowered.plugin" version "0.8.1"
-    id 'com.qixalite.spongestart2' version '3.0.1'
+    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "org.spongepowered.plugin" version "0.9.0"
+    id "com.qixalite.spongestart2" version "4.0.0"
+    id "io.franzbecker.gradle-lombok" version "3.1.0"
+    id "org.sonarqube" version "2.6"
 }
 
 group = "net.mohron.skyclaims"
@@ -39,8 +41,12 @@ repositories {
         url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
     }
     maven {
-        name "LuckPerms"
-        url "https://repo.lucko.me/"
+        name = "LuckPerms"
+        url = "https://repo.lucko.me/"
+    }
+    maven {
+        name = "bStats"
+        url = "http://repo.bstats.org/content/repositories/releases/"
     }
 }
 
@@ -48,15 +54,22 @@ dependencies {
     compile("org.spongepowered:spongeapi:${spongeapi}")
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
+    compile("org.bstats:bstats-sponge:${bstats}")
     runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
     //compile fileTree(dir: "libs", include: "*.jar")
 }
 
+lombok {
+    version = "1.18.8"
+    sha256 = ""
+}
+
 shadowJar {
+    classifier = "plugin"
     dependencies {
-        include(dependency("me.ryanhamshire:griefprevention:${griefprevention}:api"))
-        include(dependency("io.github.nucleuspowered:nucleus-api:${nucleus}"))
+        include(dependency("org.bstats:bstats-sponge:${bstats}"))
     }
+    minimize()
 }
 
 blossom {
@@ -68,12 +81,8 @@ blossom {
 }
 
 spongestart {
-    online "false"
-    minecraft "1.12.2"
-    type "bleeding"
-    spongeForge "${spongeforge}"
-    forge "${forge}"
-    forgeServerFolder "run/API7/"
+    online = "false"
+    minecraft = "1.12.2"
 }
 
 signing {

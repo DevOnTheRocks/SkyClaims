@@ -33,6 +33,8 @@ import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -45,9 +47,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandInfo extends CommandBase {
 
   public static final String HELP_TEXT = "display detailed information on your island.";
@@ -75,13 +75,13 @@ public class CommandInfo extends CommandBase {
     List<Island> islands = Lists.newArrayList();
 
     if (src instanceof Player && !args.hasAny(ISLAND)) {
-      islands.add(Island.get(((Player) src).getLocation())
+      islands.add(IslandManager.get(((Player) src).getLocation())
           .orElseThrow(() -> new CommandException(
               Text.of(TextColors.RED, "You must be on an island to use this command.")))
       );
     } else {
       Collection<UUID> islandIds = args.getAll(ISLAND);
-      islandIds.forEach(i -> Island.get(i).ifPresent(islands::add));
+      islandIds.forEach(i -> IslandManager.get(i).ifPresent(islands::add));
       if (islands.size() > 1) {
         return listIslands();
       }
@@ -94,18 +94,13 @@ public class CommandInfo extends CommandBase {
             (src instanceof Player) ? getAdminShortcuts(src, island) : Text.EMPTY,
             TextColors.YELLOW, "Name", TextColors.WHITE, " : ", island.getName(),
             getLocked(island), Text.NEW_LINE,
-            TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island),
-            Text.NEW_LINE,
-            TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE,
-            island.getWidth(),
+            TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island), Text.NEW_LINE,
+            TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
             TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
-            TextColors.YELLOW, "Entities", TextColors.WHITE, " : ", getEntities(island),
-            Text.NEW_LINE,
+            TextColors.YELLOW, "Entities", TextColors.WHITE, " : ", getEntities(island), Text.NEW_LINE,
             TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", getSpawn(island), Text.NEW_LINE,
-            TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY,
-            sdf.format(island.getDateCreated()), Text.NEW_LINE,
-            TextColors.YELLOW, "Last Active", TextColors.WHITE, " : ", TextColors.GRAY,
-            sdf.format(island.getDateLastActive()), Text.NEW_LINE,
+            TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, sdf.format(island.getDateCreated()), Text.NEW_LINE,
+            TextColors.YELLOW, "Last Active", TextColors.WHITE, " : ", TextColors.GRAY, sdf.format(island.getDateLastActive()), Text.NEW_LINE,
             TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY,
             island.getUniqueId(), Text.NEW_LINE,
             (island.getClaim().isPresent()) ? Text.of(
@@ -167,8 +162,7 @@ public class CommandInfo extends CommandBase {
                       .onClick(TextActions.executeCallback(s -> {
                         island.clear();
                         island.delete();
-                        src.sendMessage(
-                            Text.of(island.getOwnerName(), "'s island has been deleted!"));
+                        src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
                       })),
                   TextColors.WHITE, "] [",
                   Text.builder("NO")
@@ -184,34 +178,61 @@ public class CommandInfo extends CommandBase {
     Text expand = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
         TextColors.WHITE, "[",
         TextColors.GOLD, Text.builder("Expand")
-            .onHover(TextActions.showText(
-                Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2)))
+            .onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2)))
             .onClick(TextActions.executeCallback(consumer -> {
-              island.expand(1);
-              src.sendMessage(Text.of(
-                  island.getOwnerName(), "'s island has been expanded to ",
-                  TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x",
-                  TextColors.LIGHT_PURPLE, island.getWidth(),
-                  TextColors.RESET, "!"
-              ));
+              Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+
+              if (island.getWidth() < 512) {
+                island.expand(1);
+                src.sendMessage(Text.of(
+                    island.getOwnerName(),
+                    TextColors.GREEN, "'s island has been expanded to ",
+                    TextColors.LIGHT_PURPLE, island.getWidth(),
+                    TextColors.GRAY, "x",
+                    TextColors.LIGHT_PURPLE, island.getWidth(),
+                    TextColors.RESET, "!"
+                ));
+              } else {
+                src.sendMessage(Text.of(island.getOwnerName(), TextColors.RED, "'s island cannot be expanded further!"));
+              }
+
+              Sponge.getCauseStackManager().popCause();
             })),
         TextColors.WHITE, "] "
     ) : Text.EMPTY;
 
-    return (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty())
-        ? Text.EMPTY : Text.of(
+    Text shrink = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
+        TextColors.WHITE, "[",
+        TextColors.GOLD, Text.builder("Shrink")
+            .onHover(TextActions.showText(Text.of("Click to shrink this island's width by ", TextColors.LIGHT_PURPLE, 2)))
+            .onClick(TextActions.executeCallback(consumer -> {
+              Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+
+              island.shrink(1);
+              src.sendMessage(Text.of(
+                  island.getOwnerName(), "'s island has been shrunk to ",
+                  TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x", TextColors.LIGHT_PURPLE, island.getWidth(),
+                  TextColors.RESET, "!"
+              ));
+
+              Sponge.getCauseStackManager().popCause();
+            })),
+        TextColors.WHITE, "] "
+    ) : Text.EMPTY;
+
+    return (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty() && shrink.isEmpty()) ? Text.EMPTY : Text.of(
         TextColors.GOLD, "Admin", TextColors.WHITE, " : ",
-        teleport, transfer, delete, expand, Text.NEW_LINE
+        teleport, transfer, delete, expand, shrink, Text.NEW_LINE
     );
   }
 
   private static Text getMembers(Island island) {
     List<Text> members = Lists.newArrayList();
     members.add(PrivilegeType.OWNER.format(island.getOwnerName()));
-    for (String manager : island.getManagers()) {
+    for (String manager : island.getManagerNames()) {
       members.add(PrivilegeType.MANAGER.format(manager));
     }
-    for (String member : island.getMembers()) {
+    for (String member : island.getMemberNames()) {
       members.add(PrivilegeType.MEMBER.format(member));
     }
     return Text.joinWith(Text.of(TextColors.GRAY, ", "), members);

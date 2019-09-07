@@ -18,12 +18,15 @@
 
 package net.mohron.skyclaims.world.region;
 
+import lombok.EqualsAndHashCode;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Coordinate;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+@EqualsAndHashCode
 public class Region {
 
   private int x;
@@ -35,11 +38,11 @@ public class Region {
   }
 
   public static boolean isOccupied(Region region) {
-    if (SkyClaims.islands.isEmpty()) {
+    if (IslandManager.ISLANDS.isEmpty()) {
       return false;
     }
 
-    for (Island island : SkyClaims.islands.values()) {
+    for (Island island : IslandManager.ISLANDS.values()) {
       if (region.equals(island.getRegion())) {
         return true;
       }
@@ -75,26 +78,5 @@ public class Region {
         SkyClaims.getInstance().getConfig().getWorldConfig().getIslandHeight(),
         (getGreaterBoundary().getZ() + getLesserBoundary().getZ()) / 2.0
     );
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    Region region = (Region) o;
-
-    return x == region.x && z == region.z;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = x;
-    result = 31 * result + z;
-    return result;
   }
 }

@@ -22,13 +22,18 @@ import static net.mohron.skyclaims.PluginInfo.NAME;
 import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import net.mohron.skyclaims.PluginInfo;
+import net.mohron.skyclaims.command.admin.CommandReload;
+import net.mohron.skyclaims.command.admin.CommandTransfer;
+import net.mohron.skyclaims.command.argument.IslandSortType;
+import net.mohron.skyclaims.command.schematic.CommandSchematic;
 import net.mohron.skyclaims.command.team.CommandDemote;
 import net.mohron.skyclaims.command.team.CommandInvite;
 import net.mohron.skyclaims.command.team.CommandKick;
@@ -36,18 +41,21 @@ import net.mohron.skyclaims.command.team.CommandLeave;
 import net.mohron.skyclaims.command.team.CommandPromote;
 import net.mohron.skyclaims.command.user.CommandCreate;
 import net.mohron.skyclaims.command.user.CommandDelete;
+import net.mohron.skyclaims.command.user.CommandEntityInfo;
 import net.mohron.skyclaims.command.user.CommandExpand;
 import net.mohron.skyclaims.command.user.CommandInfo;
 import net.mohron.skyclaims.command.user.CommandList;
 import net.mohron.skyclaims.command.user.CommandLock;
 import net.mohron.skyclaims.command.user.CommandReset;
 import net.mohron.skyclaims.command.user.CommandSetBiome;
+import net.mohron.skyclaims.command.user.CommandSetName;
 import net.mohron.skyclaims.command.user.CommandSetSpawn;
 import net.mohron.skyclaims.command.user.CommandSpawn;
 import net.mohron.skyclaims.command.user.CommandUnlock;
 import net.mohron.skyclaims.integration.nucleus.CommandHome;
 import net.mohron.skyclaims.integration.nucleus.CommandSetHome;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.team.PrivilegeType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -62,13 +70,10 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandIsland extends CommandBase {
 
-  private static final String HELP_TEXT = String
-      .format("use to run %s's subcommands or display command help info.", PluginInfo.NAME);
+  private static final String HELP_TEXT = "use to run SkyClaim's subcommands or display command help info.";
 
   private static final Text HELP = Text.of("help");
   private static final Map<List<String>, CommandCallable> children = Maps.newHashMap();
@@ -103,6 +108,7 @@ public class CommandIsland extends CommandBase {
   private static void registerSubCommands() {
     CommandCreate.register();
     CommandDelete.register();
+    CommandEntityInfo.register();
     CommandDemote.register();
     CommandExpand.register();
     CommandInfo.register();
@@ -112,10 +118,14 @@ public class CommandIsland extends CommandBase {
     CommandList.register();
     CommandLock.register();
     CommandPromote.register();
+    CommandReload.register();
     CommandReset.register();
+    CommandSchematic.register();
     CommandSetBiome.register();
+    CommandSetName.register();
     CommandSetSpawn.register();
     CommandSpawn.register();
+    CommandTransfer.register();
     CommandUnlock.register();
   }
 
@@ -148,12 +158,21 @@ public class CommandIsland extends CommandBase {
       ));
     }
 
+    if (src.hasPermission(Permissions.COMMAND_ENTITY_INFO)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, Text.builder(alias + "entity").onClick(TextActions.runCommand("/" + alias + "entity")),
+          TextColors.GRAY, " [island]",
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandEntityInfo.HELP_TEXT
+      ));
+    }
+
     if (src.hasPermission(Permissions.COMMAND_EXPAND)) {
       helpText.add(Text.of(
           TextColors.AQUA, Text.builder(alias + "expand")
               .onClick(TextActions.suggestCommand("/" + alias + "expand ")),
           TextColors.GRAY, " [island]",
-          TextColors.GRAY, " <blocks>",
+          TextColors.GOLD, " <blocks>",
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandExpand.HELP_TEXT
       ));
@@ -205,7 +224,8 @@ public class CommandIsland extends CommandBase {
           TextColors.AQUA,
           Text.builder(alias + "invite").onClick(TextActions.runCommand("/" + alias + "invite")),
           TextColors.GRAY, " [user]",
-          TextColors.GRAY, " [privilege]",
+          TextColors.GRAY, Text.builder(" [privilege]")
+              .onHover(TextActions.showText(getTextFromEnum(PrivilegeType.class))),
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandInvite.HELP_TEXT
       ));
@@ -235,7 +255,10 @@ public class CommandIsland extends CommandBase {
           TextColors.AQUA,
           Text.builder(alias + "list").onClick(TextActions.runCommand("/" + alias + "list")),
           TextColors.GRAY, " [island]",
-          TextColors.GRAY, Text.builder(" [sort]").onHover(TextActions.showText(getSortOptions())),
+          TextColors.GRAY, Text.builder(" [sort type]")
+              .onHover(TextActions.showText(getTextFromEnum(IslandSortType.class))),
+          TextColors.GRAY, Text.builder(" [sort order]")
+              .onHover(TextActions.showText(getTextFromEnum(IslandSortType.Order.class))),
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandList.HELP_TEXT
       ));
@@ -262,6 +285,13 @@ public class CommandIsland extends CommandBase {
       ));
     }
 
+    if (src.hasPermission(Permissions.COMMAND_RELOAD)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, Text.of(TextActions.runCommand("/" + alias + "reload"), alias, "reload"),
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandReload.HELP_TEXT));
+    }
+
     if (src.hasPermission(Permissions.COMMAND_RESET)) {
       helpText.add(Text.of(
           TextColors.AQUA,
@@ -274,6 +304,15 @@ public class CommandIsland extends CommandBase {
       ));
     }
 
+    if (src.hasPermission(Permissions.COMMAND_SCHEMATIC)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, alias, "schematic",
+          TextColors.GRAY, Text.builder(" [sub command]")
+              .onHover(TextActions.showText(Text.of("list, command, create, delete, info, setbiome, sethieght, seticon, setname, setpreset"))),
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandSchematic.HELP_TEXT));
+    }
+
     if (src.hasPermission(Permissions.COMMAND_SET_BIOME)) {
       helpText.add(Text.of(
           TextColors.AQUA, Text.builder(alias + "setbiome")
@@ -282,6 +321,16 @@ public class CommandIsland extends CommandBase {
           TextColors.GRAY, " [target]",
           TextColors.DARK_GRAY, " - ",
           TextColors.DARK_GREEN, CommandSetBiome.HELP_TEXT
+      ));
+    }
+
+    if (src.hasPermission(Permissions.COMMAND_SET_NAME)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, Text.builder(alias + "setname")
+              .onClick(TextActions.suggestCommand("/" + alias + "setname ")),
+          TextColors.GRAY, " [name]",
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandSetName.HELP_TEXT
       ));
     }
 
@@ -313,6 +362,15 @@ public class CommandIsland extends CommandBase {
       ));
     }
 
+    if (src.hasPermission(Permissions.COMMAND_TRANSFER)) {
+      helpText.add(Text.of(
+          TextColors.AQUA, alias, "transfer",
+          TextColors.GRAY, " [owner]",
+          TextColors.GOLD, " <player>",
+          TextColors.DARK_GRAY, " - ",
+          TextColors.DARK_GREEN, CommandTransfer.HELP_TEXT));
+    }
+
     if (src.hasPermission(Permissions.COMMAND_LOCK)) {
       helpText.add(Text.of(
           TextColors.AQUA,
@@ -342,15 +400,16 @@ public class CommandIsland extends CommandBase {
     return CommandResult.success();
   }
 
-  private Text getSortOptions() {
-    return Text.of(
-        TextColors.GREEN, "ascending ", TextColors.RED, "descending", Text.NEW_LINE,
-        TextColors.GREEN, "newest ", TextColors.RED, "oldest", Text.NEW_LINE,
-        TextColors.GREEN, "active ", TextColors.RED, "inactive", Text.NEW_LINE,
-        TextColors.GREEN, "team+ ", TextColors.RED, "team-", Text.NEW_LINE,
-        TextColors.GREEN, "largest ", TextColors.RED, "smallest", Text.NEW_LINE,
-        TextColors.GREEN, "entities+ ", TextColors.RED, "entities-", Text.NEW_LINE,
-        TextColors.GREEN, "tile+ ", TextColors.RED, "tile-", Text.NEW_LINE
-    );
+  private Text getTextFromEnum(Class e) {
+    Text.Builder builder = Text.builder();
+    Iterator it = Iterators.forArray(e.getEnumConstants());
+    while (it.hasNext()) {
+      builder.append(Text.of(it.next()));
+      if (it.hasNext()) {
+        builder.append(Text.of(", "));
+      }
+    }
+
+    return builder.build();
   }
 }

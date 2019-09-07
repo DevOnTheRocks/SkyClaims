@@ -35,9 +35,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandVersion extends CommandBase {
 
   public static final String HELP_TEXT = "used to view loaded config settings.";
@@ -73,28 +71,19 @@ public class CommandVersion extends CommandBase {
         TextColors.YELLOW, sponge.getName(), " ", sponge.getVersion().orElse("Unknown")
     ));
     // SkyClaims
-    texts.add(Text.of(
-        TextColors.DARK_AQUA, "SkyClaims", TextColors.WHITE, " : ",
-        TextColors.YELLOW, PluginInfo.VERSION
-    ));
+    texts.add(Text.of(TextColors.DARK_AQUA, "SkyClaims", TextColors.WHITE, " : ", TextColors.YELLOW, PluginInfo.VERSION));
     // GriefPrevention
     String gp;
     try {
-      gp = (PLUGIN.getGriefPrevention() != null) ? PLUGIN.getGriefPrevention()
-          .getImplementationVersion() : "Error/Missing";
+      gp = (PLUGIN.getGriefPrevention() != null) ? PLUGIN.getGriefPrevention().getImplementationVersion() : "Error/Missing";
     } catch (Exception e) {
       PLUGIN.getLogger().error("Error getting Grief Prevention version.", e);
       Optional<PluginContainer> plugin = Sponge.getPluginManager().getPlugin("griefprevention");
-      gp = plugin.map(pluginContainer -> pluginContainer.getVersion().get())
-          .orElse("Error/Missing");
+      gp = plugin.map(pluginContainer -> pluginContainer.getVersion().get()).orElse("Error/Missing");
     }
-    texts.add(Text.of(
-        TextColors.DARK_AQUA, "Grief Prevention", TextColors.WHITE, " : ",
-        TextColors.YELLOW, gp
-    ));
+    texts.add(Text.of(TextColors.DARK_AQUA, "Grief Prevention", TextColors.WHITE, " : ", TextColors.YELLOW, gp));
     // Permissions
-    PluginContainer perms = Sponge.getServiceManager().getRegistration(PermissionService.class)
-        .get().getPlugin();
+    PluginContainer perms = Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin();
     texts.add(Text.of(
         TextColors.DARK_AQUA, "Permissions", TextColors.WHITE, " : ",
         TextColors.YELLOW, perms.getName(), " ", perms.getVersion().orElse("Unknown")

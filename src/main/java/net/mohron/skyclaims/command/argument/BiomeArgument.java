@@ -34,10 +34,8 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.world.biome.BiomeType;
 
-@NonnullByDefault
 public class BiomeArgument extends CommandElement {
 
   public static final List<BiomeType> BIOMES;
@@ -62,12 +60,24 @@ public class BiomeArgument extends CommandElement {
   @Override
   protected Object parseValue(CommandSource src, CommandArgs args) throws ArgumentParseException {
     String arg = args.next().toLowerCase();
-    BiomeType biomeType = BIOMES.stream().filter(b -> b.getId().contains(arg)).findAny().orElse(null);
-    if (biomeType != null) {
-      if (PLUGIN.getConfig().getPermissionConfig().isSeparateBiomePerms() && !src.hasPermission(getPermission(biomeType))) {
-        throw args.createError(Text.of(TextColors.RED, "You do not have permission to use the supplied biome type."));
+    boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateBiomePerms();
+    List<BiomeType> biomeList = BIOMES.stream()
+        .filter(b -> b.getId().startsWith(arg) || b.getId().startsWith("minecraft:" + arg))
+        .collect(Collectors.toList());
+
+    if (!biomeList.isEmpty()) {
+      if (biomeList.size() == 1) {
+        if (checkPerms && !src.hasPermission(getPermission(biomeList.get(0)))) {
+          throw args.createError(Text.of(TextColors.RED, "You do not have permission to use the supplied biome type."));
+        }
+        return biomeList.get(0);
+      } else {
+        return biomeList.stream()
+            .filter(b -> (b.getId().equalsIgnoreCase(arg) || b.getId().equalsIgnoreCase("minecraft:" + arg))
+                && (!checkPerms || src.hasPermission(getPermission(b))))
+            .findAny()
+            .orElseThrow(() -> args.createError(Text.of(TextColors.RED, "More that one biome found for ", arg, ".")));
       }
-      return biomeType;
     }
     throw args.createError(Text.of(TextColors.RED, "Invalid biome type."));
   }

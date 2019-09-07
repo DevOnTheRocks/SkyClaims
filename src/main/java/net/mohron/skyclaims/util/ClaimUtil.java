@@ -35,21 +35,24 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.region.Region;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
-public class ClaimUtil {
+public final class ClaimUtil {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
+  private ClaimUtil() {
+  }
+
   @SuppressWarnings("OptionalGetWithoutIsPresent")
-  public static Claim createIslandClaim(@Nonnull UUID ownerUniqueId, @Nonnull Region region)
-      throws CreateIslandException {
-    ClaimManager claimManager = PLUGIN.getGriefPrevention()
-        .getClaimManager(PLUGIN.getConfig().getWorldConfig().getWorld());
+  public static Claim createIslandClaim(@Nonnull UUID ownerUniqueId, @Nonnull Region region) throws CreateIslandException {
+    Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+    ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(PLUGIN.getConfig().getWorldConfig().getWorld());
 
     Claim claim = null;
     ClaimResult claimResult;
@@ -69,39 +72,47 @@ public class ClaimUtil {
           );
           break;
         case OVERLAPPING_CLAIM:
-          for (Claim claim1 : claimResult.getClaims()) {
-            claimManager.deleteClaim(claim1);
+          for (Claim overlappedClaim : claimResult.getClaims()) {
+            ClaimResult delete = claimManager.deleteClaim(overlappedClaim);
+            if (!delete.successful()) {
+              PLUGIN.getLogger().error("{}: {}", delete.getResultType(), delete.getMessage());
+              throw new CreateIslandException(Text.of(
+                  TextColors.RED, "Failed to delete overlapping claim: ", overlappedClaim.getUniqueId()
+              ));
+            }
+            PLUGIN.getLogger().info(
+                "Removed claim overlapping {}'s island (Owner: {}, ID: {}).",
+                getName(ownerUniqueId),
+                overlappedClaim.getOwnerName().toPlain(),
+                overlappedClaim.getUniqueId()
+            );
           }
-          PLUGIN.getLogger().info(
-              "Removing claim overlapping {}'s island (Owner: {}, ID: {}).",
-              getName(ownerUniqueId),
-              claimResult.getClaim().get().getOwnerName().toPlain(),
-              claimResult.getClaim().get().getUniqueId()
-          );
           break;
         default:
-          throw new CreateIslandException(
-              Text.of(TextColors.RED, "Failed to create claim: ", claimResult.getResultType()));
+          throw new CreateIslandException(Text.of(
+              TextColors.RED, "Failed to create claim: ", claimResult.getResultType(),
+              Text.NEW_LINE, claimResult.getMessage().orElse(Text.of("No message provided"))
+          ));
       }
     } while (claim == null);
+    Sponge.getCauseStackManager().popCause();
 
     return claim;
   }
 
-  private static ClaimResult createIslandClaimResult(@Nonnull UUID ownerUniqueId,
-      @Nonnull Region region) throws CreateIslandException {
+  private static ClaimResult createIslandClaimResult(@Nonnull UUID ownerUniqueId, @Nonnull Region region) throws CreateIslandException {
     int initialSpacing = 256 - Options.getMinSize(ownerUniqueId);
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
     checkNotNull(world, "Error Creating Claim: World (%s) is null", world.getName());
-    checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded",
-        world.getName());
+    checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded", world.getName());
     checkNotNull(ownerUniqueId, "Error Creating Claim: Owner is null");
     checkNotNull(region, "Error Creating Claim: Region is null");
 
     PlayerData playerData = PLUGIN.getGriefPrevention()
         .getWorldPlayerData(world.getProperties(), ownerUniqueId)
-        .orElseThrow(() -> new CreateIslandException(
-            Text.of(TextColors.RED, "Unable to load GriefPrevention player data!")));
+        .orElseThrow(() -> new CreateIslandException(Text.of(
+            TextColors.RED, "Unable to load GriefPrevention player data!"
+        )));
 
     return Claim.builder()
         .type(ClaimType.TOWN)
@@ -129,16 +140,14 @@ public class ClaimUtil {
   public static void createSpawnClaim(List<Region> regions) {
     ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
     if (claimResult.successful()) {
-      PLUGIN.getLogger().debug("Reserved {} regions for spawn. Admin Claim: {}", regions.size(),
-          claimResult.getClaim().get().getUniqueId());
+      PLUGIN.getLogger().debug("Reserved {} regions for spawn. Admin Claim: {}", regions.size(), claimResult.getClaim().get().getUniqueId());
     }
   }
 
   private static ClaimResult createSpawnClaimResult(List<Region> regions) {
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
     checkNotNull(world, "Error Creating Claim: World (%s) is null", world.getName());
-    checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded",
-        world.getName());
+    checkArgument(world.isLoaded(), "Error Creating Claim: World (%s) is not loaded", world.getName());
     Region lesserRegion = new Region(0, 0);
     Region greaterRegion = new Region(0, 0);
     for (Region region : regions) {
@@ -156,23 +165,19 @@ public class ClaimUtil {
         .type(ClaimType.ADMIN)
         .world(world)
         .bounds(
-            new Vector3i(lesserRegion.getLesserBoundary().getX(), 0,
-                lesserRegion.getLesserBoundary().getZ()),
-            new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255,
-                greaterRegion.getGreaterBoundary().getZ())
+            new Vector3i(lesserRegion.getLesserBoundary().getX(), 0, lesserRegion.getLesserBoundary().getZ()),
+            new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())
         )
         .build();
   }
 
   private static String getName(UUID uuid) {
-    Optional<User> user = PLUGIN.getGame().getServiceManager()
-        .provideUnchecked(UserStorageService.class).get(uuid);
+    Optional<User> user = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid);
     if (user.isPresent()) {
       return user.get().getName();
     } else {
       try {
-        return PLUGIN.getGame().getServer().getGameProfileManager().get(uuid).get().getName()
-            .orElse("somebody");
+        return PLUGIN.getGame().getServer().getGameProfileManager().get(uuid).get().getName().orElse("somebody");
       } catch (Exception e) {
         return "somebody";
       }

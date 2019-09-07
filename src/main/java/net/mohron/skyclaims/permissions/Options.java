@@ -22,28 +22,44 @@ import java.util.Optional;
 import java.util.UUID;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.argument.BiomeArgument;
+import net.mohron.skyclaims.schematic.IslandSchematic;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.world.biome.BiomeType;
 
-public class Options {
+public final class Options {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
   private static final PermissionService PERMISSION_SERVICE = SkyClaims.getInstance().getPermissionService();
 
   // SkyClaims Options
-  private static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
-  private static final String DEFAULT_BIOME = "skyclaims.default-biome";
-  private static final String MIN_SIZE = "skyclaims.min-size";
-  private static final String MAX_SIZE = "skyclaims.max-size";
-  private static final String MAX_SPAWNS = "skyclaims.max-spawns";
-  private static final String MAX_HOSTILE = "skyclaims.max-spawns.hostile";
-  private static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
-  private static final String EXPIRATION = "skyclaims.expiration";
-  private static final String MAX_ISLANDS = "skyclaims.max-islands";
+  public static final String DEFAULT_SCHEMATIC = "skyclaims.default-schematic";
+  public static final String DEFAULT_BIOME = "skyclaims.default-biome";
+  public static final String MIN_SIZE = "skyclaims.min-size";
+  public static final String MAX_SIZE = "skyclaims.max-size";
+  public static final String MAX_SPAWNS = "skyclaims.max-spawns";
+  public static final String MAX_HOSTILE = "skyclaims.max-spawns.hostile";
+  public static final String MAX_PASSIVE = "skyclaims.max-spawns.passive";
+  public static final String EXPIRATION = "skyclaims.expiration";
+  public static final String MAX_ISLANDS = "skyclaims.max-islands";
+  public static final String MAX_TEAMMATES = "skyclaims.max-teammates";
 
-  public static String getDefaultSchematic(UUID playerUniqueId) {
-    return getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "skyfactory");
+  private Options() {
+  }
+
+  public static Optional<IslandSchematic> getDefaultSchematic(UUID playerUniqueId) {
+    String name = getStringOption(playerUniqueId, DEFAULT_SCHEMATIC, "");
+
+    if(PLUGIN.getSchematicManager().getSchematics().size() == 1) {
+      return Optional.of(PLUGIN.getSchematicManager().getSchematics().get(0));
+    } else if (name.equalsIgnoreCase("random")) {
+      return Optional.of(PLUGIN.getSchematicManager().getRandomSchematic());
+    } else {
+      return PLUGIN.getSchematicManager().getSchematics().stream()
+          .filter(s -> s.getName().equalsIgnoreCase(name))
+          .findAny();
+    }
   }
 
   public static Optional<BiomeType> getDefaultBiome(UUID playerUniqueId) {
@@ -87,10 +103,15 @@ public class Options {
     return getIntOption(playerUniqueId, MAX_ISLANDS, 0);
   }
 
+  public static int getMaxTeammates(UUID playerUniqueId) {
+    return getIntOption(playerUniqueId, MAX_TEAMMATES, 0);
+  }
+
   private static String getStringOption(UUID uuid, String option, String defaultValue) {
-    return !PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()
+    Optional<Subject> subject = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString());
+    return !subject.isPresent()
         ? defaultValue
-        : PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(defaultValue);
+        : subject.get().getOption(option).orElse(defaultValue);
   }
 
   private static int getIntOption(UUID uuid, String option, int defaultValue, int min, int max) {
@@ -99,10 +120,11 @@ public class Options {
   }
 
   private static int getIntOption(UUID uuid, String option, int defaultValue) {
-    if (!PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).isPresent()) {
+    Optional<Subject> subject = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString());
+    if (!subject.isPresent()) {
       return defaultValue;
     }
-    String value = PERMISSION_SERVICE.getUserSubjects().getSubject(uuid.toString()).get().getOption(option).orElse(String.valueOf(defaultValue));
+    String value = subject.get().getOption(option).orElse(String.valueOf(defaultValue));
     try {
       return Integer.parseInt(value);
     } catch (NumberFormatException e) {

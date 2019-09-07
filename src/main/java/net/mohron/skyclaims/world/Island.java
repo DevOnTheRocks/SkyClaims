@@ -21,15 +21,19 @@ package net.mohron.skyclaims.world;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
@@ -40,11 +44,13 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.permissions.Options;
+import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.util.ClaimUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
@@ -55,6 +61,7 @@ import org.spongepowered.api.entity.living.animal.Animal;
 import org.spongepowered.api.entity.living.monster.Monster;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.context.ContextSource;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -76,7 +83,7 @@ public class Island implements ContextSource {
   private Transform<World> spawn;
   private boolean locked;
 
-  public Island(User owner, String schematic) throws CreateIslandException {
+  public Island(User owner, IslandSchematic schematic) throws CreateIslandException {
     this.id = UUID.randomUUID();
     this.context = new Context("island", this.id.toString());
     this.owner = owner.getUniqueId();
@@ -95,14 +102,20 @@ public class Island implements ContextSource {
     claim.getData().save();
     this.claim = claim.getUniqueId();
 
-    // Run commands defined in config on creation
-    for (String command : PLUGIN.getConfig().getMiscConfig().getCreateCommands()) {
-      PLUGIN.getGame().getCommandManager().process(PLUGIN.getGame().getServer().getConsole(), command.replace("@p", owner.getName()));
-    }
+    Sponge.getScheduler().createTaskBuilder()
+        .execute(IslandManager.processCommands(owner.getName(), schematic))
+        .submit(PLUGIN);
 
     // Generate the island using the specified schematic
     GenerateIslandTask generateIsland = new GenerateIslandTask(owner.getUniqueId(), this, schematic);
-    PLUGIN.getGame().getScheduler().createTaskBuilder().execute(generateIsland).submit(PLUGIN);
+    SpongeExecutorService syncExecutor = Sponge.getScheduler().createSyncExecutor(PLUGIN);
+    if (PLUGIN.getConfig().getWorldConfig().isRegenOnCreate()) {
+      CompletableFuture
+          .runAsync(RegenerateRegionTask.clear(region, getWorld()), Sponge.getScheduler().createAsyncExecutor(PLUGIN))
+          .thenRunAsync(generateIsland, syncExecutor);
+    } else {
+      CompletableFuture.runAsync(generateIsland, syncExecutor);
+    }
 
     save();
   }
@@ -113,7 +126,6 @@ public class Island implements ContextSource {
     this.owner = owner;
     this.spawn = new Transform<>(PLUGIN.getConfig().getWorldConfig().getWorld(), spawnLocation);
     this.locked = locked;
-    this.claim = claimId;
 
     ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(spawn.getExtent());
     Claim claim = claimManager.getClaimByUUID(claimId).orElse(null);
@@ -132,71 +144,16 @@ public class Island implements ContextSource {
         this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
         PLUGIN.queueForSaving(this);
       } catch (CreateIslandException e) {
-        PLUGIN.getLogger().error(
-            String.format("Failed to create claim while loading %s (%s).", getName().toPlain(), id),
-            e);
+        PLUGIN.getLogger().error(String.format("Failed to create claim while loading %s (%s).", getName().toPlain(), id), e);
       }
     }
-  }
-
-  public static Optional<Island> get(UUID islandUniqueId) {
-    return Optional.ofNullable(SkyClaims.islands.get(islandUniqueId));
-  }
-
-  public static Optional<Island> get(Location<World> location) {
-    return SkyClaims.islands.entrySet().stream()
-        .filter(i -> i.getValue().contains(location))
-        .map(Map.Entry::getValue)
-        .findFirst();
-  }
-
-  public static Optional<Island> get(Claim claim) {
-    for (Island island : SkyClaims.islands.values()) {
-      if (island.getClaim().isPresent() && island.getClaim().get().equals(claim)) {
-        return Optional.of(island);
-      }
-    }
-    return Optional.empty();
-  }
-
-  @Deprecated
-  public static Optional<Island> getByOwner(UUID owner) {
-    for (Island island : SkyClaims.islands.values()) {
-      if (island.getOwnerUniqueId().equals(owner)) {
-        return Optional.of(island);
-      }
-    }
-    return Optional.empty();
-  }
-
-  public static boolean hasIsland(UUID owner) {
-    if (SkyClaims.islands.isEmpty()) {
-      return false;
-    }
-    for (Island island : SkyClaims.islands.values()) {
-      if (island.getOwnerUniqueId().equals(owner)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public static int getTotalIslandsOwned(UUID owner) {
-    return (int) SkyClaims.islands.values().stream()
-        .filter(i -> i.getOwnerUniqueId().equals(owner))
-        .count();
-  }
-
-  public static int getTotalIslands(User user) {
-    return (int) SkyClaims.islands.values().stream()
-        .filter(i -> i.isMember(user))
-        .count();
   }
 
   public UUID getUniqueId() {
     return id;
   }
 
+  @Nonnull
   @Override
   public Context getContext() {
     return this.context;
@@ -246,6 +203,14 @@ public class Island implements ContextSource {
         : Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
   }
 
+  public void setName(@Nullable Text name) {
+    getClaim().ifPresent(claim -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+      claim.getData().setName(name);
+      Sponge.getCauseStackManager().popCause();
+    });
+  }
+
   public String getSortableName() {
     return getName().toPlain().toLowerCase();
   }
@@ -264,14 +229,14 @@ public class Island implements ContextSource {
   }
 
   public Transform<World> getSpawn() {
-    return spawn;
+    return spawn.setExtent(getWorld());
   }
 
   public void setSpawn(Transform<World> transform) {
     if (contains(transform.getLocation())) {
       Transform<World> spawn = new Transform<>(getWorld(), transform.getPosition(), transform.getRotation());
       if (transform.getLocation().getY() < 0 || transform.getLocation().getY() > 256) {
-       spawn = spawn.setPosition(new Vector3d(
+        spawn = spawn.setPosition(new Vector3d(
             spawn.getLocation().getX(),
             PLUGIN.getConfig().getWorldConfig().getIslandHeight(),
             spawn.getLocation().getZ()
@@ -303,12 +268,13 @@ public class Island implements ContextSource {
     return getClaim().isPresent() ? getClaim().get().getWidth() : 512;
   }
 
-  private boolean setWidth(int width) {
+  public boolean setWidth(int width) {
     if (width < 0 || width > 512) {
       return false;
     }
     PLUGIN.getGriefPrevention().getWorldPlayerData(getWorld().getProperties(), owner)
         .ifPresent(data -> getClaim().ifPresent(claim -> {
+          Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
           int spacing = (512 - width) / 2;
           claim.resize(new Vector3i(
               getRegion().getLesserBoundary().getX() + spacing,
@@ -319,6 +285,7 @@ public class Island implements ContextSource {
               data.getMaxClaimLevel(),
               getRegion().getGreaterBoundary().getZ() - spacing
           ));
+          Sponge.getCauseStackManager().popCause();
         }));
     return getWidth() == width;
   }
@@ -328,20 +295,29 @@ public class Island implements ContextSource {
       case OWNER:
         UUID existingOwner = owner;
         transfer(user);
-        getClaim().ifPresent(c -> c.addUserTrust(existingOwner, TrustType.MANAGER));
+        getClaim().ifPresent(c -> {
+          Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+          c.addUserTrust(existingOwner, TrustType.MANAGER);
+          Sponge.getCauseStackManager().popCause();
+        });
         break;
       case MANAGER:
       case MEMBER:
-        getClaim().ifPresent(c -> c.addUserTrust(user.getUniqueId(), type.getTrustType()));
+        getClaim().ifPresent(c -> {
+          Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+          c.addUserTrust(user.getUniqueId(), type.getTrustType());
+          Sponge.getCauseStackManager().popCause();
+        });
         break;
       case NONE:
-        getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), type.getTrustType()));
+        removeMember(user);
         break;
     }
   }
 
   public void promote(User user) {
     getClaim().ifPresent(c -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
       if (c.isUserTrusted(user, TrustType.BUILDER)) {
         c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
         c.addUserTrust(user.getUniqueId(), TrustType.MANAGER);
@@ -351,23 +327,43 @@ public class Island implements ContextSource {
         transfer(user);
         c.addUserTrust(existingOwner, TrustType.MANAGER);
       }
+      Sponge.getCauseStackManager().popCause();
     });
   }
 
   public void demote(User user) {
     getClaim().ifPresent(c -> {
       if (c.isUserTrusted(user, TrustType.MANAGER)) {
+        Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
         c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
         c.addUserTrust(user.getUniqueId(), TrustType.BUILDER);
+        Sponge.getCauseStackManager().popCause();
       }
     });
   }
 
   public void removeMember(User user) {
-    getClaim().ifPresent(c -> c.removeUserTrust(user.getUniqueId(), TrustType.NONE));
+    getClaim().ifPresent(c -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+      c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
+      Sponge.getCauseStackManager().popCause();
+    });
   }
 
-  public List<String> getMembers() {
+  public Collection<User> getMembers() {
+    Set<User> users = Sets.newHashSet();
+    UserStorageService uss = Sponge.getServiceManager().provideUnchecked(UserStorageService.class);
+    uss.get(owner).ifPresent(users::add);
+    if(getClaim().isPresent()) {
+      for (UUID uuid : getClaim().get().getUserTrusts()) {
+        uss.get(uuid).ifPresent(users::add);
+      }
+    }
+
+    return users;
+  }
+
+  public List<String> getMemberNames() {
     List<String> members = Lists.newArrayList();
     if (!getClaim().isPresent()) {
       return members;
@@ -378,7 +374,7 @@ public class Island implements ContextSource {
     return members;
   }
 
-  public List<String> getManagers() {
+  public List<String> getManagerNames() {
     List<String> members = Lists.newArrayList();
     if (!getClaim().isPresent()) {
       return members;
@@ -444,9 +440,9 @@ public class Island implements ContextSource {
   }
 
   public Collection<Entity> getPassiveEntities() {
-    return getWorld().getEntities(
-        e -> contains(e.getLocation()) && e instanceof Animal || e instanceof Aquatic
-            || e instanceof Ambient);
+    return getWorld().getEntities(e -> contains(
+        e.getLocation()) && e instanceof Animal || e instanceof Aquatic || e instanceof Ambient
+    );
   }
 
   public Collection<Entity> getItemEntities() {
@@ -463,6 +459,7 @@ public class Island implements ContextSource {
 
   public void transfer(User user) {
     getClaim().ifPresent(claim -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
       ClaimResult result = claim.transferOwner(user.getUniqueId());
       if (result.getResultType() != ClaimResultType.SUCCESS) {
         PLUGIN.getLogger().error(String.format(
@@ -470,6 +467,7 @@ public class Island implements ContextSource {
             claim.getUniqueId(), getOwnerName(), user.getName(), result.getResultType()
         ));
       }
+      Sponge.getCauseStackManager().popCause();
     });
     this.owner = user.getUniqueId();
     save();
@@ -482,25 +480,34 @@ public class Island implements ContextSource {
     setWidth(getWidth() + blocks * 2);
   }
 
+  public void shrink(int blocks) {
+    if (blocks < 1) {
+      return;
+    }
+    setWidth(getWidth() - blocks * 2);
+  }
+
   private void save() {
-    SkyClaims.islands.put(id, this);
+    IslandManager.ISLANDS.put(id, this);
     PLUGIN.getDatabase().saveIsland(this);
   }
 
   public void clear() {
-    RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(getRegion());
-    PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
+    RegenerateRegionTask regenerateRegionTask = RegenerateRegionTask.clear(getRegion(), getWorld());
+    PLUGIN.getGame().getScheduler().createTaskBuilder().async().execute(regenerateRegionTask).submit(PLUGIN);
   }
 
-  public void reset(String schematic, boolean runCommands) {
-    RegenerateRegionTask regenerateRegionTask = new RegenerateRegionTask(this, schematic, runCommands);
-    PLUGIN.getGame().getScheduler().createTaskBuilder().execute(regenerateRegionTask).submit(PLUGIN);
+  public void reset(IslandSchematic schematic, boolean runCommands) {
+    RegenerateRegionTask regenerateRegionTask = RegenerateRegionTask.regen(this, schematic, runCommands);
+    PLUGIN.getGame().getScheduler().createTaskBuilder().async().execute(regenerateRegionTask).submit(PLUGIN);
   }
 
   public void delete() {
+    Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
     ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(getWorld());
     getClaim().ifPresent(claimManager::deleteClaim);
-    SkyClaims.islands.remove(id);
+    IslandManager.ISLANDS.remove(id);
     PLUGIN.getDatabase().removeIsland(this);
+    Sponge.getCauseStackManager().popCause();
   }
 }

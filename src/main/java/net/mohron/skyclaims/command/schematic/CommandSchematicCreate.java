@@ -16,44 +16,36 @@
  * along with SkyClaims.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.mohron.skyclaims.command.admin;
+package net.mohron.skyclaims.command.schematic;
 
 import static org.spongepowered.api.command.args.GenericArguments.string;
 
 import com.flowpowered.math.vector.Vector3i;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.zip.GZIPOutputStream;
+import java.time.Instant;
 import net.mohron.skyclaims.command.CommandBase;
-import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.listener.SchematicHandler;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.persistence.DataFormats;
-import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 import org.spongepowered.api.world.extent.ArchetypeVolume;
 import org.spongepowered.api.world.schematic.BlockPaletteTypes;
 import org.spongepowered.api.world.schematic.Schematic;
 
-@NonnullByDefault
-public class CommandCreateSchematic extends CommandBase.PlayerCommand {
+public class CommandSchematicCreate extends CommandBase.PlayerCommand {
 
   public static final String HELP_TEXT = "used to save the selected area as an island schematic";
   private static final Text NAME = Text.of("name");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
-      .permission(Permissions.COMMAND_CREATE_SCHEMATIC)
+      .permission(Permissions.COMMAND_SCHEMATIC_CREATE)
       .description(Text.of(HELP_TEXT))
       .arguments(string(NAME))
-      .executor(new CommandCreateSchematic())
+      .executor(new CommandSchematicCreate())
       .build();
 
   public static void register() {
@@ -69,39 +61,34 @@ public class CommandCreateSchematic extends CommandBase.PlayerCommand {
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     SchematicHandler.PlayerData data = SchematicHandler.get(player);
     if (data.getPos1() == null || data.getPos2() == null) {
-      player.sendMessage(Text.of(TextColors.RED, "You must set both positions before copying."));
-      return CommandResult.success();
+      throw new CommandException(Text.of(TextColors.RED, "You must set both positions before copying."));
     }
     Vector3i min = data.getPos1().min(data.getPos2());
     Vector3i max = data.getPos1().max(data.getPos2());
-    ArchetypeVolume volume = player.getWorld()
-        .createArchetypeVolume(min, max, player.getLocation().getPosition().toInt());
+    ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, player.getLocation().getPosition().toInt());
 
     String name = args.<String>getOne(NAME)
-        .orElseThrow(() -> new CommandException(
-            Text.of(TextColors.RED, "You must supply a name to use this command!")));
+        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must supply a name to use this command!")));
 
     Schematic schematic = Schematic.builder()
         .volume(volume)
         .metaValue(Schematic.METADATA_AUTHOR, player.getName())
         .metaValue(Schematic.METADATA_NAME, name)
+        .metaValue(Schematic.METADATA_DATE, Instant.now().toString())
         .paletteType(BlockPaletteTypes.LOCAL)
         .build();
-    DataContainer schematicData = DataTranslators.SCHEMATIC.translate(schematic);
 
-    File outputFile = new File(PLUGIN.getConfigDir().toFile(),
-        String.format("schematics%s%s.schematic", File.separator, name.toLowerCase()));
-    try {
-      DataFormats.NBT
-          .writeTo(new GZIPOutputStream(new FileOutputStream(outputFile)), schematicData);
-      player.sendMessage(
-          Text.of(TextColors.GREEN, "Saved schematic to " + outputFile.getAbsolutePath()));
-      SchematicArgument.SCHEMATICS.put(name.toLowerCase(), name);
-    } catch (Exception e) {
-      e.printStackTrace();
-      player.sendMessage(Text.of(TextColors.DARK_RED, "Error saving schematic: " + e.getMessage()));
+    if (PLUGIN.getSchematicManager().create(schematic, name)) {
+      player.sendMessage(Text.of(TextColors.GREEN, "Successfully created ", TextColors.WHITE, name, TextColors.GREEN, "."));
+      if (PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms()){
+        player.sendMessage(Text.of(
+            TextColors.GREEN, "Use ", TextColors.GRAY, Permissions.COMMAND_ARGUMENTS_SCHEMATICS, ".", name,
+            TextColors.GREEN, " to give permission to use."
+        ));
+      }
       return CommandResult.success();
+    } else {
+      throw new CommandException(Text.of(TextColors.RED, "Error saving schematic!"));
     }
-    return CommandResult.success();
   }
 }

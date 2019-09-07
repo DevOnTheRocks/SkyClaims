@@ -23,6 +23,7 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -49,8 +50,7 @@ public class CommandSetHome extends CommandBase {
       PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
       PLUGIN.getLogger().debug("Registered command: CommandSetHome");
     } catch (UnsupportedOperationException e) {
-      e.printStackTrace();
-      PLUGIN.getLogger().error("Failed to register command: CommandSetHome");
+      PLUGIN.getLogger().error("Failed to register command: CommandSetHome:", e);
     }
   }
 
@@ -60,19 +60,18 @@ public class CommandSetHome extends CommandBase {
     }
 
     Player player = (Player) src;
-    Island island = Island.get(player.getLocation())
-        .orElseThrow(() -> new CommandException(
-            Text.of(TextColors.RED, "You must be on an island to set a home!")));
+    Island island = IslandManager.get(player.getLocation())
+        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to set a home!")));
 
     if (!island.isMember(player)) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "You must have permission to set home on this island!"));
+      throw new CommandException(Text.of(TextColors.RED, "You must have permission to set home on this island!"));
     }
 
     boolean success = modifyOrCreateHome(player);
     if (!success) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
+      throw new CommandException(Text.of(
+          TextColors.RED, "An error was encountered while attempting to set your home!"
+      ));
     }
 
     return CommandResult.success();
@@ -81,14 +80,17 @@ public class CommandSetHome extends CommandBase {
 
   private boolean modifyOrCreateHome(Player player) {
     try {
-      NucleusIntegration.getHomeService()
-          .modifyOrCreateHome(Sponge.getCauseStackManager().getCurrentCause(), player, "Island",
-              player.getLocation(), player.getRotation());
+      NucleusIntegration.getHomeService().modifyOrCreateHome(
+          Sponge.getCauseStackManager().getCurrentCause(),
+          player,
+          "Island",
+          player.getLocation(),
+          player.getRotation()
+      );
       player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
       return true;
     } catch (NucleusException e) {
-      player.sendMessage(
-          Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
+      player.sendMessage(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
       PLUGIN.getGame().getServer().getConsole().sendMessage(e.getText());
       return false;
     }

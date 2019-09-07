@@ -1,12 +1,71 @@
 # Change Log 
 
-# Upcoming/Unreleased Features, Changes & Bugfixes
-**REQUIRED: SF build 2764+ & GP build 4.3.0.505+ OPTIONAL: Nucleus version 1.2.0+**
-- Added Void World Generation capabilities
-- Added Nether portal fix
+# Beta 28
+### NOTE: Sponge Forge `1.12.2-2825-7.1.6-RC3697` adds entity and biome support for schematics
+**REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
+**OPTIONAL: Nucleus 1.9.0-S7.1+**
+- Added new schematic features:
+  - `/is create` & `/is reset` now feature a chest UI when more than 1 schematic is available
+  - `/is schematic` - schematic parent & list command
+  - `/is schematic create <name>` - replaces `/isa createschematic <name>`
+  - `/is schematic delete <schematic>` - deletes a schematic
+  - `/is schematic command <schematic> <add|remove> <command>` - manages schematic commands
+  - `/is schematic info <schematic>` - displays detailed information about a schematic
+  - `/is schematic setbiome <schematic> <biome>` - set a default biome for a schematic that overrides the permission option
+  - `/is schematic setheight <schematic> <height>` - set the generation height of a schematic
+  - `/is schematic setname <schematic> <name>` - set an in-game name for a schematic that supports formatting code
+  - `/is schematic seticon <schematic> <icon>` - set an icon for a schematic to be used by the chest GUI
+  - `/is schematic setpreset <schematic> <preset>` - set a flat world preset for a schematic *_see flat world preset support_
+  - `skyclaims.default-schematic` now defaults to empty which will list valid schematics
+  - Removed `Misc-List-Schematics` config
+  - Added `Misc > Text-Schematic-List` config to disable new chest UI
+- Removed `/isa` &`/is admin`
+  - `/is transfer` replaces `/isa transfer`
+  - `/is reload` replaces `/isa reload`
+  - `Admin-Command-Alias` config removed
+- Added `skyclaims.max-teammates` option to limit the number of players per island
+- Added fine-grained keep/clear inventory control:
+  - Player inventory keep inventory permissions:
+    - `skyclaims.keepinv.player.create`
+    - `skyclaims.keepinv.player.delete`
+    - `skyclaims.keepinv.player.kick`
+    - `skyclaims.keepinv.player.leave`
+    - `skyclaims.keepinv.player.reset`
+  - EnderChest inventory keep inventory permissions:    
+    - `skyclaims.keepinv.enderchest.create`
+    - `skyclaims.keepinv.enderchest.delete`
+    - `skyclaims.keepinv.enderchest.kick`
+    - `skyclaims.keepinv.enderchest.leave`
+    - `skyclaims.keepinv.enderchest.reset`
+- Added `/is entity` command for detailed entity information
+- Added `/is setname [name]` command
+- Added `/scplayerinfo` command for debugging permission options
+- Added support for flat world preset codes (_block ID portion only_) for region generation
+  - See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details
+- Added new schematics:
+  - Stoneblock 2
+  - SkyFactory 4
+- Added `World > Regen-On-Create` config option
+- Reworked `/is list [island] [sort type] [sort order]`
+  - Sort order has been separated from sort type
+  - **Sort Types**: NAME, CREATED, ONLINE, ACTIVE, MEMBERS, SIZE, ENTITIES
+  - **Sort Orders**: ASC, DESC
+  - Added `Misc >  Primary-List-Sort` config option - sets a sort type that gets applied before the one provided from the command argument
+- Added `Misc > Island-Commands` config option
+  - Commands trigger on island creation, join, and reset
+  - Removed `Misc > Create-Commands` & `Misc > Reset-Commands`
+- Removed outdated schematics:
+  - Garden of Glass
+  - SkyExchange
+- Added island `min-size` check when an island owner logs in and if necessary, the island will be expanded
+- Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
+- Fixed Nucleus Integration commands not registering after a reload
+- Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region
+- Fixed a bug where `/is lock` would not prevent entry to a locked island
+- Fixed a bug when removing overlapping claims during `/is create`
+- Updated bStats to 1.4
 
-
-# Beta 27.2
+# Beta 27.2 HOTFIX
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
 - **BREAKING CHANGES:**
     - Biome argument permissions have changed to `skyclaims.arguments.biomes.modid.biomeid`

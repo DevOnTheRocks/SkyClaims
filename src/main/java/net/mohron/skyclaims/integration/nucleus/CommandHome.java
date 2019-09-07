@@ -52,8 +52,7 @@ public class CommandHome extends CommandBase {
       PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
       PLUGIN.getLogger().debug("Registered command: CommandHome");
     } catch (UnsupportedOperationException e) {
-      e.printStackTrace();
-      PLUGIN.getLogger().error("Failed to register command: CommandHome");
+      PLUGIN.getLogger().error("Failed to register command: CommandHome:", e);
     }
   }
 
@@ -65,8 +64,7 @@ public class CommandHome extends CommandBase {
 
     Player player = (Player) src;
     Transform<World> transform = getHome(player)
-        .orElseThrow(() -> new CommandException(
-            Text.of(TextColors.RED, "You must set a home before using this command!")));
+        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must set a home before using this command!")));
 
     player.setTransformSafely(transform);
 

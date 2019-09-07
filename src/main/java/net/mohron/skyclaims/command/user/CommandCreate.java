@@ -18,18 +18,17 @@
 
 package net.mohron.skyclaims.command.user;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandBase.ListSchematicCommand;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Arguments;
-import net.mohron.skyclaims.command.argument.SchematicArgument;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.permissions.Permissions;
+import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -37,18 +36,12 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
-public class CommandCreate extends CommandBase.PlayerCommand {
+public class CommandCreate extends ListSchematicCommand {
 
   public static final String HELP_TEXT = "create an island.";
-  private static final Text SCHEMATIC = Text.of("schematic");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
@@ -69,77 +62,65 @@ public class CommandCreate extends CommandBase.PlayerCommand {
 
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
-    if (Island.hasIsland(player.getUniqueId())) {
+    if (IslandManager.hasIsland(player.getUniqueId())) {
       throw new CommandException(Text.of(TextColors.RED, "You already have an island!"));
     }
-    boolean canCreate = Options.getMaxIslands(player.getUniqueId()) < 1
-        || Options.getMaxIslands(player.getUniqueId()) - Island.getTotalIslands(player) > 0;
+    int maxIslands = Options.getMaxIslands(player.getUniqueId());
+    boolean canCreate = maxIslands < 1 || maxIslands - IslandManager.getTotalIslands(player) > 0;
     if (!canCreate) {
       throw new CommandException(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
     }
 
-    Optional<String> schematic = args.getOne(SCHEMATIC);
+    Optional<IslandSchematic> schematic = args.getOne(SCHEMATIC);
+    Optional<IslandSchematic> defaultSchematic = Options.getDefaultSchematic(player.getUniqueId());
     if (schematic.isPresent()) {
       return createIsland(player, schematic.get());
-    } else if (PLUGIN.getConfig().getMiscConfig().isListSchematics()
-        && SchematicArgument.SCHEMATICS.size() > 1) {
-      return listSchematics(player);
+    } else if (!defaultSchematic.isPresent()) {
+      return listSchematics(player, this::createIsland);
     } else {
-      return createIsland(player, Options.getDefaultSchematic(player.getUniqueId()));
+      return createIsland(player, defaultSchematic.get());
     }
   }
 
-  private CommandResult createIsland(Player player, String schematic) throws CommandException {
+  private CommandResult createIsland(Player player, IslandSchematic schematic) throws CommandException {
+    if (IslandManager.hasIsland(player.getUniqueId())) {
+      player.sendMessage(Text.of(TextColors.RED, "You already have an island!"));
+      return CommandResult.empty();
+    }
+
     player.sendMessage(Text.of(
         TextColors.GREEN, "Your island is being created.",
-        PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly."
-            : Text.EMPTY
+        PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
     ));
 
     try {
-      new Island(player, schematic);
+      Island island = new Island(player, schematic);
+      clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_CREATE, Permissions.KEEP_INV_ENDERCHEST_CREATE);
       return CommandResult.success();
     } catch (CreateIslandException e) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET,
-              e.getText()));
+      throw new CommandException(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
     }
   }
 
-  private CommandResult listSchematics(Player player) {
-    boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
-    List<Text> schematics = SchematicArgument.SCHEMATICS.keySet().stream()
-        .filter(s -> !checkPerms || player
-            .hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.toLowerCase()))
-        .map(s -> Text.builder(s).onClick(TextActions.executeCallback(createIsland(s))).build())
-        .collect(Collectors.toList());
-    PaginationList.builder()
-        .title(Text.of(TextColors.AQUA, "Starter Islands"))
-        .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-        .contents(schematics)
-        .sendTo(player);
-    return CommandResult.empty();
-  }
-
-  private Consumer<CommandSource> createIsland(String s) {
+  private Consumer<CommandSource> createIsland(IslandSchematic schematic) {
     return src -> {
       if (src instanceof Player) {
         Player player = (Player) src;
-        if (Island.hasIsland(player.getUniqueId())) {
+        if (IslandManager.hasIsland(player.getUniqueId())) {
           player.sendMessage(Text.of(TextColors.RED, "You already have an island!"));
           return;
         }
+
+        player.sendMessage(Text.of(
+            TextColors.GREEN, "Your island is being created.",
+            PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
+        ));
+
         try {
-          player.sendMessage(Text.of(
-              TextColors.GREEN, "Your island is being created.",
-              PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate()
-                  ? " You will be teleported shortly." : Text.EMPTY
-          ));
-          new Island(player, s);
+          Island island = new Island(player, schematic);
+          clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_CREATE, Permissions.KEEP_INV_ENDERCHEST_CREATE);
         } catch (CreateIslandException e) {
-          player.sendMessage(
-              Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET,
-                  e.getText()));
+          player.sendMessage(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
         }
       }
     };

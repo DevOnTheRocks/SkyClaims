@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Options;
-import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -49,7 +49,7 @@ public class InviteService {
   }
 
   private enum Type {
-    INCOMING, OUTGOING;
+    INCOMING, OUTGOING
   }
 
   void addInvite(Invite invite) {
@@ -78,14 +78,13 @@ public class InviteService {
 
   private List<Text> getIncomingInviteText(User user) {
     SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
-    boolean canJoin = Options.getMaxIslands(user.getUniqueId()) < 1 || Options.getMaxIslands(user.getUniqueId()) - Island.getTotalIslands(user) > 0;
     return invites.row(user).values().stream()
         .map(invite -> Text.of(
             TextColors.WHITE, "[",
             Text.builder("✓")
                 .color(TextColors.GREEN)
                 .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Accept")))
-                .onClick(TextActions.executeCallback(acceptInvite(invite, canJoin))),
+                .onClick(TextActions.executeCallback(acceptInvite(invite))),
             TextColors.WHITE, "] [",
             Text.builder("✗")
                 .color(TextColors.RED)
@@ -105,12 +104,26 @@ public class InviteService {
         .collect(Collectors.toList());
   }
 
-  private Consumer<CommandSource> acceptInvite(Invite invite, boolean canJoin) {
+  Consumer<CommandSource> acceptInvite(Invite invite) {
     return src -> {
-      if (canJoin) {
-        invite.accept();
-      } else {
+      int maxIslands = Options.getMaxIslands(invite.getReceiver().getUniqueId());
+      int maxTeammates = Options.getMaxTeammates(invite.getIsland().getOwnerUniqueId());
+
+      // Check if the receiver can accept this invite
+      if (!inviteExists(invite)) {
+        src.sendMessage(Text.of(TextColors.RED, "This invite has expired!"));
+      } else if (maxIslands > 0 && maxIslands - IslandManager.getTotalIslands(invite.getReceiver()) < 1) {
         src.sendMessage(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
+      } else if (maxTeammates > 0 && invite.getIsland().getTotalMembers() >= maxTeammates) {
+        src.sendMessage(Text.of(invite.getIsland().getName(), TextColors.RED, " has reached its maximum team size!"));
+      } else {
+        invite.accept();
+        src.sendMessage(Text.of(
+            TextColors.GREEN, "You are now a ",
+            invite.getPrivilegeType().toText(),
+            TextColors.GREEN, " on ",
+            invite.getIsland().getName(), TextColors.GREEN, "!"
+        ));
       }
     };
   }
@@ -151,16 +164,12 @@ public class InviteService {
             TextColors.AQUA, (type == Type.INCOMING) ? "[" : Text.EMPTY,
             Text.builder("Incoming")
                 .color((type == Type.INCOMING) ? TextColors.GREEN : TextColors.GRAY)
-                .onHover(TextActions.showText(
-                    Text.of("Click here to show ", TextColors.GREEN, "incoming", TextColors.RESET,
-                        " invites")))
+                .onHover(TextActions.showText(Text.of("Click here to show ", TextColors.GREEN, "incoming", TextColors.RESET, " invites")))
                 .onClick(TextActions.executeCallback(listIncomingInvites())),
             TextColors.AQUA, (type == Type.INCOMING) ? "] " : " [",
             Text.builder("Outgoing")
                 .color((type == Type.OUTGOING) ? TextColors.YELLOW : TextColors.GRAY)
-                .onHover(TextActions.showText(
-                    Text.of("Click here to show ", TextColors.YELLOW, "outgoing", TextColors.RESET,
-                        " invites")))
+                .onHover(TextActions.showText(Text.of("Click here to show ", TextColors.YELLOW, "outgoing", TextColors.RESET, " invites")))
                 .onClick(TextActions.executeCallback(listOutgoingInvites())),
             TextColors.AQUA, (type == Type.OUTGOING) ? "]" : Text.EMPTY
         );
@@ -169,19 +178,22 @@ public class InviteService {
             ? PLUGIN.getInviteService().getIncomingInviteText(player)
             : PLUGIN.getInviteService().getOutgoingInviteText(player);
         if (contents.isEmpty()) {
-          contents = ImmutableList.of(Text
-              .of(TextColors.RED, "You have no ", type.toString().toLowerCase(), " invites!"));
+          contents = ImmutableList.of(Text.of(TextColors.RED, "You have no ", type.toString().toLowerCase(), " invites!"));
         }
 
         int limit = Options.getMaxIslands(player.getUniqueId());
-        Text header = limit < 1
-            ? null
-            : Text.of(TextColors.GRAY, "You currently have ", TextColors.LIGHT_PURPLE, Island.getTotalIslands(player), TextColors.GRAY, " of ",
-                TextColors.LIGHT_PURPLE, limit, TextColors.GRAY, " maximum island", limit > 1 ? "s" : Text.EMPTY, ".");
+        Text header = Text.of(
+            TextColors.GRAY, "You currently have ",
+            TextColors.LIGHT_PURPLE, IslandManager.getTotalIslands(player),
+            TextColors.GRAY, " of ",
+            TextColors.LIGHT_PURPLE, limit, 
+            TextColors.GRAY, " maximum island",
+            limit > 1 ? "s" : Text.EMPTY, "."
+        );
 
         PaginationList.builder()
             .title(title)
-            .header(header)
+            .header(limit < 1 ? null : header)
             .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
             .contents(contents)
             .sendTo(player);

@@ -32,9 +32,7 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandLock extends CommandBase.LockCommand {
 
   public static final String HELP_TEXT = "used to prevent untrusted players from visiting to your island.";
@@ -48,9 +46,7 @@ public class CommandLock extends CommandBase.LockCommand {
         .permission(Permissions.COMMAND_LOCK)
         .description(Text.of(HELP_TEXT))
         .arguments(GenericArguments.firstParsing(
-            GenericArguments
-                .optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"),
-                    Permissions.COMMAND_LOCK_OTHERS)),
+            GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
             GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER))
         ))
         .executor(new CommandLock())
@@ -66,8 +62,7 @@ public class CommandLock extends CommandBase.LockCommand {
   }
 
   @Override
-  public CommandResult execute(CommandSource src, Island island, CommandContext args)
-      throws CommandException {
+  public CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException {
     island.setLocked(true);
 
     island.getPlayers().forEach(p -> {

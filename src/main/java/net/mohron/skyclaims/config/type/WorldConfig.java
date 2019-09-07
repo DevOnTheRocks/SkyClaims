@@ -18,10 +18,14 @@
 
 package net.mohron.skyclaims.config.type;
 
+import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Optional;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -33,20 +37,30 @@ public class WorldConfig {
   private String worldName = "world";
   @Setting(value = "Spawn-World", comment = "Use to override the world used when sending players to spawn.")
   private String spawnWorld = "";
-  //    @Setting(value = "Void-Dimensions", comment = "A list of world names to generate as void. Default: world, DIM-1, DIM1")
-//    private List<String> voidDimensions = Lists.newArrayList("world", "DIM-1", "DIM1");
+  @Setting(value = "Void-Dimensions", comment = "A list of world names to generate as void. Default: world, DIM-1, DIM1")
+  private List<String> voidDimensions = Lists.newArrayList("world", "DIM-1", "DIM1");
   @Setting(value = "Island-Height", comment = "Height to build islands at (1-255). Default: 72")
   private int islandHeight = 72;
   @Setting(value = "Spawn-Regions", comment = "The height & width of regions to reserve for spawn (min 1). Default: 1")
   private int spawnRegions = 1;
+  @Setting(value = "Preset-Code", comment = "A flat world preset code to use when regenerating a region. Only the block ID list is used.\n"
+      + "See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details.")
+  private String presetCode = "";
+  @Setting(value = "Regen-On-Create", comment = "If enabled, SkyClaims will regen the target region before an island is created.")
+  private boolean regenOnCreate = false;
 
   public String getWorldName() {
     return worldName;
   }
 
   public World getWorld() {
-    return SkyClaims.getInstance().getGame().getServer().getWorld(worldName)
-        .orElse(WorldUtil.getDefaultWorld());
+    final Optional<World> world = SkyClaims.getInstance().getGame().getServer().getWorld(worldName);
+    if (world.isPresent()) {
+      return world.get();
+    } else {
+      SkyClaims.getInstance().getLogger().warn("Unable to locate world {}.", worldName);
+      return WorldUtil.getDefaultWorld();
+    }
   }
 
   public Location<World> getSpawn() {
@@ -55,9 +69,13 @@ public class WorldConfig {
     return world.isLoaded() ? world.getSpawnLocation() : getWorld().getSpawnLocation();
   }
 
-//    public List<String> getVoidDimensions() {
-//        return voidDimensions;
-//    }
+  public List<String> getVoidDimensions() {
+    return voidDimensions;
+  }
+
+  public boolean isSeparateSpawn() {
+    return !StringUtils.isEmpty(spawnWorld) && Sponge.getServer().getWorld(spawnWorld).isPresent();
+  }
 
   public int getIslandHeight() {
     return Math.max(1, Math.min(255, islandHeight));
@@ -67,4 +85,11 @@ public class WorldConfig {
     return Math.max(1, spawnRegions);
   }
 
+  public String getPresetCode() {
+    return presetCode;
+  }
+
+  public boolean isRegenOnCreate() {
+    return regenOnCreate;
+  }
 }

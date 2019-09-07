@@ -22,6 +22,7 @@ import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.CommandContext;
@@ -29,9 +30,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandSetSpawn extends CommandBase.PlayerCommand {
 
   public static final String HELP_TEXT = "set your spawn location for your island.";
@@ -54,9 +53,8 @@ public class CommandSetSpawn extends CommandBase.PlayerCommand {
 
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
-    Island island = Island.get(player.getLocation())
-        .orElseThrow(
-            () -> new CommandException(Text.of("You must be on an island to use this command!")));
+    Island island = IslandManager.get(player.getLocation())
+        .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
 
     if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS)) {
       throw new CommandException(Text.of("Only the island owner may use this command!"));
@@ -66,8 +64,8 @@ public class CommandSetSpawn extends CommandBase.PlayerCommand {
     player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
         TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), TextColors.GRAY, ", ",
         TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), TextColors.GRAY, ", ",
-        TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), TextColors.GRAY,
-        ")"));
+        TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), TextColors.GRAY, ")"
+    ));
 
     return CommandResult.success();
   }

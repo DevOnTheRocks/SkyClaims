@@ -24,13 +24,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Arguments;
+import net.mohron.skyclaims.command.argument.IslandSortType;
+import net.mohron.skyclaims.command.argument.IslandSortType.Order;
+import net.mohron.skyclaims.config.type.MiscConfig;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -43,24 +46,23 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandList extends CommandBase {
 
   public static final String HELP_TEXT = "display a list of the current islands.";
   private static final Text ISLAND = Text.of("island");
-  private static final Text SORT = Text.of("sort");
+  private static final Text SORT_TYPE = Text.of("sort type");
+  private static final Text SORT_ORDER = Text.of("sort order");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_LIST)
         .description(Text.of(HELP_TEXT))
-        .arguments(GenericArguments.firstParsing(
-            GenericArguments.optional(Arguments.island(ISLAND)),
-            GenericArguments.optional(GenericArguments
-                .requiringPermission(Arguments.sort(SORT), Permissions.COMMAND_LIST_SORT))
-        ))
+        .arguments(
+            GenericArguments.optionalWeak(Arguments.island(ISLAND)),
+            GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.enumValue(SORT_TYPE, IslandSortType.class), Permissions.COMMAND_LIST_SORT)),
+            GenericArguments.optional(GenericArguments.enumValue(SORT_ORDER, Order.class))
+        )
         .executor(new CommandList())
         .build();
 
@@ -73,37 +75,52 @@ public class CommandList extends CommandBase {
     }
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    if (SkyClaims.islands.isEmpty()) {
+    if (IslandManager.ISLANDS.isEmpty()) {
       src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
       return CommandResult.empty();
     }
     Player player = (src instanceof Player) ? (Player) src : null;
     Collection<Island> islands = args.<UUID>getAll(ISLAND).stream()
-        .map(uuid -> SkyClaims.islands.get(uuid)).collect(Collectors.toList());
-    Comparator<Island> sortType = args.<Comparator<Island>>getOne(SORT)
-        .orElse(Comparator.comparing(Island::getSortableName));
+        .map(uuid -> IslandManager.ISLANDS.get(uuid)).collect(Collectors.toList());
+
+    MiscConfig config = PLUGIN.getConfig().getMiscConfig();
+    IslandSortType primaryListSort = config.getPrimaryListSort();
+    IslandSortType sortType = args.<IslandSortType>getOne(SORT_TYPE).orElse(primaryListSort);
+    Order order = args.<Order>getOne(SORT_ORDER).orElse(sortType.getOrder());
+    Comparator<Island> sortFunction;
+    Text sortText;
+    if (primaryListSort != IslandSortType.NONE && sortType != primaryListSort) {
+      sortFunction = Comparator.comparing(primaryListSort.getSortFunction(), primaryListSort.getOrder().getComparator())
+          .thenComparing(sortType.getSortFunction(), order.getComparator());
+      sortText = Text.of(
+          TextColors.GRAY, primaryListSort.name(), primaryListSort.getOrder().toText(),
+          TextColors.AQUA, ", ",
+          TextColors.GRAY, sortType.name(), order.toText()
+      );
+    } else {
+      sortFunction = Comparator.comparing(sortType.getSortFunction());
+      sortText = Text.of(TextColors.GRAY, sortType.name(), order.toText());
+    }
 
     boolean showUnlocked = src.hasPermission(Permissions.COMMAND_LIST_UNLOCKED);
     boolean showAll = src.hasPermission(Permissions.COMMAND_LIST_ALL);
 
     if (islands.isEmpty()) {
-      islands = SkyClaims.islands.values();
+      islands = IslandManager.ISLANDS.values();
     }
 
     List<Text> listText = islands.stream()
-        .filter(
-            i -> player == null || i.isMember(player) || !i.isLocked() && showUnlocked || showAll)
-        .sorted(sortType)
+        .filter(i -> player == null || i.isMember(player) || !i.isLocked() && showUnlocked || showAll)
+        .sorted(sortFunction)
         .map(island -> Text.of(
             getAccess(island, src),
             island.getName().toBuilder()
                 .onHover(TextActions.showText(Text.of("Click here to view island info")))
                 .onClick(TextActions.executeCallback(
-                    CommandUtil
-                        .createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(),
-                            createReturnConsumer())
+                    CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer())
                 )),
             getCoords(island, src)
         ))
@@ -113,7 +130,7 @@ public class CommandList extends CommandBase {
       src.sendMessage(Text.of(TextColors.RED, "There are no islands to display!"));
     } else if (src instanceof Player) {
       PaginationList.builder()
-          .title(Text.of(TextColors.AQUA, "Island List"))
+          .title(Text.of(TextColors.AQUA, "Island List | ", TextColors.LIGHT_PURPLE, listText.size(), TextColors.AQUA, " | ", sortText))
           .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
           .contents(listText)
           .sendTo(src);
@@ -150,14 +167,12 @@ public class CommandList extends CommandBase {
     }
 
     hover = hover.concat(Text.of(island.getName(), TextColors.WHITE, " is ",
-        island.isLocked() ? Text.of(TextColors.RED, "Locked")
-            : Text.of(TextColors.GREEN, "Unlocked")
+        island.isLocked() ? Text.of(TextColors.RED, "Locked") : Text.of(TextColors.GREEN, "Unlocked")
     ));
 
     return Text.of(
         TextColors.WHITE, " [",
-        access.toBuilder().onHover(TextActions.showText(hover))
-            .onClick(TextActions.executeCallback(toggleLock(island))),
+        access.toBuilder().onHover(TextActions.showText(hover)).onClick(TextActions.executeCallback(toggleLock(island))),
         TextColors.WHITE, "] "
     );
   }
@@ -189,8 +204,7 @@ public class CommandList extends CommandBase {
         .hasPermission(Permissions.COMMAND_SPAWN_OTHERS)
         ? coords.toBuilder()
         .onHover(TextActions.showText(Text.of("Click here to teleport to this island")))
-        .onClick(TextActions.executeCallback(
-            CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
+        .onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
         .build()
         : coords;
   }

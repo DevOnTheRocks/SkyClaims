@@ -30,6 +30,7 @@ public class MysqlDatabase extends Database {
   private String connectionString;
   private String databaseLocation;
   private String databaseTablePrefix;
+  private String databaseName;
   private String username;
   private String password;
   private Integer port;
@@ -38,20 +39,19 @@ public class MysqlDatabase extends Database {
     this.config = SkyClaims.getInstance().getConfig().getStorageConfig().getMysqlConfig();
     databaseLocation = config.getLocation();
     databaseTablePrefix = config.getTablePrefix();
+    databaseName = config.getDatabaseName();
     username = config.getUsername();
     password = config.getPassword();
     port = config.getPort();
-    connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, "islands");
+    connectionString = String.format("jdbc:mysql://%s:%s/%s", databaseLocation, port, databaseName);
 
     try {
       Class.forName("com.mysql.jdbc.Driver");
       getConnection();
     } catch (ClassNotFoundException e) {
-      SkyClaims.getInstance().getLogger().error("Unable to load MySQL JDBC driver!");
-      e.printStackTrace();
+      SkyClaims.getInstance().getLogger().error("Unable to load MySQL JDBC driver!", e);
     } catch (SQLException e) {
-      SkyClaims.getInstance().getLogger().error("Unable to connect to the database!");
-      e.printStackTrace();
+      SkyClaims.getInstance().getLogger().error("Unable to connect to the database:", e);
     }
 
     createTable();

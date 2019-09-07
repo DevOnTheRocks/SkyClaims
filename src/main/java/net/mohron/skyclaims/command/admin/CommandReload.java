@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.command.admin;
 
 import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -27,9 +28,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandReload extends CommandBase {
 
   public static final String HELP_TEXT = "used to reload SkyClaims's config, schematics, & database.";
@@ -42,6 +41,7 @@ public class CommandReload extends CommandBase {
 
   public static void register() {
     try {
+      CommandIsland.addSubCommand(commandSpec, "reload");
       PLUGIN.getGame().getCommandManager().register(PLUGIN, commandSpec);
       PLUGIN.getLogger().debug("Registered command: CommandReload");
     } catch (UnsupportedOperationException e) {

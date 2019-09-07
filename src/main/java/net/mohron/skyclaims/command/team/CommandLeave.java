@@ -32,9 +32,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandLeave extends CommandBase.IslandCommand {
 
   public static final String HELP_TEXT = "used to leave an island.";
@@ -60,12 +58,9 @@ public class CommandLeave extends CommandBase.IslandCommand {
       throws CommandException {
 
     if (island.isOwner(player)) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "You must transfer island ownership before leaving."));
+      throw new CommandException(Text.of(TextColors.RED, "You must transfer island ownership before leaving."));
     } else if (!island.isMember(player)) {
-      throw new CommandException(
-          Text.of(TextColors.RED, "You are not a member of ", island.getName(), TextColors.RED,
-              "!"));
+      throw new CommandException(Text.of(TextColors.RED, "You are not a member of ", island.getName(), TextColors.RED, "!"));
     }
 
     player.sendMessage(Text.of(
@@ -93,10 +88,10 @@ public class CommandLeave extends CommandBase.IslandCommand {
         player.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
       }
 
+      clearMemberInventory(player, Permissions.KEEP_INV_PLAYER_LEAVE, Permissions.KEEP_INV_ENDERCHEST_LEAVE);
+
       island.removeMember(player);
-      player.sendMessage(
-          Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED,
-              "!"));
+      player.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
     };
   }
 }

@@ -25,6 +25,8 @@ import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -36,9 +38,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.annotation.NonnullByDefault;
 
-@NonnullByDefault
 public class CommandDelete extends CommandBase.IslandCommand {
 
   public static final String HELP_TEXT = "used to permanently delete an island.";
@@ -92,14 +92,12 @@ public class CommandDelete extends CommandBase.IslandCommand {
             Text.builder("YES")
                 .color(TextColors.GREEN)
                 .onHover(TextActions.showText(Text.of("Click to delete")))
-                .onClick(
-                    TextActions.executeCallback(deleteIsland(island, clear))),
+                .onClick(TextActions.executeCallback(deleteIsland(island, clear))),
             TextColors.WHITE, "] [",
             Text.builder("NO")
                 .color(TextColors.RED)
-                .onHover(TextActions.showText(Text.of("Click to delete")))
-                .onClick(TextActions
-                    .executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
+                .onHover(TextActions.showText(Text.of("Click to cancel")))
+                .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
             TextColors.WHITE, "]"
         ));
       }
@@ -108,14 +106,20 @@ public class CommandDelete extends CommandBase.IslandCommand {
 
   private Consumer<CommandSource> deleteIsland(Island island, boolean clear) {
     return src -> {
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+      if (!IslandManager.ISLANDS.containsKey(island.getUniqueId())) {
+        src.sendMessage(Text.of(island.getName(), TextColors.RED, " has already been deleted!"));
+        return;
+      }
       if (clear) {
         island.clear();
       }
-      island.getPlayers()
-          .forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
+      clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_DELETE, Permissions.KEEP_INV_ENDERCHEST_DELETE);
+      island.getPlayers().forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
       island.delete();
 
       src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
+      Sponge.getCauseStackManager().popCause();
     };
   }
 }

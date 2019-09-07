@@ -23,6 +23,7 @@ import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -38,11 +39,11 @@ public class ClientJoinHandler {
 
   @Listener
   public void onClientJoin(ClientConnectionEvent.Join event, @Root Player player) {
-    if (PLUGIN.getConfig().getMiscConfig().createIslandOnJoin() && !Island
-        .hasIsland(player.getUniqueId())) {
+    if (PLUGIN.getConfig().getMiscConfig().isCreateIslandOnJoin() && !IslandManager.hasIsland(player.getUniqueId())) {
       createIslandOnJoin(player);
     }
     deliverInvites(player);
+    checkIslandSize(player);
   }
 
   private void createIslandOnJoin(Player player) {
@@ -51,13 +52,15 @@ public class ClientJoinHandler {
     Sponge.getScheduler().createTaskBuilder()
         .execute(src -> {
           try {
-            new Island(player, Options.getDefaultSchematic(player.getUniqueId()));
+            new Island(
+                player,
+                Options.getDefaultSchematic(player.getUniqueId())
+                    .orElseThrow(() -> new CreateIslandException(Text.of(TextColors.RED, "Unable to load default schematic!")))
+            );
             PLUGIN.getLogger().info("Automatically created an island for {}.", player.getName());
           } catch (CreateIslandException e) {
             // Oh well, we tried!
-            PLUGIN.getLogger()
-                .warn(String.format("Failed to create an island on join for %s.", player.getName()),
-                    e);
+            PLUGIN.getLogger().warn(String.format("Failed to create an island on join for %s.", player.getName()), e);
           }
         })
         .delayTicks(40)
@@ -78,12 +81,23 @@ public class ClientJoinHandler {
           TextColors.WHITE, "[",
           Text.builder("OPEN")
               .color(TextColors.GREEN)
-              .onClick(
-                  TextActions.executeCallback(PLUGIN.getInviteService().listIncomingInvites())),
+              .onClick(TextActions.executeCallback(PLUGIN.getInviteService().listIncomingInvites())),
           TextColors.WHITE, "]"
       ));
     }
 
     SkyClaimsTimings.DELIVER_INVITES.stopTimingIfSync();
+  }
+
+  private void checkIslandSize(Player player) {
+    IslandManager.getByOwner(player.getUniqueId()).ifPresent(island -> {
+      final int width = island.getWidth();
+      int minWidth = Options.getMinSize(player.getUniqueId()) * 2;
+
+      if (width < minWidth) {
+        PLUGIN.getLogger().info("{} will be expanded from {} to {}.", island.getName().toPlain(), width, minWidth);
+        island.setWidth(minWidth);
+      }
+    });
   }
 }
