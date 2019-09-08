@@ -1,13 +1,78 @@
 # Change Log
 
-# Beta 27.1 
+# Beta 28
+### NOTE: Sponge Forge `1.12.2-2825-7.1.6-RC3697` adds entity and biome support for schematics
+**REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
+**OPTIONAL: Nucleus 1.9.0-S7.1+**
+- Added new schematic features:
+  - `/is create` & `/is reset` now feature a chest UI when more than 1 schematic is available
+  - `/is schematic` - schematic parent & list command
+  - `/is schematic create <name>` - replaces `/isa createschematic <name>`
+  - `/is schematic delete <schematic>` - deletes a schematic
+  - `/is schematic command <schematic> <add|remove> <command>` - manages schematic commands
+  - `/is schematic info <schematic>` - displays detailed information about a schematic
+  - `/is schematic setbiome <schematic> <biome>` - set a default biome for a schematic that overrides the permission option
+  - `/is schematic setheight <schematic> <height>` - set the generation height of a schematic
+  - `/is schematic setname <schematic> <name>` - set an in-game name for a schematic that supports formatting code
+  - `/is schematic seticon <schematic> <icon>` - set an icon for a schematic to be used by the chest GUI
+  - `/is schematic setpreset <schematic> <preset>` - set a flat world preset for a schematic *see flat world preset support*
+  - `skyclaims.default-schematic` now defaults to empty which will list valid schematics
+  - Removed `Misc-List-Schematics` config
+  - Added `Misc > Text-Schematic-List` config to disable new chest UI
+- Removed `/isa` &`/is admin`
+  - `/is transfer` replaces `/isa transfer`
+  - `/is reload` replaces `/isa reload`
+  - `Admin-Command-Alias` config removed
+- Added `skyclaims.max-teammates` option to limit the number of players per island
+- Added fine-grained keep/clear inventory control:
+  - Player inventory keep inventory permissions:
+    - `skyclaims.keepinv.player.create`
+    - `skyclaims.keepinv.player.delete`
+    - `skyclaims.keepinv.player.kick`
+    - `skyclaims.keepinv.player.leave`
+    - `skyclaims.keepinv.player.reset`
+  - EnderChest inventory keep inventory permissions:    
+    - `skyclaims.keepinv.enderchest.create`
+    - `skyclaims.keepinv.enderchest.delete`
+    - `skyclaims.keepinv.enderchest.kick`
+    - `skyclaims.keepinv.enderchest.leave`
+    - `skyclaims.keepinv.enderchest.reset`
+- Added `/is entity` command for detailed entity information
+- Added `/is setname [name]` command
+- Added `/scplayerinfo` command for debugging permission options
+- Added support for flat world preset codes (_block ID portion only_) for region generation
+  - See https://minecraft.gamepedia.com/Superflat#Preset_code_format for more details
+- Added new schematics:
+  - Stoneblock 2
+  - SkyFactory 4
+- Added `World > Regen-On-Create` config option
+- Reworked `/is list [island] [sort type] [sort order]`
+  - Sort order has been separated from sort type
+  - **Sort Types**: NAME, CREATED, ONLINE, ACTIVE, MEMBERS, SIZE, ENTITIES
+  - **Sort Orders**: ASC, DESC
+  - Added `Misc >  Primary-List-Sort` config option - sets a sort type that gets applied before the one provided from the command argument
+- Added `Misc > Island-Commands` config option
+  - Commands trigger on island creation, join, and reset
+  - Removed `Misc > Create-Commands` & `Misc > Reset-Commands`
+- Removed outdated schematics:
+  - Garden of Glass
+  - SkyExchange
+- Added island `min-size` check when an island owner logs in and if necessary, the island will be expanded
+- Fixed schematics sometimes not generating at the intended height. The height set will be the height the player is at when standing on the lowest block of a schematic.
+- Fixed Nucleus Integration commands not registering after a reload
+- Fixed admin island expansion (`/is info`) bug where old clickable text can be used to expand outside the region
+- Fixed a bug where `/is lock` would not prevent entry to a locked island
+- Fixed a bug when removing overlapping claims during `/is create`
+- Updated bStats to 1.4
+
+# Beta 27.1
 **REQUIRED: SF build 2800+ & GP build 4.3.0.509+ OPTIONAL: Nucleus version 1.2.0+**
-- Fixed `/is home` not using safe teleport 
-- Fixed `/is promote` & `/is demote` success messages 
+- Fixed `/is home` not using safe teleport
+- Fixed `/is promote` & `/is demote` success messages
 - Fixed `/is expand` using more claim blocks than the owner has available
 - Improved safe teleport failure messages
 - Reworked the biome argument to _theoretically_ support modded biomes
-- Removed `/isa config` 
+- Removed `/isa config`
 - Removed Options Config - **Use permissions options instead**
 
 # Beta 27.0
@@ -38,10 +103,10 @@
 - `/is lock` & `/is unlock` can now be used by island managers
 - Locking an island will now kick non-members from the island
 - Added `skyclaims.admin.kick.exempt` - prevents being removed from an island with `/is kick` and `/is lock`
-- the "island" command argument will now only tab complete island's where a user has the required privilege level 
+- the "island" command argument will now only tab complete island's where a user has the required privilege level
 to run the command unless they have `skyclaims.admin.list`
 - Fixed an issue with `/is expand` where it would repeatedly display a confirmation message and not expand the island
-- Fixed automated island cleanup not clearing the region 
+- Fixed automated island cleanup not clearing the region
 - Fixed `/is leave` & `/is kick` not using World/Spawn-World when configured
 - **[S7.0]** Fixed a NoSuchElementException in the Options class
 - Fixed clickable text objects missing hover text
@@ -73,7 +138,7 @@ to run the command unless they have `skyclaims.admin.list`
     - Added `/is promote` - `skyclaims.command.promote`
     - Added `/is demote` - `skyclaims.command.demote`
     - Use of GriefPrevention's `/trust` & `/permissiontrust` on an island is handled by `/is invite`
-- Enhanced `/is list` and reworked permissions: 
+- Enhanced `/is list` and reworked permissions:
     - **[O]** - owner, **[M]** - manager, or **[T]** - trusted (member) now appear in place of **[L]** or **[T]** when applicable
     - `skyclaims.command.list.base` - allows a player to use the list command _(shows a player's islands ie. **owner**, **manager**, or **trusted**)_
     - `skyclaims.command.list.unlocked` - allows a player to list all unlocked islands
@@ -104,7 +169,7 @@ to run the command unless they have `skyclaims.admin.list`
 - Updated GriefPrevention API. GP 4.0.0.319 is now the minimum required version.
 - Block-break/block-place flags in the wilderness of the SkyClaim's world are set to false automatically.
 - `/is expand` now cost 256 times more blocks due to GP's change to include y in claim block costs
-- `/is home` & `/is sethome` are now exclusive to Nucleus integration 
+- `/is home` & `/is sethome` are now exclusive to Nucleus integration
 - Cleaned up Nucleus Integration (mostly behind the scenes)
 
 # Beta 22
@@ -114,7 +179,7 @@ to run the command unless they have `skyclaims.admin.list`
 - Added island expiration and cleanup capability (disabled by default)
 - New options: `skyclaims.max-spawns`, `skyclaims.max-spawns.hostile`, `skyclaims.max-spawns.passive` ,`skyclaims.expiration`
 - New configs: Entity [Limit-Spawning, Max-Hostile, Max-Passives, Max-Spawns], Island-Expiration [Enabled, Interval, Threshold]
-- Added island entity counts (living, item, & tile) to `/is info` 
+- Added island entity counts (living, item, & tile) to `/is info`
 - Added new sort types to `/is list`: entities-, entities+, tile-, tile+
 
 # Beta 21
@@ -126,7 +191,7 @@ to run the command unless they have `skyclaims.admin.list`
 # Beta 20
 **REQUIRED: SF 2096+ & GP 292+ OPTIONAL: Nucleus 0.26.0+**
 - Island locks now prevent players from entering another players island if they're not trusted
-- Changed `skyclaims.admin.lock` to `skyclaims.admin.lock.others` 
+- Changed `skyclaims.admin.lock` to `skyclaims.admin.lock.others`
 - Added `skyclaims.admin.lock.bypass` to allow bypassing of island locks
 
 # Beta 19.1 - Hotfix
@@ -148,7 +213,7 @@ to run the command unless they have `skyclaims.admin.list`
 - Nucleus Integration: `/is sethome` now requires the player to be on a trusted island
 
 # Beta 18
-### * Manual SQLite file migration required if upgrading from Beta 13 or earlier! 
+### * Manual SQLite file migration required if upgrading from Beta 13 or earlier!
 **REQUIRED: SF 2096+ & GP 255+ OPTIONAL: Nucleus 0.24.1+**
 - **Removed deprecated SQLite config and auto file migration**
 - Fixed `/isa transfer` not working when supplied with an owner
