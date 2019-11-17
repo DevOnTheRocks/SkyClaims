@@ -17,7 +17,9 @@ Options can also be defined in specific contexts (_server, world, claim, etc_) i
 | `skyclaims.max-islands` | The maximum number of islands a player may join.<br /> _0 to disable_ | `0` |
 | `skyclaims.max-teammates` | The maximum number of players that may join an island (_the island owner's limit is used_).<br /> _0 to disable_ | `0` |
 
-### Examples (LuckPerms)
+## Examples
+ 
+### LuckPerms
 - `lp group default meta set skyclaims.default-schematic sf3` **&#8594;** islands will be made using sf3.schematic
 - `lp group default meta set skyclaims.default-biome plains` **&#8594;** islands will be created as plains
 - `lp group default meta set skyclaims.min-size 128` **&#8594;** Minimum island size will be 256x256 blocks

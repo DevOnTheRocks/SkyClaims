@@ -19,7 +19,7 @@
 | `is promote [user]` | Used by a player to promote island members. | `skyclaims.command.promote` |
 | `is reset [schematic] [keepinv]` | Used by a player to reset their island.</br>(Note: **Resets player's inventory by default!**) | `skyclaims.command.reset`<br/>`skyclaims.admin.reset.keepinv`<br/>_*supports [argument perms](#command-arguments)_ |
 | `is setbiome <biome> [target]` | Used by a player to set the biome of a block, chunk, or island. (default: island) | `skyclaims.command.setbiome`<br />_*supports [argument perms](#command-arguments)_ |
-| `is setname [name]` | Used to set an island's name (_supports formatting code_). | `skyclaims.command.setname` |
+| `is setname [name]` | Used to set an island's name.<br />(_supports formatting code_) | `skyclaims.command.setname` |
 | `is setspawn` | Used by a player to set their island's spawn point. | `skyclaims.command.setspawn`<br />others: `skyclaims.admin.setspawn` |
 | `is spawn [player]`<br />`is tp [player]` | Used to telport to the spawn of your or the player specified's island. | `skyclaims.command.spawn`<br />others: `skyclaims.admin.spawn` |
 
@@ -33,11 +33,11 @@
 ### Command Arguments
 **Command argument permission checking can be turned on via the SkyClaims config for the following:**
 
-| Command - Argument | Description | Permission |
-| --------------- | ----------- | ---------- |
-| _create/reset_ - `[schematic]` | use to give access to specific schematics beyond the default | `skyclaims.arguments.schematics.<schematic>` |
-| _setbiome_ - `<biome>` | use to limit access to specific biome types | `skyclaims.arguments.biomes.<biome>` |
-| _setbiome_ - `[target]` | use to limit access to different sized targets | `skyclaims.arguments.block`<br />`skyclaims.arguments.chunk` |
+| Command(s) | Argument | Description | Permission |
+| ---------- | -------- | ----------- | ---------- |
+| `is create`<br />`is reset` | `[schematic]` | use to give access to specific schematics beyond the default | `skyclaims.arguments.schematics.<schematic>` |
+| `is setbiome` | `<biome>` | use to limit access to specific biome types | `skyclaims.arguments.biomes.<biome>` |
+| `is setbiome` | `[target]` | use to limit access to different sized targets | `skyclaims.arguments.block`<br />`skyclaims.arguments.chunk` |
 
 ## Admin Commands
 
@@ -58,7 +58,7 @@
 | `is schematic setbiome <schematic> [biome]` | Used to set/unset the biome to use when generating an island with a schematic | `skyclaims.admin.schematic.setbiome` |
 | `is schematic setheight <schematic> [height]` | Used to set/unset the height to generate an island at with a schematic | `skyclaims.admin.schematic.setheight` |
 | `is schematic seticon <schematic> [item-type]` | Used to set/unset the item type icon to use for the schematic in the GUI menu | `skyclaims.admin.schematic.seticon` |
-| `is schematic setname <schematic> [name]` | Used to set/unset the name to display for a schematic (_supports formatting code_) | `skyclaims.admin.schematic.setname` |
+| `is schematic setname <schematic> [name]` | Used to set/unset the name to display for a schematic<br />(_supports formatting code_) | `skyclaims.admin.schematic.setname` |
 | `is schematic setpreset <schematic>` | Used to set/unset the [flat world preset code](https://minecraft.gamepedia.com/Superflat#Preset_code_format) to use when generating an island with a schematic<br />**This will cause the entire region for an island to be regenerated on creation & reset** | `skyclaims.admin.schematic.setpreset` |
 
 ### Debug Commands
