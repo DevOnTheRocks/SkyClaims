@@ -27,12 +27,16 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import net.mohron.skyclaims.SkyClaims;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.world.schematic.Schematic;
@@ -98,8 +102,13 @@ public class SchematicManager {
         if (fileName.endsWith(SCHEMATIC_FILE_EXT)) {
           try {
             DataContainer schematicData = DataFormats.NBT.readFrom(new GZIPInputStream(new FileInputStream(file)));
-            Schematic schematic = DataTranslators.SCHEMATIC.translate(schematicData);
-            schematics.add(new IslandSchematic(schematic, fileName.replace(SCHEMATIC_FILE_EXT, "").toLowerCase()));
+            List<String> missingMods = getMissingMods(schematicData);
+            if (missingMods.isEmpty()) {
+              Schematic schematic = DataTranslators.SCHEMATIC.translate(schematicData);
+              schematics.add(new IslandSchematic(schematic, fileName.replace(SCHEMATIC_FILE_EXT, "").toLowerCase()));
+            } else {
+              plugin.getLogger().warn("Schematic \"{}\" is missing required mods: {}", fileName, missingMods);
+            }
           } catch (Exception e) {
             plugin.getLogger().error("Error loading schematic: " + fileName, e);
             continue;
@@ -155,5 +164,15 @@ public class SchematicManager {
     } catch (SecurityException | IOException e) {
       plugin.getLogger().error("Failed to create default schematic.", e);
     }
+  }
+
+  private List<String> getMissingMods(DataContainer schematic) {
+    List<String> requiredMods = schematic
+        .getStringList(DataQuery.of("Metadata", Schematic.METADATA_REQUIRED_MODS))
+        .orElse(new ArrayList<>());
+
+    return requiredMods.stream()
+        .filter(mod -> !Sponge.getPluginManager().isLoaded(mod))
+        .collect(Collectors.toList());
   }
 }

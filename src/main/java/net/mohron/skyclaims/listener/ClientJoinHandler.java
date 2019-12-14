@@ -18,10 +18,12 @@
 
 package net.mohron.skyclaims.listener;
 
+import java.util.List;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.Sponge;
@@ -43,7 +45,7 @@ public class ClientJoinHandler {
       createIslandOnJoin(player);
     }
     deliverInvites(player);
-    checkIslandSize(player);
+    expandOwnedIslandsToMinWidth(player);
   }
 
   private void createIslandOnJoin(Player player) {
@@ -89,13 +91,18 @@ public class ClientJoinHandler {
     SkyClaimsTimings.DELIVER_INVITES.stopTimingIfSync();
   }
 
-  private void checkIslandSize(Player player) {
-    IslandManager.getByOwner(player.getUniqueId()).ifPresent(island -> {
-      final int width = island.getWidth();
-      int minWidth = Options.getMinSize(player.getUniqueId()) * 2;
+  private void expandOwnedIslandsToMinWidth(Player player) {
+    List<Island> ownedIslands = IslandManager.getUserIslandsByPrivilege(player, PrivilegeType.OWNER);
+    if (ownedIslands.isEmpty()) {
+      return;
+    }
 
-      if (width < minWidth) {
-        PLUGIN.getLogger().info("{} will be expanded from {} to {}.", island.getName().toPlain(), width, minWidth);
+    int minWidth = Options.getMinSize(player.getUniqueId()) * 2;
+    ownedIslands.forEach(island -> {
+      final int currentWidth = island.getWidth();
+
+      if (currentWidth < minWidth) {
+        PLUGIN.getLogger().info("{} will be expanded from {} to {}.", island.getName().toPlain(), currentWidth, minWidth);
         island.setWidth(minWidth);
       }
     });

@@ -40,6 +40,7 @@ import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
 import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
 import me.ryanhamshire.griefprevention.api.claim.ClaimType;
 import me.ryanhamshire.griefprevention.api.claim.TrustType;
+import me.ryanhamshire.griefprevention.api.data.PlayerData;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
@@ -265,28 +266,39 @@ public class Island implements ContextSource {
   }
 
   public int getWidth() {
-    return getClaim().isPresent() ? getClaim().get().getWidth() : 512;
+    return getClaim().map(Claim::getWidth).orElse(512);
   }
 
   public boolean setWidth(int width) {
     if (width < 0 || width > 512) {
       return false;
     }
-    PLUGIN.getGriefPrevention().getWorldPlayerData(getWorld().getProperties(), owner)
-        .ifPresent(data -> getClaim().ifPresent(claim -> {
-          Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-          int spacing = (512 - width) / 2;
-          claim.resize(new Vector3i(
-              getRegion().getLesserBoundary().getX() + spacing,
-              data.getMinClaimLevel(),
-              getRegion().getLesserBoundary().getZ() + spacing
-          ), new Vector3i(
-              getRegion().getGreaterBoundary().getX() - spacing,
-              data.getMaxClaimLevel(),
-              getRegion().getGreaterBoundary().getZ() - spacing
-          ));
-          Sponge.getCauseStackManager().popCause();
-        }));
+
+    Optional<PlayerData> playerData = PLUGIN.getGriefPrevention().getWorldPlayerData(getWorld().getProperties(), owner);
+    Optional<Claim> optionalClaim = getClaim();
+
+    if (playerData.isPresent() && optionalClaim.isPresent()) {
+      PlayerData data = playerData.get();
+      Claim islandClaim = optionalClaim.get();
+
+      Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
+      int spacing = (512 - width) / 2;
+      ClaimResult result = islandClaim.resize(new Vector3i(
+          getRegion().getLesserBoundary().getX() + spacing,
+          data.getMinClaimLevel(),
+          getRegion().getLesserBoundary().getZ() + spacing
+      ), new Vector3i(
+          getRegion().getGreaterBoundary().getX() - spacing,
+          data.getMaxClaimLevel(),
+          getRegion().getGreaterBoundary().getZ() - spacing
+      ));
+      Sponge.getCauseStackManager().popCause();
+
+      if (!result.successful()) {
+        PLUGIN.getLogger().error("An error occurred while resizing {}.\n{}", getName().toPlain(), result.getMessage());
+        return false;
+      }
+    }
     return getWidth() == width;
   }
 
@@ -397,16 +409,22 @@ public class Island implements ContextSource {
     return getTileEntities().size();
   }
 
+  public boolean isMember(UUID user) {
+    return user.equals(owner)
+        || getClaim().map(claim -> claim.isUserTrusted(user, TrustType.BUILDER)).orElse(false);
+  }
+
   public boolean isMember(User user) {
-    return user.getUniqueId().equals(owner)
-        || getClaim().isPresent()
-        && (getClaim().get().isUserTrusted(user, TrustType.BUILDER)
-        || getClaim().get().isUserTrusted(user, TrustType.MANAGER));
+    return isMember(user.getUniqueId());
+  }
+
+  public boolean isManager(UUID user) {
+    return user.equals(owner)
+        || getClaim().map(claim -> claim.isUserTrusted(user, TrustType.MANAGER)).orElse(false);
   }
 
   public boolean isManager(User user) {
-    return user.getUniqueId().equals(owner)
-        || (getClaim().isPresent() && getClaim().get().isUserTrusted(user, TrustType.MANAGER));
+    return isManager(user.getUniqueId());
   }
 
   public boolean isOwner(User user) {
@@ -473,18 +491,18 @@ public class Island implements ContextSource {
     save();
   }
 
-  public void expand(int blocks) {
+  public boolean expand(int blocks) {
     if (blocks < 1) {
-      return;
+      throw new IllegalArgumentException("blocks must be 1 or greater.");
     }
-    setWidth(getWidth() + blocks * 2);
+    return setWidth(getWidth() + blocks * 2);
   }
 
-  public void shrink(int blocks) {
+  public boolean shrink(int blocks) {
     if (blocks < 1) {
-      return;
+      throw new IllegalArgumentException("blocks must be 1 or greater.");
     }
-    setWidth(getWidth() - blocks * 2);
+    return setWidth(getWidth() - blocks * 2);
   }
 
   private void save() {

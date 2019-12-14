@@ -20,9 +20,9 @@ package net.mohron.skyclaims.config.type;
 
 import com.google.common.collect.Lists;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.util.WorldUtil;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import org.apache.commons.lang3.StringUtils;
@@ -58,8 +58,9 @@ public class WorldConfig {
     if (world.isPresent()) {
       return world.get();
     } else {
-      SkyClaims.getInstance().getLogger().warn("Unable to locate world {}.", worldName);
-      return WorldUtil.getDefaultWorld();
+      String message = "World \"" + worldName + "\" cannot be found.";
+      SkyClaims.getInstance().getLogger().error(message);
+      throw new NoSuchElementException(message);
     }
   }
 

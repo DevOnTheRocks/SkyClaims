@@ -22,7 +22,6 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
-import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -44,7 +43,7 @@ public class RespawnHandler {
       return;
     }
 
-    final Optional<Island> island = IslandManager.get(event.getFromTransform());
+    final Optional<Island> island = IslandManager.getByTransform(event.getFromTransform());
     if (island.isPresent() && island.get().isMember(player)) {
       Sponge.getTeleportHelper()
           .getSafeLocation(island.get().getSpawn().getLocation())

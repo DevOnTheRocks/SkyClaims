@@ -1,5 +1,8 @@
 /*
 !/.github/
+!/.idea/
+/.idea/*
+!/.idea/runConfigurations/
 !/gradle/
 !/src/
 !/lib/

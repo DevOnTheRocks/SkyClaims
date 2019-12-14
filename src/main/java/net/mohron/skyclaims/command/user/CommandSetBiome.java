@@ -67,7 +67,7 @@ public class CommandSetBiome extends CommandBase.PlayerCommand {
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     BiomeType biome = args.<BiomeType>getOne(BIOME)
         .orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
-    Island island = IslandManager.get(player.getLocation())
+    Island island = IslandManager.getByLocation(player.getLocation())
         .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
 
     if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS)) {

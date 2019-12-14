@@ -143,14 +143,17 @@ public class CommandExpand extends CommandBase.IslandCommand {
 
       // Attempt to charge the required currency to the island owner.
       if (charge(island, cost)) {
-        island.expand(blocks);
-        src.sendMessage(Text.of(
-            TextColors.GREEN, "Your island has been expanded to ",
-            TextColors.LIGHT_PURPLE, island.getWidth(),
-            TextColors.GRAY, "x",
-            TextColors.LIGHT_PURPLE, island.getWidth(),
-            TextColors.GREEN, "."
-        ));
+        if (island.expand(blocks)) {
+          src.sendMessage(Text.of(
+              TextColors.GREEN, "Your island has been expanded to ",
+              TextColors.LIGHT_PURPLE, island.getWidth(),
+              TextColors.GRAY, "x",
+              TextColors.LIGHT_PURPLE, island.getWidth(),
+              TextColors.GREEN, "."
+          ));
+        } else {
+          src.sendMessage(Text.of(TextColors.RED, "An error occurred while expanding your island!"));
+        }
       } else {
         src.sendMessage(Text.of(
             TextColors.RED, "You do not have the required currency (",

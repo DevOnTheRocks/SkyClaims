@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import me.ryanhamshire.griefprevention.api.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.schematic.IslandSchematic;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Transform;
@@ -50,21 +51,21 @@ public class IslandManager {
     return Optional.ofNullable(ISLANDS.get(islandUniqueId));
   }
 
-  public static Optional<Island> get(Location<World> location) {
-    return get(Region.get(location));
+  public static Optional<Island> getByLocation(Location<World> location) {
+    return getByRegion(Region.get(location));
   }
 
-  public static Optional<Island> get(Transform<World> transform) {
-    return get(Region.get(transform.getLocation()));
+  public static Optional<Island> getByTransform(Transform<World> transform) {
+    return getByRegion(Region.get(transform.getLocation()));
   }
 
-  public static Optional<Island> get(Region region) {
+  public static Optional<Island> getByRegion(Region region) {
     return ISLANDS.values().stream()
         .filter(i -> i.getRegion().equals(region))
         .findAny();
   }
 
-  public static Optional<Island> get(Claim claim) {
+  public static Optional<Island> getByClaim(Claim claim) {
     for (Island island : ISLANDS.values()) {
       if (island.getClaim().isPresent() && island.getClaim().get().equals(claim)) {
         return Optional.of(island);
@@ -73,9 +74,15 @@ public class IslandManager {
     return Optional.empty();
   }
 
-  public static List<Island> get(User user) {
+  public static List<Island> getByUser(User user) {
     return ISLANDS.values().stream()
         .filter(i -> i.isMember(user))
+        .collect(Collectors.toList());
+  }
+
+  public static List<Island> getUserIslandsByPrivilege(User user, PrivilegeType privilege) {
+    return ISLANDS.values().stream()
+        .filter(i -> i.getPrivilegeType(user).greaterThanOrEqualTo(privilege))
         .collect(Collectors.toList());
   }
 
@@ -94,22 +101,22 @@ public class IslandManager {
       return false;
     }
     for (Island island : ISLANDS.values()) {
-      if (island.getOwnerUniqueId().equals(owner)) {
+      if (island.isMember(owner)) {
         return true;
       }
     }
     return false;
   }
 
-  public static int getTotalIslandsOwned(UUID owner) {
+  public static int countByOwner(User owner) {
     return (int) ISLANDS.values().stream()
-        .filter(i -> i.getOwnerUniqueId().equals(owner))
+        .filter(i -> i.getOwnerUniqueId().equals(owner.getUniqueId()))
         .count();
   }
 
-  public static int getTotalIslands(User user) {
+  public static int countByMember(User member) {
     return (int) ISLANDS.values().stream()
-        .filter(i -> i.isMember(user))
+        .filter(i -> i.isMember(member))
         .count();
   }
 

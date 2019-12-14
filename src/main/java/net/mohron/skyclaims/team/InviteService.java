@@ -112,7 +112,7 @@ public class InviteService {
       // Check if the receiver can accept this invite
       if (!inviteExists(invite)) {
         src.sendMessage(Text.of(TextColors.RED, "This invite has expired!"));
-      } else if (maxIslands > 0 && maxIslands - IslandManager.getTotalIslands(invite.getReceiver()) < 1) {
+      } else if (maxIslands > 0 && maxIslands - IslandManager.countByMember(invite.getReceiver()) < 1) {
         src.sendMessage(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
       } else if (maxTeammates > 0 && invite.getIsland().getTotalMembers() >= maxTeammates) {
         src.sendMessage(Text.of(invite.getIsland().getName(), TextColors.RED, " has reached its maximum team size!"));
@@ -184,7 +184,7 @@ public class InviteService {
         int limit = Options.getMaxIslands(player.getUniqueId());
         Text header = Text.of(
             TextColors.GRAY, "You currently have ",
-            TextColors.LIGHT_PURPLE, IslandManager.getTotalIslands(player),
+            TextColors.LIGHT_PURPLE, IslandManager.countByMember(player),
             TextColors.GRAY, " of ",
             TextColors.LIGHT_PURPLE, limit, 
             TextColors.GRAY, " maximum island",
