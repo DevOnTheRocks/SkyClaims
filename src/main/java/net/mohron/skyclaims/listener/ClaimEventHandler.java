@@ -80,11 +80,11 @@ public class ClaimEventHandler {
     }
 
     for (Claim claim : event.getClaims()) {
-      if (claim.getWorld().equals(world) && IslandManager.get(claim).isPresent()) {
+      if (claim.getWorld().equals(world) && IslandManager.getByClaim(claim).isPresent()) {
         if (event instanceof DeleteClaimEvent.Abandon) {
           event.setMessage(Text.of(TextColors.RED, "You cannot abandon an island claim!"));
         } else {
-          IslandManager.get(claim).ifPresent((Island island) -> event.setMessage(Text.of(
+          IslandManager.getByClaim(claim).ifPresent((Island island) -> event.setMessage(Text.of(
               TextColors.RED, "A claim you are attempting to delete belongs to an island.", Text.NEW_LINE,
               Text.of(TextColors.AQUA, "Do you want to delete ", island.getOwnerName(), "'s island?").toBuilder()
                   .onHover(TextActions.showText(Text.of("Click here to delete.")))
@@ -103,7 +103,7 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-    if (!claim.getWorld().equals(world) || isSkyClaims(event) || !IslandManager.get(claim).isPresent()) {
+    if (!claim.getWorld().equals(world) || isSkyClaims(event) || !IslandManager.getByClaim(claim).isPresent()) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
@@ -123,7 +123,7 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-    if (!claim.getWorld().equals(world) || !IslandManager.get(claim).isPresent()) {
+    if (!claim.getWorld().equals(world) || !IslandManager.getByClaim(claim).isPresent()) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
@@ -144,12 +144,12 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
-    if (!claim.getWorld().equals(world) || !IslandManager.get(claim).isPresent()) {
+    if (!claim.getWorld().equals(world) || !IslandManager.getByClaim(claim).isPresent()) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
-    Island island = IslandManager.get(claim).get();
+    Island island = IslandManager.getByClaim(claim).get();
     if (island.isLocked() && !island.isMember(player) && !player.hasPermission(Permissions.BYPASS_LOCK)) {
       event.setCancelled(true);
       event.setMessage(Text.of(TextColors.RED, "You do not have permission to enter ", island.getName(), TextColors.RED, "!"));
@@ -207,12 +207,12 @@ public class ClaimEventHandler {
       claim = parent;
     }
     // Ignore claims without an island.
-    if (!IslandManager.get(claim).isPresent()) {
+    if (!IslandManager.getByClaim(claim).isPresent()) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
     // Send out invites
-    Island island = IslandManager.get(claim).get();
+    Island island = IslandManager.getByClaim(claim).get();
     for (PrivilegeType type : PrivilegeType.values()) {
       if (type.getTrustType() == event.getTrustType()) {
         event.setCancelled(true);

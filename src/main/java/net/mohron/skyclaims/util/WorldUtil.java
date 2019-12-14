@@ -18,26 +18,15 @@
 
 package net.mohron.skyclaims.util;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.region.Region;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.biome.BiomeType;
 
-public class WorldUtil {
+public final class WorldUtil {
 
-  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-
-  public static World getDefaultWorld() {
-    String defaultWorldName = PLUGIN.getGame().getServer().getDefaultWorldName();
-    final Optional<World> world = PLUGIN.getGame().getServer().getWorld(defaultWorldName);
-    if (world.isPresent()) {
-      return world.get();
-    }
-    throw new NoSuchElementException("Failed to locate default world '" + defaultWorldName + "'!");
+  private WorldUtil() {
   }
 
   public static void setBlockBiome(Location<World> location, BiomeType biomeType) {

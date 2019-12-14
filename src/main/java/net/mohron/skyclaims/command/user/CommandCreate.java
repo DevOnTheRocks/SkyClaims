@@ -62,12 +62,7 @@ public class CommandCreate extends ListSchematicCommand {
 
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
-    if (IslandManager.hasIsland(player.getUniqueId())) {
-      throw new CommandException(Text.of(TextColors.RED, "You already have an island!"));
-    }
-    int maxIslands = Options.getMaxIslands(player.getUniqueId());
-    boolean canCreate = maxIslands < 1 || maxIslands - IslandManager.getTotalIslands(player) > 0;
-    if (!canCreate) {
+    if (hasPlayerReachedMaxIslands(player)) {
       throw new CommandException(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
     }
 
@@ -76,16 +71,16 @@ public class CommandCreate extends ListSchematicCommand {
     if (schematic.isPresent()) {
       return createIsland(player, schematic.get());
     } else if (!defaultSchematic.isPresent()) {
-      return listSchematics(player, this::createIsland);
+      listSchematics(player, this::createIsland);
+      return CommandResult.empty();
     } else {
       return createIsland(player, defaultSchematic.get());
     }
   }
 
   private CommandResult createIsland(Player player, IslandSchematic schematic) throws CommandException {
-    if (IslandManager.hasIsland(player.getUniqueId())) {
-      player.sendMessage(Text.of(TextColors.RED, "You already have an island!"));
-      return CommandResult.empty();
+    if (hasPlayerReachedMaxIslands(player)) {
+      throw new CommandException(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
     }
 
     player.sendMessage(Text.of(
@@ -102,13 +97,17 @@ public class CommandCreate extends ListSchematicCommand {
     }
   }
 
+  private boolean hasPlayerReachedMaxIslands(Player player) {
+    int maxIslands = Options.getMaxIslands(player.getUniqueId());
+    return maxIslands >= 1 && maxIslands - IslandManager.countByMember(player) <= 0;
+  }
+
   private Consumer<CommandSource> createIsland(IslandSchematic schematic) {
     return src -> {
       if (src instanceof Player) {
         Player player = (Player) src;
-        if (IslandManager.hasIsland(player.getUniqueId())) {
-          player.sendMessage(Text.of(TextColors.RED, "You already have an island!"));
-          return;
+        if (hasPlayerReachedMaxIslands(player)) {
+          player.sendMessage(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
         }
 
         player.sendMessage(Text.of(

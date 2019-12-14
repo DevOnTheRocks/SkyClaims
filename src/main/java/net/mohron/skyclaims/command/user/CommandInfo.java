@@ -34,7 +34,6 @@ import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -75,7 +74,7 @@ public class CommandInfo extends CommandBase {
     List<Island> islands = Lists.newArrayList();
 
     if (src instanceof Player && !args.hasAny(ISLAND)) {
-      islands.add(IslandManager.get(((Player) src).getLocation())
+      islands.add(IslandManager.getByLocation(((Player) src).getLocation())
           .orElseThrow(() -> new CommandException(
               Text.of(TextColors.RED, "You must be on an island to use this command.")))
       );
@@ -103,7 +102,7 @@ public class CommandInfo extends CommandBase {
             TextColors.YELLOW, "Last Active", TextColors.WHITE, " : ", TextColors.GRAY, sdf.format(island.getDateLastActive()), Text.NEW_LINE,
             TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY,
             island.getUniqueId(), Text.NEW_LINE,
-            (island.getClaim().isPresent()) ? Text.of(
+            island.getClaim().isPresent() ? Text.of(
                 TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(
                     island.getClaimUniqueId().toString())
                     .onClick(TextActions
@@ -155,14 +154,14 @@ public class CommandInfo extends CommandBase {
             .onClick(TextActions.executeCallback(consumer -> {
               src.sendMessage(Text.of(
                   TextColors.GREEN, "Are you sure you want to delete ",
-                  TextColors.GOLD, island.getOwnerName(), TextColors.GREEN, "'s island?",
+                  island.getName(), TextColors.GREEN, " island?",
                   Text.NEW_LINE,
                   TextColors.WHITE, "[",
                   Text.builder("YES").color(TextColors.GREEN)
                       .onClick(TextActions.executeCallback(s -> {
                         island.clear();
                         island.delete();
-                        src.sendMessage(Text.of(island.getOwnerName(), "'s island has been deleted!"));
+                        src.sendMessage(Text.of(island.getName(), " has been deleted!"));
                       })),
                   TextColors.WHITE, "] [",
                   Text.builder("NO")
@@ -180,23 +179,26 @@ public class CommandInfo extends CommandBase {
         TextColors.GOLD, Text.builder("Expand")
             .onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2)))
             .onClick(TextActions.executeCallback(consumer -> {
-              Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-
               if (island.getWidth() < 512) {
-                island.expand(1);
-                src.sendMessage(Text.of(
-                    island.getOwnerName(),
-                    TextColors.GREEN, "'s island has been expanded to ",
-                    TextColors.LIGHT_PURPLE, island.getWidth(),
-                    TextColors.GRAY, "x",
-                    TextColors.LIGHT_PURPLE, island.getWidth(),
-                    TextColors.RESET, "!"
-                ));
+                if (island.expand(1)) {
+                  src.sendMessage(Text.of(
+                      island.getName(),
+                      TextColors.GREEN, " has been expanded to ",
+                      TextColors.LIGHT_PURPLE, island.getWidth(),
+                      TextColors.GRAY, "x",
+                      TextColors.LIGHT_PURPLE, island.getWidth(),
+                      TextColors.GREEN, "."
+                  ));
+                } else {
+                  src.sendMessage(Text.of(
+                      TextColors.RED, "An error occurred while expanding ",
+                      island.getName(),
+                      TextColors.RED, "!"
+                  ));
+                }
               } else {
                 src.sendMessage(Text.of(island.getOwnerName(), TextColors.RED, "'s island cannot be expanded further!"));
               }
-
-              Sponge.getCauseStackManager().popCause();
             })),
         TextColors.WHITE, "] "
     ) : Text.EMPTY;
@@ -206,16 +208,22 @@ public class CommandInfo extends CommandBase {
         TextColors.GOLD, Text.builder("Shrink")
             .onHover(TextActions.showText(Text.of("Click to shrink this island's width by ", TextColors.LIGHT_PURPLE, 2)))
             .onClick(TextActions.executeCallback(consumer -> {
-              Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-
-              island.shrink(1);
-              src.sendMessage(Text.of(
-                  island.getOwnerName(), "'s island has been shrunk to ",
-                  TextColors.LIGHT_PURPLE, island.getWidth(), TextColors.RESET, "x", TextColors.LIGHT_PURPLE, island.getWidth(),
-                  TextColors.RESET, "!"
-              ));
-
-              Sponge.getCauseStackManager().popCause();
+              if (island.shrink(1)) {
+                src.sendMessage(Text.of(
+                    island.getName(),
+                    TextColors.GREEN, " has been shrunk to ",
+                    TextColors.LIGHT_PURPLE, island.getWidth(),
+                    TextColors.GRAY, "x",
+                    TextColors.LIGHT_PURPLE, island.getWidth(),
+                    TextColors.GREEN, "."
+                ));
+              } else {
+                src.sendMessage(Text.of(
+                    TextColors.RED, "An error occurred while shrinking ",
+                    island.getName(),
+                    TextColors.RED, "!"
+                ));
+              }
             })),
         TextColors.WHITE, "] "
     ) : Text.EMPTY;

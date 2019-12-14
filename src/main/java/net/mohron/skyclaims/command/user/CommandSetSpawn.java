@@ -53,7 +53,7 @@ public class CommandSetSpawn extends CommandBase.PlayerCommand {
 
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
-    Island island = IslandManager.get(player.getLocation())
+    Island island = IslandManager.getByLocation(player.getLocation())
         .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
 
     if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS)) {

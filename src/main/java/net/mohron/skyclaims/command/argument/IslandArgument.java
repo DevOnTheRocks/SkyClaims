@@ -83,6 +83,7 @@ public class IslandArgument extends CommandElement {
       boolean admin = src.hasPermission(Permissions.COMMAND_LIST_ALL);
       return IslandManager.ISLANDS.values().stream()
           .filter(i -> admin
+              || !i.isLocked()
               || src instanceof Player && i.getPrivilegeType((Player) src) == requirement)
           .filter(i -> i.getOwnerName().toLowerCase().startsWith(arg))
           .filter(i -> i.getSortableName().toLowerCase().startsWith(arg))

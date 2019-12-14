@@ -4,10 +4,9 @@ plugins {
     id "signing"
     id "ninja.miserable.blossom" version "1.0.1"
     id "com.github.johnrengelman.shadow" version "5.0.0"
-    id "org.spongepowered.plugin" version "0.9.0"
-    id "com.qixalite.spongestart2" version "4.0.0"
     id "io.franzbecker.gradle-lombok" version "3.1.0"
     id "org.sonarqube" version "2.6"
+    id "org.spongepowered.plugin" version "0.9.0"
 }
 
 group = "net.mohron.skyclaims"
@@ -51,6 +50,7 @@ repositories {
 }
 
 dependencies {
+    annotationProcessor("org.spongepowered:spongeapi:${spongeapi}")
     compile("org.spongepowered:spongeapi:${spongeapi}")
     compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
     compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
@@ -65,7 +65,7 @@ lombok {
 }
 
 shadowJar {
-    classifier = "plugin"
+    archiveClassifier.set("plugin")
     dependencies {
         include(dependency("org.bstats:bstats-sponge:${bstats}"))
     }
@@ -78,12 +78,24 @@ blossom {
     replaceToken "@NAME@", project.name, pluginInfo
     replaceToken "@VERSION@", project.version, pluginInfo
     replaceToken "@DESCRIPTION@", project.description, pluginInfo
+    replaceToken "@SPONGE_API@", spongeapi, pluginInfo
+    replaceToken "@GRIEF_PREVENTION@", griefprevention, pluginInfo
+    replaceToken "@NUCLEUS@", nucleus, pluginInfo
 }
 
-spongestart {
-    online = "false"
-    minecraft = "1.12.2"
+task cleanModsFolder(type: Delete) {
+    delete fileTree("run/forge/mods").matching {
+        include "**/SkyClaims-*-plugin.jar"
+    }
 }
+
+task copyPlugin(type: Copy) {
+    from 'build/libs'
+    into 'run/forge/mods'
+    include "SkyClaims-${version}-plugin.jar"
+}
+copyPlugin.dependsOn build
+copyPlugin.dependsOn cleanModsFolder
 
 signing {
     required {Project.hasProperty("signing.keyId")}

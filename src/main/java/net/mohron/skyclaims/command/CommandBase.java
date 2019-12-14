@@ -30,6 +30,7 @@ import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.schematic.SchematicUI;
+import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
@@ -41,6 +42,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.pagination.PaginationList;
+import org.spongepowered.api.service.pagination.PaginationList.Builder;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -63,7 +65,7 @@ public abstract class CommandBase implements CommandExecutor {
       if (!args.hasAny(ISLAND)) {
         return execute(
             (Player) src,
-            IslandManager.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
+            IslandManager.getByLocation(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
                 TextColors.RED, "You must be on an island to use this command!")
             )),
             args);
@@ -108,13 +110,15 @@ public abstract class CommandBase implements CommandExecutor {
       }
       if (!args.hasAny(ISLAND)) {
         if (src instanceof Player) {
-          Island island = IslandManager.get(((Player) src).getLocation()).orElseThrow(() -> new CommandException(
+          Island island = IslandManager.getByLocation(((Player) src).getLocation()).orElseThrow(() -> new CommandException(
               Text.of(TextColors.RED, "You must provide an island argument or be on an island to use this command!")
           ));
           checkPerms(src, island);
           return execute(src, island, args);
         } else {
-          throw new CommandException(Text.of(TextColors.RED, "An island argument is required when executed by a non-player!"));
+          throw new CommandException(Text.of(
+              TextColors.RED, "An island argument is required when executed by a non-player!"
+          ));
         }
       } else {
         List<Island> islands = Lists.newArrayList();
@@ -164,42 +168,78 @@ public abstract class CommandBase implements CommandExecutor {
     }
   }
 
+  public abstract static class ListIslandCommand extends PlayerCommand implements CommandRequirement.RequiresPlayer {
+
+    protected static final Text ISLAND = Text.of("island");
+
+    protected CommandResult listIslands(Player player, Function<Island, Consumer<CommandSource>> mapper)
+        throws CommandException {
+      return listIslands(player, PrivilegeType.MEMBER, mapper);
+    }
+
+    protected CommandResult listIslands(Player player, PrivilegeType privilege, Function<Island, Consumer<CommandSource>> mapper)
+        throws CommandException {
+      List<Island> islands = IslandManager.getUserIslandsByPrivilege(player, privilege);
+
+      if (islands.isEmpty()) {
+        throw new CommandException(Text.of(TextColors.RED, "You have no island available!"));
+      }
+      if (islands.size() == 1) {
+        mapper.apply(islands.get(0)).accept(player);
+        return CommandResult.empty();
+      }
+
+      getInteractiveIslandPagination(mapper, islands).sendTo(player);
+
+      return CommandResult.empty();
+    }
+  }
+
+  protected static Builder getInteractiveIslandPagination(Function<Island, Consumer<CommandSource>> mapper,
+      List<Island> islands) {
+    List<Text> islandText = islands.stream()
+        .map(s -> s.getName().toBuilder().onClick(TextActions.executeCallback(mapper.apply(s))).build())
+        .collect(Collectors.toList());
+
+    return PaginationList.builder()
+        .title(Text.of(TextColors.AQUA, "Islands"))
+        .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+        .contents(islandText);
+  }
+
   public abstract static class ListSchematicCommand extends PlayerCommand implements CommandRequirement.RequiresPlayer {
 
     protected static final Text SCHEMATIC = Text.of("schematic");
+  }
 
-    protected CommandResult listSchematics(Player player, Function<IslandSchematic, Consumer<CommandSource>> mapper) throws CommandException {
-      boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
+  protected void listSchematics(Player player, Function<IslandSchematic, Consumer<CommandSource>> mapper)
+      throws CommandException {
+    boolean checkPerms = PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
 
-      List<IslandSchematic> schematics = PLUGIN.getSchematicManager().getSchematics().stream()
-          .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName()))
+    List<IslandSchematic> schematics = PLUGIN.getSchematicManager().getSchematics().stream()
+        .filter(s -> !checkPerms || player.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName()))
+        .collect(Collectors.toList());
+
+    if (schematics.isEmpty()) {
+      throw new CommandException(Text.of(TextColors.RED, "You have no schematics available!"));
+    }
+    if (schematics.size() == 1) {
+      mapper.apply(schematics.get(0)).accept(player);
+    }
+
+    if (PLUGIN.getConfig().getMiscConfig().isTextSchematicList()) {
+      List<Text> schematicText = schematics.stream()
+          .map(s -> s.getText().toBuilder().onClick(TextActions.executeCallback(mapper.apply(s))).build())
           .collect(Collectors.toList());
 
-      if (schematics.isEmpty()) {
-        throw new CommandException(Text.of(TextColors.RED, "You have no schematics available!"));
-      }
-      if (schematics.size() == 1) {
-        mapper.apply(schematics.get(0));
-        return CommandResult.empty();
-      }
-
-      if (PLUGIN.getConfig().getMiscConfig().isTextSchematicList()) {
-        List<Text> schematicText = schematics.stream()
-            .map(s -> s.getText().toBuilder().onClick(TextActions.executeCallback(mapper.apply(s))).build())
-            .collect(Collectors.toList());
-
-        PaginationList.builder()
-            .title(Text.of(TextColors.AQUA, "Schematics"))
-            .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
-            .contents(schematicText)
-            .sendTo(player);
-
-        return CommandResult.empty();
-      }
-
-      player.openInventory(SchematicUI.of(schematics, mapper));
-      return CommandResult.empty();
+      PaginationList.builder()
+          .title(Text.of(TextColors.AQUA, "Schematics"))
+          .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+          .contents(schematicText)
+          .sendTo(player);
     }
+
+    player.openInventory(SchematicUI.of(schematics, mapper));
   }
 
   protected void clearIslandMemberInventories(Island island, String keepPlayerInv, String keepEnderChestInv) {

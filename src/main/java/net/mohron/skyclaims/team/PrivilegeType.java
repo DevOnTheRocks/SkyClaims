@@ -69,4 +69,8 @@ public enum PrivilegeType {
     }
     return GenericArguments.choices(key, typeMap);
   }
+
+  public boolean greaterThanOrEqualTo(PrivilegeType other) {
+    return this.ordinal() <= other.ordinal();
+  }
 }
