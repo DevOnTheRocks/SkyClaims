@@ -19,8 +19,9 @@
 package net.mohron.skyclaims.team;
 
 import com.google.common.collect.Maps;
+import com.griefdefender.api.claim.TrustType;
+import com.griefdefender.api.claim.TrustTypes;
 import java.util.Map;
-import me.ryanhamshire.griefprevention.api.claim.TrustType;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.text.Text;
@@ -28,10 +29,10 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 public enum PrivilegeType {
-  OWNER(Text.of(TextColors.BLUE, "Owner"), TrustType.NONE),
-  MANAGER(Text.of(TextColors.GOLD, "Manager"), TrustType.MANAGER),
-  MEMBER(Text.of(TextColors.YELLOW, "Member"), TrustType.BUILDER),
-  NONE(Text.of(TextColors.GRAY, "None"), TrustType.NONE);
+  OWNER(Text.of(TextColors.BLUE, "Owner"), TrustTypes.NONE),
+  MANAGER(Text.of(TextColors.GOLD, "Manager"), TrustTypes.MANAGER),
+  MEMBER(Text.of(TextColors.YELLOW, "Member"), TrustTypes.BUILDER),
+  NONE(Text.of(TextColors.GRAY, "None"), TrustTypes.NONE);
 
   private Text text;
   private TrustType trustType;

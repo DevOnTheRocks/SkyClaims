@@ -16,27 +16,25 @@
  * along with SkyClaims.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.mohron.skyclaims.config.type;
+package net.mohron.skyclaims.config.type.integration;
 
-import net.mohron.skyclaims.config.type.integration.GriefDefenderConfig;
-import net.mohron.skyclaims.config.type.integration.NucleusConfig;
+import com.griefdefender.api.permission.flag.Flag;
+import com.griefdefender.api.permission.flag.Flags;
+import java.util.HashMap;
+import java.util.Map;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
-public class IntegrationConfig {
+public class GriefDefenderConfig {
 
-  @Setting(value = "Grief-Prevention")
-  private GriefDefenderConfig griefDefenderConfig = new GriefDefenderConfig();
+  @Setting(value = "Wilderness-Flags", comment = "Use to set up default flags to be set on the Wilderness claim.")
+  private Map<Flag, Boolean> wildernessFlags = new HashMap<Flag, Boolean>() {{
+    put(Flags.BLOCK_BREAK, false);
+    put(Flags.BLOCK_PLACE, false);
+  }};
 
-  @Setting(value = "Nucleus")
-  private NucleusConfig nucleus = new NucleusConfig();
-
-  public GriefDefenderConfig getGriefDefender() {
-    return griefDefenderConfig;
-  }
-
-  public NucleusConfig getNucleus() {
-    return nucleus;
+  public Map<Flag, Boolean> getWildernessFlags() {
+    return wildernessFlags;
   }
 }

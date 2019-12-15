@@ -18,14 +18,14 @@
 
 package net.mohron.skyclaims.command.user;
 
+import com.griefdefender.api.GriefDefender;
+import com.griefdefender.api.claim.Claim;
+import com.griefdefender.api.claim.ClaimBlockSystem;
+import com.griefdefender.api.data.PlayerData;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.function.Consumer;
-import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
-import me.ryanhamshire.griefprevention.api.claim.Claim;
-import me.ryanhamshire.griefprevention.api.claim.ClaimBlockSystem;
-import me.ryanhamshire.griefprevention.api.data.PlayerData;
-import net.mohron.skyclaims.command.CommandBase;
+import net.mohron.skyclaims.command.CommandBase.IslandCommand;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.config.type.EconomyConfig;
@@ -50,10 +50,9 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
-public class CommandExpand extends CommandBase.IslandCommand {
+public class CommandExpand extends IslandCommand {
 
   public static final String HELP_TEXT = "used to expand your island.";
-  private static final GriefPreventionApi GP = PLUGIN.getGriefPrevention();
   private static final Text BLOCKS = Text.of("blocks");
 
   public static void register() {
@@ -173,7 +172,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
 
   private int getCost(int blocks, Claim claim) {
     return (int) Math.pow(claim.getWidth() + blocks, 2)
-        * (GP.getClaimBlockSystem() == ClaimBlockSystem.VOLUME ? 256 : 1) - claim.getClaimBlocks();
+        * (GriefDefender.getCore().getClaimBlockSystem() == ClaimBlockSystem.VOLUME ? 256 : 1) - claim.getClaimBlocks();
   }
 
   private boolean charge(Island island, int cost) {
@@ -197,7 +196,7 @@ public class CommandExpand extends CommandBase.IslandCommand {
       }
     } else {
       // Use GP claim blocks by manipulating the player's bonus claim block balance
-      Optional<PlayerData> data = GP.getWorldPlayerData(island.getWorld().getProperties(), island.getOwnerUniqueId());
+      Optional<PlayerData> data = GriefDefender.getCore().getPlayerData(island.getWorld().getUniqueId(), island.getOwnerUniqueId());
       if (data.isPresent()) {
         if (data.get().getRemainingClaimBlocks() >= cost) {
           // Use the Owner's claim blocks to expand the island

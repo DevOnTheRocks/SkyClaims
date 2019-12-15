@@ -20,6 +20,7 @@ package net.mohron.skyclaims.world;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.griefdefender.api.claim.Claim;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +29,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import me.ryanhamshire.griefprevention.api.claim.Claim;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.team.PrivilegeType;

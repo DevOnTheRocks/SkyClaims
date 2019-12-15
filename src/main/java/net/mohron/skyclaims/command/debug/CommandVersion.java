@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.command.debug;
 
 import com.google.common.collect.Lists;
+import com.griefdefender.api.GriefDefender;
 import java.util.List;
 import java.util.Optional;
 import net.mohron.skyclaims.PluginInfo;
@@ -72,16 +73,14 @@ public class CommandVersion extends CommandBase {
     ));
     // SkyClaims
     texts.add(Text.of(TextColors.DARK_AQUA, "SkyClaims", TextColors.WHITE, " : ", TextColors.YELLOW, PluginInfo.VERSION));
-    // GriefPrevention
-    String gp;
+    // GriefDefender
+    String gd = "Error/Missing";
     try {
-      gp = (PLUGIN.getGriefPrevention() != null) ? PLUGIN.getGriefPrevention().getImplementationVersion() : "Error/Missing";
+      gd = GriefDefender.getVersion().getImplementationVersion();
     } catch (Exception e) {
-      PLUGIN.getLogger().error("Error getting Grief Prevention version.", e);
-      Optional<PluginContainer> plugin = Sponge.getPluginManager().getPlugin("griefprevention");
-      gp = plugin.map(pluginContainer -> pluginContainer.getVersion().get()).orElse("Error/Missing");
+      PLUGIN.getLogger().error("Error getting Grief Defender version.", e);
     }
-    texts.add(Text.of(TextColors.DARK_AQUA, "Grief Prevention", TextColors.WHITE, " : ", TextColors.YELLOW, gp));
+    texts.add(Text.of(TextColors.DARK_AQUA, "Grief Defender", TextColors.WHITE, " : ", TextColors.YELLOW, gd));
     // Permissions
     PluginContainer perms = Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin();
     texts.add(Text.of(

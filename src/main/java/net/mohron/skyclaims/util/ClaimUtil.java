@@ -22,15 +22,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.griefdefender.api.GriefDefender;
+import com.griefdefender.api.claim.Claim;
+import com.griefdefender.api.claim.ClaimManager;
+import com.griefdefender.api.claim.ClaimResult;
+import com.griefdefender.api.claim.ClaimTypes;
+import com.griefdefender.api.data.PlayerData;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nonnull;
-import me.ryanhamshire.griefprevention.api.claim.Claim;
-import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
-import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
-import me.ryanhamshire.griefprevention.api.claim.ClaimType;
-import me.ryanhamshire.griefprevention.api.data.PlayerData;
+import net.kyori.text.TextComponent;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
@@ -52,7 +54,7 @@ public final class ClaimUtil {
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   public static Claim createIslandClaim(@Nonnull UUID ownerUniqueId, @Nonnull Region region) throws CreateIslandException {
     Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-    ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(PLUGIN.getConfig().getWorldConfig().getWorld());
+    ClaimManager claimManager = GriefDefender.getCore().getClaimManager(PLUGIN.getConfig().getWorldConfig().getWorld().getUniqueId());
 
     Claim claim = null;
     ClaimResult claimResult;
@@ -65,10 +67,10 @@ public final class ClaimUtil {
               "Creating {}'s claim in region ({}, {}). Claimed from {}x, {}z - {}x, {}z.",
               getName(ownerUniqueId),
               region.getX(), region.getZ(),
-              claim.getLesserBoundaryCorner().getBlockX(),
-              claim.getLesserBoundaryCorner().getBlockZ(),
-              claim.getGreaterBoundaryCorner().getBlockX(),
-              claim.getGreaterBoundaryCorner().getBlockZ()
+              claim.getLesserBoundaryCorner().getX(),
+              claim.getLesserBoundaryCorner().getZ(),
+              claim.getGreaterBoundaryCorner().getX(),
+              claim.getGreaterBoundaryCorner().getZ()
           );
           break;
         case OVERLAPPING_CLAIM:
@@ -83,7 +85,7 @@ public final class ClaimUtil {
             PLUGIN.getLogger().info(
                 "Removed claim overlapping {}'s island (Owner: {}, ID: {}).",
                 getName(ownerUniqueId),
-                overlappedClaim.getOwnerName().toPlain(),
+                overlappedClaim.getOwnerName(),
                 overlappedClaim.getUniqueId()
             );
           }
@@ -91,7 +93,7 @@ public final class ClaimUtil {
         default:
           throw new CreateIslandException(Text.of(
               TextColors.RED, "Failed to create claim: ", claimResult.getResultType(),
-              Text.NEW_LINE, claimResult.getMessage().orElse(Text.of("No message provided"))
+              Text.NEW_LINE, claimResult.getMessage().orElse(TextComponent.of("No message provided"))
           ));
       }
     } while (claim == null);
@@ -108,15 +110,15 @@ public final class ClaimUtil {
     checkNotNull(ownerUniqueId, "Error Creating Claim: Owner is null");
     checkNotNull(region, "Error Creating Claim: Region is null");
 
-    PlayerData playerData = PLUGIN.getGriefPrevention()
-        .getWorldPlayerData(world.getProperties(), ownerUniqueId)
+    PlayerData playerData = GriefDefender.getCore()
+        .getPlayerData(world.getUniqueId(), ownerUniqueId)
         .orElseThrow(() -> new CreateIslandException(Text.of(
-            TextColors.RED, "Unable to load GriefPrevention player data!"
+            TextColors.RED, "Unable to load GriefDefender player data!"
         )));
 
     return Claim.builder()
-        .type(ClaimType.TOWN)
-        .world(world)
+        .type(ClaimTypes.TOWN)
+        .world(world.getUniqueId())
         .bounds(
             new Vector3i(
                 region.getLesserBoundary().getX() + initialSpacing, playerData.getMinClaimLevel(),
@@ -162,8 +164,8 @@ public final class ClaimUtil {
     }
 
     return Claim.builder()
-        .type(ClaimType.ADMIN)
-        .world(world)
+        .type(ClaimTypes.ADMIN)
+        .world(world.getUniqueId())
         .bounds(
             new Vector3i(lesserRegion.getLesserBoundary().getX(), 0, lesserRegion.getLesserBoundary().getZ()),
             new Vector3i(greaterRegion.getGreaterBoundary().getX(), 255, greaterRegion.getGreaterBoundary().getZ())
@@ -172,12 +174,12 @@ public final class ClaimUtil {
   }
 
   private static String getName(UUID uuid) {
-    Optional<User> user = PLUGIN.getGame().getServiceManager().provideUnchecked(UserStorageService.class).get(uuid);
+    Optional<User> user = Sponge.getServiceManager().provideUnchecked(UserStorageService.class).get(uuid);
     if (user.isPresent()) {
       return user.get().getName();
     } else {
       try {
-        return PLUGIN.getGame().getServer().getGameProfileManager().get(uuid).get().getName().orElse("somebody");
+        return Sponge.getServer().getGameProfileManager().get(uuid).get().getName().orElse("somebody");
       } catch (Exception e) {
         return "somebody";
       }

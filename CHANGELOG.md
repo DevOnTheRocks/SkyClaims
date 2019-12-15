@@ -1,5 +1,9 @@
 # Change Log 
 
+# Beta 29 - Grief Defender Port
+**REQUIRED: Sponge API 7.1 (SF 3682+); Grief Defender 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
+**OPTIONAL: Nucleus 1.9.0-S7.1+**
+
 # Beta 29
 **REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
 **OPTIONAL: Nucleus 1.9.0-S7.1+**

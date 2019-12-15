@@ -20,8 +20,8 @@ package net.mohron.skyclaims;
 
 import static net.mohron.skyclaims.PluginInfo.AUTHORS;
 import static net.mohron.skyclaims.PluginInfo.DESCRIPTION;
-import static net.mohron.skyclaims.PluginInfo.GP_API_VERSION;
-import static net.mohron.skyclaims.PluginInfo.GP_VERSION;
+import static net.mohron.skyclaims.PluginInfo.GD_API_VERSION;
+import static net.mohron.skyclaims.PluginInfo.GD_VERSION;
 import static net.mohron.skyclaims.PluginInfo.ID;
 import static net.mohron.skyclaims.PluginInfo.NAME;
 import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
@@ -30,6 +30,7 @@ import static net.mohron.skyclaims.PluginInfo.VERSION;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.griefdefender.api.GriefDefender;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,8 +38,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import me.ryanhamshire.griefprevention.GriefPrevention;
-import me.ryanhamshire.griefprevention.api.GriefPreventionApi;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.command.debug.CommandPlayerInfo;
 import net.mohron.skyclaims.command.debug.CommandVersion;
@@ -48,13 +47,12 @@ import net.mohron.skyclaims.database.IDatabase;
 import net.mohron.skyclaims.database.MysqlDatabase;
 import net.mohron.skyclaims.database.SqliteDatabase;
 import net.mohron.skyclaims.integration.Version;
+import net.mohron.skyclaims.integration.griefdefender.GDIntegration;
 import net.mohron.skyclaims.integration.nucleus.NucleusIntegration;
-import net.mohron.skyclaims.listener.ClaimEventHandler;
 import net.mohron.skyclaims.listener.ClientJoinHandler;
 import net.mohron.skyclaims.listener.EntitySpawnHandler;
 import net.mohron.skyclaims.listener.RespawnHandler;
 import net.mohron.skyclaims.listener.SchematicHandler;
-import net.mohron.skyclaims.listener.WorldLoadHandler;
 import net.mohron.skyclaims.schematic.SchematicManager;
 import net.mohron.skyclaims.team.InviteService;
 import net.mohron.skyclaims.world.Island;
@@ -80,8 +78,7 @@ import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.world.ConstructWorldPropertiesEvent;
@@ -104,13 +101,12 @@ import org.spongepowered.api.world.storage.WorldProperties;
     authors = AUTHORS,
     dependencies = {
         @Dependency(id = "spongeapi", version = SPONGE_API),
-        @Dependency(id = "griefprevention", version = GP_VERSION),
+        @Dependency(id = "griefdefender", version = GD_VERSION),
         @Dependency(id = "nucleus", version = NUCLEUS_VERSION, optional = true)
     })
 public class SkyClaims {
 
   private static SkyClaims instance;
-  private GriefPreventionApi griefPrevention;
   private PermissionService permissionService;
 
   @Inject
@@ -156,7 +152,7 @@ public class SkyClaims {
   }
 
   @Listener
-  public void onPreInitialization(GamePreInitializationEvent event) {
+  public void onInitialization(GameInitializationEvent event) {
     logger.info("{} {} is initializing...", NAME, VERSION);
 
     config = new GlobalConfig();
@@ -166,35 +162,36 @@ public class SkyClaims {
     if (Sponge.getPluginManager().isLoaded("nucleus")) {
       Sponge.getEventManager().registerListeners(this, new NucleusIntegration());
     }
+
+    validateGriefDefenderVersion();
   }
 
-  @Listener
-  public void onPostInitialization(GamePostInitializationEvent event) {
+  private void validateGriefDefenderVersion() {
+    com.griefdefender.api.Version version;
     try {
-      griefPrevention = GriefPrevention.getApi();
+      version = GriefDefender.getVersion();
     } catch (IllegalStateException e) {
-      logger.error("GriefPrevention API failed to load.");
+      logger.error("GriefDefender API failed to load!");
+      logger.warn("Disabling IslandDefender.");
+      enabled = false;
+      return;
     }
 
-    if (griefPrevention != null) {
-      if (griefPrevention.getApiVersion() < GP_API_VERSION) {
-        logger.error(
-            "GriefPrevention API version {} is unsupported! Please update to API version {}+.",
-            griefPrevention.getApiVersion(), GP_API_VERSION
-        );
-        enabled = false;
-      } else if (Version.of(griefPrevention.getImplementationVersion()).compareTo(GP_VERSION) < 0) {
-        logger.error(
-            "GriefPrevention version {} is unsupported! Please update to version {}+.",
-            griefPrevention.getImplementationVersion(), GP_VERSION
-        );
-        enabled = false;
-      } else {
-        logger.info("Successfully integrated with GriefPrevention {}!", griefPrevention.getImplementationVersion());
-      }
-    } else {
-      logger.error("GriefPrevention Integration Failed! Disabling SkyClaims.");
+    if (version.getApiVersion() < GD_API_VERSION) {
+      logger.error(
+          "GriefDefender API version {} is unsupported! Please update to API version {}+.",
+          version.getApiVersion(), GD_API_VERSION
+      );
       enabled = false;
+    } else if (Version.of(version.getImplementationVersion()).compareTo(GD_VERSION) < 0) {
+      logger.error(
+          "GriefDefender version {} is unsupported! Please update to version {}+.",
+          version.getImplementationVersion(), GD_VERSION
+      );
+      enabled = false;
+    } else {
+      Sponge.getEventManager().registerListeners(this, new GDIntegration());
+      logger.info("Successfully integrated with GriefDefender {}!", version.getImplementationVersion());
     }
   }
 
@@ -243,7 +240,7 @@ public class SkyClaims {
 
   @Listener(order = Order.LATE)
   public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World world) {
-    if (!enabled || !griefPrevention.isEnabled(world) || !world.equals(config.getWorldConfig().getWorld())) {
+    if (!enabled || !world.equals(config.getWorldConfig().getWorld()) || !GriefDefender.getCore().isEnabled(world.getUniqueId())) {
       return;
     }
 
@@ -319,10 +316,8 @@ public class SkyClaims {
 
   private void registerListeners() {
     getGame().getEventManager().registerListeners(this, new SchematicHandler());
-    getGame().getEventManager().registerListeners(this, new ClaimEventHandler());
     getGame().getEventManager().registerListeners(this, new RespawnHandler());
     getGame().getEventManager().registerListeners(this, new ClientJoinHandler());
-    getGame().getEventManager().registerListeners(this, new WorldLoadHandler());
 
     if (getConfig().getEntityConfig().isLimitSpawning()) {
       getGame().getEventManager().registerListeners(this, new EntitySpawnHandler());
@@ -377,10 +372,6 @@ public class SkyClaims {
 
   public PluginContainer getPluginContainer() {
     return pluginContainer;
-  }
-
-  public GriefPreventionApi getGriefPrevention() {
-    return griefPrevention;
   }
 
   public PermissionService getPermissionService() {

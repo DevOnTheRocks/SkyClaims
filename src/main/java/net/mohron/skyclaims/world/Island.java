@@ -22,6 +22,14 @@ import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.griefdefender.api.GriefDefender;
+import com.griefdefender.api.claim.Claim;
+import com.griefdefender.api.claim.ClaimManager;
+import com.griefdefender.api.claim.ClaimResult;
+import com.griefdefender.api.claim.ClaimResultType;
+import com.griefdefender.api.claim.ClaimTypes;
+import com.griefdefender.api.claim.TrustTypes;
+import com.griefdefender.api.data.PlayerData;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
@@ -34,13 +42,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import me.ryanhamshire.griefprevention.api.claim.Claim;
-import me.ryanhamshire.griefprevention.api.claim.ClaimManager;
-import me.ryanhamshire.griefprevention.api.claim.ClaimResult;
-import me.ryanhamshire.griefprevention.api.claim.ClaimResultType;
-import me.ryanhamshire.griefprevention.api.claim.ClaimType;
-import me.ryanhamshire.griefprevention.api.claim.TrustType;
-import me.ryanhamshire.griefprevention.api.data.PlayerData;
+import net.kyori.text.serializer.gson.GsonComponentSerializer;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
@@ -68,6 +70,7 @@ import org.spongepowered.api.service.context.ContextSource;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -99,7 +102,7 @@ public class Island implements ContextSource {
 
     // Create the island claim
     Claim claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region);
-    claim.getData().setSpawnPos(spawn.getLocation());
+    claim.getData().setSpawnPos(spawn.getLocation().getBlockPosition());
     claim.getData().save();
     this.claim = claim.getUniqueId();
 
@@ -128,7 +131,7 @@ public class Island implements ContextSource {
     this.spawn = new Transform<>(PLUGIN.getConfig().getWorldConfig().getWorld(), spawnLocation);
     this.locked = locked;
 
-    ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(spawn.getExtent());
+    ClaimManager claimManager = GriefDefender.getCore().getClaimManager(spawn.getExtent().getUniqueId());
     Claim claim = claimManager.getClaimByUUID(claimId).orElse(null);
     if (claim != null) {
       this.claim = claimId;
@@ -137,8 +140,8 @@ public class Island implements ContextSource {
       if (claim.getWidth() < initialWidth) {
         setWidth(initialWidth);
       }
-      if (claim.getType() != ClaimType.TOWN) {
-        claim.changeType(ClaimType.TOWN);
+      if (claim.getType() != ClaimTypes.TOWN) {
+        claim.changeType(ClaimTypes.TOWN);
       }
     } else {
       try {
@@ -187,7 +190,7 @@ public class Island implements ContextSource {
   }
 
   public Optional<Claim> getClaim() {
-    return PLUGIN.getGriefPrevention().getClaimManager(getWorld()).getClaimByUUID(this.claim);
+    return GriefDefender.getCore().getClaimManager(getWorld().getUniqueId()).getClaimByUUID(this.claim);
   }
 
   public Date getDateCreated() {
@@ -200,14 +203,14 @@ public class Island implements ContextSource {
 
   public Text getName() {
     return (getClaim().isPresent() && getClaim().get().getName().isPresent())
-        ? getClaim().get().getName().get()
+        ? TextSerializers.JSON.deserialize(GsonComponentSerializer.INSTANCE.serialize(getClaim().get().getName().get()))
         : Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
   }
 
   public void setName(@Nullable Text name) {
     getClaim().ifPresent(claim -> {
       Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-      claim.getData().setName(name);
+      claim.getData().setName(GsonComponentSerializer.INSTANCE.deserialize(TextSerializers.JSON.serialize(name)));
       Sponge.getCauseStackManager().popCause();
     });
   }
@@ -256,13 +259,13 @@ public class Island implements ContextSource {
 
     int x = location.getBlockX();
     int z = location.getBlockZ();
-    Location lesserBoundaryCorner = getClaim().get().getLesserBoundaryCorner();
-    Location greaterBoundaryCorner = getClaim().get().getGreaterBoundaryCorner();
+    Vector3i lesserBoundaryCorner = getClaim().get().getLesserBoundaryCorner();
+    Vector3i greaterBoundaryCorner = getClaim().get().getGreaterBoundaryCorner();
 
-    return x >= lesserBoundaryCorner.getBlockX()
-        && x <= greaterBoundaryCorner.getBlockX()
-        && z >= lesserBoundaryCorner.getBlockZ()
-        && z <= greaterBoundaryCorner.getBlockZ();
+    return x >= lesserBoundaryCorner.getX()
+        && x <= greaterBoundaryCorner.getX()
+        && z >= lesserBoundaryCorner.getZ()
+        && z <= greaterBoundaryCorner.getZ();
   }
 
   public int getWidth() {
@@ -274,7 +277,7 @@ public class Island implements ContextSource {
       return false;
     }
 
-    Optional<PlayerData> playerData = PLUGIN.getGriefPrevention().getWorldPlayerData(getWorld().getProperties(), owner);
+    Optional<PlayerData> playerData = GriefDefender.getCore().getPlayerData(getWorld().getUniqueId(), owner);
     Optional<Claim> optionalClaim = getClaim();
 
     if (playerData.isPresent() && optionalClaim.isPresent()) {
@@ -309,7 +312,7 @@ public class Island implements ContextSource {
         transfer(user);
         getClaim().ifPresent(c -> {
           Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-          c.addUserTrust(existingOwner, TrustType.MANAGER);
+          c.addUserTrust(existingOwner, TrustTypes.MANAGER);
           Sponge.getCauseStackManager().popCause();
         });
         break;
@@ -330,14 +333,14 @@ public class Island implements ContextSource {
   public void promote(User user) {
     getClaim().ifPresent(c -> {
       Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-      if (c.isUserTrusted(user, TrustType.BUILDER)) {
-        c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
-        c.addUserTrust(user.getUniqueId(), TrustType.MANAGER);
-      } else if (c.isUserTrusted(user, TrustType.MANAGER)) {
-        c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
+      if (c.isUserTrusted(user.getUniqueId(), TrustTypes.BUILDER)) {
+        c.removeUserTrust(user.getUniqueId(), TrustTypes.NONE);
+        c.addUserTrust(user.getUniqueId(), TrustTypes.MANAGER);
+      } else if (c.isUserTrusted(user.getUniqueId(), TrustTypes.MANAGER)) {
+        c.removeUserTrust(user.getUniqueId(), TrustTypes.NONE);
         UUID existingOwner = owner;
         transfer(user);
-        c.addUserTrust(existingOwner, TrustType.MANAGER);
+        c.addUserTrust(existingOwner, TrustTypes.MANAGER);
       }
       Sponge.getCauseStackManager().popCause();
     });
@@ -345,10 +348,10 @@ public class Island implements ContextSource {
 
   public void demote(User user) {
     getClaim().ifPresent(c -> {
-      if (c.isUserTrusted(user, TrustType.MANAGER)) {
+      if (c.isUserTrusted(user.getUniqueId(), TrustTypes.MANAGER)) {
         Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-        c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
-        c.addUserTrust(user.getUniqueId(), TrustType.BUILDER);
+        c.removeUserTrust(user.getUniqueId(), TrustTypes.NONE);
+        c.addUserTrust(user.getUniqueId(), TrustTypes.BUILDER);
         Sponge.getCauseStackManager().popCause();
       }
     });
@@ -357,7 +360,7 @@ public class Island implements ContextSource {
   public void removeMember(User user) {
     getClaim().ifPresent(c -> {
       Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-      c.removeUserTrust(user.getUniqueId(), TrustType.NONE);
+      c.removeUserTrust(user.getUniqueId(), TrustTypes.NONE);
       Sponge.getCauseStackManager().popCause();
     });
   }
@@ -380,7 +383,7 @@ public class Island implements ContextSource {
     if (!getClaim().isPresent()) {
       return members;
     }
-    for (UUID builder : getClaim().get().getUserTrusts(TrustType.BUILDER)) {
+    for (UUID builder : getClaim().get().getUserTrusts(TrustTypes.BUILDER)) {
       members.add(getName(builder));
     }
     return members;
@@ -391,7 +394,7 @@ public class Island implements ContextSource {
     if (!getClaim().isPresent()) {
       return members;
     }
-    for (UUID manager : getClaim().get().getUserTrusts(TrustType.MANAGER)) {
+    for (UUID manager : getClaim().get().getUserTrusts(TrustTypes.MANAGER)) {
       members.add(getName(manager));
     }
     return members;
@@ -411,7 +414,7 @@ public class Island implements ContextSource {
 
   public boolean isMember(UUID user) {
     return user.equals(owner)
-        || getClaim().map(claim -> claim.isUserTrusted(user, TrustType.BUILDER)).orElse(false);
+        || getClaim().map(claim -> claim.isUserTrusted(user, TrustTypes.BUILDER)).orElse(false);
   }
 
   public boolean isMember(User user) {
@@ -420,7 +423,7 @@ public class Island implements ContextSource {
 
   public boolean isManager(UUID user) {
     return user.equals(owner)
-        || getClaim().map(claim -> claim.isUserTrusted(user, TrustType.MANAGER)).orElse(false);
+        || getClaim().map(claim -> claim.isUserTrusted(user, TrustTypes.MANAGER)).orElse(false);
   }
 
   public boolean isManager(User user) {
@@ -522,7 +525,7 @@ public class Island implements ContextSource {
 
   public void delete() {
     Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-    ClaimManager claimManager = PLUGIN.getGriefPrevention().getClaimManager(getWorld());
+    ClaimManager claimManager = GriefDefender.getCore().getClaimManager(getWorld().getUniqueId());
     getClaim().ifPresent(claimManager::deleteClaim);
     IslandManager.ISLANDS.remove(id);
     PLUGIN.getDatabase().removeIsland(this);

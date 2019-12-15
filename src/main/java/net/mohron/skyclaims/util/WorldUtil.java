@@ -52,10 +52,10 @@ public final class WorldUtil {
 
   public static void setIslandBiome(Island island, BiomeType biomeType) {
     if (island.getClaim().isPresent()) {
-      int x1 = island.getClaim().get().getLesserBoundaryCorner().getBlockX();
-      int x2 = island.getClaim().get().getGreaterBoundaryCorner().getBlockX();
-      int z1 = island.getClaim().get().getLesserBoundaryCorner().getBlockZ();
-      int z2 = island.getClaim().get().getGreaterBoundaryCorner().getBlockZ();
+      int x1 = island.getClaim().get().getLesserBoundaryCorner().getX();
+      int x2 = island.getClaim().get().getGreaterBoundaryCorner().getX();
+      int z1 = island.getClaim().get().getLesserBoundaryCorner().getZ();
+      int z2 = island.getClaim().get().getGreaterBoundaryCorner().getZ();
       for (int x = x1; x < x2; x++) {
         for (int z = z1; z < z2; z++) {
           island.getWorld().setBiome(

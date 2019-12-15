@@ -11,7 +11,7 @@ plugins {
 
 group = "net.mohron.skyclaims"
 version = "${major}.${minor}.${patch}-${api}-${suffix}"
-description = "SkyClaims is an Island Management plugin that integrates with GriefPrevention."
+description = "SkyClaims is an Island Management plugin that integrates with GriefDefender."
 
 if (System.getenv().BUILD_NUMBER != null) {
     version += "-${System.getenv().BUILD_NUMBER}"
@@ -47,16 +47,28 @@ repositories {
         name = "bStats"
         url = "http://repo.bstats.org/content/repositories/releases/"
     }
+    maven {
+        name = "Aikar"
+        url = "https://repo.aikar.co/content/groups/aikar/"
+    }
+    maven {
+        name = "jitpack"
+        url = "https://jitpack.io"
+    }
 }
 
 dependencies {
     annotationProcessor("org.spongepowered:spongeapi:${spongeapi}")
-    compile("org.spongepowered:spongeapi:${spongeapi}")
-    compile("me.ryanhamshire:griefprevention:${griefprevention}:api")
-    compile("io.github.nucleuspowered:nucleus-api:${nucleus}")
-    compile("org.bstats:bstats-sponge:${bstats}")
-    runtimeOnly("me.ryanhamshire:griefprevention:${griefprevention}")
-    //compile fileTree(dir: "libs", include: "*.jar")
+    implementation("org.spongepowered:spongeapi:${spongeapi}")
+    implementation("com.github.bloodmc:GriefDefenderAPI:master-SNAPSHOT")
+    implementation("me.lucko.luckperms:luckperms-api:4.3")
+    implementation("net.kyori:text-api:3.0.2")
+    implementation("net.kyori:text-adapter-spongeapi:3.0.3")
+    implementation("net.kyori:event-api:3.0.0")
+    implementation("net.kyori:event-method:3.0.0")
+    implementation("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
+    implementation("io.github.nucleuspowered:nucleus-api:${nucleus}")
+    implementation("org.bstats:bstats-sponge:${bstats}")
 }
 
 lombok {
@@ -79,7 +91,7 @@ blossom {
     replaceToken "@VERSION@", project.version, pluginInfo
     replaceToken "@DESCRIPTION@", project.description, pluginInfo
     replaceToken "@SPONGE_API@", spongeapi, pluginInfo
-    replaceToken "@GRIEF_PREVENTION@", griefprevention, pluginInfo
+    replaceToken "@GRIEF_DEFENDER@", griefdefender, pluginInfo
     replaceToken "@NUCLEUS@", nucleus, pluginInfo
 }
 
