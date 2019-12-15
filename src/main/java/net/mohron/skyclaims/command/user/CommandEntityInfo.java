@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.command.user;
 
 import com.google.common.collect.Lists;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -83,17 +85,20 @@ public class CommandEntityInfo extends IslandCommand {
           info.add(Text.of(
               TextColors.YELLOW, "Passive",
               TextColors.WHITE, " : ",
-              TextColors.LIGHT_PURPLE, island.getPassiveEntities().size()
+              TextColors.LIGHT_PURPLE, island.getPassiveEntities().size(),
+              getClearEntityButton("passive", clearEntities("passive", island.getPassiveEntities()))
           ));
           info.add(Text.of(
               TextColors.YELLOW, "Hostile",
               TextColors.WHITE, " : ",
-              TextColors.LIGHT_PURPLE, island.getHostileEntities().size()
+              TextColors.LIGHT_PURPLE, island.getHostileEntities().size(),
+              getClearEntityButton("hostile", clearEntities("hostile", island.getHostileEntities()))
           ));
           info.add(Text.of(
               TextColors.YELLOW, "Item",
               TextColors.WHITE, " : ",
-              TextColors.LIGHT_PURPLE, island.getItemEntities().size()
+              TextColors.LIGHT_PURPLE, island.getItemEntities().size(),
+              getClearEntityButton("items", clearEntities("items", island.getItemEntities()))
           ));
           info.add(Text.of(
               TextColors.YELLOW, "Tile",
@@ -109,12 +114,12 @@ public class CommandEntityInfo extends IslandCommand {
         case PASSIVE:
           island.getPassiveEntities().stream()
               .collect(Collectors.groupingBy(Entity::getType, Collectors.counting()))
-              .forEach((e, c) -> info.add(getEntityDetails(e, c)));
+              .forEach((e, c) -> info.add(getEntityDetails(island, src, e, c)));
           break;
         case HOSTILE:
           island.getHostileEntities().stream()
               .collect(Collectors.groupingBy(Entity::getType, Collectors.counting()))
-              .forEach((e, c) -> info.add(getEntityDetails(e, c)));
+              .forEach((e, c) -> info.add(getEntityDetails(island, src, e, c)));
           break;
         case TILE:
           island.getTileEntities().stream()
@@ -132,12 +137,61 @@ public class CommandEntityInfo extends IslandCommand {
     };
   }
 
+  private Text getEntityDetails(Island island, CommandSource src, EntityType e, Long c) {
+    return Text.of(
+        getEntityDetails(e, c),
+        src.hasPermission(Permissions.COMMAND_ENTITY_CLEAR) ? getClearEntityTypeButton(island, e) : Text.EMPTY
+    );
+  }
+
+  private Text getClearEntityTypeButton(Island island, EntityType e) {
+    return getClearEntityButton(e.getName(), clearAllEntitiesOfType(island, e));
+  }
+
+  private Text getClearEntityButton(String name, Consumer<CommandSource> callback) {
+    return Text.of(
+        TextColors.WHITE, " [",
+        Text.builder("✗")
+            .color(TextColors.RED)
+            .onClick(TextActions.executeCallback(callback))
+            .onHover(TextActions.showText(Text.of("Clear all ", name))),
+        TextColors.WHITE, "]"
+    );
+  }
+
   private Text getEntityDetails(CatalogType e, Long c) {
     return Text.of(
         TextColors.YELLOW, e.getName(),
         TextColors.WHITE, " : ",
         TextColors.LIGHT_PURPLE, c
     );
+  }
+
+  private Consumer<CommandSource> clearAllEntitiesOfType(Island island, EntityType entityType) {
+    return src -> {
+      final Collection<Entity> entities = island.getWorld()
+          .getEntities(entity -> entity.getType().equals(entityType) && island.contains(entity.getLocation()));
+      clearEntities(entityType.getName(), entities).accept(src);
+    };
+  }
+
+  private Consumer<CommandSource> clearEntities(String entityName, Collection<Entity> entities) {
+    return src -> {
+      if (entities.isEmpty()) {
+        return;
+      }
+      if (!src.hasPermission(Permissions.COMMAND_ENTITY_CLEAR)){
+        src.sendMessage(Text.of(TextColors.RED, "You do not have permission to clear entities!"));
+        return;
+      }
+      entities.forEach(Entity::remove);
+      src.sendMessage(Text.of(
+          TextColors.GREEN, "Removed ",
+          TextColors.LIGHT_PURPLE, entities.size(), " ",
+          TextColors.YELLOW, entityName,
+          TextColors.GREEN, "."
+      ));
+    };
   }
 
   private Text getMenuText(Island island, Category category) {

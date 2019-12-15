@@ -46,9 +46,9 @@ public class RegenerateChunkTask implements Runnable {
     // Clear the contents of an tile entity with an inventory
     chunk.getTileEntities(e -> e instanceof TileEntityCarrier).forEach(e -> ((TileEntityCarrier) e).getInventory().clear());
     // Set the blocks
-    for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
-      for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
-        for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
+    for (int by = chunk.getBlockMin().getY(); by <= chunk.getBlockMax().getY(); by++) {
+      for (int bx = chunk.getBlockMin().getX(); bx <= chunk.getBlockMax().getX(); bx++) {
+        for (int bz = chunk.getBlockMin().getZ(); bz <= chunk.getBlockMax().getZ(); bz++) {
           if (!chunk.getBlock(bx, by, bz).equals(blocks[by])) {
             chunk.getLocation(bx, by, bz).setBlock(blocks[by], BlockChangeFlags.NONE);
           }
