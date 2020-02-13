@@ -19,6 +19,7 @@
 package net.mohron.skyclaims.command.user;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
@@ -26,6 +27,7 @@ import net.mohron.skyclaims.command.argument.Arguments;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.world.Island;
+import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandPermissionException;
 import org.spongepowered.api.command.CommandResult;
@@ -60,12 +62,15 @@ public class CommandSpawn extends CommandBase.ListIslandCommand {
 
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
-    Optional<Island> island = args.getOne(ISLAND);
-    if (island.isPresent()) {
-      return sendPlayerToSpawn(player, island.get());
-    } else {
-      return listIslands(player, this::sendPlayerToSpawn);
+    Optional<UUID> uuid = args.getOne(ISLAND);
+    if (uuid.isPresent()) {
+      final Optional<Island> island = IslandManager.get(uuid.get());
+      if (island.isPresent()) {
+        return sendPlayerToSpawn(player, island.get());
+      }
     }
+
+    return listIslands(player, this::sendPlayerToSpawn);
   }
 
   private CommandResult sendPlayerToSpawn(Player player, Island island) throws CommandException {
