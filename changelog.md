@@ -1,5 +1,18 @@
 # Change Log
 
+# Beta 29.1
+**REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
+**OPTIONAL: Nucleus 1.9.0-S7.1+**
+- Fixed a bug where `/is tp` | `/is spawn` would error if an argument was provided
+
+# Beta 29
+**REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
+**OPTIONAL: Nucleus 1.9.0-S7.1+**
+- Added support for one player to own multiple islands
+  - `/is spawn` & `/is reset` will now display the chest GUI or island list if you have permission to use them on multiple islands
+- Added clear entity "buttons" to `/is entity`. _Requires_ `skyclaims.admin.entity.clear`
+- Added various improvements to logging to aid in debugging
+
 # Beta 28
 ### NOTE: Sponge Forge `1.12.2-2825-7.1.6-RC3697` adds entity and biome support for schematics
 **REQUIRED: Sponge API 7.1 (SF 3682+); GP 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
