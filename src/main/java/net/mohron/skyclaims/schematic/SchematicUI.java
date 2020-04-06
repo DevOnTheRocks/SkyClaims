@@ -9,10 +9,8 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
-import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
@@ -38,12 +36,9 @@ public final class SchematicUI {
 
     for (int i = 0; i < schematics.size(); i++) {
       IslandSchematic schematic = schematics.get(i);
-      ItemStack itemStack = ItemStack.builder()
-          .itemType(schematic.getIcon().orElse(ItemTypes.GOLDEN_SHOVEL))
-          .add(Keys.DISPLAY_NAME, schematic.getText())
-          .quantity(1)
-          .build();
-      inventory.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(i % 9, i / 9))).first().set(itemStack);
+      inventory.query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(i % 9, i / 9)))
+          .first()
+          .set(schematic.getItemStackRepresentation());
     }
 
     return inventory;

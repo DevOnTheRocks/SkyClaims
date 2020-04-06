@@ -44,10 +44,6 @@ repositories {
         url = "https://repo.lucko.me/"
     }
     maven {
-        name = "bStats"
-        url = "http://repo.bstats.org/content/repositories/releases/"
-    }
-    maven {
         name = "Aikar"
         url = "https://repo.aikar.co/content/groups/aikar/"
     }

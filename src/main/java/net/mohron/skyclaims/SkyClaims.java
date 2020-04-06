@@ -118,7 +118,6 @@ public class SkyClaims {
   @Inject
   private Game game;
 
-  @Inject
   private Metrics2 metrics;
 
   @Inject
@@ -141,6 +140,11 @@ public class SkyClaims {
   private boolean setupSpawn = false;
 
   private static final String ISLAND_CLEANUP = "skyclaims.island.cleanup";
+
+  @Inject
+  public SkyClaims(Metrics2.Factory metricsFactory) {
+    metrics = metricsFactory.make(96);
+  }
 
   public static SkyClaims getInstance() {
     return instance;

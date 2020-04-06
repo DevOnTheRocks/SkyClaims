@@ -229,7 +229,10 @@ public abstract class CommandBase implements CommandExecutor {
 
     if (PLUGIN.getConfig().getMiscConfig().isTextSchematicList()) {
       List<Text> schematicText = schematics.stream()
-          .map(s -> s.getText().toBuilder().onClick(TextActions.executeCallback(mapper.apply(s))).build())
+          .map(s -> s.getText().toBuilder()
+              .onHover(TextActions.showItem(s.getItemStackRepresentation().createSnapshot()))
+              .onClick(TextActions.executeCallback(mapper.apply(s)))
+              .build())
           .collect(Collectors.toList());
 
       PaginationList.builder()
@@ -237,9 +240,9 @@ public abstract class CommandBase implements CommandExecutor {
           .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
           .contents(schematicText)
           .sendTo(player);
+    } else {
+      player.openInventory(SchematicUI.of(schematics, mapper));
     }
-
-    player.openInventory(SchematicUI.of(schematics, mapper));
   }
 
   protected void clearIslandMemberInventories(Island island, String keepPlayerInv, String keepEnderChestInv) {

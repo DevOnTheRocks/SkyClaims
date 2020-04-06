@@ -17,6 +17,10 @@ public class EconomyConfig {
       + "The default currency will be used if not configured or an invalid currency is configured.")
   private String currency = "";
 
+  @Setting(value = "cost-modifier", comment = "The cost of expanding is based on the number of blocks the expansion adds.\n"
+      + "This will be multiplied by the number of blocks to calculate the final cost.")
+  private double costModifier = 1.0;
+
   public boolean isUseClaimBlocks() {
     return useClaimBlocks;
   }
@@ -26,5 +30,9 @@ public class EconomyConfig {
         .flatMap(economyService -> economyService.getCurrencies().stream()
             .filter(c -> c.getName().equalsIgnoreCase(currency))
             .findAny());
+  }
+
+  public double getCostModifier() {
+    return Math.max(0, costModifier);
   }
 }

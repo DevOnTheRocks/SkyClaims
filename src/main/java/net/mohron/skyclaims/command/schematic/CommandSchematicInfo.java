@@ -113,6 +113,7 @@ public class CommandSchematicInfo extends CommandBase {
     contents.add(Text.of(TextColors.YELLOW, "Author", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getAuthor()));
     contents.add(Text.of(TextColors.YELLOW, "Date", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getDate()));
     contents.add(Text.of(TextColors.YELLOW, "Filename", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getName()));
+    contents.add(Text.of(TextColors.YELLOW, "Description", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getDescriptionText()));
     contents.add(Text.of(TextColors.YELLOW, "Biome", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getBiomeType().map(CatalogType::getName).orElse("none")));
     contents.add(Text.of(TextColors.YELLOW, "Height", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, schematic.getHeight().map(Text::of).orElse(NONE)));
     contents.add(Text.of(TextColors.YELLOW, "Icon", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getIcon().map(i -> Text.of(i).toText()).orElse(NONE)));

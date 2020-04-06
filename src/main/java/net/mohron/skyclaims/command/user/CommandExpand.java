@@ -138,7 +138,7 @@ public class CommandExpand extends IslandCommand {
         ));
         return;
       }
-      int cost = getCost(blocks, claim);
+      double cost = getCost(blocks, claim);
 
       // Attempt to charge the required currency to the island owner.
       if (charge(island, cost)) {
@@ -170,12 +170,14 @@ public class CommandExpand extends IslandCommand {
     return claim.getWidth() + blocks * 2 > Options.getMaxSize(island.getOwnerUniqueId()) * 2;
   }
 
-  private int getCost(int blocks, Claim claim) {
-    return (int) Math.pow(claim.getWidth() + blocks, 2)
-        * (GriefDefender.getCore().getClaimBlockSystem() == ClaimBlockSystem.VOLUME ? 256 : 1) - claim.getClaimBlocks();
+  private double getCost(int blocks, Claim claim) {
+    final int claimSystemModifier = GriefDefender.getCore().getClaimBlockSystem() == ClaimBlockSystem.VOLUME ? 256 : 1;
+    final double newBlocks = Math.pow(claim.getWidth() + blocks, 2) * claimSystemModifier - claim.getClaimBlocks();
+
+    return Math.round(newBlocks * PLUGIN.getConfig().getEconomyConfig().getCostModifier() * 100) / 100.0;
   }
 
-  private boolean charge(Island island, int cost) {
+  private boolean charge(Island island, double cost) {
     EconomyConfig config = PLUGIN.getConfig().getEconomyConfig();
     Optional<EconomyService> economyService = Sponge.getServiceManager().provide(EconomyService.class);
 
@@ -200,7 +202,7 @@ public class CommandExpand extends IslandCommand {
       if (data.isPresent()) {
         if (data.get().getRemainingClaimBlocks() >= cost) {
           // Use the Owner's claim blocks to expand the island
-          data.get().setBonusClaimBlocks(data.get().getBonusClaimBlocks() - cost);
+          data.get().setBonusClaimBlocks(data.get().getBonusClaimBlocks() - (int) Math.round(cost));
           return true;
         }
         return false;

@@ -18,23 +18,18 @@
 
 package net.mohron.skyclaims.config.type.integration;
 
-import com.griefdefender.api.permission.flag.Flag;
-import com.griefdefender.api.permission.flag.Flags;
-import java.util.HashMap;
-import java.util.Map;
-import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class GriefDefenderConfig {
 
-  @Setting(value = "Wilderness-Flags", comment = "Use to set up default flags to be set on the Wilderness claim.")
-  private Map<Flag, Boolean> wildernessFlags = new HashMap<Flag, Boolean>() {{
-    put(Flags.BLOCK_BREAK, false);
-    put(Flags.BLOCK_PLACE, false);
-  }};
-
-  public Map<Flag, Boolean> getWildernessFlags() {
-    return wildernessFlags;
-  }
+//  @Setting(value = "Wilderness-Flags", comment = "Use to set up default flags to be set on the Wilderness claim.")
+//  private Map<Flag, Boolean> wildernessFlags = new HashMap<Flag, Boolean>() {{
+//    put(Flags.BLOCK_BREAK, false);
+//    put(Flags.BLOCK_PLACE, false);
+//  }};
+//
+//  public Map<Flag, Boolean> getWildernessFlags() {
+//    return wildernessFlags;
+//  }
 }

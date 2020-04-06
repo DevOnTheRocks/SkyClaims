@@ -20,13 +20,19 @@ package net.mohron.skyclaims.schematic;
 
 import com.google.common.collect.Lists;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import net.mohron.skyclaims.SkyClaims;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.biome.BiomeType;
@@ -39,6 +45,7 @@ public class IslandSchematic {
   private static final DataQuery HEIGHT = DataQuery.of("SkyClaims", "Height");
   private static final DataQuery ICON = DataQuery.of("SkyClaims", "Icon");
   private static final DataQuery TEXT = DataQuery.of("SkyClaims", "Text");
+  private static final DataQuery DESCRIPTION = DataQuery.of("SkyClaims", "Description");
   private static final DataQuery PRESET = DataQuery.of("SkyClaims", "Preset");
 
   private final Schematic schematic;
@@ -117,6 +124,27 @@ public class IslandSchematic {
     setMetadata(TEXT, TextSerializers.FORMATTING_CODE.serialize(text));
   }
 
+  public String getDescription() {
+    return schematic.getMetadata().getString(DESCRIPTION).orElse("");
+  }
+
+  public Text getDescriptionText() {
+    String description = getDescription();
+    Iterator<String> it = Arrays.asList(description.split("\n")).iterator();
+    Text.Builder builder = Text.builder();
+    while (it.hasNext()) {
+      builder.append(TextSerializers.FORMATTING_CODE.deserialize(it.next()));
+      if (it.hasNext()) {
+        builder.append(Text.NEW_LINE);
+      }
+    }
+    return builder.build();
+  }
+
+  public void setDescription(String description) {
+    setMetadata(DESCRIPTION, description);
+  }
+
   public Optional<ItemType> getIcon() {
     String type = schematic.getMetadata().getString(ICON).orElse("");
     return Sponge.getRegistry().getType(ItemType.class, type);
@@ -132,6 +160,18 @@ public class IslandSchematic {
 
   public Optional<String> getPreset() {
     return schematic.getMetadata().getString(PRESET);
+  }
+
+  public ItemStack getItemStackRepresentation() {
+    List<Text> lore = Arrays.stream(this.getDescription().split("\n"))
+        .map(TextSerializers.FORMATTING_CODE::deserialize)
+        .collect(Collectors.toList());
+    return ItemStack.builder()
+        .itemType(this.getIcon().orElse(ItemTypes.GOLDEN_SHOVEL))
+        .add(Keys.DISPLAY_NAME, this.getText())
+        .add(Keys.ITEM_LORE, lore)
+        .quantity(1)
+        .build();
   }
 
   private void setMetadata(DataQuery path, Object value) {

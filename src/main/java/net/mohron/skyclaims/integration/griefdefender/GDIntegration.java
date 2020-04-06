@@ -6,16 +6,7 @@
 
 package net.mohron.skyclaims.integration.griefdefender;
 
-import com.google.common.collect.Sets;
 import com.griefdefender.api.GriefDefender;
-import com.griefdefender.api.Tristate;
-import com.griefdefender.api.claim.Claim;
-import com.griefdefender.api.claim.ClaimManager;
-import com.griefdefender.api.permission.Context;
-import com.griefdefender.api.permission.flag.Flag;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiConsumer;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.integration.GriefDefenderConfig;
 import org.spongepowered.api.event.Listener;
@@ -53,34 +44,34 @@ public class GDIntegration {
 
   @Listener(order = Order.LAST)
   public void onWorldLoad(LoadWorldEvent event, @Getter(value = "getTargetWorld") World targetWorld) {
-    String world = PLUGIN.getConfig().getWorldConfig().getWorldName();
-
-    if (targetWorld.getName().equalsIgnoreCase(world)) {
-      ClaimManager claimManager = GriefDefender.getCore().getClaimManager(targetWorld.getUniqueId());
-      Claim wilderness = claimManager.getWildernessClaim();
-      Set<Context> contexts = Sets.newHashSet();
-
-      final Map<Flag, Boolean> wildernessFlags = config.getWildernessFlags();
-      if (wildernessFlags != null) {
-        wildernessFlags.forEach(setWildernessFlag(world, wilderness, contexts));
-      }
-    }
+//    String world = PLUGIN.getConfig().getWorldConfig().getWorldName();
+//
+//    if (targetWorld.getName().equalsIgnoreCase(world)) {
+//      ClaimManager claimManager = GriefDefender.getCore().getClaimManager(targetWorld.getUniqueId());
+//      Claim wilderness = claimManager.getWildernessClaim();
+//      Set<Context> contexts = Sets.newHashSet();
+//
+//      final Map<Flag, Boolean> wildernessFlags = config.getWildernessFlags();
+//      if (wildernessFlags != null) {
+//        wildernessFlags.forEach(setWildernessFlag(world, wilderness, contexts));
+//      }
+//    }
   }
 
-  private BiConsumer<Flag, Boolean> setWildernessFlag(String world, Claim wilderness, Set<Context> contexts) {
-    return (flag, value) -> {
-      Tristate tristate = value ? Tristate.TRUE : Tristate.FALSE;
-      if (wilderness.getFlagPermissionValue(flag, contexts) != tristate) {
-        wilderness.setFlagPermission(flag, tristate, contexts).whenComplete((result, throwable) -> {
-          if (result.successful()) {
-            PLUGIN.getLogger().info("{}: Set {} flag in wilderness to {}.", world, flag, tristate.toString());
-          } else {
-            PLUGIN.getLogger().warn(result.getResultType().toString(), throwable);
-          }
-        });
-      }
-    };
-  }
+//  private BiConsumer<Flag, Boolean> setWildernessFlag(String world, Claim wilderness, Set<Context> contexts) {
+//    return (flag, value) -> {
+//      Tristate tristate = value ? Tristate.TRUE : Tristate.FALSE;
+//      if (wilderness.getFlagPermissionValue(flag, contexts) != tristate) {
+//        wilderness.setFlagPermission(flag, tristate, contexts).whenComplete((result, throwable) -> {
+//          if (result.successful()) {
+//            PLUGIN.getLogger().info("{}: Set {} flag in wilderness to {}.", world, flag, tristate.toString());
+//          } else {
+//            PLUGIN.getLogger().warn(result.getResultType().toString(), throwable);
+//          }
+//        });
+//      }
+//    };
+//  }
 
   private void registerClaimEventHandler() {
     claimEventHandler = new ClaimEventHandler();

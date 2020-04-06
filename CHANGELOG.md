@@ -1,5 +1,12 @@
 # Change Log 
 
+# Beta 30 - Grief Defender Port
+**REQUIRED: Sponge API 7.1 (SF 3682+); Grief Defender 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
+**OPTIONAL: Nucleus 1.9.0-S7.1+**
+- Added economy `cost-modifier` config to adjust the currency cost of `/is expand` relative to it's block cost
+- Added new schematic features:
+  - `/is schematic setdescription <schematic> <name>` - set an in-game description for a schematic that supports formatting code & newlines (`/n`)
+- Updated bStats to version 1.7
 
 # Beta 29.1 - Grief Defender Port
 **REQUIRED: Sponge API 7.1 (SF 3682+); Grief Defender 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
