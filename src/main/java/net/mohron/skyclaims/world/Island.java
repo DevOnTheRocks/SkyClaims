@@ -144,11 +144,20 @@ public class Island implements ContextSource {
         claim.changeType(ClaimTypes.TOWN);
       }
     } else {
-      try {
-        this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
-        PLUGIN.queueForSaving(this);
-      } catch (CreateIslandException e) {
-        PLUGIN.getLogger().error(String.format("Failed to create claim while loading %s (%s).", getName().toPlain(), id), e);
+      claim = claimManager.getClaimAt(this.getRegion().getCenter().getBlockPosition());
+      if (!claim.isWilderness() && claim.getOwnerUniqueId().equals(owner)) {
+        PLUGIN.getLogger().warn(
+            "Claim UUID for {} has changed from {} to {}.",
+            getName().toPlain(), this.claim, claim.getUniqueId()
+        );
+        this.claim = claim.getUniqueId();
+      } else {
+        try {
+          this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
+          PLUGIN.queueForSaving(this);
+        } catch (CreateIslandException e) {
+          PLUGIN.getLogger().error(String.format("Failed to create claim while loading %s (%s).", getName().toPlain(), id), e);
+        }
       }
     }
   }

@@ -77,7 +77,7 @@ public final class ClaimUtil {
           for (Claim overlappedClaim : claimResult.getClaims()) {
             ClaimResult delete = claimManager.deleteClaim(overlappedClaim);
             if (!delete.successful()) {
-              PLUGIN.getLogger().error("{}: {}", delete.getResultType(), delete.getMessage());
+              PLUGIN.getLogger().error("{}: {}", delete.getResultType(), delete.getMessage().toString());
               throw new CreateIslandException(Text.of(
                   TextColors.RED, "Failed to delete overlapping claim: ", overlappedClaim.getUniqueId()
               ));
@@ -85,7 +85,7 @@ public final class ClaimUtil {
             PLUGIN.getLogger().info(
                 "Removed claim overlapping {}'s island (Owner: {}, ID: {}).",
                 getName(ownerUniqueId),
-                overlappedClaim.getOwnerName(),
+                overlappedClaim.getOwnerName().toString(),
                 overlappedClaim.getUniqueId()
             );
           }
