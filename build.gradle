@@ -64,7 +64,6 @@ dependencies {
     implementation("net.kyori:event-method:3.0.0")
     implementation("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
     implementation("io.github.nucleuspowered:nucleus-api:${nucleus}")
-    implementation("org.bstats:bstats-sponge:${bstats}")
 }
 
 lombok {
@@ -74,9 +73,6 @@ lombok {
 
 shadowJar {
     archiveClassifier.set("plugin")
-    dependencies {
-        include(dependency("org.bstats:bstats-sponge:${bstats}"))
-    }
     minimize()
 }
 
