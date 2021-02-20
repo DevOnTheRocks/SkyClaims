@@ -271,6 +271,12 @@ public class SkyClaims {
       return;
     }
 
+    Optional<World> world = config.getWorldConfig().loadWorld();
+    if (!world.isPresent()) {
+      logger.error("Unable to load world '{}'.", config.getWorldConfig().getWorldUuid() != null ? config.getWorldConfig().getWorldUuid() : config.getWorldConfig().getWorldName());
+      return;
+    }
+
     database = initializeDatabase();
     schematicManager.load();
 

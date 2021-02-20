@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 import net.mohron.skyclaims.SkyClaims;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
@@ -33,7 +34,9 @@ import org.spongepowered.api.world.World;
 @ConfigSerializable
 public class WorldConfig {
 
-  @Setting(value = "SkyClaims-World", comment = "Name of the world to manage islands in. Default: world")
+  @Setting(value = "SkyClaims-World-UUID", comment = "Sponge UUID of the world to manage islands in")
+  private UUID worldUuid = null;
+  @Setting(value = "SkyClaims-World", comment = "Name of the world to manage islands in. Ignored if the UUID is provided Default: world")
   private String worldName = "world";
   @Setting(value = "Spawn-World", comment = "Use to override the world used when sending players to spawn.")
   private String spawnWorld = "";
@@ -49,12 +52,24 @@ public class WorldConfig {
   @Setting(value = "Regen-On-Create", comment = "If enabled, SkyClaims will regen the target region before an island is created.")
   private boolean regenOnCreate = false;
 
+  public UUID getWorldUuid() {
+    return worldUuid;
+  }
+
   public String getWorldName() {
     return worldName;
   }
 
+  private Optional<World> getWorldOptional() {
+    return worldUuid != null ? Sponge.getServer().getWorld(worldUuid) : Sponge.getServer().getWorld(worldName);
+  }
+
+  public Optional<World> loadWorld() {
+    return worldUuid != null ? Sponge.getServer().loadWorld(worldUuid) : Sponge.getServer().loadWorld(worldName);
+  }
+
   public World getWorld() {
-    final Optional<World> world = SkyClaims.getInstance().getGame().getServer().getWorld(worldName);
+    final Optional<World> world = getWorldOptional();
     if (world.isPresent()) {
       return world.get();
     } else {
@@ -65,7 +80,7 @@ public class WorldConfig {
   }
 
   public Location<World> getSpawn() {
-    World world = Sponge.getServer().getWorld(spawnWorld).orElse(getWorld());
+    World world = getWorld();
     SkyClaims.getInstance().getLogger().debug("Spawn World: {}", world.getName());
     return world.isLoaded() ? world.getSpawnLocation() : getWorld().getSpawnLocation();
   }
