@@ -33,6 +33,7 @@ import com.google.inject.Inject;
 import com.griefdefender.api.GriefDefender;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,8 +62,10 @@ import net.mohron.skyclaims.world.gen.VoidWorldGeneratorModifier;
 import net.mohron.skyclaims.world.region.Region;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.bstats.sponge.Metrics2;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
@@ -115,6 +118,8 @@ public class SkyClaims {
   @Inject
   private Game game;
 
+  private Metrics2 metrics;
+
   @Inject
   @ConfigDir(sharedRoot = false)
   private Path configDir;
@@ -135,6 +140,11 @@ public class SkyClaims {
   private boolean setupSpawn = false;
 
   private static final String ISLAND_CLEANUP = "skyclaims.island.cleanup";
+
+  @Inject
+  public SkyClaims(Metrics2.Factory metricsFactory) {
+    metrics = metricsFactory.make(96);
+  }
 
   public static SkyClaims getInstance() {
     return instance;
@@ -271,6 +281,8 @@ public class SkyClaims {
       database.saveData(IslandManager.saveQueue);
     }
 
+    addCustomMetrics();
+
     logger.info("Initialization complete.");
   }
 
@@ -345,6 +357,21 @@ public class SkyClaims {
     } else {
       return new SqliteDatabase();
     }
+  }
+
+  private void addCustomMetrics() {
+    metrics.addCustomChart(new Metrics2.SingleLineChart("islands", () -> IslandManager.ISLANDS.size()));
+    metrics.addCustomChart(new Metrics2.DrilldownPie("sponge_version", () -> {
+      Map<String, Map<String, Integer>> map = new HashMap<>();
+      String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion().orElse("?").split("-")[0];
+      Map<String, Integer> entry = new HashMap<>();
+      entry.put(Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse(null), 1);
+      map.put(api, entry);
+      return map;
+    }));
+    metrics.addCustomChart(new Metrics2.SimplePie("allocated_ram", () ->
+        String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0))
+    );
   }
 
   public PluginContainer getPluginContainer() {
