@@ -18,8 +18,6 @@
 
 package net.mohron.skyclaims.config.type;
 
-import com.google.common.collect.Lists;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,15 +31,14 @@ import org.spongepowered.api.world.World;
 
 @ConfigSerializable
 public class WorldConfig {
+  private static final UUID NIL_UUID = new UUID(0, 0);
 
   @Setting(value = "SkyClaims-World-UUID", comment = "Sponge UUID of the world to manage islands in")
-  private UUID worldUuid = null;
+  private UUID worldUuid = NIL_UUID;
   @Setting(value = "SkyClaims-World", comment = "Name of the world to manage islands in. Ignored if the UUID is provided Default: world")
   private String worldName = "world";
   @Setting(value = "Spawn-World", comment = "Use to override the world used when sending players to spawn.")
   private String spawnWorld = "";
-  @Setting(value = "Void-Dimensions", comment = "A list of world names to generate as void. Default: world, DIM-1, DIM1")
-  private List<String> voidDimensions = Lists.newArrayList("world", "DIM-1", "DIM1");
   @Setting(value = "Island-Height", comment = "Height to build islands at (1-255). Default: 72")
   private int islandHeight = 72;
   @Setting(value = "Spawn-Regions", comment = "The height & width of regions to reserve for spawn (min 1). Default: 1")
@@ -52,8 +49,8 @@ public class WorldConfig {
   @Setting(value = "Regen-On-Create", comment = "If enabled, SkyClaims will regen the target region before an island is created.")
   private boolean regenOnCreate = false;
 
-  public UUID getWorldUuid() {
-    return worldUuid;
+  public Optional<UUID> getWorldUuid() {
+    return worldUuid.equals(NIL_UUID) ? Optional.empty() : Optional.of(worldUuid);
   }
 
   public String getWorldName() {
@@ -61,11 +58,11 @@ public class WorldConfig {
   }
 
   private Optional<World> getWorldOptional() {
-    return worldUuid != null ? Sponge.getServer().getWorld(worldUuid) : Sponge.getServer().getWorld(worldName);
+    return getWorldUuid().map(uuid -> Sponge.getServer().getWorld(uuid)).orElseGet(() -> Sponge.getServer().getWorld(worldName));
   }
 
   public Optional<World> loadWorld() {
-    return worldUuid != null ? Sponge.getServer().loadWorld(worldUuid) : Sponge.getServer().loadWorld(worldName);
+    return getWorldUuid().map(uuid -> Sponge.getServer().loadWorld(uuid)).orElseGet(() -> Sponge.getServer().loadWorld(worldName));
   }
 
   public World getWorld() {
@@ -83,10 +80,6 @@ public class WorldConfig {
     World world = getWorld();
     SkyClaims.getInstance().getLogger().debug("Spawn World: {}", world.getName());
     return world.isLoaded() ? world.getSpawnLocation() : getWorld().getSpawnLocation();
-  }
-
-  public List<String> getVoidDimensions() {
-    return voidDimensions;
   }
 
   public boolean isSeparateSpawn() {

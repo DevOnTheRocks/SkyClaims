@@ -18,7 +18,9 @@
 
 package net.mohron.skyclaims.integration.nucleus;
 
-import io.github.nucleuspowered.nucleus.api.exceptions.NucleusException;
+import io.github.nucleuspowered.nucleus.api.module.home.NucleusHomeService;
+import io.github.nucleuspowered.nucleus.api.module.home.exception.HomeException;
+import java.util.Optional;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
@@ -78,21 +80,26 @@ public class CommandSetHome extends CommandBase {
   }
 
 
-  private boolean modifyOrCreateHome(Player player) {
-    try {
-      NucleusIntegration.getHomeService().modifyOrCreateHome(
-          Sponge.getCauseStackManager().getCurrentCause(),
-          player,
-          "Island",
-          player.getLocation(),
-          player.getRotation()
-      );
-      player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
-      return true;
-    } catch (NucleusException e) {
-      player.sendMessage(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
-      PLUGIN.getGame().getServer().getConsole().sendMessage(e.getText());
-      return false;
+  private boolean modifyOrCreateHome(Player player) throws CommandException {
+    Optional<NucleusHomeService> homeService = Sponge.getServiceManager().provide(NucleusHomeService.class);
+    if (homeService.isPresent()) {
+      try {
+        homeService.get().modifyOrCreateHome(
+            Sponge.getCauseStackManager().getCurrentCause(),
+            player,
+            "Island",
+            player.getLocation(),
+            player.getRotation()
+        );
+        player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
+        return true;
+      } catch (HomeException e) {
+        player.sendMessage(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
+        PLUGIN.getLogger().error("Unable to set home", e);
+        return false;
+      }
+    } else {
+      throw new CommandException(Text.of(TextColors.RED, "The Nucleus Home Service is Unavailable"));
     }
   }
 }

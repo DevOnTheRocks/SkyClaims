@@ -32,7 +32,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.griefdefender.api.GriefDefender;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -62,7 +61,10 @@ import net.mohron.skyclaims.world.gen.VoidWorldGeneratorModifier;
 import net.mohron.skyclaims.world.region.Region;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.bstats.sponge.Metrics2;
+import org.bstats.charts.DrilldownPie;
+import org.bstats.charts.SimplePie;
+import org.bstats.charts.SingleLineChart;
+import org.bstats.sponge.Metrics;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform;
@@ -71,6 +73,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.Getter;
@@ -88,6 +91,8 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.util.Tristate;
+import org.spongepowered.api.util.metric.MetricsConfigManager;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.gen.WorldGeneratorModifier;
@@ -113,12 +118,15 @@ public class SkyClaims {
   private PluginContainer pluginContainer;
 
   @Inject
+  private MetricsConfigManager metricsConfigManager;
+
+  @Inject
   private Logger logger;
 
   @Inject
   private Game game;
 
-  private Metrics2 metrics;
+  private Metrics metrics;
 
   @Inject
   @ConfigDir(sharedRoot = false)
@@ -142,7 +150,7 @@ public class SkyClaims {
   private static final String ISLAND_CLEANUP = "skyclaims.island.cleanup";
 
   @Inject
-  public SkyClaims(Metrics2.Factory metricsFactory) {
+  public SkyClaims(Metrics.Factory metricsFactory) {
     metrics = metricsFactory.make(96);
   }
 
@@ -230,12 +238,6 @@ public class SkyClaims {
 
   @Listener
   public void onConstructWorldProperties(ConstructWorldPropertiesEvent event, @Getter(value = "getWorldProperties") WorldProperties properties) {
-    if (!properties.isInitialized() && config.getWorldConfig().getVoidDimensions().contains(properties.getWorldName())) {
-      Collection<WorldGeneratorModifier> modifiers = properties.getGeneratorModifiers();
-      modifiers.add(voidGenModifier);
-      properties.setGeneratorModifiers(modifiers);
-      logger.info("{} set to use SkyClaims' Enhanced Void World Generation Modifier.", properties.getWorldName());
-    }
     if (!properties.isInitialized() && properties.getWorldName()
         .equalsIgnoreCase(config.getWorldConfig().getWorldName())) {
       setupSpawn = true;
@@ -273,8 +275,18 @@ public class SkyClaims {
 
     Optional<World> world = config.getWorldConfig().loadWorld();
     if (!world.isPresent()) {
-      logger.error("Unable to load world '{}'.", config.getWorldConfig().getWorldUuid() != null ? config.getWorldConfig().getWorldUuid() : config.getWorldConfig().getWorldName());
+      unload();
+      this.enabled = false;
+      logger.error("Unable to load world '{}'.", config.getWorldConfig().getWorldUuid().map(UUID::toString).orElse(config.getWorldConfig().getWorldName()));
       return;
+    }
+    if (logger.isInfoEnabled()) {
+      logger.info(
+          "Using world: {} | DIM {} | {}",
+          world.get().getName(),
+          world.get().getProperties().getAdditionalProperties().getInt(DataQuery.of("SpongeData", "dimensionId")).map(String::valueOf).orElse("?"),
+          world.get().getUniqueId()
+      );
     }
 
     database = initializeDatabase();
@@ -287,6 +299,10 @@ public class SkyClaims {
       database.saveData(IslandManager.saveQueue);
     }
 
+    // SkyClaims Metrics are enabled by default
+    if (this.metricsConfigManager.getCollectionState(this.pluginContainer) == Tristate.UNDEFINED) {
+      Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "sponge metrics " + ID + " enable");
+    }
     addCustomMetrics();
 
     logger.info("Initialization complete.");
@@ -305,23 +321,32 @@ public class SkyClaims {
     reload();
   }
 
-  public void reload() {
-    // Load Plugin Config
-    configManager.load();
-    // Load Schematics
-    schematicManager.load();
-    // Load Database
-    IslandManager.ISLANDS = database.loadData();
-    // Reload Listeners
+  private void unload() {
+    // Unregister Listeners
     Sponge.getEventManager().unregisterPluginListeners(this);
-    registerListeners();
-    // Reload Tasks
+    // Cancel Tasks
     Sponge.getScheduler().getTasksByName(ISLAND_CLEANUP).forEach(Task::cancel);
-    registerTasks();
-    // Reload Commands
+    // Remove Commands
     Sponge.getCommandManager().getOwnedBy(this).forEach(Sponge.getCommandManager()::removeMapping);
     CommandIsland.clearSubCommands();
-    registerCommands();
+  }
+
+  public void reload() {
+    if (enabled) {
+      unload();
+      // Load Plugin Config
+      configManager.load();
+      // Load Schematics
+      schematicManager.load();
+      // Load Database
+      IslandManager.ISLANDS = database.loadData();
+      // Reload Listeners
+      registerListeners();
+      // Reload Tasks
+      registerTasks();
+      // Reload Commands
+      registerCommands();
+    }
   }
 
   private void registerListeners() {
@@ -366,8 +391,8 @@ public class SkyClaims {
   }
 
   private void addCustomMetrics() {
-    metrics.addCustomChart(new Metrics2.SingleLineChart("islands", () -> IslandManager.ISLANDS.size()));
-    metrics.addCustomChart(new Metrics2.DrilldownPie("sponge_version", () -> {
+    metrics.addCustomChart(new SingleLineChart("islands", IslandManager.ISLANDS::size));
+    metrics.addCustomChart(new DrilldownPie("sponge_version", () -> {
       Map<String, Map<String, Integer>> map = new HashMap<>();
       String api = Sponge.getPlatform().getContainer(Platform.Component.API).getVersion().orElse("?").split("-")[0];
       Map<String, Integer> entry = new HashMap<>();
@@ -375,7 +400,7 @@ public class SkyClaims {
       map.put(api, entry);
       return map;
     }));
-    metrics.addCustomChart(new Metrics2.SimplePie("allocated_ram", () ->
+    metrics.addCustomChart(new SimplePie("allocated_ram", () ->
         String.format("%s GB", Math.round((Runtime.getRuntime().maxMemory() / 1024.0 / 1024.0 / 1024.0) * 2.0) / 2.0))
     );
   }

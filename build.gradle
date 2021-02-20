@@ -29,15 +29,15 @@ repositories {
     jcenter()
     maven {
         name = "Sponge"
-        url = "http://repo.spongepowered.org/maven"
+        url = "https://repo.spongepowered.org/maven"
     }
     maven {
         name = "Forge"
-        url = "http://files.minecraftforge.net/maven"
+        url = "https://files.minecraftforge.net/maven"
     }
     maven {
         name = "Nucleus"
-        url = "http://repo.drnaylor.co.uk/artifactory/list/minecraft"
+        url = "https://repo.drnaylor.co.uk/artifactory/list/minecraft"
     }
     maven {
         name = "LuckPerms"
@@ -75,8 +75,11 @@ lombok {
 shadowJar {
     archiveClassifier.set("plugin")
     dependencies {
+        include(dependency("org.bstats:bstats-base:${bstats}"))
         include(dependency("org.bstats:bstats-sponge:${bstats}"))
     }
+    relocate "org.bstats", "net.mohron.skyclaims.metrics"
+
     minimize()
 }
 

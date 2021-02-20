@@ -18,12 +18,14 @@
 
 package net.mohron.skyclaims.integration.nucleus;
 
-import io.github.nucleuspowered.nucleus.api.nucleusdata.Home;
-import io.github.nucleuspowered.nucleus.api.nucleusdata.NamedLocation;
+import io.github.nucleuspowered.nucleus.api.module.home.NucleusHomeService;
+import io.github.nucleuspowered.nucleus.api.module.home.data.Home;
+import io.github.nucleuspowered.nucleus.api.util.data.NamedLocation;
 import java.util.Optional;
 import net.mohron.skyclaims.command.CommandBase;
 import net.mohron.skyclaims.command.CommandIsland;
 import net.mohron.skyclaims.permissions.Permissions;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -37,7 +39,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 public class CommandHome extends CommandBase {
-
   public static final String HELP_TEXT = "teleport to your home island.";
 
   public static CommandSpec commandSpec = CommandSpec.builder()
@@ -71,8 +72,12 @@ public class CommandHome extends CommandBase {
     return CommandResult.success();
   }
 
-  private Optional<Transform<World>> getHome(User user) {
-    Optional<Home> oHome = NucleusIntegration.getHomeService().getHome(user, "Island");
-    return oHome.flatMap(NamedLocation::getTransform);
+  private Optional<Transform<World>> getHome(User user) throws CommandException {
+    Optional<NucleusHomeService> homeService = Sponge.getServiceManager().provide(NucleusHomeService.class);
+    if (homeService.isPresent()) {
+      Optional<Home> oHome = homeService.get().getHome(user, "Island");
+      return oHome.flatMap(NamedLocation::getTransform);
+    }
+    throw new CommandException(Text.of(TextColors.RED, "The Nucleus Home Service is Unavailable"));
   }
 }

@@ -18,17 +18,11 @@
 
 package net.mohron.skyclaims.integration.nucleus;
 
-import io.github.nucleuspowered.nucleus.api.NucleusAPI;
-import io.github.nucleuspowered.nucleus.api.service.NucleusAFKService;
-import io.github.nucleuspowered.nucleus.api.service.NucleusAPIMetaService;
-import io.github.nucleuspowered.nucleus.api.service.NucleusHomeService;
-import io.github.nucleuspowered.nucleus.api.service.NucleusKitService;
-import java.time.Instant;
+import io.github.nucleuspowered.nucleus.api.core.NucleusAPIMetaService;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.integration.Version;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.GameReloadEvent;
@@ -38,15 +32,10 @@ import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 public class NucleusIntegration {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-  private static NucleusAPIMetaService metaService;
-  private static NucleusHomeService homeService;
-  private static NucleusKitService kitService;
-  private static NucleusAFKService afkService;
 
   @Listener
   public void onPostInitialization(GamePostInitializationEvent event) {
-
-    metaService = NucleusAPI.getMetaService();
+    NucleusAPIMetaService metaService = Sponge.getServiceManager().provideUnchecked(NucleusAPIMetaService.class);
     if (Version.of(metaService.semanticVersion()).compareTo(PluginInfo.NUCLEUS_VERSION) >= 0) {
       PLUGIN.getLogger().info("Successfully integrated with Nucleus {}!", metaService.version());
     } else {
@@ -58,9 +47,6 @@ public class NucleusIntegration {
   @Listener(order = Order.EARLY)
   public void onGameAboutToStart(GameAboutToStartServerEvent event) {
     initHomeSupport();
-
-    //kitService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusKitService.class);
-    //afkService = PLUGIN.getGame().getServiceManager().provideUnchecked(NucleusAFKService.class);
   }
 
   @Listener(order = Order.EARLY)
@@ -69,26 +55,9 @@ public class NucleusIntegration {
   }
 
   private void initHomeSupport() {
-    if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled() && NucleusAPI.getHomeService().isPresent()) {
-      homeService = NucleusAPI.getHomeService().get();
+    if (PLUGIN.getConfig().getIntegrationConfig().getNucleus().isHomesEnabled()) {
       CommandHome.register();
       CommandSetHome.register();
     }
-  }
-
-  public static NucleusHomeService getHomeService() {
-    return homeService;
-  }
-
-  public static NucleusKitService getKitService() {
-    return kitService;
-  }
-
-  public static boolean isAFK(Player player) {
-    return afkService.isAFK(player);
-  }
-
-  public static Instant lastActivity(Player player) {
-    return afkService.lastActivity(player);
   }
 }

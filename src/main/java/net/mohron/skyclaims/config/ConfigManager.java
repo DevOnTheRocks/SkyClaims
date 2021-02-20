@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.GlobalConfig;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -35,10 +34,10 @@ import org.slf4j.Logger;
 public class ConfigManager {
 
   public static final int CONFIG_VERSION = 1;
-  private final SkyClaims PLUGIN = SkyClaims.getInstance();
-  private final Logger LOGGER = PLUGIN.getLogger();
+  private static final SkyClaims PLUGIN = SkyClaims.getInstance();
+  private static final Logger LOGGER = PLUGIN.getLogger();
+  private final ConfigurationLoader<CommentedConfigurationNode> loader;
   private ObjectMapper<GlobalConfig>.BoundInstance configMapper;
-  private ConfigurationLoader<CommentedConfigurationNode> loader;
 
   public ConfigManager(ConfigurationLoader<CommentedConfigurationNode> loader) {
     this.loader = loader;
@@ -57,11 +56,11 @@ public class ConfigManager {
    */
   public void save() {
     try {
-      SimpleCommentedConfigurationNode out = SimpleCommentedConfigurationNode.root();
+      CommentedConfigurationNode out = CommentedConfigurationNode.root();
       this.configMapper.serialize(out);
       this.loader.save(out);
     } catch (ObjectMappingException | IOException e) {
-      LOGGER.error(String.format("Failed to save config.\r\n %s", e.getMessage()));
+      LOGGER.error("Failed to save config", e);
     }
   }
 
@@ -71,8 +70,8 @@ public class ConfigManager {
   public void load() {
     try {
       this.configMapper.populate(this.loader.load());
-    } catch (ObjectMappingException | IOException e) {
-      LOGGER.error(String.format("Failed to load config.\r\n %s", e.getMessage()));
+    } catch (Exception e) {
+      LOGGER.error("Failed to load config", e);
     }
   }
 
@@ -85,7 +84,7 @@ public class ConfigManager {
       try {
         Files.createDirectory(path);
       } catch (IOException e) {
-        LOGGER.error(String.format("Failed to create data directory.\r\n %s", e.getMessage()));
+        LOGGER.error("Failed to create data directory", e);
       }
     }
   }

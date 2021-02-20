@@ -1,5 +1,14 @@
 # Change Log 
 
+# Beta 31
+**REQUIRED: Sponge API 7.3+; Grief Defender 1.5.9+; LuckPerms 5.2.X;**
+**OPTIONAL: Nucleus 2.3.2+**
+- **BREAKING CHANGE:** Nucleus integration updated to Nucleus V2
+- Updated bStats to version 2.2.1 (Fixes incompatibility with older versions)
+- Removed `World` > `Void-Worlds` config. The `skyclaims:void` modifier will no longer be automatically applied
+- Added `World` > `SkyClaims-World-UUID` config. This config can be used instead of `World` > `SkyClaims-World` (world name)
+- Added special handling for migrating to an island claim with the same owner but with a different UUID
+
 # Beta 30 - Grief Defender Port
 **REQUIRED: Sponge API 7.1 (SF 3682+); Grief Defender 1.12.2-4.3.0.622+; Permissions Plugin (ie. LuckPerms)**
 **OPTIONAL: Nucleus 1.9.0-S7.1+**
