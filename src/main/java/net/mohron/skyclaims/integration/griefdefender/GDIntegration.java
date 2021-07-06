@@ -7,6 +7,8 @@
 package net.mohron.skyclaims.integration.griefdefender;
 
 import com.griefdefender.api.GriefDefender;
+import com.griefdefender.api.event.ClaimEvent;
+import net.kyori.event.EventSubscription;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.config.type.integration.GriefDefenderConfig;
 import org.spongepowered.api.event.Listener;
@@ -22,8 +24,8 @@ public class GDIntegration {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
 
-  private ClaimEventHandler claimEventHandler;
   private GriefDefenderConfig config;
+  private EventSubscription eventSubscription;
 
   @Listener(order = Order.LATE)
   public void onInitialization(GameInitializationEvent event) {
@@ -38,7 +40,7 @@ public class GDIntegration {
   @Listener
   public void onReload(GameReloadEvent event) {
     config = PLUGIN.getConfig().getIntegrationConfig().getGriefDefender();
-    GriefDefender.getEventManager().unregister(claimEventHandler);
+    eventSubscription.unsubscribe();
     registerClaimEventHandler();
   }
 
@@ -74,7 +76,6 @@ public class GDIntegration {
 //  }
 
   private void registerClaimEventHandler() {
-    claimEventHandler = new ClaimEventHandler();
-    GriefDefender.getEventManager().register(claimEventHandler);
+    eventSubscription = GriefDefender.getEventManager().getBus().subscribe(ClaimEvent.class, new ClaimEventHandler());
   }
 }

@@ -42,14 +42,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.kyori.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.spongeapi.SpongeComponentSerializer;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.exception.InvalidRegionException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.team.PrivilegeType;
-import net.mohron.skyclaims.util.ClaimUtil;
+import net.mohron.skyclaims.integration.griefdefender.ClaimUtil;
 import net.mohron.skyclaims.world.region.IRegionPattern;
 import net.mohron.skyclaims.world.region.Region;
 import net.mohron.skyclaims.world.region.SpiralRegionPattern;
@@ -70,7 +70,6 @@ import org.spongepowered.api.service.context.ContextSource;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -101,10 +100,10 @@ public class Island implements ContextSource {
     this.locked = true;
 
     // Create the island claim
-    Claim claim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region);
-    claim.getData().setSpawnPos(spawn.getLocation().getBlockPosition());
-    claim.getData().save();
-    this.claim = claim.getUniqueId();
+    Claim newClaim = ClaimUtil.createIslandClaim(owner.getUniqueId(), region);
+    newClaim.getData().setSpawnPos(spawn.getLocation().getBlockPosition());
+    newClaim.getData().save();
+    this.claim = newClaim.getUniqueId();
 
     Sponge.getScheduler().createTaskBuilder()
         .execute(IslandManager.processCommands(owner.getName(), schematic))
@@ -132,25 +131,25 @@ public class Island implements ContextSource {
     this.locked = locked;
 
     ClaimManager claimManager = GriefDefender.getCore().getClaimManager(spawn.getExtent().getUniqueId());
-    Claim claim = claimManager.getClaimByUUID(claimId).orElse(null);
-    if (claim != null) {
+    Claim islandClaim = claimManager.getClaimByUUID(claimId);
+    if (islandClaim != null) {
       this.claim = claimId;
       int initialWidth = Options.getMinSize(owner) * 2;
       // Resize claims smaller than the player's initial-size
-      if (claim.getWidth() < initialWidth) {
+      if (islandClaim.getWidth() < initialWidth) {
         setWidth(initialWidth);
       }
-      if (claim.getType() != ClaimTypes.TOWN) {
-        claim.changeType(ClaimTypes.TOWN);
+      if (islandClaim.getType() != ClaimTypes.TOWN) {
+        islandClaim.changeType(ClaimTypes.TOWN);
       }
     } else {
-      claim = claimManager.getClaimAt(this.getRegion().getCenter().getBlockPosition());
-      if (!claim.isWilderness() && claim.getOwnerUniqueId().equals(owner)) {
+      islandClaim = claimManager.getClaimAt(this.getRegion().getCenter().getBlockPosition());
+      if (!islandClaim.isWilderness() && islandClaim.getOwnerUniqueId().equals(owner)) {
         PLUGIN.getLogger().warn(
             "Claim UUID for {} has changed from {} to {}.",
-            getName().toPlain(), this.claim, claim.getUniqueId()
+            getName().toPlain(), this.claim, islandClaim.getUniqueId()
         );
-        this.claim = claim.getUniqueId();
+        this.claim = islandClaim.getUniqueId();
       } else {
         try {
           this.claim = ClaimUtil.createIslandClaim(owner, getRegion()).getUniqueId();
@@ -199,7 +198,7 @@ public class Island implements ContextSource {
   }
 
   public Optional<Claim> getClaim() {
-    return GriefDefender.getCore().getClaimManager(getWorld().getUniqueId()).getClaimByUUID(this.claim);
+    return Optional.ofNullable(GriefDefender.getCore().getClaimManager(getWorld().getUniqueId()).getClaimByUUID(this.claim));
   }
 
   public Date getDateCreated() {
@@ -211,15 +210,16 @@ public class Island implements ContextSource {
   }
 
   public Text getName() {
-    return (getClaim().isPresent() && getClaim().get().getName().isPresent())
-        ? TextSerializers.JSON.deserialize(GsonComponentSerializer.INSTANCE.serialize(getClaim().get().getName().get()))
+    Optional<Claim> claim = getClaim();
+    return (claim.isPresent() && claim.get().getDisplayNameComponent().isPresent())
+        ? SpongeComponentSerializer.get().serialize(claim.get().getDisplayNameComponent().get())
         : Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
   }
 
   public void setName(@Nullable Text name) {
     getClaim().ifPresent(claim -> {
       Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
-      claim.getData().setName(GsonComponentSerializer.INSTANCE.deserialize(TextSerializers.JSON.serialize(name)));
+      claim.getData().setDisplayName(name != null ? SpongeComponentSerializer.get().deserialize(name) : null);
       Sponge.getCauseStackManager().popCause();
     });
   }
@@ -286,22 +286,21 @@ public class Island implements ContextSource {
       return false;
     }
 
-    Optional<PlayerData> playerData = GriefDefender.getCore().getPlayerData(getWorld().getUniqueId(), owner);
+    PlayerData playerData = GriefDefender.getCore().getPlayerData(getWorld().getUniqueId(), owner);
     Optional<Claim> optionalClaim = getClaim();
 
-    if (playerData.isPresent() && optionalClaim.isPresent()) {
-      PlayerData data = playerData.get();
+    if (playerData != null && optionalClaim.isPresent()) {
       Claim islandClaim = optionalClaim.get();
 
       Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
       int spacing = (512 - width) / 2;
       ClaimResult result = islandClaim.resize(new Vector3i(
           getRegion().getLesserBoundary().getX() + spacing,
-          data.getMinClaimLevel(),
+          playerData.getMinClaimLevel(),
           getRegion().getLesserBoundary().getZ() + spacing
       ), new Vector3i(
           getRegion().getGreaterBoundary().getX() - spacing,
-          data.getMaxClaimLevel(),
+          playerData.getMaxClaimLevel(),
           getRegion().getGreaterBoundary().getZ() - spacing
       ));
       Sponge.getCauseStackManager().popCause();

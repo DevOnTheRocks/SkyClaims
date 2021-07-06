@@ -27,15 +27,14 @@ package net.mohron.skyclaims.integration.griefdefender;
 import com.griefdefender.api.claim.Claim;
 import com.griefdefender.api.event.BorderClaimEvent;
 import com.griefdefender.api.event.ChangeClaimEvent;
+import com.griefdefender.api.event.ClaimEvent;
 import com.griefdefender.api.event.CreateClaimEvent;
 import com.griefdefender.api.event.RemoveClaimEvent;
 import com.griefdefender.api.event.TrustClaimEvent;
 import com.griefdefender.api.event.UserTrustClaimEvent;
-import net.kyori.event.method.annotation.Subscribe;
-import net.kyori.text.Component;
-import net.kyori.text.TextComponent;
-import net.kyori.text.format.TextColor;
-import net.kyori.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.spongeapi.SpongeComponentSerializer;
+import net.kyori.event.EventSubscriber;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.SkyClaimsTimings;
@@ -45,6 +44,7 @@ import net.mohron.skyclaims.team.Invite;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -55,15 +55,32 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.World;
 
-public class ClaimEventHandler {
+public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
   private static final Text PREFIX = Text.of(TextColors.WHITE, "[", TextColors.AQUA, PluginInfo.NAME, TextColors.WHITE, "] ");
 
-  @Subscribe
+  @Override
+  public void on(@NonNull ClaimEvent event) throws Throwable {
+    if (event instanceof CreateClaimEvent) {
+      onClaimCreate((CreateClaimEvent) event);
+    } else if (event instanceof RemoveClaimEvent) {
+      onClaimDelete((RemoveClaimEvent) event);
+    } else if (event instanceof ChangeClaimEvent) {
+      if (event instanceof ChangeClaimEvent.Resize) {
+        onClaimResized((ChangeClaimEvent.Resize) event);
+      } else {
+        onClaimChanged((ChangeClaimEvent) event);
+      }
+    } else if (event instanceof BorderClaimEvent) {
+      onClaimBorder((BorderClaimEvent) event);
+    } else if (event instanceof UserTrustClaimEvent) {
+      onClaimTrust((UserTrustClaimEvent) event);
+    }
+  }
+
   public void onClaimCreate(CreateClaimEvent event) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
@@ -74,7 +91,7 @@ public class ClaimEventHandler {
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
     Claim claim = event.getClaim();
 
-    if (!claim.getWorldUniqueId().equals(world.getUniqueId()) || isIslandDefender(event) || claim.isAdminClaim() || claim.getParent().isPresent()) {
+    if (!claim.getWorldUniqueId().equals(world.getUniqueId()) || isIslandDefender(event) || claim.isAdminClaim() || claim.getParent() != null) {
       SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
@@ -85,7 +102,6 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
-  @Subscribe
   public void onClaimDelete(RemoveClaimEvent event) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
@@ -103,7 +119,7 @@ public class ClaimEventHandler {
     for (Claim claim : event.getClaims()) {
       if (claim.getWorldUniqueId().equals(world.getUniqueId()) && IslandManager.getByClaim(claim).isPresent()) {
         if (event instanceof RemoveClaimEvent.Abandon) {
-          event.setMessage(TextComponent.of("You cannot abandon an island claim!", TextColor.RED));
+          event.setMessage(toComponent(Text.of(TextColors.RED, "You cannot abandon an island claim!")));
         } else {
           IslandManager.getByClaim(claim).ifPresent((Island island) -> event.setMessage(toComponent(Text.of(
               PREFIX, TextColors.RED, "A claim you are attempting to delete belongs to an island.", Text.NEW_LINE,
@@ -119,7 +135,6 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
-  @Subscribe
   public void onClaimChanged(ChangeClaimEvent event) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
@@ -145,7 +160,6 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
-  @Subscribe
   public void onClaimResized(ChangeClaimEvent.Resize event) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
@@ -167,7 +181,6 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
-  @Subscribe
   public void onClaimBorder(BorderClaimEvent event) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
@@ -209,7 +222,6 @@ public class ClaimEventHandler {
     SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
-  @Subscribe
   public void onClaimTrust(UserTrustClaimEvent event) {
     SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
 
@@ -230,8 +242,8 @@ public class ClaimEventHandler {
     // Get The top level claim
     if (claim.isSubdivision()) {
       Claim parent = claim;
-      while (parent.getParent().isPresent()) {
-        parent = parent.getParent().get();
+      while (parent.getParent() != null) {
+        parent = parent.getParent();
       }
       claim = parent;
     }
@@ -274,7 +286,7 @@ public class ClaimEventHandler {
   }
 
   private Component toComponent(Text text) {
-    return GsonComponentSerializer.INSTANCE.deserialize(TextSerializers.JSON.serialize(text));
+    return SpongeComponentSerializer.get().deserialize(text);
   }
 
   private boolean isIslandDefender(com.griefdefender.api.event.Event event) {

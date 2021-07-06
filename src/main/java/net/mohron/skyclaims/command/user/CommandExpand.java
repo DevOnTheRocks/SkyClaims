@@ -198,18 +198,17 @@ public class CommandExpand extends IslandCommand {
       }
     } else {
       // Use GP claim blocks by manipulating the player's bonus claim block balance
-      Optional<PlayerData> data = GriefDefender.getCore().getPlayerData(island.getWorld().getUniqueId(), island.getOwnerUniqueId());
+      Optional<PlayerData> data = Optional.ofNullable(GriefDefender.getCore().getPlayerData(island.getWorld().getUniqueId(), island.getOwnerUniqueId()));
       if (data.isPresent()) {
         if (data.get().getRemainingClaimBlocks() >= cost) {
           // Use the Owner's claim blocks to expand the island
           data.get().setBonusClaimBlocks(data.get().getBonusClaimBlocks() - (int) Math.round(cost));
           return true;
         }
-        return false;
       } else {
         PLUGIN.getLogger().error("Could not load GP player data for {}.", island.getOwnerName());
-        return false;
       }
+      return false;
     }
   }
 }

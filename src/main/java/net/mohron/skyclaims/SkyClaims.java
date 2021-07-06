@@ -18,16 +18,6 @@
 
 package net.mohron.skyclaims;
 
-import static net.mohron.skyclaims.PluginInfo.AUTHORS;
-import static net.mohron.skyclaims.PluginInfo.DESCRIPTION;
-import static net.mohron.skyclaims.PluginInfo.GD_API_VERSION;
-import static net.mohron.skyclaims.PluginInfo.GD_VERSION;
-import static net.mohron.skyclaims.PluginInfo.ID;
-import static net.mohron.skyclaims.PluginInfo.NAME;
-import static net.mohron.skyclaims.PluginInfo.NUCLEUS_VERSION;
-import static net.mohron.skyclaims.PluginInfo.SPONGE_API;
-import static net.mohron.skyclaims.PluginInfo.VERSION;
-
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.griefdefender.api.GriefDefender;
@@ -99,15 +89,15 @@ import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 @Plugin(
-    id = ID,
-    name = NAME,
-    version = VERSION,
-    description = DESCRIPTION,
-    authors = AUTHORS,
+    id = PluginInfo.ID,
+    name = PluginInfo.NAME,
+    version = PluginInfo.VERSION,
+    description = PluginInfo.DESCRIPTION,
+    authors = PluginInfo.AUTHORS,
     dependencies = {
-        @Dependency(id = "spongeapi", version = SPONGE_API),
-        @Dependency(id = "griefdefender", version = GD_VERSION),
-        @Dependency(id = "nucleus", version = NUCLEUS_VERSION, optional = true)
+        @Dependency(id = "spongeapi", version = PluginInfo.SPONGE_API),
+        @Dependency(id = "griefdefender", version = PluginInfo.GD_VERSION),
+        @Dependency(id = "nucleus", version = PluginInfo.NUCLEUS_VERSION, optional = true)
     })
 public class SkyClaims {
 
@@ -165,7 +155,7 @@ public class SkyClaims {
 
   @Listener
   public void onInitialization(GameInitializationEvent event) {
-    logger.info("{} {} is initializing...", NAME, VERSION);
+    logger.info("{} {} is initializing...", PluginInfo.NAME, PluginInfo.VERSION);
 
     config = new GlobalConfig();
     configManager = new ConfigManager(configLoader);
@@ -174,8 +164,6 @@ public class SkyClaims {
     if (Sponge.getPluginManager().isLoaded("nucleus")) {
       Sponge.getEventManager().registerListeners(this, new NucleusIntegration());
     }
-
-    validateGriefDefenderVersion();
   }
 
   private void validateGriefDefenderVersion() {
@@ -183,22 +171,22 @@ public class SkyClaims {
     try {
       version = GriefDefender.getVersion();
     } catch (IllegalStateException e) {
-      logger.error("GriefDefender API failed to load!");
-      logger.warn("Disabling IslandDefender.");
+      logger.error("GriefDefender API failed to load!", e);
+      logger.warn("Disabling SkyClaims.");
       enabled = false;
       return;
     }
 
-    if (version.getApiVersion() < GD_API_VERSION) {
+    if (version.getApiVersion() < PluginInfo.GD_API_VERSION) {
       logger.error(
           "GriefDefender API version {} is unsupported! Please update to API version {}+.",
-          version.getApiVersion(), GD_API_VERSION
+          version.getApiVersion(), PluginInfo.GD_API_VERSION
       );
       enabled = false;
-    } else if (Version.of(version.getImplementationVersion()).compareTo(GD_VERSION) < 0) {
+    } else if (Version.of(version.getImplementationVersion()).compareTo(PluginInfo.GD_VERSION) < 0) {
       logger.error(
           "GriefDefender version {} is unsupported! Please update to version {}+.",
-          version.getImplementationVersion(), GD_VERSION
+          version.getImplementationVersion(), PluginInfo.GD_VERSION
       );
       enabled = false;
     } else {
@@ -211,6 +199,7 @@ public class SkyClaims {
   @Listener(order = Order.LATE)
   public void onAboutToStart(GameAboutToStartServerEvent event) {
     registerDebugCommands();
+    validateGriefDefenderVersion();
     if (!enabled) {
       return;
     }
@@ -301,7 +290,7 @@ public class SkyClaims {
 
     // SkyClaims Metrics are enabled by default
     if (this.metricsConfigManager.getCollectionState(this.pluginContainer) == Tristate.UNDEFINED) {
-      Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "sponge metrics " + ID + " enable");
+      Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "sponge metrics " + PluginInfo.ID + " enable");
     }
     addCustomMetrics();
 
@@ -313,7 +302,7 @@ public class SkyClaims {
     if (!enabled) {
       return;
     }
-    logger.info("{} {} is stopping...", NAME, VERSION);
+    logger.info("{} {} is stopping...", PluginInfo.NAME, PluginInfo.VERSION);
   }
 
   @Listener

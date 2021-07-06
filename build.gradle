@@ -36,6 +36,10 @@ repositories {
         url = "https://files.minecraftforge.net/maven"
     }
     maven {
+        name = "GriefDefender"
+        url = "https://repo.glaremasters.me/repository/bloodshot"
+    }
+    maven {
         name = "Nucleus"
         url = "https://repo.drnaylor.co.uk/artifactory/list/minecraft"
     }
@@ -56,12 +60,12 @@ repositories {
 dependencies {
     annotationProcessor("org.spongepowered:spongeapi:${spongeapi}")
     implementation("org.spongepowered:spongeapi:${spongeapi}")
-    implementation("com.github.bloodmc:GriefDefenderAPI:master-SNAPSHOT")
+    implementation("com.griefdefender:api:2.0.0-SNAPSHOT")
     implementation("me.lucko.luckperms:luckperms-api:4.3")
-    implementation("net.kyori:text-api:3.0.2")
-    implementation("net.kyori:text-adapter-spongeapi:3.0.3")
-    implementation("net.kyori:event-api:3.0.0")
-    implementation("net.kyori:event-method:3.0.0")
+    implementation("net.kyori:adventure-api:4.8.0")
+    implementation("net.kyori:adventure-platform-spongeapi:4.0.0-SNAPSHOT")
+    implementation("net.kyori:adventure-text-serializer-spongeapi:4.0.0-SNAPSHOT")
+    implementation("net.kyori:event-api:5.0.0-SNAPSHOT")
     implementation("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
     implementation("io.github.nucleuspowered:nucleus-api:${nucleus}")
     implementation("org.bstats:bstats-sponge:${bstats}")
@@ -79,6 +83,9 @@ shadowJar {
         include(dependency("org.bstats:bstats-sponge:${bstats}"))
     }
     relocate "org.bstats", "net.mohron.skyclaims.metrics"
+
+    relocate("net.kyori", "com.griefdefender.lib.kyori")
+    relocate("co.aikar.commands", "com.griefdefender.lib.aikar.commands")
 
     minimize()
 }
