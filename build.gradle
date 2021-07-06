@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "idea"
     id "signing"
+    id "com.github.ben-manes.versions" version "0.39.0"
     id "ninja.miserable.blossom" version "1.0.1"
     id "com.github.johnrengelman.shadow" version "5.0.0"
     id "io.franzbecker.gradle-lombok" version "3.1.0"
@@ -26,7 +27,7 @@ tasks.withType(JavaCompile) {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven {
         name = "Sponge"
         url = "https://repo.spongepowered.org/maven"
@@ -34,6 +35,10 @@ repositories {
     maven {
         name = "Forge"
         url = "https://files.minecraftforge.net/maven"
+    }
+    maven {
+        name = "GriefDefender"
+        url = "https://repo.glaremasters.me/repository/bloodshot"
     }
     maven {
         name = "Nucleus"
@@ -56,12 +61,13 @@ repositories {
 dependencies {
     annotationProcessor("org.spongepowered:spongeapi:${spongeapi}")
     implementation("org.spongepowered:spongeapi:${spongeapi}")
-    implementation("com.github.bloodmc:GriefDefenderAPI:master-SNAPSHOT")
-    implementation("me.lucko.luckperms:luckperms-api:4.3")
-    implementation("net.kyori:text-api:3.0.2")
-    implementation("net.kyori:text-adapter-spongeapi:3.0.3")
-    implementation("net.kyori:event-api:3.0.0")
-    implementation("net.kyori:event-method:3.0.0")
+//    runtime(files("libs/griefdefender-sponge-2.0.1.jar"))
+    implementation("com.griefdefender:api:2.0.0-SNAPSHOT")
+    implementation("me.lucko.luckperms:luckperms-api:4.4")
+    implementation("net.kyori:adventure-api:4.9.0")
+    implementation("net.kyori:adventure-platform-spongeapi:4.0.0")
+    implementation("net.kyori:adventure-text-serializer-spongeapi:4.0.0-SNAPSHOT")
+    implementation("net.kyori:event-api:5.0.0-SNAPSHOT")
     implementation("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
     implementation("io.github.nucleuspowered:nucleus-api:${nucleus}")
     implementation("org.bstats:bstats-sponge:${bstats}")
@@ -79,6 +85,9 @@ shadowJar {
         include(dependency("org.bstats:bstats-sponge:${bstats}"))
     }
     relocate "org.bstats", "net.mohron.skyclaims.metrics"
+
+    relocate("net.kyori", "com.griefdefender.lib.kyori")
+    relocate("co.aikar.commands", "com.griefdefender.lib.aikar.commands")
 
     minimize()
 }

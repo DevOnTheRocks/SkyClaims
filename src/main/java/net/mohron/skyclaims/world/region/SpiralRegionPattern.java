@@ -21,7 +21,7 @@ package net.mohron.skyclaims.world.region;
 import java.util.ArrayList;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.InvalidRegionException;
-import net.mohron.skyclaims.util.ClaimUtil;
+import net.mohron.skyclaims.integration.griefdefender.ClaimUtil;
 import net.mohron.skyclaims.world.IslandManager;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.spongepowered.api.text.Text;

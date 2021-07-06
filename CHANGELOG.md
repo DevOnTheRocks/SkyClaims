@@ -1,5 +1,10 @@
 # Change Log 
 
+# Beta 32 - Grief Defender 2
+**REQUIRED: Sponge API 7.3+; Grief Defender 2+; LuckPerms 5.3.X;**
+**OPTIONAL: Nucleus 2.3.2+**
+- Port to GriefDefender 2.X
+
 # Beta 31
 **REQUIRED: Sponge API 7.3+; Grief Defender 1.5.9+; LuckPerms 5.2.X;**
 **OPTIONAL: Nucleus 2.3.2+**

@@ -16,7 +16,7 @@
  * along with SkyClaims.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.mohron.skyclaims.util;
+package net.mohron.skyclaims.integration.griefdefender;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nonnull;
-import net.kyori.text.TextComponent;
+import net.kyori.adventure.text.Component;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
@@ -62,7 +62,7 @@ public final class ClaimUtil {
       claimResult = ClaimUtil.createIslandClaimResult(ownerUniqueId, region);
       switch (claimResult.getResultType()) {
         case SUCCESS:
-          claim = claimResult.getClaim().get();
+          claim = claimResult.getClaim();
           PLUGIN.getLogger().debug(
               "Creating {}'s claim in region ({}, {}). Claimed from {}x, {}z - {}x, {}z.",
               getName(ownerUniqueId),
@@ -85,7 +85,7 @@ public final class ClaimUtil {
             PLUGIN.getLogger().info(
                 "Removed claim overlapping {}'s island (Owner: {}, ID: {}).",
                 getName(ownerUniqueId),
-                overlappedClaim.getOwnerName().toString(),
+                overlappedClaim.getOwnerName(),
                 overlappedClaim.getUniqueId()
             );
           }
@@ -93,7 +93,7 @@ public final class ClaimUtil {
         default:
           throw new CreateIslandException(Text.of(
               TextColors.RED, "Failed to create claim: ", claimResult.getResultType(),
-              Text.NEW_LINE, claimResult.getMessage().orElse(TextComponent.of("No message provided"))
+              Text.NEW_LINE, claimResult.getMessage().orElse(Component.text("No message provided"))
           ));
       }
     } while (claim == null);
@@ -110,8 +110,8 @@ public final class ClaimUtil {
     checkNotNull(ownerUniqueId, "Error Creating Claim: Owner is null");
     checkNotNull(region, "Error Creating Claim: Region is null");
 
-    PlayerData playerData = GriefDefender.getCore()
-        .getPlayerData(world.getUniqueId(), ownerUniqueId)
+    PlayerData playerData = Optional.ofNullable(GriefDefender.getCore()
+        .getPlayerData(world.getUniqueId(), ownerUniqueId))
         .orElseThrow(() -> new CreateIslandException(Text.of(
             TextColors.RED, "Unable to load GriefDefender player data!"
         )));
@@ -142,7 +142,7 @@ public final class ClaimUtil {
   public static void createSpawnClaim(List<Region> regions) {
     ClaimResult claimResult = ClaimUtil.createSpawnClaimResult(regions);
     if (claimResult.successful()) {
-      PLUGIN.getLogger().debug("Reserved {} regions for spawn. Admin Claim: {}", regions.size(), claimResult.getClaim().get().getUniqueId());
+      PLUGIN.getLogger().debug("Reserved {} regions for spawn. Admin Claim: {}", regions.size(), claimResult.getClaim().getUniqueId());
     }
   }
 

@@ -27,6 +27,6 @@ public final class PluginInfo {
   public static final String AUTHORS = "Mohron";
   public static final String SPONGE_API = "@SPONGE_API@";
   public static final String GD_VERSION = "[@GRIEF_DEFENDER@,)";
-  public static final double GD_API_VERSION = 0.8;
+  public static final double GD_API_VERSION = 2.0D;
   public static final String NUCLEUS_VERSION = "@NUCLEUS@";
 }
