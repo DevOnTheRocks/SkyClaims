@@ -1,5 +1,10 @@
 # Change Log 
 
+# Beta 32.1
+**REQUIRED: Sponge API 7.3+; Grief Defender 2+; LuckPerms 5.3.X;**
+**OPTIONAL: Nucleus 2.3.2+**
+- Bug Fix: `World -> Spawn-World` config option works as intended again 
+
 # Beta 32 - Grief Defender 2
 **REQUIRED: Sponge API 7.3+; Grief Defender 2+; LuckPerms 5.3.X;**
 **OPTIONAL: Nucleus 2.3.2+**

@@ -31,6 +31,7 @@ import org.spongepowered.api.world.World;
 
 @ConfigSerializable
 public class WorldConfig {
+
   private static final UUID NIL_UUID = new UUID(0, 0);
 
   @Setting(value = "SkyClaims-World-UUID", comment = "Sponge UUID of the world to manage islands in")
@@ -76,10 +77,27 @@ public class WorldConfig {
     }
   }
 
+  public World getSpawnWorld() {
+    if (!isSeparateSpawn()) {
+      return getWorld();
+    }
+    final Optional<World> world = Sponge.getServer().getWorld(spawnWorld);
+    if (world.isPresent()) {
+      return world.get();
+    } else {
+      SkyClaims.getInstance().getLogger().error("World \"" + spawnWorld + "\" cannot be found.");
+      return getWorld();
+    }
+  }
+
   public Location<World> getSpawn() {
-    World world = getWorld();
+    World world = getSpawnWorld();
     SkyClaims.getInstance().getLogger().debug("Spawn World: {}", world.getName());
-    return world.isLoaded() ? world.getSpawnLocation() : getWorld().getSpawnLocation();
+    if (!world.isLoaded()) {
+      SkyClaims.getInstance().getLogger().error("World \"" + spawnWorld + "\" is not loaded.");
+      return getWorld().getSpawnLocation();
+    }
+    return world.getSpawnLocation();
   }
 
   public boolean isSeparateSpawn() {
