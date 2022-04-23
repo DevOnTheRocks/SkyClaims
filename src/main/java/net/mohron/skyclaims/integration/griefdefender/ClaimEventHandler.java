@@ -1,12 +1,6 @@
 /*
- * Required Notice: Copyright (C) 2019 Mohron (https://www.mohron.dev)
- *
- * IslandDefender is licensed under the PolyForm Noncommercial License 1.0.0 (https://polyformproject.org/licenses/noncommercial/1.0.0).
- */
-
-/*
  * SkyClaims - A Skyblock plugin made for Sponge
- * Copyright (C) 2017 Mohron
+ * Copyright (C) 2022 Mohron
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
