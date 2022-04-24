@@ -20,7 +20,6 @@ package net.mohron.skyclaims.world;
 
 import com.flowpowered.math.vector.Vector3i;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.entity.Entity;
@@ -49,8 +48,6 @@ public class RegenerateChunkTask implements Runnable {
 
   @Override
   public void run() {
-    SkyClaimsTimings.CLEAR_ISLAND.startTimingIfSync();
-
     final Chunk chunk = world.loadChunk(position, true).orElse(null);
 
     if (chunk == null) {
@@ -77,7 +74,5 @@ public class RegenerateChunkTask implements Runnable {
     chunk.getEntities(e -> !(e instanceof Player)).forEach(Entity::remove);
     chunk.unloadChunk();
     PLUGIN.getLogger().debug("Finished regenerating chunk {}", position.toString());
-
-    SkyClaimsTimings.CLEAR_ISLAND.stopTimingIfSync();
   }
 }

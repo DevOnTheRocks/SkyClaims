@@ -19,7 +19,6 @@
 package net.mohron.skyclaims.listener;
 
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
@@ -38,13 +37,10 @@ public class EntitySpawnHandler {
   @Listener
   public void onEntitySpawn(SpawnEntityEvent event) {
 
-    SkyClaimsTimings.ENTITY_SPAWN.startTimingIfSync();
-
     if (event instanceof DropItemEvent
         || event.getEntities().isEmpty()
         || !event.getEntities().get(0).getWorld()
         .equals(PLUGIN.getConfig().getWorldConfig().getWorld())) {
-      SkyClaimsTimings.ENTITY_SPAWN.abort();
       return;
     }
 
@@ -73,8 +69,6 @@ public class EntitySpawnHandler {
       limit = Options.getMaxSpawns(island.getOwnerUniqueId());
       return (limit <= 0 || limit >= hostile + passive);
     });
-
-    SkyClaimsTimings.ENTITY_SPAWN.stopTimingIfSync();
   }
 
 }

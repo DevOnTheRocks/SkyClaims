@@ -19,7 +19,6 @@ package net.mohron.skyclaims.listener;
 
 import java.util.Optional;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.world.Island;
 import net.mohron.skyclaims.world.IslandManager;
 import org.spongepowered.api.Sponge;
@@ -35,11 +34,9 @@ public class RespawnHandler {
 
   @Listener
   public void onPlayerRespawn(RespawnPlayerEvent event, @Root Player player) {
-    SkyClaimsTimings.PLAYER_RESPAWN.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
     if (!event.isDeath() || !world.equals(event.getFromTransform().getExtent())) {
-      SkyClaimsTimings.PLAYER_RESPAWN.abort();
       return;
     }
 
@@ -49,7 +46,5 @@ public class RespawnHandler {
           .getSafeLocation(island.get().getSpawn().getLocation())
           .ifPresent(spawn -> event.setToTransform(island.get().getSpawn().setLocation(spawn)));
     }
-
-    SkyClaimsTimings.PLAYER_RESPAWN.stopTimingIfSync();
   }
 }

@@ -20,7 +20,6 @@ package net.mohron.skyclaims.listener;
 
 import java.util.List;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.exception.CreateIslandException;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.team.PrivilegeType;
@@ -49,8 +48,6 @@ public class ClientJoinHandler {
   }
 
   private void createIslandOnJoin(Player player) {
-    SkyClaimsTimings.CREATE_ISLAND_ON_JOIN.startTimingIfSync();
-
     Sponge.getScheduler().createTaskBuilder()
         .execute(src -> {
           try {
@@ -67,13 +64,9 @@ public class ClientJoinHandler {
         })
         .delayTicks(40)
         .submit(PLUGIN);
-
-    SkyClaimsTimings.CREATE_ISLAND_ON_JOIN.stopTimingIfSync();
   }
 
   private void deliverInvites(Player player) {
-    SkyClaimsTimings.DELIVER_INVITES.startTimingIfSync();
-
     int invites = PLUGIN.getInviteService().getInviteCount(player);
     if (invites > 0) {
       player.sendMessage(Text.of(
@@ -87,8 +80,6 @@ public class ClientJoinHandler {
           TextColors.WHITE, "]"
       ));
     }
-
-    SkyClaimsTimings.DELIVER_INVITES.stopTimingIfSync();
   }
 
   private void expandOwnedIslandsToMinWidth(Player player) {

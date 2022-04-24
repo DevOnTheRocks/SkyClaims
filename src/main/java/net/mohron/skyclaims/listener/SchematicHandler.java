@@ -23,7 +23,6 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Permissions;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.type.HandTypes;
@@ -42,10 +41,7 @@ public class SchematicHandler {
 
   @Listener
   public void onInteract(InteractBlockEvent.Secondary.MainHand event, @Root Player player) {
-    SkyClaimsTimings.SCHEMATIC_HANDLER.startTimingIfSync();
-
     if (!player.hasPermission(Permissions.COMMAND_SCHEMATIC_CREATE)) {
-      SkyClaimsTimings.SCHEMATIC_HANDLER.abort();
       return;
     }
 
@@ -57,16 +53,11 @@ public class SchematicHandler {
           "Position 2 set to " + event.getTargetBlock().getPosition()));
       event.setCancelled(true);
     }
-
-    SkyClaimsTimings.SCHEMATIC_HANDLER.stopTimingIfSync();
   }
 
   @Listener
   public void onInteract(InteractBlockEvent.Primary.MainHand event, @Root Player player) {
-    SkyClaimsTimings.SCHEMATIC_HANDLER.startTimingIfSync();
-
     if (!player.hasPermission(Permissions.COMMAND_SCHEMATIC_CREATE)) {
-      SkyClaimsTimings.SCHEMATIC_HANDLER.abort();
       return;
     }
 
@@ -77,8 +68,6 @@ public class SchematicHandler {
           "Position 1 set to " + event.getTargetBlock().getPosition()));
       event.setCancelled(true);
     }
-
-    SkyClaimsTimings.SCHEMATIC_HANDLER.stopTimingIfSync();
   }
 
   public static PlayerData get(Player pl) {

@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Options;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
@@ -42,8 +41,6 @@ public class IslandCleanupTask implements Runnable {
 
   @Override
   public void run() {
-    SkyClaimsTimings.ISLAND_CLEANUP.startTimingIfSync();
-
     PLUGIN.getLogger().info("Starting island cleanup check.");
     Stopwatch sw = Stopwatch.createStarted();
     SpongeExecutorService asyncExecutor = Sponge.getScheduler().createAsyncExecutor(PLUGIN);
@@ -66,7 +63,5 @@ public class IslandCleanupTask implements Runnable {
 
     sw.stop();
     PLUGIN.getLogger().info("Finished island cleanup check in {}ms.", sw.elapsed(TimeUnit.MILLISECONDS));
-
-    SkyClaimsTimings.ISLAND_CLEANUP.stopTimingIfSync();
   }
 }

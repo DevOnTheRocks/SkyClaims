@@ -20,7 +20,6 @@ package net.mohron.skyclaims.world;
 
 import java.util.UUID;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.permissions.Options;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.util.CommandUtil;
@@ -48,7 +47,6 @@ public class GenerateIslandTask implements Runnable {
 
   @Override
   public void run() {
-    SkyClaimsTimings.GENERATE_ISLAND.startTimingIfSync();
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
     ArchetypeVolume volume = schematic.getSchematic();
@@ -90,7 +88,5 @@ public class GenerateIslandTask implements Runnable {
           .execute(CommandUtil.createTeleportConsumer(p, spawn))
           .submit(PLUGIN));
     }
-
-    SkyClaimsTimings.GENERATE_ISLAND.stopTimingIfSync();
   }
 }

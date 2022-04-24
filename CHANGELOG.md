@@ -4,6 +4,7 @@
 **REQUIRED: Sponge API 8.0+; Grief Defender 2.1.5+; LuckPerms 5.3.X;**
 **OPTIONAL: Nucleus 3+**
 - Port to Sponge API 8.0
+  - Removed: Timings integrations
 
 # Beta 32.1
 **REQUIRED: Sponge API 7.3+; Grief Defender 2+; LuckPerms 5.3.X;**

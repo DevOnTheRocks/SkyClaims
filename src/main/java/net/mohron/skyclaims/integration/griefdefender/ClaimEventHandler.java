@@ -31,7 +31,6 @@ import net.kyori.adventure.text.serializer.spongeapi.SpongeComponentSerializer;
 import net.kyori.event.EventSubscriber;
 import net.mohron.skyclaims.PluginInfo;
 import net.mohron.skyclaims.SkyClaims;
-import net.mohron.skyclaims.SkyClaimsTimings;
 import net.mohron.skyclaims.config.type.MiscConfig.ClearItemsType;
 import net.mohron.skyclaims.permissions.Permissions;
 import net.mohron.skyclaims.team.Invite;
@@ -76,8 +75,6 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
   }
 
   public void onClaimCreate(CreateClaimEvent event) {
-    SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
-
     if (!event.getCause().containsType(Player.class)) {
       return;
     }
@@ -86,19 +83,14 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     Claim claim = event.getClaim();
 
     if (!claim.getWorldUniqueId().equals(world.getUniqueId()) || isIslandDefender(event) || claim.isAdminClaim() || claim.getParent() != null) {
-      SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
     event.setMessage(toComponent(Text.of(PREFIX, TextColors.RED, "You cannot create a player claim in this dimension!")));
     event.cancelled(true);
-
-    SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
   public void onClaimDelete(RemoveClaimEvent event) {
-    SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
-
     if (!event.getCause().containsType(Player.class)) {
       return;
     }
@@ -106,7 +98,6 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     World world = PLUGIN.getConfig().getWorldConfig().getWorld();
 
     if (isIslandDefender(event)) {
-      SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
@@ -125,13 +116,9 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
         event.cancelled(true);
       }
     }
-
-    SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
   public void onClaimChanged(ChangeClaimEvent event) {
-    SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
-
     if (!event.getCause().containsType(Player.class)) {
       return;
     }
@@ -140,7 +127,6 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     Claim claim = event.getClaim();
 
     if (!claim.getWorldUniqueId().equals(world.getUniqueId()) || isIslandDefender(event) || !IslandManager.getByClaim(claim).isPresent()) {
-      SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
@@ -150,17 +136,12 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
         " an island claim!"
     )));
     event.cancelled(true);
-
-    SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
-  public void onClaimResized(ChangeClaimEvent.Resize event) {
-    SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
-    World world = PLUGIN.getConfig().getWorldConfig().getWorld();
+  public void onClaimResized(ChangeClaimEvent.Resize event) {    World world = PLUGIN.getConfig().getWorldConfig().getWorld();
     Claim claim = event.getClaim();
 
     if (!claim.getWorldUniqueId().equals(world.getUniqueId()) || !IslandManager.getByClaim(claim).isPresent()) {
-      SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
@@ -171,13 +152,9 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
       )));
       event.cancelled(true);
     }
-
-    SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
   public void onClaimBorder(BorderClaimEvent event) {
-    SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
-
     Player player = event.getCause().first(Player.class).orElse(null);
     if (player == null) {
       return;
@@ -187,7 +164,6 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     Claim claim = event.getClaim();
 
     if (!claim.getWorldUniqueId().equals(world.getUniqueId()) || !IslandManager.getByClaim(claim).isPresent()) {
-      SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
@@ -212,16 +188,11 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
         }
       }
     }
-
-    SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
   public void onClaimTrust(UserTrustClaimEvent event) {
-    SkyClaimsTimings.CLAIM_HANDLER.startTimingIfSync();
-
     Player player = event.getCause().first(Player.class).orElse(null);
     if (player == null || isIslandDefender(event) || player.hasPermission(Permissions.BYPASS_TRUST)) {
-      SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
@@ -229,7 +200,6 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     Claim claim = event.getClaim();
 
     if (!claim.getWorldUniqueId().equals(world.getUniqueId())) {
-      SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
 
@@ -243,7 +213,6 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     }
     // Ignore claims without an island.
     if (!IslandManager.getByClaim(claim).isPresent()) {
-      SkyClaimsTimings.CLAIM_HANDLER.abort();
       return;
     }
     // Send out invites
@@ -275,8 +244,6 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
             }));
       }
     }
-
-    SkyClaimsTimings.CLAIM_HANDLER.stopTimingIfSync();
   }
 
   private Component toComponent(Text text) {

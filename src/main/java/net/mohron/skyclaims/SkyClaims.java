@@ -49,13 +49,11 @@ import net.mohron.skyclaims.world.IslandCleanupTask;
 import net.mohron.skyclaims.world.IslandManager;
 import net.mohron.skyclaims.world.gen.VoidWorldGeneratorModifier;
 import net.mohron.skyclaims.world.region.Region;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.apache.logging.log4j.Logger;
 import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
-import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
@@ -63,42 +61,25 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
-import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.persistence.DataQuery;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.Getter;
-import org.spongepowered.api.event.game.GameRegistryEvent;
-import org.spongepowered.api.event.game.GameReloadEvent;
-import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.event.world.ConstructWorldPropertiesEvent;
+import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
-import org.spongepowered.api.plugin.Dependency;
-import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.permission.PermissionService;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.util.metric.MetricsConfigManager;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.gen.WorldGeneratorModifier;
 import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.plugin.PluginContainer;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
 
-@Plugin(
-    id = PluginInfo.ID,
-    name = PluginInfo.NAME,
-    version = PluginInfo.VERSION,
-    description = PluginInfo.DESCRIPTION,
-    authors = PluginInfo.AUTHORS,
-    dependencies = {
-        @Dependency(id = "spongeapi", version = PluginInfo.SPONGE_API),
-        @Dependency(id = "griefdefender", version = PluginInfo.GD_VERSION),
-        @Dependency(id = "nucleus", version = PluginInfo.NUCLEUS_VERSION, optional = true)
-    })
+@Plugin("skyclaims")
 public class SkyClaims {
 
   private static SkyClaims instance;
@@ -151,6 +132,11 @@ public class SkyClaims {
   @Listener
   public void onGameConstruction(GameConstructionEvent event) {
     instance = this;
+  }
+
+  @Listener
+  public void onRegisterCommand(RegisterCommandEvent event) {
+    registerCommands();
   }
 
   @Listener
