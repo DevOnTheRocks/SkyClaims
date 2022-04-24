@@ -1,5 +1,10 @@
 # Change Log 
 
+# Beta 33 - Sponge API 8 (MC 1.16.5)
+**REQUIRED: Sponge API 8.0+; Grief Defender 2.1.5+; LuckPerms 5.3.X;**
+**OPTIONAL: Nucleus 3+**
+- Port to Sponge API 8.0
+
 # Beta 32.1
 **REQUIRED: Sponge API 7.3+; Grief Defender 2+; LuckPerms 5.3.X;**
 **OPTIONAL: Nucleus 2.3.2+**

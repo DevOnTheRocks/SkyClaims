@@ -7,12 +7,12 @@
 !/src/
 !/lib/
 !/.gitignore
-!/build.gradle
+!/build.gradle.kts
 !/gradlew*
 !/CHANGELOG*.md
 !/LICENSE.md
 !/README*.md
-!/settings.gradle
+!/settings.gradle.kts
 !/intellij-java-google-style.xml
 !/.travis.yml
 !/gradle.properties
