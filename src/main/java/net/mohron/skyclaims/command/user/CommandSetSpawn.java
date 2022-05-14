@@ -38,7 +38,7 @@ public class CommandSetSpawn extends CommandBase.PlayerCommand {
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_SET_SPAWN)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .executor(new CommandSetSpawn())
         .build();
 
@@ -54,17 +54,17 @@ public class CommandSetSpawn extends CommandBase.PlayerCommand {
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     Island island = IslandManager.getByLocation(player.getLocation())
-        .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear("You must be on an island to use this command!")));
 
     if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_SPAWN_OTHERS)) {
-      throw new CommandException(Text.of("Only the island owner may use this command!"));
+      throw new CommandException(LinearComponents.linear("Only the island owner may use this command!"));
     }
 
     island.setSpawn(player.getTransform());
-    player.sendMessage(Text.of("Your island spawn has been set to ", TextColors.GRAY, "(",
-        TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), TextColors.GRAY, ", ",
-        TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), TextColors.GRAY, ", ",
-        TextColors.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), TextColors.GRAY, ")"
+    player.sendMessage(LinearComponents.linear("Your island spawn has been set to ", NamedTextColor.GRAY, "(",
+        NamedTextColor.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorX(), NamedTextColor.GRAY, ", ",
+        NamedTextColor.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorY(), NamedTextColor.GRAY, ", ",
+        NamedTextColor.LIGHT_PURPLE, island.getSpawn().getPosition().getFloorZ(), NamedTextColor.GRAY, ")"
     ));
 
     return CommandResult.success();

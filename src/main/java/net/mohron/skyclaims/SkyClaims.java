@@ -226,7 +226,7 @@ public class SkyClaims {
     }
 
     if (setupSpawn && !config.getWorldConfig().isSeparateSpawn()) {
-      Location<World> spawn = new Region(0, 0).getCenter();
+      ServerLocation spawn = new Region(0, 0).getCenter();
       int size = 4;
       for (int x = -size; x <= size; x++) {
         for (int z = -size; z <= size; z++) {
@@ -276,7 +276,7 @@ public class SkyClaims {
 
     // SkyClaims Metrics are enabled by default
     if (this.metricsConfigManager.getCollectionState(this.pluginContainer) == Tristate.UNDEFINED) {
-      Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "sponge metrics " + PluginInfo.ID + " enable");
+      Sponge.getCommandManager().process(Sponge.server().getConsole(), "sponge metrics " + PluginInfo.ID + " enable");
     }
     addCustomMetrics();
 

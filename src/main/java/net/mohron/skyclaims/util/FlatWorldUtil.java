@@ -26,7 +26,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.text.Text;
 
 public final class FlatWorldUtil {
 
@@ -68,7 +67,7 @@ public final class FlatWorldUtil {
       }
 
       BlockType type = Sponge.getRegistry().getType(BlockType.class, blockId)
-          .orElseThrow(() -> new SkyClaimsException(Text.of("Unable to parse flat world preset code. Unknown Block ID: ", blockId)));
+          .orElseThrow(() -> new SkyClaimsException(LinearComponents.linear("Unable to parse flat world preset code. Unknown Block ID: ", blockId)));
       for (int i = 0; i < count; i++) {
         list[l] = BlockState.builder().blockType(type).build();
         l++;

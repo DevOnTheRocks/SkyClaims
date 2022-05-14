@@ -38,7 +38,7 @@ public class CommandSchematic extends CommandBase {
   public static void register() {
     commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_SCHEMATIC)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .child(CommandSchematicCommand.commandSpec, "command")
         .child(CommandSchematicCreate.commandSpec, "create")
         .child(CommandSchematicDelete.commandSpec, "delete")

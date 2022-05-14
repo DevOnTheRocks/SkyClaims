@@ -60,14 +60,14 @@ public enum IslandSortType {
       switch (this) {
         case DESC:
           return Text.builder("▼")
-              .color(TextColors.GRAY)
-              .onHover(TextActions.showText(Text.of("Descending")))
+              .color(NamedTextColor.GRAY)
+              .onHover(TextActions.showText(LinearComponents.linear("Descending")))
               .build();
         case ASC:
         default:
           return Text.builder("▲")
-              .color(TextColors.GRAY)
-              .onHover(TextActions.showText(Text.of("Ascending")))
+              .color(NamedTextColor.GRAY)
+              .onHover(TextActions.showText(LinearComponents.linear("Ascending")))
               .build();
       }
     }

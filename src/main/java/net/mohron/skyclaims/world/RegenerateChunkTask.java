@@ -36,9 +36,9 @@ public class RegenerateChunkTask implements Runnable {
   private final World world;
   private final Vector3i position;
   private final BlockState[] blocks;
-  private final Location<World> spawn;
+  private final ServerLocation spawn;
 
-  public RegenerateChunkTask(World world, Vector3i position, BlockState[] blocks, Location<World> spawn) {
+  public RegenerateChunkTask(World world, Vector3i position, BlockState[] blocks, ServerLocation spawn) {
     this.world = world;
     this.position = position;
     this.blocks = blocks;

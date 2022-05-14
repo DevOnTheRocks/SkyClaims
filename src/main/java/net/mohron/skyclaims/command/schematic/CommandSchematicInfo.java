@@ -41,8 +41,8 @@ import org.spongepowered.api.text.format.TextStyles;
 public class CommandSchematicInfo extends CommandBase {
 
   public static final String HELP_TEXT = "used to view detailed schematic info";
-  private static final Text SCHEMATIC = Text.of("schematic");
-  private static final LiteralText NONE = Text.of("none");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
+  private static final LiteralText NONE = LinearComponents.linear("none");
 
   private enum Category {
     DETAILS, COMMANDS, RESET_COMMANDS
@@ -50,7 +50,7 @@ public class CommandSchematicInfo extends CommandBase {
 
   public static final CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_INFO)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(Arguments.schematic(SCHEMATIC))
       .executor(new CommandSchematicInfo())
       .build();
@@ -67,7 +67,7 @@ public class CommandSchematicInfo extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a schematic to use this command!")));
 
     getPaginationList(schematic, Category.DETAILS, src).sendTo(src);
 
@@ -75,20 +75,20 @@ public class CommandSchematicInfo extends CommandBase {
   }
 
   private PaginationList getPaginationList(IslandSchematic schematic, Category category, CommandSource src) {
-    Text title = Text.of(
-        schematic.getText(), TextColors.AQUA, " : ",
-        category == Category.DETAILS ? TextColors.AQUA : TextColors.GRAY, "[",
+    Text title = LinearComponents.linear(
+        schematic.getText(), NamedTextColor.AQUA, " : ",
+        category == Category.DETAILS ? NamedTextColor.AQUA : NamedTextColor.GRAY, "[",
         Text.builder("Details")
-            .color(category == Category.DETAILS ? TextColors.GREEN : TextColors.GRAY)
-            .onHover(TextActions.showText(Text.of("Click here to show details")))
+            .color(category == Category.DETAILS ? NamedTextColor.GREEN : NamedTextColor.GRAY)
+            .onHover(TextActions.showText(LinearComponents.linear("Click here to show details")))
             .onClick(TextActions.executeCallback(s -> getPaginationList(schematic, Category.DETAILS, s).sendTo(s))),
-        category == Category.DETAILS ? TextColors.AQUA : TextColors.GRAY, "] ",
-        category == Category.COMMANDS ? TextColors.AQUA : TextColors.GRAY, "[",
+        category == Category.DETAILS ? NamedTextColor.AQUA : NamedTextColor.GRAY, "] ",
+        category == Category.COMMANDS ? NamedTextColor.AQUA : NamedTextColor.GRAY, "[",
         Text.builder("Commands")
-            .color(category == Category.COMMANDS ? TextColors.GREEN : TextColors.GRAY)
-            .onHover(TextActions.showText(Text.of("Click here to show commands")))
+            .color(category == Category.COMMANDS ? NamedTextColor.GREEN : NamedTextColor.GRAY)
+            .onHover(TextActions.showText(LinearComponents.linear("Click here to show commands")))
             .onClick(TextActions.executeCallback(s -> getPaginationList(schematic, Category.COMMANDS, s).sendTo(s))),
-        category == Category.COMMANDS ? TextColors.AQUA : TextColors.GRAY, "] "
+        category == Category.COMMANDS ? NamedTextColor.AQUA : NamedTextColor.GRAY, "] "
     );
 
     List<Text> contents = Lists.newArrayList();
@@ -103,35 +103,35 @@ public class CommandSchematicInfo extends CommandBase {
 
     return PaginationList.builder()
         .title(title)
-        .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+        .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
         .contents(contents)
         .build();
   }
 
   private List<Text> getDetails(IslandSchematic schematic) {
     List<Text> contents = Lists.newArrayList();
-    contents.add(Text.of(TextColors.YELLOW, "Author", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getAuthor()));
-    contents.add(Text.of(TextColors.YELLOW, "Date", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getDate()));
-    contents.add(Text.of(TextColors.YELLOW, "Filename", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getName()));
-    contents.add(Text.of(TextColors.YELLOW, "Description", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getDescriptionText()));
-    contents.add(Text.of(TextColors.YELLOW, "Biome", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getBiomeType().map(CatalogType::getName).orElse("none")));
-    contents.add(Text.of(TextColors.YELLOW, "Height", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, schematic.getHeight().map(Text::of).orElse(NONE)));
-    contents.add(Text.of(TextColors.YELLOW, "Icon", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getIcon().map(i -> Text.of(i).toText()).orElse(NONE)));
-    contents.add(Text.of(TextColors.YELLOW, "Preset", TextColors.WHITE, " : ", TextColors.GRAY, schematic.getPreset().map(Text::of).orElse(NONE)));
+    contents.add(LinearComponents.linear(NamedTextColor.YELLOW, "Author", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, schematic.getAuthor()));
+    contents.add(LinearComponents.linear(NamedTextColor.YELLOW, "Date", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, schematic.getDate()));
+    contents.add(LinearComponents.linear(NamedTextColor.YELLOW, "Filename", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, schematic.getName()));
+    contents.add(LinearComponents.linear(NamedTextColor.YELLOW, "Description", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, schematic.getDescriptionText()));
+    contents.add(LinearComponents.linear(NamedTextColor.YELLOW, "Biome", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, schematic.getBiomeType().map(CatalogType::getName).orElse("none")));
+    contents.add(LinearComponents.linear(NamedTextColor.YELLOW, "Height", NamedTextColor.WHITE, " : ", NamedTextColor.LIGHT_PURPLE, schematic.getHeight().map(Text::of).orElse(NONE)));
+    contents.add(LinearComponents.linear(NamedTextColor.YELLOW, "Icon", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, schematic.getIcon().map(i -> LinearComponents.linear(i).toText()).orElse(NONE)));
+    contents.add(LinearComponents.linear(NamedTextColor.YELLOW, "Preset", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, schematic.getPreset().map(Text::of).orElse(NONE)));
     return contents;
   }
 
   private List<Text> getCommands(IslandSchematic schematic, boolean canEdit) {
     List<Text> contents = schematic.getCommands().stream()
-        .map(s -> Text.of(canEdit ? deleteCommandButton(schematic, s) : Text.EMPTY, "/", s))
+        .map(s -> LinearComponents.linear(canEdit ? deleteCommandButton(schematic, s) : Text.EMPTY, "/", s))
         .collect(Collectors.toList());
     if (contents.isEmpty()) {
-      contents.add(Text.of(TextColors.RED, "No commands set"));
+      contents.add(LinearComponents.linear(NamedTextColor.RED, "No commands set"));
     }
     if (canEdit) {
       contents.add(
-          Text.of(TextColors.WHITE, "[", TextColors.GREEN, "+", TextColors.WHITE, "]", TextColors.GREEN, " Add new command").toBuilder()
-              .onHover(TextActions.showText(Text.of("Click to add")))
+          LinearComponents.linear(NamedTextColor.WHITE, "[", NamedTextColor.GREEN, "+", NamedTextColor.WHITE, "]", NamedTextColor.GREEN, " Add new command").toBuilder()
+              .onHover(TextActions.showText(LinearComponents.linear("Click to add")))
               .onClick(TextActions.suggestCommand("/is schematic command " + schematic.getName() + " add "))
               .build());
     }
@@ -139,20 +139,20 @@ public class CommandSchematicInfo extends CommandBase {
   }
 
   private Text deleteCommandButton(IslandSchematic schematic, String command) {
-    return Text.of(TextColors.WHITE, "[",
+    return LinearComponents.linear(NamedTextColor.WHITE, "[",
         Text.builder("✗")
-            .color(TextColors.RED)
-            .onHover(TextActions.showText(Text.of(TextColors.RED, "Click to delete")))
+            .color(NamedTextColor.RED)
+            .onHover(TextActions.showText(LinearComponents.linear(NamedTextColor.RED, "Click to delete")))
             .onClick(TextActions.executeCallback(src -> {
               List<String> commands = schematic.getCommands();
               commands.remove(command);
               schematic.setCommands(commands);
               if (PLUGIN.getSchematicManager().save(schematic)) {
-                src.sendMessage(Text.of(TextColors.GREEN, "Successfully removed ", TextColors.WHITE, command, TextColors.GREEN, "."));
+                src.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully removed ", NamedTextColor.WHITE, command, NamedTextColor.GREEN, "."));
               } else {
-                src.sendMessage(Text.of(TextColors.RED, "Failed to remove ", TextColors.WHITE, command, TextColors.RED, "."));
+                src.sendMessage(LinearComponents.linear(NamedTextColor.RED, "Failed to remove ", NamedTextColor.WHITE, command, NamedTextColor.RED, "."));
               }
             })),
-        TextColors.WHITE, "] ");
+        NamedTextColor.WHITE, "] ");
   }
 }

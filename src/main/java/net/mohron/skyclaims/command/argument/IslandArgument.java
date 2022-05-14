@@ -57,7 +57,7 @@ public class IslandArgument extends CommandElement {
       throws ArgumentParseException {
     String arg = args.next().toLowerCase();
     if (IslandManager.ISLANDS.isEmpty()) {
-      throw args.createError(Text.of(TextColors.RED, "There are no valid islands!"));
+      throw args.createError(LinearComponents.linear(NamedTextColor.RED, "There are no valid islands!"));
     }
     try {
       UUID uuid = UUID.fromString(arg);
@@ -71,7 +71,7 @@ public class IslandArgument extends CommandElement {
         .map(Map.Entry::getKey)
         .collect(Collectors.toSet());
     if (islands.isEmpty()) {
-      throw args.createError(Text.of(TextColors.RED, "There are no valid islands found for ", arg, "!"));
+      throw args.createError(LinearComponents.linear(NamedTextColor.RED, "There are no valid islands found for ", arg, "!"));
     } else {
       return islands;
     }

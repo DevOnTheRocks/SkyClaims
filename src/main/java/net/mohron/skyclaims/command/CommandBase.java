@@ -55,18 +55,18 @@ public abstract class CommandBase implements CommandExecutor {
 
   public abstract static class IslandCommand extends CommandBase implements CommandRequirement.RequiresPlayerIsland {
 
-    protected static final Text ISLAND = Text.of("island");
+    protected static final Text ISLAND = LinearComponents.linear("island");
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (!(src instanceof Player)) {
-        throw new CommandException(Text.of(TextColors.RED, "This command can only be used by a player!"));
+        throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "This command can only be used by a player!"));
       }
       if (!args.hasAny(ISLAND)) {
         return execute(
             (Player) src,
-            IslandManager.getByLocation(((Player) src).getLocation()).orElseThrow(() -> new CommandException(Text.of(
-                TextColors.RED, "You must be on an island to use this command!")
+            IslandManager.getByLocation(((Player) src).getLocation()).orElseThrow(() -> new CommandException(LinearComponents.linear(
+                NamedTextColor.RED, "You must be on an island to use this command!")
             )),
             args);
       } else {
@@ -75,7 +75,7 @@ public abstract class CommandBase implements CommandExecutor {
         if (islands.size() == 1) {
           return execute((Player) src, islands.get(0), args);
         } else {
-          throw new CommandException(Text.of(TextColors.RED, "Multiple island support not yet implemented!"));
+          throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Multiple island support not yet implemented!"));
         }
       }
     }
@@ -88,7 +88,7 @@ public abstract class CommandBase implements CommandExecutor {
       if (src instanceof Player) {
         return execute((Player) src, args);
       }
-      throw new CommandException(Text.of(TextColors.RED, "This command can only be used by a player!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "This command can only be used by a player!"));
     }
   }
 
@@ -100,8 +100,8 @@ public abstract class CommandBase implements CommandExecutor {
       this.lock = lock;
     }
 
-    protected static final Text ALL = Text.of("all");
-    protected static final Text ISLAND = Text.of("island");
+    protected static final Text ALL = LinearComponents.linear("all");
+    protected static final Text ISLAND = LinearComponents.linear("island");
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -111,13 +111,13 @@ public abstract class CommandBase implements CommandExecutor {
       if (!args.hasAny(ISLAND)) {
         if (src instanceof Player) {
           Island island = IslandManager.getByLocation(((Player) src).getLocation()).orElseThrow(() -> new CommandException(
-              Text.of(TextColors.RED, "You must provide an island argument or be on an island to use this command!")
+              LinearComponents.linear(NamedTextColor.RED, "You must provide an island argument or be on an island to use this command!")
           ));
           checkPerms(src, island);
           return execute(src, island, args);
         } else {
-          throw new CommandException(Text.of(
-              TextColors.RED, "An island argument is required when executed by a non-player!"
+          throw new CommandException(LinearComponents.linear(
+              NamedTextColor.RED, "An island argument is required when executed by a non-player!"
           ));
         }
       } else {
@@ -135,10 +135,10 @@ public abstract class CommandBase implements CommandExecutor {
     private void checkPerms(CommandSource src, Island island) throws CommandPermissionException {
       if (!(src instanceof Player && island.isManager((Player) src) || src
           .hasPermission(Permissions.COMMAND_LOCK_OTHERS))) {
-        throw new CommandPermissionException(Text.of(
-            TextColors.RED, "You do not have permission to ",
+        throw new CommandPermissionException(LinearComponents.linear(
+            NamedTextColor.RED, "You do not have permission to ",
             lock ? "lock " : "unlock ",
-            island.getName(), TextColors.RED, "!"
+            island.getName(), NamedTextColor.RED, "!"
         ));
       }
     }
@@ -148,9 +148,9 @@ public abstract class CommandBase implements CommandExecutor {
       islandsIds.forEach(i -> IslandManager.get(i).ifPresent(islands::add));
       islands.forEach(island -> {
         island.setLocked(lock);
-        src.sendMessage(Text.of(
+        src.sendMessage(LinearComponents.linear(
             island.getName(),
-            TextColors.GREEN, " has been ",
+            NamedTextColor.GREEN, " has been ",
             lock ? "locked" : "unlocked", "!"
         ));
       });
@@ -159,9 +159,9 @@ public abstract class CommandBase implements CommandExecutor {
 
     private CommandResult lockAll(CommandSource src) {
       IslandManager.ISLANDS.values().forEach(i -> i.setLocked(lock));
-      src.sendMessage(Text.of(
-          TextColors.DARK_PURPLE, IslandManager.ISLANDS.size(),
-          TextColors.GREEN, " islands have been ",
+      src.sendMessage(LinearComponents.linear(
+          NamedTextColor.DARK_PURPLE, IslandManager.ISLANDS.size(),
+          NamedTextColor.GREEN, " islands have been ",
           lock ? "locked" : "unlocked", "!"
       ));
       return CommandResult.success();
@@ -170,7 +170,7 @@ public abstract class CommandBase implements CommandExecutor {
 
   public abstract static class ListIslandCommand extends PlayerCommand implements CommandRequirement.RequiresPlayer {
 
-    protected static final Text ISLAND = Text.of("island");
+    protected static final Text ISLAND = LinearComponents.linear("island");
 
     protected CommandResult listIslands(Player player, Function<Island, Consumer<CommandSource>> mapper)
         throws CommandException {
@@ -182,7 +182,7 @@ public abstract class CommandBase implements CommandExecutor {
       List<Island> islands = IslandManager.getUserIslandsByPrivilege(player, privilege);
 
       if (islands.isEmpty()) {
-        throw new CommandException(Text.of(TextColors.RED, "You have no island available!"));
+        throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You have no island available!"));
       }
       if (islands.size() == 1) {
         mapper.apply(islands.get(0)).accept(player);
@@ -202,14 +202,14 @@ public abstract class CommandBase implements CommandExecutor {
         .collect(Collectors.toList());
 
     return PaginationList.builder()
-        .title(Text.of(TextColors.AQUA, "Islands"))
-        .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+        .title(LinearComponents.linear(NamedTextColor.AQUA, "Islands"))
+        .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
         .contents(islandText);
   }
 
   public abstract static class ListSchematicCommand extends PlayerCommand implements CommandRequirement.RequiresPlayer {
 
-    protected static final Text SCHEMATIC = Text.of("schematic");
+    protected static final Text SCHEMATIC = LinearComponents.linear("schematic");
   }
 
   protected void listSchematics(Player player, Function<IslandSchematic, Consumer<CommandSource>> mapper)
@@ -221,7 +221,7 @@ public abstract class CommandBase implements CommandExecutor {
         .collect(Collectors.toList());
 
     if (schematics.isEmpty()) {
-      throw new CommandException(Text.of(TextColors.RED, "You have no schematics available!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You have no schematics available!"));
     }
     if (schematics.size() == 1) {
       mapper.apply(schematics.get(0)).accept(player);
@@ -236,8 +236,8 @@ public abstract class CommandBase implements CommandExecutor {
           .collect(Collectors.toList());
 
       PaginationList.builder()
-          .title(Text.of(TextColors.AQUA, "Schematics"))
-          .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+          .title(LinearComponents.linear(NamedTextColor.AQUA, "Schematics"))
+          .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
           .contents(schematicText)
           .sendTo(player);
     } else {

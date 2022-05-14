@@ -25,11 +25,11 @@ import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.util.CommandUtil;
 import net.mohron.skyclaims.util.WorldUtil;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.world.BlockChangeFlags;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.ArchetypeVolume;
+import org.spongepowered.api.world.server.ServerLocation;
+import org.spongepowered.api.world.volume.archetype.ArchetypeVolume;
+import org.spongepowered.math.vector.Vector3d;
 
 public class GenerateIslandTask implements Runnable {
 
@@ -51,25 +51,28 @@ public class GenerateIslandTask implements Runnable {
 
     ArchetypeVolume volume = schematic.getSchematic();
 
-    Location<World> centerBlock = island.getRegion().getCenter();
+    ServerLocation centerBlock = island.getRegion().getCenter();
     // Loads center chunks
     for (int x = -1; x <= 1; x++) {
       for (int z = -1; z <= 1; z++) {
         world.loadChunk(
-            centerBlock.getChunkPosition().getX() + x,
-            centerBlock.getChunkPosition().getY(),
-            centerBlock.getChunkPosition().getZ() + z,
+            centerBlock.chunkPosition().x() + x,
+            centerBlock.chunkPosition().y(),
+            centerBlock.chunkPosition().z() + z,
             true
         );
       }
     }
 
-    int height = schematic.getHeight().orElse(PLUGIN.getConfig().getWorldConfig().getIslandHeight());
-    Location<World> spawn = new Location<>(
+    int height = schematic.getHeight()
+        .orElse(PLUGIN.getConfig().getWorldConfig().getIslandHeight());
+    ServerLocation spawn = ServerLocation.Factory.create(
         island.getWorld(),
-        centerBlock.getX(),
-        height + volume.getRelativeBlockView().getBlockMax().getY() - volume.getBlockMax().getY() - 1,
-        centerBlock.getZ()
+        Vector3d.from(centerBlock.x(),
+            height + volume.getRelativeBlockView().getBlockMax().getY() - volume.getBlockMax()
+                .getY() - 1,
+            centerBlock.z())
+
     );
     island.setSpawn(new Transform<>(spawn.getExtent(), spawn.getPosition()));
 
@@ -83,10 +86,11 @@ public class GenerateIslandTask implements Runnable {
     }
 
     if (PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate()) {
-      Sponge.getServer().getPlayer(owner).ifPresent(p -> PLUGIN.getGame().getScheduler().createTaskBuilder()
-          .delayTicks(20)
-          .execute(CommandUtil.createTeleportConsumer(p, spawn))
-          .submit(PLUGIN));
+      Sponge.server().getPlayer(owner)
+          .ifPresent(p -> PLUGIN.getGame().getScheduler().createTaskBuilder()
+              .delayTicks(20)
+              .execute(CommandUtil.createTeleportConsumer(p, spawn))
+              .submit(PLUGIN));
     }
   }
 }

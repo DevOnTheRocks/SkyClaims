@@ -78,8 +78,8 @@ public final class ClaimUtil {
             ClaimResult delete = claimManager.deleteClaim(overlappedClaim);
             if (!delete.successful()) {
               PLUGIN.getLogger().error("{}: {}", delete.getResultType(), delete.getMessage().toString());
-              throw new CreateIslandException(Text.of(
-                  TextColors.RED, "Failed to delete overlapping claim: ", overlappedClaim.getUniqueId()
+              throw new CreateIslandException(LinearComponents.linear(
+                  NamedTextColor.RED, "Failed to delete overlapping claim: ", overlappedClaim.getUniqueId()
               ));
             }
             PLUGIN.getLogger().info(
@@ -91,9 +91,9 @@ public final class ClaimUtil {
           }
           break;
         default:
-          throw new CreateIslandException(Text.of(
-              TextColors.RED, "Failed to create claim: ", claimResult.getResultType(),
-              Text.NEW_LINE, claimResult.getMessage().orElse(Component.text("No message provided"))
+          throw new CreateIslandException(LinearComponents.linear(
+              NamedTextColor.RED, "Failed to create claim: ", claimResult.getResultType(),
+              Component.newline(), claimResult.getMessage().orElse(Component.text("No message provided"))
           ));
       }
     } while (claim == null);
@@ -112,8 +112,8 @@ public final class ClaimUtil {
 
     PlayerData playerData = Optional.ofNullable(GriefDefender.getCore()
         .getPlayerData(world.getUniqueId(), ownerUniqueId))
-        .orElseThrow(() -> new CreateIslandException(Text.of(
-            TextColors.RED, "Unable to load GriefDefender player data!"
+        .orElseThrow(() -> new CreateIslandException(LinearComponents.linear(
+            NamedTextColor.RED, "Unable to load GriefDefender player data!"
         )));
 
     return Claim.builder()
@@ -179,7 +179,7 @@ public final class ClaimUtil {
       return user.get().getName();
     } else {
       try {
-        return Sponge.getServer().getGameProfileManager().get(uuid).get().getName().orElse("somebody");
+        return Sponge.server().getGameProfileManager().get(uuid).get().getName().orElse("somebody");
       } catch (Exception e) {
         return "somebody";
       }

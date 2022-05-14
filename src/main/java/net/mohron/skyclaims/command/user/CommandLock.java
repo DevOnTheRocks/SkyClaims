@@ -44,7 +44,7 @@ public class CommandLock extends CommandBase.LockCommand {
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_LOCK)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(GenericArguments.firstParsing(
             GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
             GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER))
@@ -68,11 +68,11 @@ public class CommandLock extends CommandBase.LockCommand {
     island.getPlayers().forEach(p -> {
       if (!island.isMember(p) && !p.hasPermission(Permissions.EXEMPT_KICK)) {
         p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
-        p.sendMessage(Text.of(island.getName(), TextColors.RED, " has been locked!"));
+        p.sendMessage(LinearComponents.linear(island.getName(), NamedTextColor.RED, " has been locked!"));
       }
     });
 
-    src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now locked!"));
+    src.sendMessage(LinearComponents.linear(island.getName(), NamedTextColor.GREEN, " is now locked!"));
     return CommandResult.success();
   }
 

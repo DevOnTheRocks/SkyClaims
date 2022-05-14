@@ -42,12 +42,12 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandSchematicSetIcon extends CommandBase {
 
   public static final String HELP_TEXT = "used to set the menu icon for a schematic";
-  private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text ICON = Text.of("icon");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
+  private static final Text ICON = LinearComponents.linear("icon");
 
   public static final CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_SET_ICON)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
           GenericArguments.optional(GenericArguments.catalogedElement(ICON, ItemType.class))
@@ -68,7 +68,7 @@ public class CommandSchematicSetIcon extends CommandBase {
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
         .orElseThrow(
-            () -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
+            () -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a schematic to use this command!")));
     Optional<ItemType> icon = args.getOne(ICON);
 
     if (icon.isPresent() || (src instanceof Player
@@ -77,22 +77,22 @@ public class CommandSchematicSetIcon extends CommandBase {
       ItemType itemType = icon.orElse(((Player) src).getItemInHand(HandTypes.MAIN_HAND).get().getType());
       schematic.setIcon(itemType);
       ItemStackSnapshot snapshot = ItemStack.of(itemType).createSnapshot();
-      src.sendMessage(Text.of(
-          TextColors.GREEN, "Successfully updated schematic icon to ",
-          snapshot.get(Keys.DISPLAY_NAME).orElse(Text.of(itemType.getTranslation())).toBuilder()
-              .color(TextColors.WHITE)
+      src.sendMessage(LinearComponents.linear(
+          NamedTextColor.GREEN, "Successfully updated schematic icon to ",
+          snapshot.get(Keys.DISPLAY_NAME).orElse(LinearComponents.linear(itemType.getTranslation())).toBuilder()
+              .color(NamedTextColor.WHITE)
               .onHover(TextActions.showItem(snapshot)),
-          TextColors.GREEN, "."
+          NamedTextColor.GREEN, "."
       ));
     } else {
       schematic.setIcon(null);
-      src.sendMessage(Text.of(TextColors.GREEN, "Successfully removed schematic icon."));
+      src.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully removed schematic icon."));
     }
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
       return CommandResult.success();
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Failed to update schematic."));
     }
   }
 }

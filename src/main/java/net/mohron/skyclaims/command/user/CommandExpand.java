@@ -53,12 +53,12 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandExpand extends IslandCommand {
 
   public static final String HELP_TEXT = "used to expand your island.";
-  private static final Text BLOCKS = Text.of("blocks");
+  private static final Text BLOCKS = LinearComponents.linear("blocks");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_EXPAND)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(
             GenericArguments.optionalWeak(Arguments.island(ISLAND, PrivilegeType.MANAGER)),
             Arguments.positiveInteger(BLOCKS)
@@ -79,46 +79,46 @@ public class CommandExpand extends IslandCommand {
   public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
     int blocks = args.<Integer>getOne(BLOCKS).orElse(1);
 
-    Claim claim = island.getClaim().orElseThrow(() -> new CommandException(Text.of(
-        TextColors.RED, "This command can only be used on claimed islands."
+    Claim claim = island.getClaim().orElseThrow(() -> new CommandException(LinearComponents.linear(
+        NamedTextColor.RED, "This command can only be used on claimed islands."
     )));
 
     // Check if the player is a Manager
     if (!island.isManager(player)) {
-      throw new CommandException(Text.of(TextColors.RED, "Only an island manager may use this command!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Only an island manager may use this command!"));
     }
 
     int maxSize = Options.getMaxSize(island.getOwnerUniqueId()) * 2;
 
     // Check if expanding would exceed the max size
     if (exceedsMaxSize(island, claim, blocks)) {
-      throw new CommandException(Text.of(
-          TextColors.RED, "You cannot expand ", island.getName(), TextColors.RED, " greater than ",
-          TextColors.LIGHT_PURPLE, maxSize, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, maxSize,
-          TextColors.RED, "."
+      throw new CommandException(LinearComponents.linear(
+          NamedTextColor.RED, "You cannot expand ", island.getName(), NamedTextColor.RED, " greater than ",
+          NamedTextColor.LIGHT_PURPLE, maxSize, NamedTextColor.GRAY, "x", NamedTextColor.LIGHT_PURPLE, maxSize,
+          NamedTextColor.RED, "."
       ));
     }
 
-    player.sendMessage(Text.of(
-        TextColors.GRAY, "It will cost ", TextColors.LIGHT_PURPLE, getCost(blocks, claim),
-        TextColors.GRAY, " to expand ", island.getName(), TextColors.GRAY, " by ",
-        TextColors.LIGHT_PURPLE, blocks, TextColors.GRAY, "."
+    player.sendMessage(LinearComponents.linear(
+        NamedTextColor.GRAY, "It will cost ", NamedTextColor.LIGHT_PURPLE, getCost(blocks, claim),
+        NamedTextColor.GRAY, " to expand ", island.getName(), NamedTextColor.GRAY, " by ",
+        NamedTextColor.LIGHT_PURPLE, blocks, NamedTextColor.GRAY, "."
     ));
 
-    player.sendMessage(Text.of(
-        TextColors.GRAY, "Do you want to continue expanding your island?",
-        Text.NEW_LINE,
-        TextColors.WHITE, "[",
+    player.sendMessage(LinearComponents.linear(
+        NamedTextColor.GRAY, "Do you want to continue expanding your island?",
+        Component.newline(),
+        NamedTextColor.WHITE, "[",
         Text.builder("YES")
-            .color(TextColors.GREEN)
-            .onHover(TextActions.showText(Text.of("Click to expand")))
+            .color(NamedTextColor.GREEN)
+            .onHover(TextActions.showText(LinearComponents.linear("Click to expand")))
             .onClick(TextActions.executeCallback(expandIsland(island, claim, blocks))),
-        TextColors.WHITE, "] [",
+        NamedTextColor.WHITE, "] [",
         Text.builder("NO")
-            .color(TextColors.RED)
-            .onHover(TextActions.showText(Text.of("Click to cancel")))
-            .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island expansion canceled!")))),
-        TextColors.WHITE, "]"
+            .color(NamedTextColor.RED)
+            .onHover(TextActions.showText(LinearComponents.linear("Click to cancel")))
+            .onClick(TextActions.executeCallback(s -> s.sendMessage(LinearComponents.linear("Island expansion canceled!")))),
+        NamedTextColor.WHITE, "]"
         )
     );
 
@@ -131,10 +131,10 @@ public class CommandExpand extends IslandCommand {
 
       if (exceedsMaxSize(island, claim, blocks)) {
         int maxSize = Options.getMaxSize(island.getOwnerUniqueId()) * 2;
-        src.sendMessage(Text.of(
-            TextColors.RED, "You cannot expand ", island.getName(), TextColors.RED, " greater than ",
-            TextColors.LIGHT_PURPLE, maxSize, TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, maxSize,
-            TextColors.RED, "."
+        src.sendMessage(LinearComponents.linear(
+            NamedTextColor.RED, "You cannot expand ", island.getName(), NamedTextColor.RED, " greater than ",
+            NamedTextColor.LIGHT_PURPLE, maxSize, NamedTextColor.GRAY, "x", NamedTextColor.LIGHT_PURPLE, maxSize,
+            NamedTextColor.RED, "."
         ));
         return;
       }
@@ -143,23 +143,23 @@ public class CommandExpand extends IslandCommand {
       // Attempt to charge the required currency to the island owner.
       if (charge(island, cost)) {
         if (island.expand(blocks)) {
-          src.sendMessage(Text.of(
-              TextColors.GREEN, "Your island has been expanded to ",
-              TextColors.LIGHT_PURPLE, island.getWidth(),
-              TextColors.GRAY, "x",
-              TextColors.LIGHT_PURPLE, island.getWidth(),
-              TextColors.GREEN, "."
+          src.sendMessage(LinearComponents.linear(
+              NamedTextColor.GREEN, "Your island has been expanded to ",
+              NamedTextColor.LIGHT_PURPLE, island.getWidth(),
+              NamedTextColor.GRAY, "x",
+              NamedTextColor.LIGHT_PURPLE, island.getWidth(),
+              NamedTextColor.GREEN, "."
           ));
         } else {
-          src.sendMessage(Text.of(TextColors.RED, "An error occurred while expanding your island!"));
+          src.sendMessage(LinearComponents.linear(NamedTextColor.RED, "An error occurred while expanding your island!"));
         }
       } else {
-        src.sendMessage(Text.of(
-            TextColors.RED, "You do not have the required currency (",
-            TextColors.LIGHT_PURPLE, cost,
-            TextColors.RED, ") to expand your island by ",
-            TextColors.LIGHT_PURPLE, blocks,
-            TextColors.RED, "."
+        src.sendMessage(LinearComponents.linear(
+            NamedTextColor.RED, "You do not have the required currency (",
+            NamedTextColor.LIGHT_PURPLE, cost,
+            NamedTextColor.RED, ") to expand your island by ",
+            NamedTextColor.LIGHT_PURPLE, blocks,
+            NamedTextColor.RED, "."
         ));
       }
       Sponge.getCauseStackManager().popCause();

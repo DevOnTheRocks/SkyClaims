@@ -74,33 +74,33 @@ public class Invite {
   }
 
   public void send() {
-    receiver.getPlayer().ifPresent(p -> p.sendMessage(Text.of(
+    receiver.getPlayer().ifPresent(p -> p.sendMessage(LinearComponents.linear(
         island.getPrivilegeType(sender).format(sender.getName()),
-        TextColors.GRAY, " has invited you to be a ",
+        NamedTextColor.GRAY, " has invited you to be a ",
         privilegeType.toText(),
-        TextColors.GRAY, " of ",
+        NamedTextColor.GRAY, " of ",
         island.getName(),
-        TextColors.GRAY, "!", Text.NEW_LINE,
-        TextColors.WHITE, "[",
+        NamedTextColor.GRAY, "!", Component.newline(),
+        NamedTextColor.WHITE, "[",
         Text.builder("ACCEPT")
-            .color(TextColors.GREEN)
-            .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Click to accept")))
+            .color(NamedTextColor.GREEN)
+            .onHover(TextActions.showText(LinearComponents.linear(NamedTextColor.GREEN, "Click to accept")))
             .onClick(TextActions.executeCallback(PLUGIN.getInviteService().acceptInvite(this))),
-        TextColors.WHITE, "] [",
+        NamedTextColor.WHITE, "] [",
         Text.builder("DENY")
-            .color(TextColors.RED)
-            .onHover(TextActions.showText(Text.of(TextColors.RED, "Click to deny")))
+            .color(NamedTextColor.RED)
+            .onHover(TextActions.showText(LinearComponents.linear(NamedTextColor.RED, "Click to deny")))
             .onClick(TextActions.executeCallback(src -> {
               if (PLUGIN.getInviteService().inviteExists(this)) {
-                src.sendMessage(Text.of(
-                    TextColors.GREEN, "You have denied ",
+                src.sendMessage(LinearComponents.linear(
+                    NamedTextColor.GREEN, "You have denied ",
                     island.getPrivilegeType(sender).format(sender.getName()),
-                    TextColors.GREEN, "'s invite to ", island.getName(), TextColors.GREEN, "!"
+                    NamedTextColor.GREEN, "'s invite to ", island.getName(), NamedTextColor.GREEN, "!"
                 ));
                 this.deny();
               }
             })),
-        TextColors.WHITE, "]"
+        NamedTextColor.WHITE, "]"
     )));
   }
 

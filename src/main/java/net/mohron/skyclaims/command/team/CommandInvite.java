@@ -39,9 +39,9 @@ import org.spongepowered.api.text.format.TextStyles;
 public class CommandInvite extends CommandBase.IslandCommand {
 
   public static final String HELP_TEXT = "used to invite players to your island or list your pending invites.";
-  private static final Text LIST = Text.of("list");
-  private static final Text USER = Text.of("user");
-  private static final Text PRIVILEGE = Text.of("privilege");
+  private static final Text LIST = LinearComponents.linear("list");
+  private static final Text USER = LinearComponents.linear("user");
+  private static final Text PRIVILEGE = LinearComponents.linear("privilege");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
@@ -53,7 +53,7 @@ public class CommandInvite extends CommandBase.IslandCommand {
             ),
             GenericArguments.literal(LIST, "list")
         )))
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .executor(new CommandInvite())
         .build();
 
@@ -73,27 +73,27 @@ public class CommandInvite extends CommandBase.IslandCommand {
     int maxTeammates = Options.getMaxTeammates(island.getOwnerUniqueId());
 
     if (type == PrivilegeType.NONE) {
-      throw new CommandException(Text.of(TextStyles.ITALIC, "What kind of invite is ", TextStyles.RESET, type.toText(), TextStyles.ITALIC, "?"));
+      throw new CommandException(LinearComponents.linear(TextStyles.ITALIC, "What kind of invite is ", TextStyles.RESET, type.toText(), TextStyles.ITALIC, "?"));
     }
 
     if (user == null || args.hasAny(LIST)) {
       PLUGIN.getInviteService().listIncomingInvites().accept(player);
     } else if (player.equals(user)) {
-      throw new CommandException(Text.of(TextColors.RED, "You cannot invite yourself!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You cannot invite yourself!"));
     } else if (island.getPrivilegeType(user) != PrivilegeType.NONE) {
-      throw new CommandException(Text.of(
-          island.getPrivilegeType(user).format(user.getName()), TextColors.RED, " is already a ",
+      throw new CommandException(LinearComponents.linear(
+          island.getPrivilegeType(user).format(user.getName()), NamedTextColor.RED, " is already a ",
           island.getPrivilegeType(user).toText(),
-          TextColors.RED, " on ", island.getName(), TextColors.RED, "!"
+          NamedTextColor.RED, " on ", island.getName(), NamedTextColor.RED, "!"
       ));
     } else if (!island.isOwner(player) || island.getPrivilegeType(player).ordinal() >= type.ordinal()) {
-      throw new CommandException(Text.of(
-          TextColors.RED, "You do not have permission to send ",
+      throw new CommandException(LinearComponents.linear(
+          NamedTextColor.RED, "You do not have permission to send ",
           type == PrivilegeType.OWNER ? "an " : "a ",
-          type.toText(), TextColors.RED, " invite for ", island.getName(), TextColors.RED, "!"
+          type.toText(), NamedTextColor.RED, " invite for ", island.getName(), NamedTextColor.RED, "!"
       ));
     } else if (maxTeammates > 0 && island.getTotalMembers() >= maxTeammates) {
-      throw new CommandException(Text.of(island.getName(), TextColors.RED, " has reached its maximum team size (", maxTeammates, ")!"));
+      throw new CommandException(LinearComponents.linear(island.getName(), NamedTextColor.RED, " has reached its maximum team size (", maxTeammates, ")!"));
     } else {
       Invite.builder()
           .island(island)
@@ -102,7 +102,7 @@ public class CommandInvite extends CommandBase.IslandCommand {
           .privilegeType(type)
           .build()
           .send();
-      player.sendMessage(Text.of(TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, "."));
+      player.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Island invite sent to ", type.format(user.getName()), NamedTextColor.GREEN, "."));
     }
 
     return CommandResult.success();

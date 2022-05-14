@@ -44,7 +44,7 @@ public class CommandVersion extends CommandBase {
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_VERSION)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .executor(new CommandVersion())
         .build();
 
@@ -61,18 +61,18 @@ public class CommandVersion extends CommandBase {
     List<Text> texts = Lists.newArrayList();
 
     // Minecraft
-    texts.add(Text.of(
-        TextColors.DARK_AQUA, "Minecraft", TextColors.WHITE, " : ",
-        TextColors.YELLOW, Sponge.getPlatform().getMinecraftVersion().getName()
+    texts.add(LinearComponents.linear(
+        NamedTextColor.DARK_AQUA, "Minecraft", NamedTextColor.WHITE, " : ",
+        NamedTextColor.YELLOW, Sponge.getPlatform().getMinecraftVersion().getName()
     ));
     // Sponge
     PluginContainer sponge = Sponge.getPlatform().getContainer(Platform.Component.IMPLEMENTATION);
-    texts.add(Text.of(
-        TextColors.DARK_AQUA, "Sponge", TextColors.WHITE, " : ",
-        TextColors.YELLOW, sponge.getName(), " ", sponge.getVersion().orElse("Unknown")
+    texts.add(LinearComponents.linear(
+        NamedTextColor.DARK_AQUA, "Sponge", NamedTextColor.WHITE, " : ",
+        NamedTextColor.YELLOW, sponge.getName(), " ", sponge.getVersion().orElse("Unknown")
     ));
     // SkyClaims
-    texts.add(Text.of(TextColors.DARK_AQUA, "SkyClaims", TextColors.WHITE, " : ", TextColors.YELLOW, PluginInfo.VERSION));
+    texts.add(LinearComponents.linear(NamedTextColor.DARK_AQUA, "SkyClaims", NamedTextColor.WHITE, " : ", NamedTextColor.YELLOW, PluginInfo.VERSION));
     // GriefDefender
     String gd = "Error/Missing";
     try {
@@ -80,18 +80,18 @@ public class CommandVersion extends CommandBase {
     } catch (Exception e) {
       PLUGIN.getLogger().error("Error getting Grief Defender version.", e);
     }
-    texts.add(Text.of(TextColors.DARK_AQUA, "Grief Defender", TextColors.WHITE, " : ", TextColors.YELLOW, gd));
+    texts.add(LinearComponents.linear(NamedTextColor.DARK_AQUA, "Grief Defender", NamedTextColor.WHITE, " : ", NamedTextColor.YELLOW, gd));
     // Permissions
     PluginContainer perms = Sponge.getServiceManager().getRegistration(PermissionService.class).get().getPlugin();
-    texts.add(Text.of(
-        TextColors.DARK_AQUA, "Permissions", TextColors.WHITE, " : ",
-        TextColors.YELLOW, perms.getName(), " ", perms.getVersion().orElse("Unknown")
+    texts.add(LinearComponents.linear(
+        NamedTextColor.DARK_AQUA, "Permissions", NamedTextColor.WHITE, " : ",
+        NamedTextColor.YELLOW, perms.getName(), " ", perms.getVersion().orElse("Unknown")
     ));
     // Nucleus
     Optional<PluginContainer> nucleus = Sponge.getPluginManager().getPlugin("nucleus");
-    texts.add(Text.of(
-        TextColors.DARK_AQUA, "Nucleus", TextColors.WHITE, " : ",
-        TextColors.YELLOW,
+    texts.add(LinearComponents.linear(
+        NamedTextColor.DARK_AQUA, "Nucleus", NamedTextColor.WHITE, " : ",
+        NamedTextColor.YELLOW,
         nucleus.isPresent() ? nucleus.get().getVersion().orElse("Unknown") : "Not Installed"
     ));
 

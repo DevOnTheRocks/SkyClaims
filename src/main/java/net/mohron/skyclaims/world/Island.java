@@ -70,7 +70,6 @@ import org.spongepowered.api.service.context.ContextSource;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 public class Island implements ContextSource {
@@ -94,7 +93,7 @@ public class Island implements ContextSource {
     try {
       region = PATTERN.nextRegion();
     } catch (InvalidRegionException e) {
-      throw new CreateIslandException(e.getText());
+      throw new CreateIslandException(e.getComponent());
     }
     this.spawn = new Transform<>(region.getCenter());
     this.locked = true;
@@ -213,7 +212,7 @@ public class Island implements ContextSource {
     Optional<Claim> claim = getClaim();
     return (claim.isPresent() && claim.get().getDisplayNameComponent().isPresent())
         ? SpongeComponentSerializer.get().serialize(claim.get().getDisplayNameComponent().get())
-        : Text.of(TextColors.AQUA, getOwnerName(), "'s Island");
+        : LinearComponents.linear(NamedTextColor.AQUA, getOwnerName(), "'s Island");
   }
 
   public void setName(@Nullable Text name) {
@@ -261,7 +260,7 @@ public class Island implements ContextSource {
     }
   }
 
-  public boolean contains(Location<World> location) {
+  public boolean contains(ServerLocation location) {
     if (!getClaim().isPresent()) {
       return location.getExtent().equals(getWorld()) && Region.get(location).equals(getRegion());
     }

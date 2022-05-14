@@ -42,7 +42,7 @@ public class CommandSetHome extends CommandBase {
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SET_HOME)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .executor(new CommandSetHome())
       .build();
 
@@ -58,21 +58,21 @@ public class CommandSetHome extends CommandBase {
 
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (!(src instanceof Player)) {
-      throw new CommandException(Text.of("You must be a player to use this command!"));
+      throw new CommandException(LinearComponents.linear("You must be a player to use this command!"));
     }
 
     Player player = (Player) src;
     Island island = IslandManager.getByLocation(player.getLocation())
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must be on an island to set a home!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must be on an island to set a home!")));
 
     if (!island.isMember(player)) {
-      throw new CommandException(Text.of(TextColors.RED, "You must have permission to set home on this island!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must have permission to set home on this island!"));
     }
 
     boolean success = modifyOrCreateHome(player);
     if (!success) {
-      throw new CommandException(Text.of(
-          TextColors.RED, "An error was encountered while attempting to set your home!"
+      throw new CommandException(LinearComponents.linear(
+          NamedTextColor.RED, "An error was encountered while attempting to set your home!"
       ));
     }
 
@@ -91,15 +91,15 @@ public class CommandSetHome extends CommandBase {
             player.getLocation(),
             player.getRotation()
         );
-        player.sendMessage(Text.of(TextColors.GREEN, "Your home has been set!"));
+        player.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Your home has been set!"));
         return true;
       } catch (HomeException e) {
-        player.sendMessage(Text.of(TextColors.RED, "An error was encountered while attempting to set your home!"));
+        player.sendMessage(LinearComponents.linear(NamedTextColor.RED, "An error was encountered while attempting to set your home!"));
         PLUGIN.getLogger().error("Unable to set home", e);
         return false;
       }
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "The Nucleus Home Service is Unavailable"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "The Nucleus Home Service is Unavailable"));
     }
   }
 }

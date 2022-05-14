@@ -59,11 +59,11 @@ public class WorldConfig {
   }
 
   private Optional<World> getWorldOptional() {
-    return getWorldUuid().map(uuid -> Sponge.getServer().getWorld(uuid)).orElseGet(() -> Sponge.getServer().getWorld(worldName));
+    return getWorldUuid().map(uuid -> Sponge.server().getWorld(uuid)).orElseGet(() -> Sponge.server().getWorld(worldName));
   }
 
   public Optional<World> loadWorld() {
-    return getWorldUuid().map(uuid -> Sponge.getServer().loadWorld(uuid)).orElseGet(() -> Sponge.getServer().loadWorld(worldName));
+    return getWorldUuid().map(uuid -> Sponge.server().loadWorld(uuid)).orElseGet(() -> Sponge.server().loadWorld(worldName));
   }
 
   public World getWorld() {
@@ -81,7 +81,7 @@ public class WorldConfig {
     if (!isSeparateSpawn()) {
       return getWorld();
     }
-    final Optional<World> world = Sponge.getServer().getWorld(spawnWorld);
+    final Optional<World> world = Sponge.server().getWorld(spawnWorld);
     if (world.isPresent()) {
       return world.get();
     } else {
@@ -90,7 +90,7 @@ public class WorldConfig {
     }
   }
 
-  public Location<World> getSpawn() {
+  public ServerLocation getSpawn() {
     World world = getSpawnWorld();
     SkyClaims.getInstance().getLogger().debug("Spawn World: {}", world.getName());
     if (!world.isLoaded()) {
@@ -101,7 +101,7 @@ public class WorldConfig {
   }
 
   public boolean isSeparateSpawn() {
-    return !StringUtils.isEmpty(spawnWorld) && Sponge.getServer().getWorld(spawnWorld).isPresent();
+    return !StringUtils.isEmpty(spawnWorld) && Sponge.server().getWorld(spawnWorld).isPresent();
   }
 
   public int getIslandHeight() {

@@ -104,14 +104,14 @@ public class RegenerateRegionTask implements Runnable {
     }
   }
 
-  private void regenerateChunks(String preset, Location<World> spawn) {
+  private void regenerateChunks(String preset, ServerLocation spawn) {
     SpongeExecutorService executor = Sponge.getScheduler().createSyncExecutor(PLUGIN);
     BlockState[] blocks = FlatWorldUtil.getBlocksSafely(preset);
     int progress = 0;
     for (int x = region.getLesserBoundary().getX(); x < region.getGreaterBoundary().getX(); x += 16) {
       List<CompletableFuture<Void>> tasks = Lists.newArrayListWithCapacity(32);
       for (int z = region.getLesserBoundary().getZ(); z < region.getGreaterBoundary().getZ(); z += 16) {
-        Vector3i position = Sponge.getServer().getChunkLayout().forceToChunk(x, 0, z);
+        Vector3i position = Sponge.server().getChunkLayout().forceToChunk(x, 0, z);
         tasks.add(CompletableFuture.runAsync(new RegenerateChunkTask(world, position, blocks, spawn), executor));
       }
       try {

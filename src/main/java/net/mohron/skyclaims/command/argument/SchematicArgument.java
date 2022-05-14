@@ -47,16 +47,16 @@ public class SchematicArgument extends CommandElement {
   protected IslandSchematic parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
     String schem = args.next().toLowerCase();
     if (PLUGIN.getSchematicManager().getSchematics().isEmpty()) {
-      throw args.createError(Text.of(TextColors.RED, "There are no valid schematics available!"));
+      throw args.createError(LinearComponents.linear(NamedTextColor.RED, "There are no valid schematics available!"));
     }
     Optional<IslandSchematic> schematic = PLUGIN.getSchematicManager().getSchematics().stream().filter(s -> s.getName().equalsIgnoreCase(schem)).findAny();
     if (schematic.isPresent()) {
       if (PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms() && !hasPermission(source, schem)) {
-        throw args.createError(Text.of(TextColors.RED, "You do not have permission to use the supplied schematic!"));
+        throw args.createError(LinearComponents.linear(NamedTextColor.RED, "You do not have permission to use the supplied schematic!"));
       }
       return schematic.get();
     }
-    throw args.createError(Text.of(TextColors.RED, "Invalid Schematic!"));
+    throw args.createError(LinearComponents.linear(NamedTextColor.RED, "Invalid Schematic!"));
   }
 
   @Override

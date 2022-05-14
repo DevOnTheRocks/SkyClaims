@@ -37,12 +37,12 @@ import org.spongepowered.api.text.serializer.TextSerializers;
 public class CommandSetName extends CommandBase.IslandCommand {
 
   public static final String HELP_TEXT = "set your name of your island.";
-  private static final Text NAME = Text.of("name");
+  private static final Text NAME = LinearComponents.linear("name");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_SET_NAME)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(
             GenericArguments.optionalWeak(Arguments.island(ISLAND, PrivilegeType.MANAGER)),
             GenericArguments.text(NAME, TextSerializers.FORMATTING_CODE, true)
@@ -62,14 +62,14 @@ public class CommandSetName extends CommandBase.IslandCommand {
   @Override
   public CommandResult execute(Player player, Island island, CommandContext args) throws CommandException {
     if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_NAME_OTHERS)) {
-      throw new CommandException(Text.of(
-          TextColors.RED, "Only an island ", PrivilegeType.MANAGER.toText(), TextColors.RED, " may use this command!"
+      throw new CommandException(LinearComponents.linear(
+          NamedTextColor.RED, "Only an island ", PrivilegeType.MANAGER.toText(), NamedTextColor.RED, " may use this command!"
       ));
     }
 
     Text name = args.<Text>getOne(NAME).orElse(null);
     island.setName(name);
-    player.sendMessage(Text.of(TextColors.GREEN, "Your island name has been changed to ", island.getName()));
+    player.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Your island name has been changed to ", island.getName()));
 
     return CommandResult.success();
   }

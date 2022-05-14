@@ -21,57 +21,54 @@ package net.mohron.skyclaims.team;
 import com.google.common.collect.Maps;
 import com.griefdefender.api.claim.TrustType;
 import com.griefdefender.api.claim.TrustTypes;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.LinearComponents;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+
 import java.util.Map;
-import org.spongepowered.api.command.args.CommandElement;
-import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextColors;
 
 public enum PrivilegeType {
-  OWNER(Text.of(TextColors.BLUE, "Owner"), TrustTypes.NONE),
-  MANAGER(Text.of(TextColors.GOLD, "Manager"), TrustTypes.MANAGER),
-  MEMBER(Text.of(TextColors.YELLOW, "Member"), TrustTypes.BUILDER),
-  NONE(Text.of(TextColors.GRAY, "None"), TrustTypes.NONE);
+    OWNER(Component.text("Owner", NamedTextColor.BLUE), TrustTypes.NONE),
+    MANAGER(Component.text("Manager", NamedTextColor.GOLD), TrustTypes.MANAGER),
+    MEMBER(Component.text("Member", NamedTextColor.YELLOW), TrustTypes.BUILDER),
+    NONE(Component.text("None", NamedTextColor.GRAY), TrustTypes.NONE);
 
-  private Text text;
-  private TrustType trustType;
+    private final Component text;
+    private final TrustType trustType;
 
-  PrivilegeType(Text text, TrustType trustType) {
-    this.text = text;
-    this.trustType = trustType;
-  }
-
-  public Text format(Text text) {
-    return format(text.toPlain());
-  }
-
-  public Text format(String string) {
-    return Text.builder(string)
-        .color(text.getColor())
-        .onHover(TextActions.showText(text))
-        .build();
-  }
-
-  public Text toText() {
-    return text;
-  }
-
-  public TrustType getTrustType() {
-    return trustType;
-  }
-
-  public static CommandElement getCommandArgument(Text key) {
-    Map<String, PrivilegeType> typeMap = Maps.newHashMap();
-    for (PrivilegeType type : values()) {
-      if (type != NONE) {
-        typeMap.put(type.toString().toLowerCase(), type);
-      }
+    PrivilegeType(Component text, TrustType trustType) {
+        this.text = text;
+        this.trustType = trustType;
     }
-    return GenericArguments.choices(key, typeMap);
-  }
 
-  public boolean greaterThanOrEqualTo(PrivilegeType other) {
-    return this.ordinal() <= other.ordinal();
-  }
+    public Component format(Component component) {
+        return component.color(component.color()).hoverEvent(text.asHoverEvent());
+    }
+
+    public Component format(String string) {
+        return format(Component.text(string));
+    }
+
+    public Component toText() {
+        return text;
+    }
+
+    public TrustType getTrustType() {
+        return trustType;
+    }
+
+    public static CommandElement getCommandArgument(Component key) {
+        Map<String, PrivilegeType> typeMap = Maps.newHashMap();
+        for (PrivilegeType type : values()) {
+            if (type != NONE) {
+                typeMap.put(type.toString().toLowerCase(), type);
+            }
+        }
+        return GenericArguments.choices(key, typeMap);
+    }
+
+    public boolean greaterThanOrEqualTo(PrivilegeType other) {
+        return this.ordinal() <= other.ordinal();
+    }
 }

@@ -95,6 +95,6 @@ public class SpiralRegionPattern implements IRegionPattern {
       }
     }
 
-    throw new InvalidRegionException(Text.of("Failed to find a valid region!"));
+    throw new InvalidRegionException(LinearComponents.linear("Failed to find a valid region!"));
   }
 }

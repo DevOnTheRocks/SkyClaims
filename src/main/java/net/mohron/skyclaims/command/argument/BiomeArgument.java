@@ -68,7 +68,7 @@ public class BiomeArgument extends CommandElement {
     if (!biomeList.isEmpty()) {
       if (biomeList.size() == 1) {
         if (checkPerms && !src.hasPermission(getPermission(biomeList.get(0)))) {
-          throw args.createError(Text.of(TextColors.RED, "You do not have permission to use the supplied biome type."));
+          throw args.createError(LinearComponents.linear(NamedTextColor.RED, "You do not have permission to use the supplied biome type."));
         }
         return biomeList.get(0);
       } else {
@@ -76,10 +76,10 @@ public class BiomeArgument extends CommandElement {
             .filter(b -> (b.getId().equalsIgnoreCase(arg) || b.getId().equalsIgnoreCase("minecraft:" + arg))
                 && (!checkPerms || src.hasPermission(getPermission(b))))
             .findAny()
-            .orElseThrow(() -> args.createError(Text.of(TextColors.RED, "More that one biome found for ", arg, ".")));
+            .orElseThrow(() -> args.createError(LinearComponents.linear(NamedTextColor.RED, "More that one biome found for ", arg, ".")));
       }
     }
-    throw args.createError(Text.of(TextColors.RED, "Invalid biome type."));
+    throw args.createError(LinearComponents.linear(NamedTextColor.RED, "Invalid biome type."));
   }
 
   @Override

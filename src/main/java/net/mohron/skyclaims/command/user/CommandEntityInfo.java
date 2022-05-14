@@ -54,7 +54,7 @@ public class CommandEntityInfo extends IslandCommand {
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_ENTITY_INFO)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(GenericArguments.optional(Arguments.island(ISLAND)))
         .executor(new CommandEntityInfo())
         .build();
@@ -82,33 +82,33 @@ public class CommandEntityInfo extends IslandCommand {
 
       switch (category) {
         case SUMMARY:
-          info.add(Text.of(
-              TextColors.YELLOW, "Passive",
-              TextColors.WHITE, " : ",
-              TextColors.LIGHT_PURPLE, island.getPassiveEntities().size(),
+          info.add(LinearComponents.linear(
+              NamedTextColor.YELLOW, "Passive",
+              NamedTextColor.WHITE, " : ",
+              NamedTextColor.LIGHT_PURPLE, island.getPassiveEntities().size(),
               getClearEntityButton("passive", clearEntities("passive", island.getPassiveEntities()))
           ));
-          info.add(Text.of(
-              TextColors.YELLOW, "Hostile",
-              TextColors.WHITE, " : ",
-              TextColors.LIGHT_PURPLE, island.getHostileEntities().size(),
+          info.add(LinearComponents.linear(
+              NamedTextColor.YELLOW, "Hostile",
+              NamedTextColor.WHITE, " : ",
+              NamedTextColor.LIGHT_PURPLE, island.getHostileEntities().size(),
               getClearEntityButton("hostile", clearEntities("hostile", island.getHostileEntities()))
           ));
-          info.add(Text.of(
-              TextColors.YELLOW, "Item",
-              TextColors.WHITE, " : ",
-              TextColors.LIGHT_PURPLE, island.getItemEntities().size(),
+          info.add(LinearComponents.linear(
+              NamedTextColor.YELLOW, "Item",
+              NamedTextColor.WHITE, " : ",
+              NamedTextColor.LIGHT_PURPLE, island.getItemEntities().size(),
               getClearEntityButton("items", clearEntities("items", island.getItemEntities()))
           ));
-          info.add(Text.of(
-              TextColors.YELLOW, "Tile",
-              TextColors.WHITE, " : ",
-              TextColors.LIGHT_PURPLE, island.getTileEntities().size()
+          info.add(LinearComponents.linear(
+              NamedTextColor.YELLOW, "Tile",
+              NamedTextColor.WHITE, " : ",
+              NamedTextColor.LIGHT_PURPLE, island.getTileEntities().size()
           ));
-          info.add(Text.of(
-              TextColors.YELLOW, "Total",
-              TextColors.WHITE, " : ",
-              TextColors.LIGHT_PURPLE, island.getEntities().size()
+          info.add(LinearComponents.linear(
+              NamedTextColor.YELLOW, "Total",
+              NamedTextColor.WHITE, " : ",
+              NamedTextColor.LIGHT_PURPLE, island.getEntities().size()
           ));
           break;
         case PASSIVE:
@@ -129,8 +129,8 @@ public class CommandEntityInfo extends IslandCommand {
       }
 
       PaginationList.builder()
-          .title(Text.of(TextColors.AQUA, "Island Entity Info"))
-          .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+          .title(LinearComponents.linear(NamedTextColor.AQUA, "Island Entity Info"))
+          .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
           .header(getMenuText(island, category))
           .contents(info)
           .sendTo(src);
@@ -138,7 +138,7 @@ public class CommandEntityInfo extends IslandCommand {
   }
 
   private Text getEntityDetails(Island island, CommandSource src, EntityType e, Long c) {
-    return Text.of(
+    return LinearComponents.linear(
         getEntityDetails(e, c),
         src.hasPermission(Permissions.COMMAND_ENTITY_CLEAR) ? getClearEntityTypeButton(island, e) : Text.EMPTY
     );
@@ -149,21 +149,21 @@ public class CommandEntityInfo extends IslandCommand {
   }
 
   private Text getClearEntityButton(String name, Consumer<CommandSource> callback) {
-    return Text.of(
-        TextColors.WHITE, " [",
+    return LinearComponents.linear(
+        NamedTextColor.WHITE, " [",
         Text.builder("✗")
-            .color(TextColors.RED)
+            .color(NamedTextColor.RED)
             .onClick(TextActions.executeCallback(callback))
-            .onHover(TextActions.showText(Text.of("Clear all ", name))),
-        TextColors.WHITE, "]"
+            .onHover(TextActions.showText(LinearComponents.linear("Clear all ", name))),
+        NamedTextColor.WHITE, "]"
     );
   }
 
   private Text getEntityDetails(CatalogType e, Long c) {
-    return Text.of(
-        TextColors.YELLOW, e.getName(),
-        TextColors.WHITE, " : ",
-        TextColors.LIGHT_PURPLE, c
+    return LinearComponents.linear(
+        NamedTextColor.YELLOW, e.getName(),
+        NamedTextColor.WHITE, " : ",
+        NamedTextColor.LIGHT_PURPLE, c
     );
   }
 
@@ -181,45 +181,45 @@ public class CommandEntityInfo extends IslandCommand {
         return;
       }
       if (!src.hasPermission(Permissions.COMMAND_ENTITY_CLEAR)){
-        src.sendMessage(Text.of(TextColors.RED, "You do not have permission to clear entities!"));
+        src.sendMessage(LinearComponents.linear(NamedTextColor.RED, "You do not have permission to clear entities!"));
         return;
       }
       entities.forEach(Entity::remove);
-      src.sendMessage(Text.of(
-          TextColors.GREEN, "Removed ",
-          TextColors.LIGHT_PURPLE, entities.size(), " ",
-          TextColors.YELLOW, entityName,
-          TextColors.GREEN, "."
+      src.sendMessage(LinearComponents.linear(
+          NamedTextColor.GREEN, "Removed ",
+          NamedTextColor.LIGHT_PURPLE, entities.size(), " ",
+          NamedTextColor.YELLOW, entityName,
+          NamedTextColor.GREEN, "."
       ));
     };
   }
 
   private Text getMenuText(Island island, Category category) {
-    return Text.of(
-        category == Category.SUMMARY ? TextColors.AQUA : TextColors.GRAY, "[",
+    return LinearComponents.linear(
+        category == Category.SUMMARY ? NamedTextColor.AQUA : NamedTextColor.GRAY, "[",
         Text.builder("Summary")
-            .color(category == Category.SUMMARY ? TextColors.GREEN : TextColors.GRAY)
-            .onHover(TextActions.showText(Text.of("Click here to show entity summary")))
+            .color(category == Category.SUMMARY ? NamedTextColor.GREEN : NamedTextColor.GRAY)
+            .onHover(TextActions.showText(LinearComponents.linear("Click here to show entity summary")))
             .onClick(TextActions.executeCallback(sendEntityInfo(island, Category.SUMMARY))),
-        category == Category.SUMMARY ? TextColors.AQUA : TextColors.GRAY, "] ",
-        category == Category.PASSIVE ? TextColors.AQUA : TextColors.GRAY, "[",
+        category == Category.SUMMARY ? NamedTextColor.AQUA : NamedTextColor.GRAY, "] ",
+        category == Category.PASSIVE ? NamedTextColor.AQUA : NamedTextColor.GRAY, "[",
         Text.builder("Passive")
-            .color(category == Category.PASSIVE ? TextColors.GREEN : TextColors.GRAY)
-            .onHover(TextActions.showText(Text.of("Click here to show passive entity details")))
+            .color(category == Category.PASSIVE ? NamedTextColor.GREEN : NamedTextColor.GRAY)
+            .onHover(TextActions.showText(LinearComponents.linear("Click here to show passive entity details")))
             .onClick(TextActions.executeCallback(sendEntityInfo(island, Category.PASSIVE))),
-        category == Category.PASSIVE ? TextColors.AQUA : TextColors.GRAY, "] ",
-        category == Category.HOSTILE ? TextColors.AQUA : TextColors.GRAY, "[",
+        category == Category.PASSIVE ? NamedTextColor.AQUA : NamedTextColor.GRAY, "] ",
+        category == Category.HOSTILE ? NamedTextColor.AQUA : NamedTextColor.GRAY, "[",
         Text.builder("Hostile")
-            .color(category == Category.HOSTILE ? TextColors.GREEN : TextColors.GRAY)
-            .onHover(TextActions.showText(Text.of("Click here to show hostile entity details")))
+            .color(category == Category.HOSTILE ? NamedTextColor.GREEN : NamedTextColor.GRAY)
+            .onHover(TextActions.showText(LinearComponents.linear("Click here to show hostile entity details")))
             .onClick(TextActions.executeCallback(sendEntityInfo(island, Category.HOSTILE))),
-        category == Category.HOSTILE ? TextColors.AQUA : TextColors.GRAY, "] ",
-        category == Category.TILE ? TextColors.AQUA : TextColors.GRAY, "[",
+        category == Category.HOSTILE ? NamedTextColor.AQUA : NamedTextColor.GRAY, "] ",
+        category == Category.TILE ? NamedTextColor.AQUA : NamedTextColor.GRAY, "[",
         Text.builder("Tile")
-            .color(category == Category.TILE ? TextColors.GREEN : TextColors.GRAY)
-            .onHover(TextActions.showText(Text.of("Click here to show tile entity details")))
+            .color(category == Category.TILE ? NamedTextColor.GREEN : NamedTextColor.GRAY)
+            .onHover(TextActions.showText(LinearComponents.linear("Click here to show tile entity details")))
             .onClick(TextActions.executeCallback(sendEntityInfo(island, Category.TILE))),
-        category == Category.TILE ? TextColors.AQUA : TextColors.GRAY, "]"
+        category == Category.TILE ? NamedTextColor.AQUA : NamedTextColor.GRAY, "]"
     );
   }
 }

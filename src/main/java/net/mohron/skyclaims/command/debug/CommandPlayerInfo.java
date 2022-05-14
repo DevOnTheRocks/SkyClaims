@@ -44,12 +44,12 @@ import org.spongepowered.api.text.format.TextStyles;
 public class CommandPlayerInfo extends CommandBase {
 
   public static final String HELP_TEXT = "display info about a player as SkyClaims sees it.";
-  private static final Text USER = Text.of("user");
+  private static final Text USER = LinearComponents.linear("user");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_PLAYER_INFO)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(GenericArguments.optional(GenericArguments.user(USER)))
         .executor(new CommandPlayerInfo())
         .build();
@@ -65,13 +65,13 @@ public class CommandPlayerInfo extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (!args.hasAny(USER) && !(src instanceof Player)) {
-      throw  new CommandException(Text.of(TextColors.RED, "You must provide a player argument to use this command!"));
+      throw  new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a player argument to use this command!"));
     }
     User user = args.<User>getOne(USER).orElse((User) src);
 
     PaginationList.builder()
-        .title(Text.of(TextColors.AQUA, user.getName(), "'s SkyClaims Info"))
-        .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+        .title(LinearComponents.linear(NamedTextColor.AQUA, user.getName(), "'s SkyClaims Info"))
+        .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
         .contents(getUserInfo(user))
         .sendTo(src);
 
@@ -81,7 +81,7 @@ public class CommandPlayerInfo extends CommandBase {
   private List<Text> getUserInfo(User user) {
     final UUID uuid = user.getUniqueId();
     final List<Text> options = Lists.newArrayList();
-    final Text defaultSchematic = Options.getDefaultSchematic(uuid).map(IslandSchematic::getText).orElse(Text.of("none"));
+    final Text defaultSchematic = Options.getDefaultSchematic(uuid).map(IslandSchematic::getText).orElse(LinearComponents.linear("none"));
     final String defaultBiome = Options.getDefaultBiome(uuid).map(CatalogType::getName).orElse("none");
 
     options.add(getOptionText(Options.DEFAULT_SCHEMATIC, "Default Schematic", defaultSchematic));
@@ -99,10 +99,10 @@ public class CommandPlayerInfo extends CommandBase {
   }
 
   private Text getOptionText(String option, String name, Object value) {
-    TextColor valueColor = value instanceof Integer ? TextColors.LIGHT_PURPLE : TextColors.GRAY;
-    return Text.of(
-        Text.builder(name).color(TextColors.YELLOW).onHover(TextActions.showText(Text.of(option))),
-        TextColors.WHITE, " : ",
+    TextColor valueColor = value instanceof Integer ? NamedTextColor.LIGHT_PURPLE : NamedTextColor.GRAY;
+    return LinearComponents.linear(
+        Text.builder(name).color(NamedTextColor.YELLOW).onHover(TextActions.showText(LinearComponents.linear(option))),
+        NamedTextColor.WHITE, " : ",
         valueColor, value
     );
   }

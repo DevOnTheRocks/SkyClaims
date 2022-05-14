@@ -34,12 +34,12 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandSchematicSetPreset extends CommandBase {
 
   public static final String HELP_TEXT = "used to set the flat world preset for a schematic";
-  private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text PRESET = Text.of("preset");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
+  private static final Text PRESET = LinearComponents.linear("preset");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_SET_PRESET)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
           GenericArguments.optional(GenericArguments.string(PRESET))
@@ -59,23 +59,23 @@ public class CommandSchematicSetPreset extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a schematic to use this command!")));
     String preset = args.<String>getOne(PRESET).orElse(null);
 
     schematic.setPreset(preset);
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
       if (preset != null) {
-        src.sendMessage(Text.of(
-            TextColors.GREEN, "Successfully updated schematic preset to ",
-            TextColors.WHITE, preset, TextColors.GREEN, "."
+        src.sendMessage(LinearComponents.linear(
+            NamedTextColor.GREEN, "Successfully updated schematic preset to ",
+            NamedTextColor.WHITE, preset, NamedTextColor.GREEN, "."
         ));
       } else {
-        src.sendMessage(Text.of(TextColors.GREEN, "Successfully removed schematic preset."));
+        src.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully removed schematic preset."));
       }
       return CommandResult.success();
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Failed to update schematic."));
     }
   }
 }

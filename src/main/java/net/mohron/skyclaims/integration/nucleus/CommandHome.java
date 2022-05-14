@@ -43,7 +43,7 @@ public class CommandHome extends CommandBase {
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_HOME)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .executor(new CommandHome())
       .build();
 
@@ -60,12 +60,12 @@ public class CommandHome extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (!(src instanceof Player)) {
-      throw new CommandException(Text.of("You must be a player to use this command!"));
+      throw new CommandException(LinearComponents.linear("You must be a player to use this command!"));
     }
 
     Player player = (Player) src;
     Transform<World> transform = getHome(player)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must set a home before using this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must set a home before using this command!")));
 
     player.setTransformSafely(transform);
 
@@ -78,6 +78,6 @@ public class CommandHome extends CommandBase {
       Optional<Home> oHome = homeService.get().getHome(user, "Island");
       return oHome.flatMap(NamedLocation::getTransform);
     }
-    throw new CommandException(Text.of(TextColors.RED, "The Nucleus Home Service is Unavailable"));
+    throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "The Nucleus Home Service is Unavailable"));
   }
 }

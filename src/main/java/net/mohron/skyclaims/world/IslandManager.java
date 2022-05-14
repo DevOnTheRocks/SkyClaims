@@ -28,17 +28,16 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import net.mohron.skyclaims.SkyClaims;
 import net.mohron.skyclaims.schematic.IslandSchematic;
 import net.mohron.skyclaims.team.PrivilegeType;
 import net.mohron.skyclaims.world.region.Region;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.server.ServerLocation;
 
 public class IslandManager {
 
@@ -51,7 +50,7 @@ public class IslandManager {
     return Optional.ofNullable(ISLANDS.get(islandUniqueId));
   }
 
-  public static Optional<Island> getByLocation(Location<World> location) {
+  public static Optional<Island> getByLocation(ServerLocation location) {
     return getByRegion(Region.get(location));
   }
 
@@ -110,7 +109,7 @@ public class IslandManager {
 
   public static int countByOwner(User owner) {
     return (int) ISLANDS.values().stream()
-        .filter(i -> i.getOwnerUniqueId().equals(owner.getUniqueId()))
+        .filter(i -> i.getOwnerUniqueId().equals(owner.uniqueId()))
         .count();
   }
 
@@ -129,14 +128,14 @@ public class IslandManager {
       // Run island commands defined in config
       for (String command : PLUGIN.getConfig().getMiscConfig().getIslandCommands()) {
         command = command.replace("@p", playerName);
-        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
+        Sponge.getCommandManager().process(Sponge.server().getConsole(), command);
         PLUGIN.getLogger().debug("Ran island command: {}", command);
       }
       // Run schematic commands
       if (schematic != null) {
         for (String command : schematic.getCommands()) {
           command = command.replace("@p", playerName);
-          Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
+          Sponge.getCommandManager().process(Sponge.server().getConsole(), command);
           PLUGIN.getLogger().debug("Ran schematic command: {}", command);
         }
       }

@@ -35,12 +35,12 @@ import org.spongepowered.api.world.biome.BiomeType;
 public class CommandSchematicSetBiome extends CommandBase {
 
   public static final String HELP_TEXT = "used to set the default biome for a schematic";
-  private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text BIOME = Text.of("biome-type");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
+  private static final Text BIOME = LinearComponents.linear("biome-type");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_SET_BIOME)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
           GenericArguments.optional(Arguments.biome(BIOME))
@@ -60,19 +60,19 @@ public class CommandSchematicSetBiome extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a schematic to use this command!")));
     BiomeType biome = args.<BiomeType>getOne(BIOME).orElse(null);
 
     schematic.setBiomeType(biome);
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
-      src.sendMessage(Text.of(
-          TextColors.GREEN, "Successfully updated schematic biome to ",
-          TextColors.WHITE, biome != null ? biome.getName() : "none", TextColors.GREEN, "."
+      src.sendMessage(LinearComponents.linear(
+          NamedTextColor.GREEN, "Successfully updated schematic biome to ",
+          NamedTextColor.WHITE, biome != null ? biome.getName() : "none", NamedTextColor.GREEN, "."
       ));
       return CommandResult.success();
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Failed to update schematic."));
     }
   }
 }

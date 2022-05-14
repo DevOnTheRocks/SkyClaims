@@ -84,6 +84,6 @@ public class TwoUserArgument extends CommandElement {
   private User getUserFromName(String name) throws ArgumentParseException {
     return SkyClaims.getInstance().getGame().getServiceManager()
         .provideUnchecked(UserStorageService.class).get(name)
-        .orElseThrow(() -> new ArgumentParseException(Text.of("Invalid User Supplied"), name, 0));
+        .orElseThrow(() -> new ArgumentParseException(LinearComponents.linear("Invalid User Supplied"), name, 0));
   }
 }

@@ -35,9 +35,9 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandSchematicCommand extends CommandBase {
 
   public static final String HELP_TEXT = "used to configure schematic commands";
-  private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text ACTION = Text.of("add|remove");
-  private static final Text COMMAND = Text.of("command");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
+  private static final Text ACTION = LinearComponents.linear("add|remove");
+  private static final Text COMMAND = LinearComponents.linear("command");
 
   private enum Action {
     add, remove
@@ -45,7 +45,7 @@ public class CommandSchematicCommand extends CommandBase {
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_COMMAND)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
           GenericArguments.enumValue(ACTION, Action.class),
@@ -66,11 +66,11 @@ public class CommandSchematicCommand extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic argument to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a schematic argument to use this command!")));
     Action action = args.<Action>getOne(ACTION)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide an action argument to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide an action argument to use this command!")));
     String command = args.<String>getOne(COMMAND)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a command argument to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a command argument to use this command!")));
 
     List<String> commands;
     if (action == Action.add) {
@@ -84,10 +84,10 @@ public class CommandSchematicCommand extends CommandBase {
     }
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
-      src.sendMessage(Text.of(TextColors.GREEN, "Successfully updated schematic."));
+      src.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully updated schematic."));
       return CommandResult.success();
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Failed to update schematic."));
     }
   }
 }

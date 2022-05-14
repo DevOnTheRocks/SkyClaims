@@ -35,7 +35,7 @@ public class CommandReload extends CommandBase {
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_RELOAD)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .executor(new CommandReload())
       .build();
 
@@ -52,7 +52,7 @@ public class CommandReload extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     PLUGIN.reload();
-    src.sendMessage(Text.of(TextColors.GREEN, "Successfully reloaded SkyClaims!"));
+    src.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully reloaded SkyClaims!"));
     return CommandResult.success();
   }
 }

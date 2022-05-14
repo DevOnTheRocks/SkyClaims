@@ -50,14 +50,14 @@ import org.spongepowered.api.text.format.TextStyles;
 public class CommandList extends CommandBase {
 
   public static final String HELP_TEXT = "display a list of the current islands.";
-  private static final Text ISLAND = Text.of("island");
-  private static final Text SORT_TYPE = Text.of("sort type");
-  private static final Text SORT_ORDER = Text.of("sort order");
+  private static final Text ISLAND = LinearComponents.linear("island");
+  private static final Text SORT_TYPE = LinearComponents.linear("sort type");
+  private static final Text SORT_ORDER = LinearComponents.linear("sort order");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_LIST)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(
             GenericArguments.optionalWeak(Arguments.island(ISLAND)),
             GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.enumValue(SORT_TYPE, IslandSortType.class), Permissions.COMMAND_LIST_SORT)),
@@ -79,7 +79,7 @@ public class CommandList extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (IslandManager.ISLANDS.isEmpty()) {
-      src.sendMessage(Text.of(TextColors.RED, "There are currently no islands!"));
+      src.sendMessage(LinearComponents.linear(NamedTextColor.RED, "There are currently no islands!"));
       return CommandResult.empty();
     }
     Player player = (src instanceof Player) ? (Player) src : null;
@@ -95,14 +95,14 @@ public class CommandList extends CommandBase {
     if (primaryListSort != IslandSortType.NONE && sortType != primaryListSort) {
       sortFunction = Comparator.comparing(primaryListSort.getSortFunction(), primaryListSort.getOrder().getComparator())
           .thenComparing(sortType.getSortFunction(), order.getComparator());
-      sortText = Text.of(
-          TextColors.GRAY, primaryListSort.name(), primaryListSort.getOrder().toText(),
-          TextColors.AQUA, ", ",
-          TextColors.GRAY, sortType.name(), order.toText()
+      sortText = LinearComponents.linear(
+          NamedTextColor.GRAY, primaryListSort.name(), primaryListSort.getOrder().toText(),
+          NamedTextColor.AQUA, ", ",
+          NamedTextColor.GRAY, sortType.name(), order.toText()
       );
     } else {
       sortFunction = Comparator.comparing(sortType.getSortFunction());
-      sortText = Text.of(TextColors.GRAY, sortType.name(), order.toText());
+      sortText = LinearComponents.linear(NamedTextColor.GRAY, sortType.name(), order.toText());
     }
 
     boolean showUnlocked = src.hasPermission(Permissions.COMMAND_LIST_UNLOCKED);
@@ -115,10 +115,10 @@ public class CommandList extends CommandBase {
     List<Text> listText = islands.stream()
         .filter(i -> player == null || i.isMember(player) || !i.isLocked() && showUnlocked || showAll)
         .sorted(sortFunction)
-        .map(island -> Text.of(
+        .map(island -> LinearComponents.linear(
             getAccess(island, src),
             island.getName().toBuilder()
-                .onHover(TextActions.showText(Text.of("Click here to view island info")))
+                .onHover(TextActions.showText(LinearComponents.linear("Click here to view island info")))
                 .onClick(TextActions.executeCallback(
                     CommandUtil.createCommandConsumer(src, "islandinfo", island.getUniqueId().toString(), createReturnConsumer())
                 )),
@@ -127,11 +127,11 @@ public class CommandList extends CommandBase {
         .collect(Collectors.toList());
 
     if (listText.isEmpty()) {
-      src.sendMessage(Text.of(TextColors.RED, "There are no islands to display!"));
+      src.sendMessage(LinearComponents.linear(NamedTextColor.RED, "There are no islands to display!"));
     } else if (src instanceof Player) {
       PaginationList.builder()
-          .title(Text.of(TextColors.AQUA, "Island List | ", TextColors.LIGHT_PURPLE, listText.size(), TextColors.AQUA, " | ", sortText))
-          .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+          .title(LinearComponents.linear(NamedTextColor.AQUA, "Island List | ", NamedTextColor.LIGHT_PURPLE, listText.size(), NamedTextColor.AQUA, " | ", sortText))
+          .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
           .contents(listText)
           .sendTo(src);
     } else {
@@ -142,11 +142,11 @@ public class CommandList extends CommandBase {
   }
 
   private static Consumer<CommandSource> createReturnConsumer() {
-    return src -> src.sendMessage(Text.of(
+    return src -> src.sendMessage(LinearComponents.linear(
         TextActions.executeCallback(CommandUtil.createCommandConsumer(src, "islandlist", "", null)),
-        Text.NEW_LINE, TextColors.WHITE, "[",
-        TextColors.AQUA, "Return to Island List",
-        TextColors.WHITE, "]", Text.NEW_LINE
+        Component.newline(), NamedTextColor.WHITE, "[",
+        NamedTextColor.AQUA, "Return to Island List",
+        NamedTextColor.WHITE, "]", Component.newline()
     ));
   }
 
@@ -154,26 +154,26 @@ public class CommandList extends CommandBase {
     Text access;
     Text hover = Text.EMPTY;
     if (src instanceof Player && island.getOwnerUniqueId().equals(((Player) src).getUniqueId())) {
-      access = Text.of(TextColors.BLUE, "O");
-      hover = Text.of(TextColors.BLUE, "You own this Island", Text.NEW_LINE);
+      access = LinearComponents.linear(NamedTextColor.BLUE, "O");
+      hover = LinearComponents.linear(NamedTextColor.BLUE, "You own this Island", Component.newline());
     } else if (src instanceof Player && island.isManager((Player) src)) {
-      access = Text.of(TextColors.GOLD, "M");
-      hover = Text.of(TextColors.GOLD, "You are a Manager on this Island", Text.NEW_LINE);
+      access = LinearComponents.linear(NamedTextColor.GOLD, "M");
+      hover = LinearComponents.linear(NamedTextColor.GOLD, "You are a Manager on this Island", Component.newline());
     } else if (src instanceof Player && island.isMember((Player) src)) {
-      access = Text.of(TextColors.YELLOW, "T");
-      hover = Text.of(TextColors.YELLOW, "You are Trusted on this Island", Text.NEW_LINE);
+      access = LinearComponents.linear(NamedTextColor.YELLOW, "T");
+      hover = LinearComponents.linear(NamedTextColor.YELLOW, "You are Trusted on this Island", Component.newline());
     } else {
-      access = island.isLocked() ? Text.of(TextColors.RED, "L") : Text.of(TextColors.GREEN, "U");
+      access = island.isLocked() ? LinearComponents.linear(NamedTextColor.RED, "L") : LinearComponents.linear(NamedTextColor.GREEN, "U");
     }
 
-    hover = hover.concat(Text.of(island.getName(), TextColors.WHITE, " is ",
-        island.isLocked() ? Text.of(TextColors.RED, "Locked") : Text.of(TextColors.GREEN, "Unlocked")
+    hover = hover.concat(LinearComponents.linear(island.getName(), NamedTextColor.WHITE, " is ",
+        island.isLocked() ? LinearComponents.linear(NamedTextColor.RED, "Locked") : LinearComponents.linear(NamedTextColor.GREEN, "Unlocked")
     ));
 
-    return Text.of(
-        TextColors.WHITE, " [",
+    return LinearComponents.linear(
+        NamedTextColor.WHITE, " [",
         access.toBuilder().onHover(TextActions.showText(hover)).onClick(TextActions.executeCallback(toggleLock(island))),
-        TextColors.WHITE, "] "
+        NamedTextColor.WHITE, "] "
     );
   }
 
@@ -184,26 +184,26 @@ public class CommandList extends CommandBase {
           && src.hasPermission(Permissions.COMMAND_LOCK)
           || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
         island.setLocked(!island.isLocked());
-        src.sendMessage(Text.of(island.getName(), TextColors.GRAY, " is now ",
+        src.sendMessage(LinearComponents.linear(island.getName(), NamedTextColor.GRAY, " is now ",
             Text.builder((island.isLocked()) ? "Locked" : "Unlocked")
-                .color((island.isLocked()) ? TextColors.RED : TextColors.GREEN)
+                .color((island.isLocked()) ? NamedTextColor.RED : NamedTextColor.GREEN)
                 .onClick(TextActions.executeCallback(toggleLock(island))),
-            TextColors.GRAY, "!"
+            NamedTextColor.GRAY, "!"
         ));
       }
     };
   }
 
   private Text getCoords(Island island, CommandSource src) {
-    Text coords = Text.of(TextColors.GRAY, " (",
-        TextColors.LIGHT_PURPLE, island.getRegion().getX(),
-        TextColors.GRAY, ", ",
-        TextColors.LIGHT_PURPLE, island.getRegion().getZ(),
-        TextColors.GRAY, ")");
+    Text coords = LinearComponents.linear(NamedTextColor.GRAY, " (",
+        NamedTextColor.LIGHT_PURPLE, island.getRegion().getX(),
+        NamedTextColor.GRAY, ", ",
+        NamedTextColor.LIGHT_PURPLE, island.getRegion().getZ(),
+        NamedTextColor.GRAY, ")");
     return !island.isLocked() || src instanceof Player && island.isMember((Player) src) || src
         .hasPermission(Permissions.COMMAND_SPAWN_OTHERS)
         ? coords.toBuilder()
-        .onHover(TextActions.showText(Text.of("Click here to teleport to this island")))
+        .onHover(TextActions.showText(LinearComponents.linear("Click here to teleport to this island")))
         .onClick(TextActions.executeCallback(CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation())))
         .build()
         : coords;

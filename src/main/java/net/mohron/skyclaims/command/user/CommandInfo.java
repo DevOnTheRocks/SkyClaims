@@ -50,12 +50,12 @@ import org.spongepowered.api.text.format.TextStyles;
 public class CommandInfo extends CommandBase {
 
   public static final String HELP_TEXT = "display detailed information on your island.";
-  private static final Text ISLAND = Text.of("island");
+  private static final Text ISLAND = LinearComponents.linear("island");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_INFO)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(GenericArguments.optional(Arguments.island(ISLAND)))
         .executor(new CommandInfo())
         .build();
@@ -76,7 +76,7 @@ public class CommandInfo extends CommandBase {
     if (src instanceof Player && !args.hasAny(ISLAND)) {
       islands.add(IslandManager.getByLocation(((Player) src).getLocation())
           .orElseThrow(() -> new CommandException(
-              Text.of(TextColors.RED, "You must be on an island to use this command.")))
+              LinearComponents.linear(NamedTextColor.RED, "You must be on an island to use this command.")))
       );
     } else {
       Collection<UUID> islandIds = args.getAll(ISLAND);
@@ -89,35 +89,35 @@ public class CommandInfo extends CommandBase {
     SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
 
     List<Text> infoText = islands.stream()
-        .map(island -> Text.of(
+        .map(island -> LinearComponents.linear(
             (src instanceof Player) ? getAdminShortcuts(src, island) : Text.EMPTY,
-            TextColors.YELLOW, "Name", TextColors.WHITE, " : ", island.getName(),
-            getLocked(island), Text.NEW_LINE,
-            TextColors.YELLOW, "Members", TextColors.WHITE, " : ", getMembers(island), Text.NEW_LINE,
-            TextColors.YELLOW, "Size", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, island.getWidth(),
-            TextColors.GRAY, "x", TextColors.LIGHT_PURPLE, island.getWidth(), Text.NEW_LINE,
-            TextColors.YELLOW, "Entities", TextColors.WHITE, " : ", getEntities(island), Text.NEW_LINE,
-            TextColors.YELLOW, "Spawn", TextColors.WHITE, " : ", getSpawn(island), Text.NEW_LINE,
-            TextColors.YELLOW, "Created", TextColors.WHITE, " : ", TextColors.GRAY, sdf.format(island.getDateCreated()), Text.NEW_LINE,
-            TextColors.YELLOW, "Last Active", TextColors.WHITE, " : ", TextColors.GRAY, sdf.format(island.getDateLastActive()), Text.NEW_LINE,
-            TextColors.YELLOW, "UUID", TextColors.WHITE, " : ", TextColors.GRAY,
-            island.getUniqueId(), Text.NEW_LINE,
-            island.getClaim().isPresent() ? Text.of(
-                TextColors.YELLOW, "Claim", TextColors.WHITE, " : ", TextColors.GRAY, Text.builder(
+            NamedTextColor.YELLOW, "Name", NamedTextColor.WHITE, " : ", island.getName(),
+            getLocked(island), Component.newline(),
+            NamedTextColor.YELLOW, "Members", NamedTextColor.WHITE, " : ", getMembers(island), Component.newline(),
+            NamedTextColor.YELLOW, "Size", NamedTextColor.WHITE, " : ", NamedTextColor.LIGHT_PURPLE, island.getWidth(),
+            NamedTextColor.GRAY, "x", NamedTextColor.LIGHT_PURPLE, island.getWidth(), Component.newline(),
+            NamedTextColor.YELLOW, "Entities", NamedTextColor.WHITE, " : ", getEntities(island), Component.newline(),
+            NamedTextColor.YELLOW, "Spawn", NamedTextColor.WHITE, " : ", getSpawn(island), Component.newline(),
+            NamedTextColor.YELLOW, "Created", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, sdf.format(island.getDateCreated()), Component.newline(),
+            NamedTextColor.YELLOW, "Last Active", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, sdf.format(island.getDateLastActive()), Component.newline(),
+            NamedTextColor.YELLOW, "UUID", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY,
+            island.getUniqueId(), Component.newline(),
+            island.getClaim().isPresent() ? LinearComponents.linear(
+                NamedTextColor.YELLOW, "Claim", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY, Text.builder(
                     island.getClaimUniqueId().toString())
                     .onClick(TextActions
                         .executeCallback(CommandUtil.createCommandConsumer(src, "claiminfo",
                             island.getClaimUniqueId().toString(),
                             createReturnConsumer(src, island.getUniqueId().toString())
                         )))
-                    .onHover(TextActions.showText(Text.of("Click to view claim info")))
+                    .onHover(TextActions.showText(LinearComponents.linear("Click to view claim info")))
             ) : Text.EMPTY
         ))
         .collect(Collectors.toList());
 
     PaginationList.builder()
-        .title(Text.of(TextColors.AQUA, "Island Info"))
-        .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+        .title(LinearComponents.linear(NamedTextColor.AQUA, "Island Info"))
+        .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
         .contents(infoText)
         .sendTo(src);
 
@@ -126,111 +126,111 @@ public class CommandInfo extends CommandBase {
 
   private static CommandResult listIslands() throws CommandException {
     throw new CommandException(
-        Text.of(TextColors.RED, "Command does not support players with multiple islands yet!"));
+        LinearComponents.linear(NamedTextColor.RED, "Command does not support players with multiple islands yet!"));
   }
 
   private static Text getAdminShortcuts(CommandSource src, Island island) {
-    Text teleport = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS) ? Text.of(
-        TextColors.WHITE, "[",
-        TextColors.GOLD, Text.builder("Teleport")
-            .onHover(TextActions.showText(Text.of("Click to teleport to this island")))
+    Text teleport = src.hasPermission(Permissions.COMMAND_SPAWN_OTHERS) ? LinearComponents.linear(
+        NamedTextColor.WHITE, "[",
+        NamedTextColor.GOLD, Text.builder("Teleport")
+            .onHover(TextActions.showText(LinearComponents.linear("Click to teleport to this island")))
             .onClick(TextActions.executeCallback(
                 CommandUtil.createTeleportConsumer(src, island.getSpawn().getLocation()))),
-        TextColors.WHITE, "] "
+        NamedTextColor.WHITE, "] "
     ) : Text.EMPTY;
 
-    Text transfer = src.hasPermission(Permissions.COMMAND_TRANSFER) ? Text.of(
-        TextColors.WHITE, "[",
-        TextColors.GOLD, Text.builder("Transfer")
-            .onHover(TextActions.showText(Text.of("Click to transfer this island")))
+    Text transfer = src.hasPermission(Permissions.COMMAND_TRANSFER) ? LinearComponents.linear(
+        NamedTextColor.WHITE, "[",
+        NamedTextColor.GOLD, Text.builder("Transfer")
+            .onHover(TextActions.showText(LinearComponents.linear("Click to transfer this island")))
             .onClick(TextActions.suggestCommand("/isa transfer " + island.getOwnerName() + " ?")),
-        TextColors.WHITE, "] "
+        NamedTextColor.WHITE, "] "
     ) : Text.EMPTY;
 
-    Text delete = src.hasPermission(Permissions.COMMAND_DELETE_OTHERS) ? Text.of(
-        TextColors.WHITE, "[",
-        TextColors.GOLD, Text.builder("Delete")
-            .onHover(TextActions.showText(Text.of("Click to delete this island")))
+    Text delete = src.hasPermission(Permissions.COMMAND_DELETE_OTHERS) ? LinearComponents.linear(
+        NamedTextColor.WHITE, "[",
+        NamedTextColor.GOLD, Text.builder("Delete")
+            .onHover(TextActions.showText(LinearComponents.linear("Click to delete this island")))
             .onClick(TextActions.executeCallback(consumer -> {
-              src.sendMessage(Text.of(
-                  TextColors.GREEN, "Are you sure you want to delete ",
-                  island.getName(), TextColors.GREEN, " island?",
-                  Text.NEW_LINE,
-                  TextColors.WHITE, "[",
-                  Text.builder("YES").color(TextColors.GREEN)
+              src.sendMessage(LinearComponents.linear(
+                  NamedTextColor.GREEN, "Are you sure you want to delete ",
+                  island.getName(), NamedTextColor.GREEN, " island?",
+                  Component.newline(),
+                  NamedTextColor.WHITE, "[",
+                  Text.builder("YES").color(NamedTextColor.GREEN)
                       .onClick(TextActions.executeCallback(s -> {
                         island.clear();
                         island.delete();
-                        src.sendMessage(Text.of(island.getName(), " has been deleted!"));
+                        src.sendMessage(LinearComponents.linear(island.getName(), " has been deleted!"));
                       })),
-                  TextColors.WHITE, "] [",
+                  NamedTextColor.WHITE, "] [",
                   Text.builder("NO")
-                      .color(TextColors.RED)
+                      .color(NamedTextColor.RED)
                       .onClick(TextActions.executeCallback(
-                          s -> s.sendMessage(Text.of("Island deletion canceled!")))),
-                  TextColors.WHITE, "]"
+                          s -> s.sendMessage(LinearComponents.linear("Island deletion canceled!")))),
+                  NamedTextColor.WHITE, "]"
               ));
             })),
-        TextColors.WHITE, "] "
+        NamedTextColor.WHITE, "] "
     ) : Text.EMPTY;
 
-    Text expand = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
-        TextColors.WHITE, "[",
-        TextColors.GOLD, Text.builder("Expand")
-            .onHover(TextActions.showText(Text.of("Click to expand this island's width by ", TextColors.LIGHT_PURPLE, 2)))
+    Text expand = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? LinearComponents.linear(
+        NamedTextColor.WHITE, "[",
+        NamedTextColor.GOLD, Text.builder("Expand")
+            .onHover(TextActions.showText(LinearComponents.linear("Click to expand this island's width by ", NamedTextColor.LIGHT_PURPLE, 2)))
             .onClick(TextActions.executeCallback(consumer -> {
               if (island.getWidth() < 512) {
                 if (island.expand(1)) {
-                  src.sendMessage(Text.of(
+                  src.sendMessage(LinearComponents.linear(
                       island.getName(),
-                      TextColors.GREEN, " has been expanded to ",
-                      TextColors.LIGHT_PURPLE, island.getWidth(),
-                      TextColors.GRAY, "x",
-                      TextColors.LIGHT_PURPLE, island.getWidth(),
-                      TextColors.GREEN, "."
+                      NamedTextColor.GREEN, " has been expanded to ",
+                      NamedTextColor.LIGHT_PURPLE, island.getWidth(),
+                      NamedTextColor.GRAY, "x",
+                      NamedTextColor.LIGHT_PURPLE, island.getWidth(),
+                      NamedTextColor.GREEN, "."
                   ));
                 } else {
-                  src.sendMessage(Text.of(
-                      TextColors.RED, "An error occurred while expanding ",
+                  src.sendMessage(LinearComponents.linear(
+                      NamedTextColor.RED, "An error occurred while expanding ",
                       island.getName(),
-                      TextColors.RED, "!"
+                      NamedTextColor.RED, "!"
                   ));
                 }
               } else {
-                src.sendMessage(Text.of(island.getOwnerName(), TextColors.RED, "'s island cannot be expanded further!"));
+                src.sendMessage(LinearComponents.linear(island.getOwnerName(), NamedTextColor.RED, "'s island cannot be expanded further!"));
               }
             })),
-        TextColors.WHITE, "] "
+        NamedTextColor.WHITE, "] "
     ) : Text.EMPTY;
 
-    Text shrink = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? Text.of(
-        TextColors.WHITE, "[",
-        TextColors.GOLD, Text.builder("Shrink")
-            .onHover(TextActions.showText(Text.of("Click to shrink this island's width by ", TextColors.LIGHT_PURPLE, 2)))
+    Text shrink = src.hasPermission(Permissions.COMMAND_EXPAND_OTHERS) ? LinearComponents.linear(
+        NamedTextColor.WHITE, "[",
+        NamedTextColor.GOLD, Text.builder("Shrink")
+            .onHover(TextActions.showText(LinearComponents.linear("Click to shrink this island's width by ", NamedTextColor.LIGHT_PURPLE, 2)))
             .onClick(TextActions.executeCallback(consumer -> {
               if (island.shrink(1)) {
-                src.sendMessage(Text.of(
+                src.sendMessage(LinearComponents.linear(
                     island.getName(),
-                    TextColors.GREEN, " has been shrunk to ",
-                    TextColors.LIGHT_PURPLE, island.getWidth(),
-                    TextColors.GRAY, "x",
-                    TextColors.LIGHT_PURPLE, island.getWidth(),
-                    TextColors.GREEN, "."
+                    NamedTextColor.GREEN, " has been shrunk to ",
+                    NamedTextColor.LIGHT_PURPLE, island.getWidth(),
+                    NamedTextColor.GRAY, "x",
+                    NamedTextColor.LIGHT_PURPLE, island.getWidth(),
+                    NamedTextColor.GREEN, "."
                 ));
               } else {
-                src.sendMessage(Text.of(
-                    TextColors.RED, "An error occurred while shrinking ",
+                src.sendMessage(LinearComponents.linear(
+                    NamedTextColor.RED, "An error occurred while shrinking ",
                     island.getName(),
-                    TextColors.RED, "!"
+                    NamedTextColor.RED, "!"
                 ));
               }
             })),
-        TextColors.WHITE, "] "
+        NamedTextColor.WHITE, "] "
     ) : Text.EMPTY;
 
-    return (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty() && shrink.isEmpty()) ? Text.EMPTY : Text.of(
-        TextColors.GOLD, "Admin", TextColors.WHITE, " : ",
-        teleport, transfer, delete, expand, shrink, Text.NEW_LINE
+    return (teleport.isEmpty() && transfer.isEmpty() && delete.isEmpty() && expand.isEmpty() && shrink.isEmpty()) ? Text.EMPTY : LinearComponents.linear(
+        NamedTextColor.GOLD, "Admin", NamedTextColor.WHITE, " : ",
+        teleport, transfer, delete, expand, shrink, Component.newline()
     );
   }
 
@@ -243,17 +243,17 @@ public class CommandInfo extends CommandBase {
     for (String member : island.getMemberNames()) {
       members.add(PrivilegeType.MEMBER.format(member));
     }
-    return Text.joinWith(Text.of(TextColors.GRAY, ", "), members);
+    return Text.joinWith(LinearComponents.linear(NamedTextColor.GRAY, ", "), members);
 
   }
 
   private static Consumer<CommandSource> createReturnConsumer(CommandSource src, String arguments) {
     return consumer -> {
       Text returnCommand = Text.builder()
-          .append(Text.of(
-              TextColors.WHITE, Text.NEW_LINE, "[", TextColors.AQUA, "Return to Island Info",
-              TextColors.WHITE,
-              "]", Text.NEW_LINE
+          .append(LinearComponents.linear(
+              NamedTextColor.WHITE, Component.newline(), "[", NamedTextColor.AQUA, "Return to Island Info",
+              NamedTextColor.WHITE,
+              "]", Component.newline()
           ))
           .onClick(TextActions.executeCallback(
               CommandUtil.createCommandConsumer(src, "islandinfo", arguments, null)))
@@ -263,15 +263,15 @@ public class CommandInfo extends CommandBase {
   }
 
   private Text getLocked(Island island) {
-    return Text.of(TextColors.WHITE, " [",
+    return LinearComponents.linear(NamedTextColor.WHITE, " [",
         Text.builder(island.isLocked() ? "L" : "U")
-            .color(island.isLocked() ? TextColors.RED : TextColors.GREEN)
+            .color(island.isLocked() ? NamedTextColor.RED : NamedTextColor.GREEN)
             .onHover(TextActions.showText(island.isLocked()
-                ? Text.of(TextColors.RED, "LOCKED")
-                : Text.of(TextColors.GREEN, "UNLOCKED")
+                ? LinearComponents.linear(NamedTextColor.RED, "LOCKED")
+                : LinearComponents.linear(NamedTextColor.GREEN, "UNLOCKED")
             ))
             .onClick(TextActions.executeCallback(toggleLock(island))),
-        TextColors.WHITE, "] ");
+        NamedTextColor.WHITE, "] ");
   }
 
   private Consumer<CommandSource> toggleLock(Island island) {
@@ -281,21 +281,21 @@ public class CommandInfo extends CommandBase {
           && src.hasPermission(Permissions.COMMAND_LOCK)
           || src.hasPermission(Permissions.COMMAND_LOCK_OTHERS)) {
         island.setLocked(!island.isLocked());
-        src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now ",
+        src.sendMessage(LinearComponents.linear(island.getName(), NamedTextColor.GREEN, " is now ",
             Text.builder((island.isLocked()) ? "LOCKED" : "UNLOCKED")
-                .color((island.isLocked()) ? TextColors.RED : TextColors.GREEN)
+                .color((island.isLocked()) ? NamedTextColor.RED : NamedTextColor.GREEN)
                 .onClick(TextActions.executeCallback(toggleLock(island))),
-            TextColors.GREEN, "!"
+            NamedTextColor.GREEN, "!"
         ));
       }
     };
   }
 
   private Text getSpawn(Island island) {
-    return Text.of(
-        TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockX(), TextColors.GRAY, "x ",
-        TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockY(), TextColors.GRAY, "y ",
-        TextColors.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockZ(), TextColors.GRAY, "z"
+    return LinearComponents.linear(
+        NamedTextColor.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockX(), NamedTextColor.GRAY, "x ",
+        NamedTextColor.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockY(), NamedTextColor.GRAY, "y ",
+        NamedTextColor.LIGHT_PURPLE, island.getSpawn().getLocation().getBlockZ(), NamedTextColor.GRAY, "z"
     );
   }
 
@@ -307,27 +307,27 @@ public class CommandInfo extends CommandBase {
     int maxPassive = Options.getMaxPassiveSpawns(island.getOwnerUniqueId());
     int passive = island.getPassiveEntities().size();
 
-    return Text.of(
-        Text.of(TextActions.showText(Text.of(
-            TextColors.GRAY, "Hostile", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, hostile,
+    return LinearComponents.linear(
+        LinearComponents.linear(TextActions.showText(LinearComponents.linear(
+            NamedTextColor.GRAY, "Hostile", NamedTextColor.WHITE, " : ", NamedTextColor.LIGHT_PURPLE, hostile,
             (limitSpawning && maxHostile > 0)
-                ? Text.of(TextColors.GRAY, " (", TextColors.RED, maxHostile, TextColors.GRAY, ")")
+                ? LinearComponents.linear(NamedTextColor.GRAY, " (", NamedTextColor.RED, maxHostile, NamedTextColor.GRAY, ")")
                 : Text.EMPTY,
-            Text.NEW_LINE,
-            TextColors.GRAY, "Passive", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE, passive,
+            Component.newline(),
+            NamedTextColor.GRAY, "Passive", NamedTextColor.WHITE, " : ", NamedTextColor.LIGHT_PURPLE, passive,
             (limitSpawning && maxPassive > 0)
-                ? Text.of(TextColors.GRAY, " (", TextColors.RED, maxPassive, TextColors.GRAY, ")")
+                ? LinearComponents.linear(NamedTextColor.GRAY, " (", NamedTextColor.RED, maxPassive, NamedTextColor.GRAY, ")")
                 : Text.EMPTY
             )),
-            TextColors.GRAY, "Living", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE,
-            hostile + passive, TextColors.WHITE,
+            NamedTextColor.GRAY, "Living", NamedTextColor.WHITE, " : ", NamedTextColor.LIGHT_PURPLE,
+            hostile + passive, NamedTextColor.WHITE,
             (limitSpawning && max > 0)
-                ? Text.of(TextColors.GRAY, " (", TextColors.RED, max, TextColors.GRAY, ")")
+                ? LinearComponents.linear(NamedTextColor.GRAY, " (", NamedTextColor.RED, max, NamedTextColor.GRAY, ")")
                 : Text.EMPTY, ", "
         ),
-        TextColors.GRAY, "Item", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE,
-        island.getItemEntities().size(), TextColors.WHITE, ", ",
-        TextColors.GRAY, "Tile", TextColors.WHITE, " : ", TextColors.LIGHT_PURPLE,
+        NamedTextColor.GRAY, "Item", NamedTextColor.WHITE, " : ", NamedTextColor.LIGHT_PURPLE,
+        island.getItemEntities().size(), NamedTextColor.WHITE, ", ",
+        NamedTextColor.GRAY, "Tile", NamedTextColor.WHITE, " : ", NamedTextColor.LIGHT_PURPLE,
         island.getTileEntities().size());
   }
 }

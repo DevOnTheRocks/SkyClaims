@@ -40,13 +40,13 @@ import org.spongepowered.api.world.biome.BiomeType;
 public class CommandSetBiome extends CommandBase.PlayerCommand {
 
   public static final String HELP_TEXT = "set the biome of a block, chunk or island.";
-  private static final Text BIOME = Text.of("biome");
-  private static final Text TARGET = Text.of("target");
+  private static final Text BIOME = LinearComponents.linear("biome");
+  private static final Text TARGET = LinearComponents.linear("target");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_SET_BIOME)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(GenericArguments.seq(
             Arguments.biome(BIOME),
             GenericArguments.optional(Arguments.target(TARGET))
@@ -66,13 +66,13 @@ public class CommandSetBiome extends CommandBase.PlayerCommand {
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     BiomeType biome = args.<BiomeType>getOne(BIOME)
-        .orElseThrow(() -> new CommandException(Text.of("You must supply a biome to use this command")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear("You must supply a biome to use this command")));
     Island island = IslandManager.getByLocation(player.getLocation())
-        .orElseThrow(() -> new CommandException(Text.of("You must be on an island to use this command")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear("You must be on an island to use this command")));
 
     if (!island.isManager(player) && !player.hasPermission(Permissions.COMMAND_SET_BIOME_OTHERS)) {
       throw new CommandPermissionException(
-          Text.of("You do not have permission to use setbiome on this island"));
+          LinearComponents.linear("You do not have permission to use setbiome on this island"));
     }
 
     Targets target = args.<Targets>getOne(TARGET).orElse(Targets.ISLAND);
@@ -80,26 +80,26 @@ public class CommandSetBiome extends CommandBase.PlayerCommand {
     switch (target) {
       case BLOCK:
         WorldUtil.setBlockBiome(player.getLocation(), biome);
-        player.sendMessage(Text.of(
-            TextColors.GREEN, "Successfully changed the biome at ",
-            TextColors.DARK_PURPLE, player.getLocation().getBlockX(),
-            TextColors.GREEN, ",",
-            TextColors.DARK_PURPLE, player.getLocation().getBlockZ(),
-            TextColors.GREEN, " to ", TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+        player.sendMessage(LinearComponents.linear(
+            NamedTextColor.GREEN, "Successfully changed the biome at ",
+            NamedTextColor.DARK_PURPLE, player.getLocation().getBlockX(),
+            NamedTextColor.GREEN, ",",
+            NamedTextColor.DARK_PURPLE, player.getLocation().getBlockZ(),
+            NamedTextColor.GREEN, " to ", NamedTextColor.GOLD, biome.getName(), NamedTextColor.GREEN, "."
         ));
         break;
       case CHUNK:
         WorldUtil.setChunkBiome(player.getLocation(), biome);
-        player.sendMessage(Text.of(
-            TextColors.GREEN, "Successfully changed the biome in this chunk to ",
-            TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+        player.sendMessage(LinearComponents.linear(
+            NamedTextColor.GREEN, "Successfully changed the biome in this chunk to ",
+            NamedTextColor.GOLD, biome.getName(), NamedTextColor.GREEN, "."
         ));
         break;
       case ISLAND:
         WorldUtil.setIslandBiome(island, biome);
-        player.sendMessage(Text.of(
-            TextColors.GREEN, "Successfully changed the biome on this island to ",
-            TextColors.GOLD, biome.getName(), TextColors.GREEN, "."
+        player.sendMessage(LinearComponents.linear(
+            NamedTextColor.GREEN, "Successfully changed the biome on this island to ",
+            NamedTextColor.GOLD, biome.getName(), NamedTextColor.GREEN, "."
         ));
         break;
     }

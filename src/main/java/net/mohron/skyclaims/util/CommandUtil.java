@@ -19,32 +19,33 @@
 package net.mohron.skyclaims.util;
 
 import java.util.function.Consumer;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.LinearComponents;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandException;
-import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 public class CommandUtil {
 
-  public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, Location<World> location) {
+  public static Consumer<CommandSource> createTeleportConsumer(CommandSource src, ServerLocation location) {
     return teleport -> {
       if (src instanceof Player) {
         Player player = (Player) src;
-        Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+        ServerLocation safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
         if (safeLocation == null) {
-          player.sendMessage(Text.of(
-              TextColors.RED, "Location is not safe. ",
-              TextColors.WHITE, "Are you sure you want to teleport here?", Text.NEW_LINE,
+          player.sendMessage(LinearComponents.linear(
+
+                  NamedTextColor.RED, "Location is not safe. ",
+              NamedTextColor.WHITE, "Are you sure you want to teleport here?", Component.newline(),
               Text.builder("[YES]")
-                  .onHover(TextActions.showText(Text.of("Click to teleport")))
+                  .onHover(TextActions.showText(LinearComponents.linear("Click to teleport")))
                   .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location)))
-                  .color(TextColors.GREEN)
+                  .color(NamedTextColor.GREEN)
           ));
         } else {
           player.setLocation(safeLocation);
@@ -53,19 +54,19 @@ public class CommandUtil {
     };
   }
 
-  public static Consumer<Task> createTeleportConsumer(Player player, Location<World> location) {
+  public static Consumer<Task> createTeleportConsumer(Player player, ServerLocation location) {
     return teleport -> {
-      Location<World> safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
+      ServerLocation safeLocation = Sponge.getGame().getTeleportHelper().getSafeLocation(location).orElse(null);
       if (safeLocation == null) {
-        player.sendMessage(Text.of(
-            TextColors.RED, "Location is not safe. ",
-            TextColors.WHITE, "Are you sure you want to teleport here?", Text.NEW_LINE,
-            TextColors.WHITE, "[",
+        player.sendMessage(LinearComponents.linear(
+            NamedTextColor.RED, "Location is not safe. ",
+            NamedTextColor.WHITE, "Are you sure you want to teleport here?", Component.newline(),
+            NamedTextColor.WHITE, "[",
             Text.builder("YES")
-                .color(TextColors.GREEN)
-                .onHover(TextActions.showText(Text.of("Click to teleport")))
+                .color(NamedTextColor.GREEN)
+                .onHover(TextActions.showText(LinearComponents.linear("Click to teleport")))
                 .onClick(TextActions.executeCallback(createForceTeleportConsumer(player, location))),
-            TextColors.WHITE, "]"
+            NamedTextColor.WHITE, "]"
         ));
       } else {
         player.setLocation(safeLocation);
@@ -73,7 +74,7 @@ public class CommandUtil {
     };
   }
 
-  private static Consumer<CommandSource> createForceTeleportConsumer(Player player, Location<World> location) {
+  private static Consumer<CommandSource> createForceTeleportConsumer(Player player, ServerLocation location) {
     return teleport -> player.setLocation(location);
   }
 

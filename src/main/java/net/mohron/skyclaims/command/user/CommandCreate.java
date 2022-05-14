@@ -46,7 +46,7 @@ public class CommandCreate extends ListSchematicCommand {
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_CREATE)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(GenericArguments.optional(Arguments.schematic(SCHEMATIC)))
         .executor(new CommandCreate())
         .build();
@@ -63,7 +63,7 @@ public class CommandCreate extends ListSchematicCommand {
   @Override
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     if (hasPlayerReachedMaxIslands(player)) {
-      throw new CommandException(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You have reached your maximum number of islands!"));
     }
 
     Optional<IslandSchematic> schematic = args.getOne(SCHEMATIC);
@@ -80,11 +80,11 @@ public class CommandCreate extends ListSchematicCommand {
 
   private CommandResult createIsland(Player player, IslandSchematic schematic) throws CommandException {
     if (hasPlayerReachedMaxIslands(player)) {
-      throw new CommandException(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You have reached your maximum number of islands!"));
     }
 
-    player.sendMessage(Text.of(
-        TextColors.GREEN, "Your island is being created.",
+    player.sendMessage(LinearComponents.linear(
+        NamedTextColor.GREEN, "Your island is being created.",
         PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
     ));
 
@@ -93,7 +93,7 @@ public class CommandCreate extends ListSchematicCommand {
       clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_CREATE, Permissions.KEEP_INV_ENDERCHEST_CREATE);
       return CommandResult.success();
     } catch (CreateIslandException e) {
-      throw new CommandException(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Unable to create island!", Component.newline(), NamedTextColor.RESET, e.getComponent()));
     }
   }
 
@@ -107,11 +107,11 @@ public class CommandCreate extends ListSchematicCommand {
       if (src instanceof Player) {
         Player player = (Player) src;
         if (hasPlayerReachedMaxIslands(player)) {
-          player.sendMessage(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
+          player.sendMessage(LinearComponents.linear(NamedTextColor.RED, "You have reached your maximum number of islands!"));
         }
 
-        player.sendMessage(Text.of(
-            TextColors.GREEN, "Your island is being created.",
+        player.sendMessage(LinearComponents.linear(
+            NamedTextColor.GREEN, "Your island is being created.",
             PLUGIN.getConfig().getMiscConfig().isTeleportOnCreate() ? " You will be teleported shortly." : Text.EMPTY
         ));
 
@@ -119,7 +119,7 @@ public class CommandCreate extends ListSchematicCommand {
           Island island = new Island(player, schematic);
           clearIslandMemberInventories(island, Permissions.KEEP_INV_PLAYER_CREATE, Permissions.KEEP_INV_ENDERCHEST_CREATE);
         } catch (CreateIslandException e) {
-          player.sendMessage(Text.of(TextColors.RED, "Unable to create island!", Text.NEW_LINE, TextColors.RESET, e.getText()));
+          player.sendMessage(LinearComponents.linear(NamedTextColor.RED, "Unable to create island!", Component.newline(), NamedTextColor.RESET, e.getComponent()));
         }
       }
     };

@@ -34,12 +34,12 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandSchematicSetHeight extends CommandBase {
 
   public static final String HELP_TEXT = "used to set the generation height for a schematic";
-  private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text HEIGHT = Text.of("height");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
+  private static final Text HEIGHT = LinearComponents.linear("height");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_SET_HEIGHT)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
           GenericArguments.optional(GenericArguments.integer(HEIGHT))
@@ -59,19 +59,19 @@ public class CommandSchematicSetHeight extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a schematic to use this command!")));
     Integer height = args.<Integer>getOne(HEIGHT).orElse(null);
     if (height != null && (height < 0 || height > 255)) {
-      throw new CommandException(Text.of(TextColors.RED, "Schematic height must be between ", TextColors.LIGHT_PURPLE, "0-255", TextColors.RED, "!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Schematic height must be between ", NamedTextColor.LIGHT_PURPLE, "0-255", NamedTextColor.RED, "!"));
     }
 
     schematic.setHeight(height);
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
-      src.sendMessage(Text.of(TextColors.GREEN, "Successfully updated schematic height to ", TextColors.LIGHT_PURPLE, height, TextColors.GREEN, "."));
+      src.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully updated schematic height to ", NamedTextColor.LIGHT_PURPLE, height, NamedTextColor.GREEN, "."));
       return CommandResult.success();
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Failed to update schematic."));
     }
   }
 }

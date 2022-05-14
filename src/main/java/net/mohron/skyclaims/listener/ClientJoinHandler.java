@@ -54,7 +54,7 @@ public class ClientJoinHandler {
             new Island(
                 player,
                 Options.getDefaultSchematic(player.getUniqueId())
-                    .orElseThrow(() -> new CreateIslandException(Text.of(TextColors.RED, "Unable to load default schematic!")))
+                    .orElseThrow(() -> new CreateIslandException(LinearComponents.linear(NamedTextColor.RED, "Unable to load default schematic!")))
             );
             PLUGIN.getLogger().info("Automatically created an island for {}.", player.getName());
           } catch (CreateIslandException e) {
@@ -69,15 +69,15 @@ public class ClientJoinHandler {
   private void deliverInvites(Player player) {
     int invites = PLUGIN.getInviteService().getInviteCount(player);
     if (invites > 0) {
-      player.sendMessage(Text.of(
-          TextColors.GRAY, "You have ",
-          TextColors.LIGHT_PURPLE, invites,
-          TextColors.GRAY, " waiting for your response! ",
-          TextColors.WHITE, "[",
+      player.sendMessage(LinearComponents.linear(
+          NamedTextColor.GRAY, "You have ",
+          NamedTextColor.LIGHT_PURPLE, invites,
+          NamedTextColor.GRAY, " waiting for your response! ",
+          NamedTextColor.WHITE, "[",
           Text.builder("OPEN")
-              .color(TextColors.GREEN)
+              .color(NamedTextColor.GREEN)
               .onClick(TextActions.executeCallback(PLUGIN.getInviteService().listIncomingInvites())),
-          TextColors.WHITE, "]"
+          NamedTextColor.WHITE, "]"
       ));
     }
   }

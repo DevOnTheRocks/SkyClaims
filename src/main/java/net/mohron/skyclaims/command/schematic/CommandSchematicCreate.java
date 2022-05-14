@@ -39,11 +39,11 @@ import org.spongepowered.api.world.schematic.Schematic;
 public class CommandSchematicCreate extends CommandBase.PlayerCommand {
 
   public static final String HELP_TEXT = "used to save the selected area as an island schematic";
-  private static final Text NAME = Text.of("name");
+  private static final Text NAME = LinearComponents.linear("name");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_CREATE)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(string(NAME))
       .executor(new CommandSchematicCreate())
       .build();
@@ -61,14 +61,14 @@ public class CommandSchematicCreate extends CommandBase.PlayerCommand {
   public CommandResult execute(Player player, CommandContext args) throws CommandException {
     SchematicHandler.PlayerData data = SchematicHandler.get(player);
     if (data.getPos1() == null || data.getPos2() == null) {
-      throw new CommandException(Text.of(TextColors.RED, "You must set both positions before copying."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must set both positions before copying."));
     }
     Vector3i min = data.getPos1().min(data.getPos2());
     Vector3i max = data.getPos1().max(data.getPos2());
     ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, player.getLocation().getPosition().toInt());
 
     String name = args.<String>getOne(NAME)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must supply a name to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must supply a name to use this command!")));
 
     Schematic schematic = Schematic.builder()
         .volume(volume)
@@ -79,16 +79,16 @@ public class CommandSchematicCreate extends CommandBase.PlayerCommand {
         .build();
 
     if (PLUGIN.getSchematicManager().create(schematic, name)) {
-      player.sendMessage(Text.of(TextColors.GREEN, "Successfully created ", TextColors.WHITE, name, TextColors.GREEN, "."));
+      player.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully created ", NamedTextColor.WHITE, name, NamedTextColor.GREEN, "."));
       if (PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms()){
-        player.sendMessage(Text.of(
-            TextColors.GREEN, "Use ", TextColors.GRAY, Permissions.COMMAND_ARGUMENTS_SCHEMATICS, ".", name,
-            TextColors.GREEN, " to give permission to use."
+        player.sendMessage(LinearComponents.linear(
+            NamedTextColor.GREEN, "Use ", NamedTextColor.GRAY, Permissions.COMMAND_ARGUMENTS_SCHEMATICS, ".", name,
+            NamedTextColor.GREEN, " to give permission to use."
         ));
       }
       return CommandResult.success();
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "Error saving schematic!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Error saving schematic!"));
     }
   }
 }

@@ -33,11 +33,11 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandSchematicDelete extends CommandBase {
 
   public static final String HELP_TEXT = "deletes a schematic";
-  private static final Text SCHEMATIC = Text.of("schematic");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_DELETE)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(Arguments.schematic(SCHEMATIC))
       .executor(new CommandSchematicDelete())
       .build();
@@ -54,13 +54,13 @@ public class CommandSchematicDelete extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a schematic to use this command!")));
 
     if (PLUGIN.getSchematicManager().delete(schematic)) {
-      src.sendMessage(Text.of(TextColors.GREEN, "Successfully deleted schematic."));
+      src.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully deleted schematic."));
       return CommandResult.success();
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "Failed to delete schematic."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Failed to delete schematic."));
     }
   }
 }

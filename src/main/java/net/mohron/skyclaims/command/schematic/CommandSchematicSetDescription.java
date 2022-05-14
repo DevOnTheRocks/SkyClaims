@@ -34,12 +34,12 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandSchematicSetDescription extends CommandBase {
 
   public static final String HELP_TEXT = "used to set the name for a schematic";
-  private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text DESCRIPTION = Text.of("description");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
+  private static final Text DESCRIPTION = LinearComponents.linear("description");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_SCHEMATIC_SET_NAME)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(
           Arguments.schematic(SCHEMATIC),
           GenericArguments.optional(GenericArguments.remainingRawJoinedStrings(DESCRIPTION))
@@ -59,7 +59,7 @@ public class CommandSchematicSetDescription extends CommandBase {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     IslandSchematic schematic = args.<IslandSchematic>getOne(SCHEMATIC)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "You must provide a schematic to use this command!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must provide a schematic to use this command!")));
     String description = args.<String>getOne(DESCRIPTION).orElse(null);
 
     if (description != null) {
@@ -69,13 +69,13 @@ public class CommandSchematicSetDescription extends CommandBase {
     }
 
     if (PLUGIN.getSchematicManager().save(schematic)) {
-      src.sendMessage(Text.of(
-          TextColors.GREEN, "Successfully updated schematic description to", TextColors.WHITE, ":", Text.NEW_LINE,
-          TextColors.RESET, schematic.getDescriptionText()
+      src.sendMessage(LinearComponents.linear(
+          NamedTextColor.GREEN, "Successfully updated schematic description to", NamedTextColor.WHITE, ":", Component.newline(),
+          NamedTextColor.RESET, schematic.getDescriptionText()
       ));
       return CommandResult.success();
     } else {
-      throw new CommandException(Text.of(TextColors.RED, "Failed to update schematic."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "Failed to update schematic."));
     }
   }
 }

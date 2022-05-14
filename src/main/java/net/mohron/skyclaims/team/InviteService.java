@@ -79,25 +79,25 @@ public class InviteService {
   private List<Text> getIncomingInviteText(User user) {
     SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
     return invites.row(user).values().stream()
-        .map(invite -> Text.of(
-            TextColors.WHITE, "[",
+        .map(invite -> LinearComponents.linear(
+            NamedTextColor.WHITE, "[",
             Text.builder("✓")
-                .color(TextColors.GREEN)
-                .onHover(TextActions.showText(Text.of(TextColors.GREEN, "Accept")))
+                .color(NamedTextColor.GREEN)
+                .onHover(TextActions.showText(LinearComponents.linear(NamedTextColor.GREEN, "Accept")))
                 .onClick(TextActions.executeCallback(acceptInvite(invite))),
-            TextColors.WHITE, "] [",
+            NamedTextColor.WHITE, "] [",
             Text.builder("✗")
-                .color(TextColors.RED)
-                .onHover(TextActions.showText(Text.of(TextColors.RED, "Deny")))
+                .color(NamedTextColor.RED)
+                .onHover(TextActions.showText(LinearComponents.linear(NamedTextColor.RED, "Deny")))
                 .onClick(TextActions.executeCallback(src -> invite.deny())),
-            TextColors.WHITE, "] ",
+            NamedTextColor.WHITE, "] ",
             invite.getPrivilegeType().toText(),
-            TextColors.WHITE, " : ",
+            NamedTextColor.WHITE, " : ",
             invite.getIsland().getName().toBuilder()
-                .onHover(TextActions.showText(Text.of(
-                    TextColors.YELLOW, "Invited by", TextColors.WHITE, " : ", TextColors.GOLD,
-                    invite.getSender().getName(), Text.NEW_LINE,
-                    TextColors.YELLOW, "Sent on", TextColors.WHITE, " : ", TextColors.GRAY,
+                .onHover(TextActions.showText(LinearComponents.linear(
+                    NamedTextColor.YELLOW, "Invited by", NamedTextColor.WHITE, " : ", NamedTextColor.GOLD,
+                    invite.getSender().getName(), Component.newline(),
+                    NamedTextColor.YELLOW, "Sent on", NamedTextColor.WHITE, " : ", NamedTextColor.GRAY,
                     sdf.format(Date.from(invite.getSent()))
                 )))
         ))
@@ -111,18 +111,18 @@ public class InviteService {
 
       // Check if the receiver can accept this invite
       if (!inviteExists(invite)) {
-        src.sendMessage(Text.of(TextColors.RED, "This invite has expired!"));
+        src.sendMessage(LinearComponents.linear(NamedTextColor.RED, "This invite has expired!"));
       } else if (maxIslands > 0 && maxIslands - IslandManager.countByMember(invite.getReceiver()) < 1) {
-        src.sendMessage(Text.of(TextColors.RED, "You have reached your maximum number of islands!"));
+        src.sendMessage(LinearComponents.linear(NamedTextColor.RED, "You have reached your maximum number of islands!"));
       } else if (maxTeammates > 0 && invite.getIsland().getTotalMembers() >= maxTeammates) {
-        src.sendMessage(Text.of(invite.getIsland().getName(), TextColors.RED, " has reached its maximum team size!"));
+        src.sendMessage(LinearComponents.linear(invite.getIsland().getName(), NamedTextColor.RED, " has reached its maximum team size!"));
       } else {
         invite.accept();
-        src.sendMessage(Text.of(
-            TextColors.GREEN, "You are now a ",
+        src.sendMessage(LinearComponents.linear(
+            NamedTextColor.GREEN, "You are now a ",
             invite.getPrivilegeType().toText(),
-            TextColors.GREEN, " on ",
-            invite.getIsland().getName(), TextColors.GREEN, "!"
+            NamedTextColor.GREEN, " on ",
+            invite.getIsland().getName(), NamedTextColor.GREEN, "!"
         ));
       }
     };
@@ -131,25 +131,25 @@ public class InviteService {
   private List<Text> getOutgoingInviteText(User user) {
     SimpleDateFormat sdf = PLUGIN.getConfig().getMiscConfig().getDateFormat();
     return invites.column(user).values().stream()
-        .map(invite -> Text.of(
-            TextColors.WHITE, "[",
+        .map(invite -> LinearComponents.linear(
+            NamedTextColor.WHITE, "[",
             Text.builder("✗")
-                .color(TextColors.RED)
-                .onHover(TextActions.showText(Text.of(TextColors.RED, "Cancel")))
+                .color(NamedTextColor.RED)
+                .onHover(TextActions.showText(LinearComponents.linear(NamedTextColor.RED, "Cancel")))
                 .onClick(TextActions.executeCallback(src -> {
                   invite.deny();
-                  src.sendMessage(Text.of(
-                      TextColors.GREEN, "Invite to ",
+                  src.sendMessage(LinearComponents.linear(
+                      NamedTextColor.GREEN, "Invite to ",
                       invite.getPrivilegeType().format(invite.getReceiver().getName()),
-                      TextColors.GREEN, " has been canceled."
+                      NamedTextColor.GREEN, " has been canceled."
                   ));
                 })),
-            TextColors.WHITE, "] ",
+            NamedTextColor.WHITE, "] ",
             invite.getPrivilegeType().format(invite.getReceiver().getName()),
-            TextColors.WHITE, " : ",
+            NamedTextColor.WHITE, " : ",
             invite.getIsland().getName(),
-            TextColors.WHITE, " : ",
-            TextColors.GRAY, sdf.format(Date.from(invite.getSent()))
+            NamedTextColor.WHITE, " : ",
+            NamedTextColor.GRAY, sdf.format(Date.from(invite.getSent()))
         ))
         .collect(Collectors.toList());
   }
@@ -159,42 +159,42 @@ public class InviteService {
       if (src instanceof Player) {
         Player player = (Player) src;
 
-        Text title = Text.of(
-            TextColors.AQUA, "Invites : ",
-            TextColors.AQUA, (type == Type.INCOMING) ? "[" : Text.EMPTY,
+        Text title = LinearComponents.linear(
+            NamedTextColor.AQUA, "Invites : ",
+            NamedTextColor.AQUA, (type == Type.INCOMING) ? "[" : Text.EMPTY,
             Text.builder("Incoming")
-                .color((type == Type.INCOMING) ? TextColors.GREEN : TextColors.GRAY)
-                .onHover(TextActions.showText(Text.of("Click here to show ", TextColors.GREEN, "incoming", TextColors.RESET, " invites")))
+                .color((type == Type.INCOMING) ? NamedTextColor.GREEN : NamedTextColor.GRAY)
+                .onHover(TextActions.showText(LinearComponents.linear("Click here to show ", NamedTextColor.GREEN, "incoming", NamedTextColor.RESET, " invites")))
                 .onClick(TextActions.executeCallback(listIncomingInvites())),
-            TextColors.AQUA, (type == Type.INCOMING) ? "] " : " [",
+            NamedTextColor.AQUA, (type == Type.INCOMING) ? "] " : " [",
             Text.builder("Outgoing")
-                .color((type == Type.OUTGOING) ? TextColors.YELLOW : TextColors.GRAY)
-                .onHover(TextActions.showText(Text.of("Click here to show ", TextColors.YELLOW, "outgoing", TextColors.RESET, " invites")))
+                .color((type == Type.OUTGOING) ? NamedTextColor.YELLOW : NamedTextColor.GRAY)
+                .onHover(TextActions.showText(LinearComponents.linear("Click here to show ", NamedTextColor.YELLOW, "outgoing", NamedTextColor.RESET, " invites")))
                 .onClick(TextActions.executeCallback(listOutgoingInvites())),
-            TextColors.AQUA, (type == Type.OUTGOING) ? "]" : Text.EMPTY
+            NamedTextColor.AQUA, (type == Type.OUTGOING) ? "]" : Text.EMPTY
         );
 
         List<Text> contents = (type == Type.INCOMING)
             ? PLUGIN.getInviteService().getIncomingInviteText(player)
             : PLUGIN.getInviteService().getOutgoingInviteText(player);
         if (contents.isEmpty()) {
-          contents = ImmutableList.of(Text.of(TextColors.RED, "You have no ", type.toString().toLowerCase(), " invites!"));
+          contents = ImmutableList.of(LinearComponents.linear(NamedTextColor.RED, "You have no ", type.toString().toLowerCase(), " invites!"));
         }
 
         int limit = Options.getMaxIslands(player.getUniqueId());
-        Text header = Text.of(
-            TextColors.GRAY, "You currently have ",
-            TextColors.LIGHT_PURPLE, IslandManager.countByMember(player),
-            TextColors.GRAY, " of ",
-            TextColors.LIGHT_PURPLE, limit, 
-            TextColors.GRAY, " maximum island",
+        Text header = LinearComponents.linear(
+            NamedTextColor.GRAY, "You currently have ",
+            NamedTextColor.LIGHT_PURPLE, IslandManager.countByMember(player),
+            NamedTextColor.GRAY, " of ",
+            NamedTextColor.LIGHT_PURPLE, limit, 
+            NamedTextColor.GRAY, " maximum island",
             limit > 1 ? "s" : Text.EMPTY, "."
         );
 
         PaginationList.builder()
             .title(title)
             .header(limit < 1 ? null : header)
-            .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+            .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
             .contents(contents)
             .sendTo(player);
       }

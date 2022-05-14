@@ -18,19 +18,19 @@
 
 package net.mohron.skyclaims.exception;
 
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.util.TextMessageException;
+import net.kyori.adventure.text.Component;
+import org.spongepowered.api.util.ComponentMessageException;
 
-public class SkyClaimsException extends TextMessageException {
+public class SkyClaimsException extends ComponentMessageException {
 
-  private Text message;
+  private Component message;
 
-  public SkyClaimsException(Text message) {
+  public SkyClaimsException(Component message) {
     super(message);
     this.message = message;
   }
 
-  public Text getText() {
+  public Component getComponent() {
     return message;
   }
 }

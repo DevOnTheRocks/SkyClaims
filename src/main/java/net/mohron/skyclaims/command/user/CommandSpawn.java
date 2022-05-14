@@ -46,7 +46,7 @@ public class CommandSpawn extends CommandBase.ListIslandCommand {
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_SPAWN)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(GenericArguments.optional(Arguments.island(ISLAND)))
         .executor(new CommandSpawn())
         .build();
@@ -75,8 +75,8 @@ public class CommandSpawn extends CommandBase.ListIslandCommand {
 
   private CommandResult sendPlayerToSpawn(Player player, Island island) throws CommandException {
     if (!canTeleport(player, island)) {
-      throw new CommandPermissionException(Text.of(
-          TextColors.RED, "You must be trusted on ", island.getName(), " to use this command!"
+      throw new CommandPermissionException(LinearComponents.linear(
+          NamedTextColor.RED, "You must be trusted on ", island.getName(), " to use this command!"
       ));
     }
 
@@ -92,8 +92,8 @@ public class CommandSpawn extends CommandBase.ListIslandCommand {
         if (canTeleport(player, island)) {
           teleport(player, island);
         } else {
-          player.sendMessage(Text.of(
-              TextColors.RED, "You must be trusted on ", island.getName(), " to use this command!"
+          player.sendMessage(LinearComponents.linear(
+              NamedTextColor.RED, "You must be trusted on ", island.getName(), " to use this command!"
           ));
         }
       }

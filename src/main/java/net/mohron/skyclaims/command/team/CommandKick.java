@@ -36,13 +36,13 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandKick extends CommandBase.IslandCommand {
 
   public static final String HELP_TEXT = "used to remove players from an island.";
-  private static final Text USER = Text.of("user");
+  private static final Text USER = LinearComponents.linear("user");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_KICK)
         .arguments(GenericArguments.user(USER))
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .executor(new CommandKick())
         .build();
 
@@ -61,23 +61,23 @@ public class CommandKick extends CommandBase.IslandCommand {
     User user = args.<User>getOne(USER).orElse(null);
 
     if (user == null) {
-      throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "A user argument must be provided."));
     } else if (player.equals(user)) {
-      throw new CommandException(Text.of(TextColors.RED, "You cannot kick yourself!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You cannot kick yourself!"));
     } else if (island.getPrivilegeType(user) == PrivilegeType.NONE) {
-      throw new CommandException(Text.of(
-          PrivilegeType.NONE.format(user.getName()), TextColors.RED, " is not a member of ",
-          island.getName(), TextColors.RED, "!"
+      throw new CommandException(LinearComponents.linear(
+          PrivilegeType.NONE.format(user.getName()), NamedTextColor.RED, " is not a member of ",
+          island.getName(), NamedTextColor.RED, "!"
       ));
     } else if (user.hasPermission(Permissions.EXEMPT_KICK)) {
-      throw new CommandException(Text.of(
-          island.getPrivilegeType(user).format(user.getName()), TextColors.RED, " is exempt from being kicked!")
+      throw new CommandException(LinearComponents.linear(
+          island.getPrivilegeType(user).format(user.getName()), NamedTextColor.RED, " is exempt from being kicked!")
       );
     } else if (island.getPrivilegeType(player).ordinal() >= island.getPrivilegeType(user).ordinal()) {
-      throw new CommandException(Text.of(
-          TextColors.RED, "You do not have permission to kick ",
+      throw new CommandException(LinearComponents.linear(
+          NamedTextColor.RED, "You do not have permission to kick ",
           island.getPrivilegeType(user).format(user.getName()),
-          " from ", island.getName(), TextColors.RED, "."
+          " from ", island.getName(), NamedTextColor.RED, "."
       ));
     }
 
@@ -85,16 +85,16 @@ public class CommandKick extends CommandBase.IslandCommand {
     user.getPlayer().ifPresent(p -> {
       if (island.getPlayers().contains(p)) {
         p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn());
-        p.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
+        p.sendMessage(LinearComponents.linear(NamedTextColor.RED, "You have been removed from ", island.getName(), NamedTextColor.RED, "!"));
       }
     });
 
     clearMemberInventory(user, Permissions.KEEP_INV_PLAYER_KICK, Permissions.KEEP_INV_ENDERCHEST_KICK);
     island.removeMember(user);
 
-    player.sendMessage(Text.of(
-        type.format(user.getName()), TextColors.RED, " has successfully been removed from ",
-        island.getName(), TextColors.RED, "!"
+    player.sendMessage(LinearComponents.linear(
+        type.format(user.getName()), NamedTextColor.RED, " has successfully been removed from ",
+        island.getName(), NamedTextColor.RED, "!"
     ));
 
     return CommandResult.success();

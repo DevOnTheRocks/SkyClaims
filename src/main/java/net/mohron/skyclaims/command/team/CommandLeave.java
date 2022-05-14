@@ -40,7 +40,7 @@ public class CommandLeave extends CommandBase.IslandCommand {
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_LEAVE)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .executor(new CommandLeave())
         .build();
 
@@ -58,25 +58,25 @@ public class CommandLeave extends CommandBase.IslandCommand {
       throws CommandException {
 
     if (island.isOwner(player)) {
-      throw new CommandException(Text.of(TextColors.RED, "You must transfer island ownership before leaving."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must transfer island ownership before leaving."));
     } else if (!island.isMember(player)) {
-      throw new CommandException(Text.of(TextColors.RED, "You are not a member of ", island.getName(), TextColors.RED, "!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You are not a member of ", island.getName(), NamedTextColor.RED, "!"));
     }
 
-    player.sendMessage(Text.of(
+    player.sendMessage(LinearComponents.linear(
         "Are you sure you want to leave ",
         island.getName(),
-        TextColors.RESET, "?", Text.NEW_LINE,
-        TextColors.WHITE, "[",
+        NamedTextColor.RESET, "?", Component.newline(),
+        NamedTextColor.WHITE, "[",
         Text.builder("YES")
-            .color(TextColors.GREEN)
+            .color(NamedTextColor.GREEN)
             .onClick(TextActions.executeCallback(leaveIsland(player, island))),
-        TextColors.WHITE, "] [",
+        NamedTextColor.WHITE, "] [",
         Text.builder("NO")
-            .color(TextColors.RED)
+            .color(NamedTextColor.RED)
             .onClick(
-                TextActions.executeCallback(s -> s.sendMessage(Text.of("Leave island canceled!")))),
-        TextColors.WHITE, "]"
+                TextActions.executeCallback(s -> s.sendMessage(LinearComponents.linear("Leave island canceled!")))),
+        NamedTextColor.WHITE, "]"
     ));
 
     return CommandResult.success();
@@ -91,7 +91,7 @@ public class CommandLeave extends CommandBase.IslandCommand {
       clearMemberInventory(player, Permissions.KEEP_INV_PLAYER_LEAVE, Permissions.KEEP_INV_ENDERCHEST_LEAVE);
 
       island.removeMember(player);
-      player.sendMessage(Text.of(TextColors.RED, "You have been removed from ", island.getName(), TextColors.RED, "!"));
+      player.sendMessage(LinearComponents.linear(NamedTextColor.RED, "You have been removed from ", island.getName(), NamedTextColor.RED, "!"));
     };
   }
 }

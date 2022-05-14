@@ -38,13 +38,13 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandPromote extends CommandBase.IslandCommand {
 
   public static final String HELP_TEXT = "used to promote a player on an island.";
-  private static final Text USER = Text.of("user");
+  private static final Text USER = LinearComponents.linear("user");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_PROMOTE)
         .arguments(GenericArguments.user(USER))
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .executor(new CommandPromote())
         .build();
 
@@ -63,11 +63,11 @@ public class CommandPromote extends CommandBase.IslandCommand {
     User user = args.<User>getOne(USER).orElse(null);
 
     if (user == null) {
-      throw new CommandException(Text.of(TextColors.RED, "A user argument must be provided."));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "A user argument must be provided."));
     } else if (player.equals(user)) {
-      throw new CommandException(Text.of(TextColors.RED, "You cannot promote yourself!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You cannot promote yourself!"));
     } else if (!island.isOwner(player)) {
-      throw new CommandException(Text.of(TextColors.RED, "You do not have permission to promote players on this island!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You do not have permission to promote players on this island!"));
     } else {
       PrivilegeType type = island.getPrivilegeType(user);
       if (type == PrivilegeType.MANAGER) {
@@ -78,14 +78,14 @@ public class CommandPromote extends CommandBase.IslandCommand {
             .privilegeType(type)
             .build()
             .send();
-        player.sendMessage(Text.of(
-            TextColors.GREEN, "Island ownership transfer request sent to ", type.format(user.getName()), TextColors.GREEN, "."
+        player.sendMessage(LinearComponents.linear(
+            NamedTextColor.GREEN, "Island ownership transfer request sent to ", type.format(user.getName()), NamedTextColor.GREEN, "."
         ));
       } else {
         island.promote(user);
-        player.sendMessage(Text.of(
-            type.format(user.getName()), TextColors.GREEN, " has been promoted from a ", type.toText(),
-            TextColors.GREEN, " to a ", island.getPrivilegeType(user).toText(), TextColors.GREEN, "."
+        player.sendMessage(LinearComponents.linear(
+            type.format(user.getName()), NamedTextColor.GREEN, " has been promoted from a ", type.toText(),
+            NamedTextColor.GREEN, " to a ", island.getPrivilegeType(user).toText(), NamedTextColor.GREEN, "."
         ));
       }
     }

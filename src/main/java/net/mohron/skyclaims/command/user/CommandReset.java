@@ -43,13 +43,13 @@ public class CommandReset extends ListIslandCommand {
 
   public static final String HELP_TEXT = "reset your island and inventory so you can start over.";
 
-  private static final Text SCHEMATIC = Text.of("schematic");
-  private static final Text KEEP_INV = Text.of("keepinv");
+  private static final Text SCHEMATIC = LinearComponents.linear("schematic");
+  private static final Text KEEP_INV = LinearComponents.linear("keepinv");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_RESET)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(
             GenericArguments.optional(Arguments.schematic(SCHEMATIC)),
             GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.bool(KEEP_INV), Permissions.COMMAND_RESET_KEEP_INV))
@@ -96,22 +96,22 @@ public class CommandReset extends ListIslandCommand {
       if (src instanceof Player) {
         Player player = (Player) src;
         if (island.isOwner(player)) {
-          player.sendMessage(Text.of(
+          player.sendMessage(LinearComponents.linear(
               "Are you sure you want to reset your island",
               !keepInv ? " and inventory" : Text.EMPTY,
-              "? This cannot be undone!", Text.NEW_LINE,
-              TextColors.GOLD, "Do you want to continue?", Text.NEW_LINE,
-              TextColors.WHITE, "[",
+              "? This cannot be undone!", Component.newline(),
+              NamedTextColor.GOLD, "Do you want to continue?", Component.newline(),
+              NamedTextColor.WHITE, "[",
               Text.builder("YES")
-                  .color(TextColors.GREEN)
-                  .onHover(TextActions.showText(Text.of("Click to reset")))
+                  .color(NamedTextColor.GREEN)
+                  .onHover(TextActions.showText(LinearComponents.linear("Click to reset")))
                   .onClick(TextActions.executeCallback(resetIsland(player, island, schematic, keepInv))),
-              TextColors.WHITE, "] [",
+              NamedTextColor.WHITE, "] [",
               Text.builder("NO")
-                  .color(TextColors.RED)
-                  .onHover(TextActions.showText(Text.of("Click to cancel")))
-                  .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island reset canceled!")))),
-              TextColors.WHITE, "]"
+                  .color(NamedTextColor.RED)
+                  .onHover(TextActions.showText(LinearComponents.linear("Click to cancel")))
+                  .onClick(TextActions.executeCallback(s -> s.sendMessage(LinearComponents.linear("Island reset canceled!")))),
+              NamedTextColor.WHITE, "]"
           ));
         }
       }
@@ -130,7 +130,7 @@ public class CommandReset extends ListIslandCommand {
         // Teleport any players located in the island's region to spawn
         island.getPlayers().forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
 
-        player.sendMessage(Text.of("Please be patient while your island is reset."));
+        player.sendMessage(LinearComponents.linear("Please be patient while your island is reset."));
         island.reset(schematic, !keepInv);
       }
     };

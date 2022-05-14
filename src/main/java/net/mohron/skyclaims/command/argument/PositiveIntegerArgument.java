@@ -53,9 +53,9 @@ public class PositiveIntegerArgument extends CommandElement {
         return a;
       }
 
-      throw new ArgumentParseException(Text.of(TextColors.RED, "Zero is not a valid input!"), i, 0);
+      throw new ArgumentParseException(LinearComponents.linear(NamedTextColor.RED, "Zero is not a valid input!"), i, 0);
     } catch (NumberFormatException e) {
-      throw new ArgumentParseException(Text.of(TextColors.RED, "A positive integer is required!"),
+      throw new ArgumentParseException(LinearComponents.linear(NamedTextColor.RED, "A positive integer is required!"),
           i, 0);
     }
   }

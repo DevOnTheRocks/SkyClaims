@@ -42,12 +42,12 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandDelete extends CommandBase.IslandCommand {
 
   public static final String HELP_TEXT = "used to permanently delete an island.";
-  private static final Text CLEAR = Text.of("clear");
+  private static final Text CLEAR = LinearComponents.linear("clear");
 
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_DELETE)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(
             GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.OWNER)),
             GenericArguments.optional(GenericArguments.requiringPermission(
@@ -71,7 +71,7 @@ public class CommandDelete extends CommandBase.IslandCommand {
       throws CommandException {
     if (!island.isOwner(player) && !player.hasPermission(Permissions.COMMAND_DELETE_OTHERS)) {
       throw new CommandPermissionException(
-          Text.of(TextColors.RED, "You do not have permission to delete ", island.getName(), "!"));
+          LinearComponents.linear(NamedTextColor.RED, "You do not have permission to delete ", island.getName(), "!"));
     }
 
     boolean clear = args.<Boolean>getOne(CLEAR).orElse(true);
@@ -85,20 +85,20 @@ public class CommandDelete extends CommandBase.IslandCommand {
     return src -> {
       if (src instanceof Player) {
         Player player = (Player) src;
-        player.sendMessage(Text.of(
-            "Are you sure you want to delete your island? This cannot be undone!", Text.NEW_LINE,
-            TextColors.GOLD, "Do you want to continue?", Text.NEW_LINE,
-            TextColors.WHITE, "[",
+        player.sendMessage(LinearComponents.linear(
+            "Are you sure you want to delete your island? This cannot be undone!", Component.newline(),
+            NamedTextColor.GOLD, "Do you want to continue?", Component.newline(),
+            NamedTextColor.WHITE, "[",
             Text.builder("YES")
-                .color(TextColors.GREEN)
-                .onHover(TextActions.showText(Text.of("Click to delete")))
+                .color(NamedTextColor.GREEN)
+                .onHover(TextActions.showText(LinearComponents.linear("Click to delete")))
                 .onClick(TextActions.executeCallback(deleteIsland(island, clear))),
-            TextColors.WHITE, "] [",
+            NamedTextColor.WHITE, "] [",
             Text.builder("NO")
-                .color(TextColors.RED)
-                .onHover(TextActions.showText(Text.of("Click to cancel")))
-                .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Island deletion canceled!")))),
-            TextColors.WHITE, "]"
+                .color(NamedTextColor.RED)
+                .onHover(TextActions.showText(LinearComponents.linear("Click to cancel")))
+                .onClick(TextActions.executeCallback(s -> s.sendMessage(LinearComponents.linear("Island deletion canceled!")))),
+            NamedTextColor.WHITE, "]"
         ));
       }
     };
@@ -108,7 +108,7 @@ public class CommandDelete extends CommandBase.IslandCommand {
     return src -> {
       Sponge.getCauseStackManager().pushCause(PLUGIN.getPluginContainer());
       if (!IslandManager.ISLANDS.containsKey(island.getUniqueId())) {
-        src.sendMessage(Text.of(island.getName(), TextColors.RED, " has already been deleted!"));
+        src.sendMessage(LinearComponents.linear(island.getName(), NamedTextColor.RED, " has already been deleted!"));
         return;
       }
       if (clear) {
@@ -118,7 +118,7 @@ public class CommandDelete extends CommandBase.IslandCommand {
       island.getPlayers().forEach(p -> p.setLocationSafely(PLUGIN.getConfig().getWorldConfig().getSpawn()));
       island.delete();
 
-      src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " has been deleted!"));
+      src.sendMessage(LinearComponents.linear(island.getName(), NamedTextColor.GREEN, " has been deleted!"));
       Sponge.getCauseStackManager().popCause();
     };
   }

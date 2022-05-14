@@ -44,7 +44,7 @@ public class CommandUnlock extends CommandBase.LockCommand {
   public static void register() {
     CommandSpec commandSpec = CommandSpec.builder()
         .permission(Permissions.COMMAND_LOCK)
-        .description(Text.of(HELP_TEXT))
+        .description(LinearComponents.linear(HELP_TEXT))
         .arguments(GenericArguments.firstParsing(
             GenericArguments.optional(GenericArguments.requiringPermission(GenericArguments.literal(ALL, "all"), Permissions.COMMAND_LOCK_OTHERS)),
             GenericArguments.optional(Arguments.island(ISLAND, PrivilegeType.MANAGER))
@@ -65,7 +65,7 @@ public class CommandUnlock extends CommandBase.LockCommand {
   public CommandResult execute(CommandSource src, Island island, CommandContext args) throws CommandException {
     island.setLocked(false);
 
-    src.sendMessage(Text.of(island.getName(), TextColors.GREEN, " is now unlocked!"));
+    src.sendMessage(LinearComponents.linear(island.getName(), NamedTextColor.GREEN, " is now unlocked!"));
     return CommandResult.success();
   }
 }

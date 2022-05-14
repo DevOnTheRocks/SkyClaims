@@ -39,12 +39,12 @@ import org.spongepowered.api.text.format.TextColors;
 public class CommandTransfer extends CommandBase {
 
   public static final String HELP_TEXT = "used to transfer island ownership to another player.";
-  private static final Text OWNER = Text.of("owner");
-  private static final Text USER = Text.of("user");
+  private static final Text OWNER = LinearComponents.linear("owner");
+  private static final Text USER = LinearComponents.linear("user");
 
   public static CommandSpec commandSpec = CommandSpec.builder()
       .permission(Permissions.COMMAND_TRANSFER)
-      .description(Text.of(HELP_TEXT))
+      .description(LinearComponents.linear(HELP_TEXT))
       .arguments(Arguments.twoUser(OWNER, USER))
       .executor(new CommandTransfer())
       .build();
@@ -63,7 +63,7 @@ public class CommandTransfer extends CommandBase {
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     User owner = args.<User>getOne(OWNER).orElse(null);
     User user = args.<User>getOne(USER)
-        .orElseThrow(() -> new CommandException(Text.of(TextColors.RED, "Invalid user!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(NamedTextColor.RED, "Invalid user!")));
 
     if (owner != null) {
       List<Island> ownedIslands = IslandManager.getUserIslandsByPrivilege(owner, PrivilegeType.OWNER);
@@ -71,22 +71,22 @@ public class CommandTransfer extends CommandBase {
     }
 
     if (!(src instanceof Player)) {
-        throw new CommandException(Text.of(TextColors.RED, "You must supply a owner & user to use this command."));
+        throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "You must supply a owner & user to use this command."));
     }
 
     Island islandToTransfer = IslandManager.getByLocation(((Player) src).getLocation())
-        .orElseThrow(() -> new CommandException(Text.of(
-            TextColors.RED, "This command must be run on the island you wish to transfer!")));
+        .orElseThrow(() -> new CommandException(LinearComponents.linear(
+            NamedTextColor.RED, "This command must be run on the island you wish to transfer!")));
     return transferIsland(src, islandToTransfer, user);
   }
 
   private CommandResult processTransferByOwner(CommandSource src, List<Island> ownedIslands, User user) throws CommandException {
     if (ownedIslands.isEmpty()) {
-      throw new CommandException(Text.of(TextColors.RED, "The owner supplied must have an island!"));
+      throw new CommandException(LinearComponents.linear(NamedTextColor.RED, "The owner supplied must have an island!"));
     }
     if (ownedIslands.size() > 1) {
-      throw new CommandException(Text.of(
-          TextColors.RED, "The owner supplied has multiple islands. Please go to the island you want to transfer."
+      throw new CommandException(LinearComponents.linear(
+          NamedTextColor.RED, "The owner supplied has multiple islands. Please go to the island you want to transfer."
       ));
     }
 
@@ -95,12 +95,12 @@ public class CommandTransfer extends CommandBase {
   }
 
   private CommandResult transferIsland(CommandSource src, Island island, User user) {
-    src.sendMessage(Text.of(
-        TextColors.GREEN, "Completed transfer of ",
-        TextColors.GOLD, island.getOwnerName(),
-        TextColors.GREEN, "'s island to ",
-        TextColors.GOLD, user.getName(),
-        TextColors.GREEN, "."
+    src.sendMessage(LinearComponents.linear(
+        NamedTextColor.GREEN, "Completed transfer of ",
+        NamedTextColor.GOLD, island.getOwnerName(),
+        NamedTextColor.GREEN, "'s island to ",
+        NamedTextColor.GOLD, user.getName(),
+        NamedTextColor.GREEN, "."
     ));
     island.transfer(user);
 

@@ -27,6 +27,7 @@ import com.griefdefender.api.event.RemoveClaimEvent;
 import com.griefdefender.api.event.TrustClaimEvent;
 import com.griefdefender.api.event.UserTrustClaimEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.spongeapi.SpongeComponentSerializer;
 import net.kyori.event.EventSubscriber;
 import net.mohron.skyclaims.PluginInfo;
@@ -42,18 +43,12 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
-import org.spongepowered.api.service.user.UserStorageService;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.world.World;
 
 public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
 
   private static final SkyClaims PLUGIN = SkyClaims.getInstance();
-  private static final Text PREFIX = Text.of(TextColors.WHITE, "[", TextColors.AQUA, PluginInfo.NAME, TextColors.WHITE, "] ");
+  private static final Text PREFIX = LinearComponents.linear(NamedTextColor.WHITE, "[", NamedTextColor.AQUA, PluginInfo.NAME, NamedTextColor.WHITE, "] ");
 
   @Override
   public void on(@NonNull ClaimEvent event) throws Throwable {
@@ -86,7 +81,7 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
       return;
     }
 
-    event.setMessage(toComponent(Text.of(PREFIX, TextColors.RED, "You cannot create a player claim in this dimension!")));
+    event.setMessage(toComponent(LinearComponents.linear(PREFIX, NamedTextColor.RED, "You cannot create a player claim in this dimension!")));
     event.cancelled(true);
   }
 
@@ -104,12 +99,12 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     for (Claim claim : event.getClaims()) {
       if (claim.getWorldUniqueId().equals(world.getUniqueId()) && IslandManager.getByClaim(claim).isPresent()) {
         if (event instanceof RemoveClaimEvent.Abandon) {
-          event.setMessage(toComponent(Text.of(TextColors.RED, "You cannot abandon an island claim!")));
+          event.setMessage(toComponent(LinearComponents.linear(NamedTextColor.RED, "You cannot abandon an island claim!")));
         } else {
-          IslandManager.getByClaim(claim).ifPresent((Island island) -> event.setMessage(toComponent(Text.of(
-              PREFIX, TextColors.RED, "A claim you are attempting to delete belongs to an island.", Text.NEW_LINE,
-              Text.of(TextColors.AQUA, "Do you want to delete ", island.getOwnerName(), "'s island?").toBuilder()
-                  .onHover(TextActions.showText(Text.of("Click here to delete.")))
+          IslandManager.getByClaim(claim).ifPresent((Island island) -> event.setMessage(toComponent(LinearComponents.linear(
+              PREFIX, NamedTextColor.RED, "A claim you are attempting to delete belongs to an island.", Component.newline(),
+              LinearComponents.linear(NamedTextColor.AQUA, "Do you want to delete ", island.getOwnerName(), "'s island?").toBuilder()
+                  .onHover(TextActions.showText(LinearComponents.linear("Click here to delete.")))
                   .onClick(TextActions.executeCallback(src -> island.delete()))
           ))));
         }
@@ -130,8 +125,8 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
       return;
     }
 
-    event.setMessage(toComponent(Text.of(
-        PREFIX, TextColors.RED, "You cannot ",
+    event.setMessage(toComponent(LinearComponents.linear(
+        PREFIX, NamedTextColor.RED, "You cannot ",
         event instanceof ChangeClaimEvent.Resize ? "resize" : "change the claim type of",
         " an island claim!"
     )));
@@ -146,9 +141,9 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     }
 
     if (claim.getWidth() >= 512) {
-      event.setMessage(toComponent(Text.of(
-          PREFIX, TextColors.RED, "An island claim can not be expanded beyond ",
-          TextColors.LIGHT_PURPLE, 512, TextColors.RED, " x ", TextColors.LIGHT_PURPLE, 512, TextColors.RED, "!"
+      event.setMessage(toComponent(LinearComponents.linear(
+          PREFIX, NamedTextColor.RED, "An island claim can not be expanded beyond ",
+          NamedTextColor.LIGHT_PURPLE, 512, NamedTextColor.RED, " x ", NamedTextColor.LIGHT_PURPLE, 512, NamedTextColor.RED, "!"
       )));
       event.cancelled(true);
     }
@@ -170,7 +165,7 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
     Island island = IslandManager.getByClaim(claim).get();
     if (island.isLocked() && !island.isMember(player) && !player.hasPermission(Permissions.BYPASS_LOCK)) {
       event.cancelled(true);
-      event.setMessage(toComponent(Text.of(PREFIX, TextColors.RED, "You do not have permission to enter ", island.getName(), TextColors.RED, "!")));
+      event.setMessage(toComponent(LinearComponents.linear(PREFIX, NamedTextColor.RED, "You do not have permission to enter ", island.getName(), NamedTextColor.RED, "!")));
     }
 
     // Clears configured items when entering/leaving an island
@@ -231,13 +226,13 @@ public class ClaimEventHandler implements EventSubscriber<ClaimEvent> {
                     .build()
                     .send();
                 event.setMessage(toComponent(
-                    Text.of(PREFIX, TextColors.GREEN, "Island invite sent to ", type.format(user.getName()), TextColors.GREEN, ".")
+                    LinearComponents.linear(PREFIX, NamedTextColor.GREEN, "Island invite sent to ", type.format(user.getName()), NamedTextColor.GREEN, ".")
                 ));
               }
               if (event instanceof TrustClaimEvent.Remove) {
-                event.setMessage(toComponent(Text.of(
-                    PREFIX, TextColors.RED, "Use ",
-                    Text.builder("/is kick").color(TextColors.AQUA).style(TextStyles.ITALIC).onClick(TextActions.suggestCommand("/is kick ")),
+                event.setMessage(toComponent(LinearComponents.linear(
+                    PREFIX, NamedTextColor.RED, "Use ",
+                    Text.builder("/is kick").color(NamedTextColor.AQUA).style(TextStyles.ITALIC).onClick(TextActions.suggestCommand("/is kick ")),
                     " to remove a player from this island."
                 )));
               }

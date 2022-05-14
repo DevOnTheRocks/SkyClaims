@@ -20,8 +20,8 @@ package net.mohron.skyclaims.world;
 
 public class Coordinate {
 
-  private int x;
-  private int z;
+  private final int x;
+  private final int z;
 
   public Coordinate(int x, int z) {
     this.x = x;

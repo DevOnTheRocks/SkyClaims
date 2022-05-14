@@ -61,21 +61,21 @@ public class CommandSchematicList extends CommandBase {
     boolean checkPerms = !args.<Boolean>getOne("a").orElse(false) && PLUGIN.getConfig().getPermissionConfig().isSeparateSchematicPerms();
     List<Text> schematics = PLUGIN.getSchematicManager().getSchematics().stream()
         .filter(s -> !checkPerms || src.hasPermission(Permissions.COMMAND_ARGUMENTS_SCHEMATICS + "." + s.getName()))
-        .map(s -> Text.of(
+        .map(s -> LinearComponents.linear(
             canDelete ? deleteSchematicButton(s) : Text.EMPTY,
             s.getText().toBuilder()
-                .onHover(TextActions.showText(Text.of("Click to view schematic info")))
+                .onHover(TextActions.showText(LinearComponents.linear("Click to view schematic info")))
                 .onClick(TextActions.runCommand("/is schematic info " + s.getName())),
-            TextColors.WHITE, " - ",
-            TextColors.GRAY, s.getBiomeType().isPresent() ? s.getBiomeType().get().getName() : "none", TextColors.WHITE, " - ",
-            TextColors.LIGHT_PURPLE, s.getCommands().size(), TextColors.GRAY, " command", s.getCommands().size() != 1 ? "s" : ""
+            NamedTextColor.WHITE, " - ",
+            NamedTextColor.GRAY, s.getBiomeType().isPresent() ? s.getBiomeType().get().getName() : "none", NamedTextColor.WHITE, " - ",
+            NamedTextColor.LIGHT_PURPLE, s.getCommands().size(), NamedTextColor.GRAY, " command", s.getCommands().size() != 1 ? "s" : ""
         ))
         .collect(Collectors.toList());
 
     PaginationList.builder()
-        .title(Text.of(TextColors.AQUA, "Schematics"))
-        .header(Text.of(TextStyles.BOLD, "NAME", " - ", "BIOME", " - ", "COMMANDS"))
-        .padding(Text.of(TextColors.AQUA, TextStyles.STRIKETHROUGH, "-"))
+        .title(LinearComponents.linear(NamedTextColor.AQUA, "Schematics"))
+        .header(LinearComponents.linear(TextStyles.BOLD, "NAME", " - ", "BIOME", " - ", "COMMANDS"))
+        .padding(LinearComponents.linear(NamedTextColor.AQUA, TextStyles.STRIKETHROUGH, "-"))
         .contents(schematics)
         .sendTo(src);
 
@@ -83,30 +83,30 @@ public class CommandSchematicList extends CommandBase {
   }
 
   private Text deleteSchematicButton(IslandSchematic schematic) {
-    return Text.of(TextColors.WHITE, "[",
+    return LinearComponents.linear(NamedTextColor.WHITE, "[",
         Text.builder("✗")
-            .color(TextColors.RED)
-            .onHover(TextActions.showText(Text.of(TextColors.RED, "Click to delete")))
-            .onClick(TextActions.executeCallback(src -> src.sendMessage(Text.of(
-                TextColors.WHITE, "Are you sure you want to delete ", schematic.getText(), TextColors.WHITE, "?", Text.NEW_LINE,
-                TextColors.WHITE, "[",
+            .color(NamedTextColor.RED)
+            .onHover(TextActions.showText(LinearComponents.linear(NamedTextColor.RED, "Click to delete")))
+            .onClick(TextActions.executeCallback(src -> src.sendMessage(LinearComponents.linear(
+                NamedTextColor.WHITE, "Are you sure you want to delete ", schematic.getText(), NamedTextColor.WHITE, "?", Component.newline(),
+                NamedTextColor.WHITE, "[",
                 Text.builder("YES")
-                    .color(TextColors.GREEN)
-                    .onHover(TextActions.showText(Text.of("Click to delete")))
+                    .color(NamedTextColor.GREEN)
+                    .onHover(TextActions.showText(LinearComponents.linear("Click to delete")))
                     .onClick(TextActions.executeCallback(source -> {
                       if (PLUGIN.getSchematicManager().delete(schematic)) {
-                        src.sendMessage(Text.of(TextColors.GREEN, "Successfully deleted ", TextColors.WHITE, schematic.getText(), TextColors.GREEN, "."));
+                        src.sendMessage(LinearComponents.linear(NamedTextColor.GREEN, "Successfully deleted ", NamedTextColor.WHITE, schematic.getText(), NamedTextColor.GREEN, "."));
                       } else {
-                        src.sendMessage(Text.of(TextColors.RED, "Failed to delete ", TextColors.WHITE, schematic.getText(), TextColors.RED, "."));
+                        src.sendMessage(LinearComponents.linear(NamedTextColor.RED, "Failed to delete ", NamedTextColor.WHITE, schematic.getText(), NamedTextColor.RED, "."));
                       }
                     })),
-                TextColors.WHITE, "] [",
+                NamedTextColor.WHITE, "] [",
                 Text.builder("NO")
-                    .color(TextColors.RED)
-                    .onHover(TextActions.showText(Text.of("Click to cancel")))
-                    .onClick(TextActions.executeCallback(s -> s.sendMessage(Text.of("Schematic deletion canceled!")))),
-                TextColors.WHITE, "]"
+                    .color(NamedTextColor.RED)
+                    .onHover(TextActions.showText(LinearComponents.linear("Click to cancel")))
+                    .onClick(TextActions.executeCallback(s -> s.sendMessage(LinearComponents.linear("Schematic deletion canceled!")))),
+                NamedTextColor.WHITE, "]"
             )))),
-        TextColors.WHITE, "] ");
+        NamedTextColor.WHITE, "] ");
   }
 }

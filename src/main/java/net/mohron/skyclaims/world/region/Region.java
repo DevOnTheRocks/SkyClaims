@@ -51,7 +51,7 @@ public class Region {
     return false;
   }
 
-  public static Region get(Location<World> location) {
+  public static Region get(ServerLocation location) {
     return new Region(location.getBlockX() >> 4 >> 5, location.getBlockZ() >> 4 >> 5);
   }
 
@@ -71,7 +71,7 @@ public class Region {
     return new Coordinate((((x + 1) << 5) << 4) - 1, (((z + 1) << 5) << 4) - 1);
   }
 
-  public Location<World> getCenter() {
+  public ServerLocation getCenter() {
     return new Location<>(
         SkyClaims.getInstance().getConfig().getWorldConfig().getWorld(),
         (getGreaterBoundary().getX() + getLesserBoundary().getX()) / 2.0,

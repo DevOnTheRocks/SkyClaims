@@ -61,12 +61,12 @@ public class TargetArgument extends CommandElement {
     if (TARGETS.containsKey(target)) {
       if (!hasPermission(source, TARGETS.get(target))) {
         throw new ArgumentParseException(
-            Text.of(TextColors.RED, "You do not have permission to use the supplied target!"),
+            LinearComponents.linear(NamedTextColor.RED, "You do not have permission to use the supplied target!"),
             target, 0);
       }
       return TARGETS.get(target);
     }
-    throw new ArgumentParseException(Text.of(TextColors.RED, "Invalid target!"), target, 0);
+    throw new ArgumentParseException(LinearComponents.linear(NamedTextColor.RED, "Invalid target!"), target, 0);
   }
 
   @Override

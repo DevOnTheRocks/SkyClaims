@@ -135,7 +135,7 @@ public class IslandSchematic {
     while (it.hasNext()) {
       builder.append(TextSerializers.FORMATTING_CODE.deserialize(it.next()));
       if (it.hasNext()) {
-        builder.append(Text.NEW_LINE);
+        builder.append(Component.newline());
       }
     }
     return builder.build();

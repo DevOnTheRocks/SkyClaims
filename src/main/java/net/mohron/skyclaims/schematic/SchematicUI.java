@@ -47,7 +47,7 @@ public final class SchematicUI {
   public static Inventory of(List<IslandSchematic> schematics, Function<IslandSchematic, Consumer<CommandSource>> mapper) {
     Inventory inventory = Inventory.builder()
         .of(InventoryArchetypes.CHEST)
-        .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(Text.of(TextColors.AQUA, "Schematics")))
+        .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(LinearComponents.linear(NamedTextColor.AQUA, "Schematics")))
         .property(InventoryDimension.PROPERTY_NAME, InventoryDimension.of(9, schematics.size() / 9 + 1))
         .listener(ClickInventoryEvent.class, handleClick(mapper))
         .build(PLUGIN);
